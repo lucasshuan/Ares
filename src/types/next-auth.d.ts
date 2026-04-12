@@ -8,7 +8,6 @@ declare module "next-auth" {
       username: string | null;
       permissions: Array<{
         id: string;
-        gameId: string;
         key: PermissionKey;
         name: string;
       }>;

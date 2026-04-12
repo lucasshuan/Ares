@@ -1,0 +1,68 @@
+{
+  "Header": {
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout",
+    "viewProfile": "View profile",
+    "editAccount": "Manage account"
+  },
+  "LocaleSwitcher": {
+    "label": "Languages",
+    "en": "English",
+    "pt": "Português"
+  },
+  "HomePage": {
+    "heroSubtitle": "Rankings and tournaments for competitive games.",
+    "explore": "Explore",
+    "join": "Join",
+    "games": {
+      "title": "Games",
+      "description": "Choose a game to view its rankings, performance history and ladders.",
+      "cardFallbackDescription": "Open the game page to inspect current rankings.",
+      "noGamesTitle": "No games available",
+      "noGamesDescription": "Add games to the database or reconnect the current database to load the list here."
+    }
+  },
+  "ProfilePage": {
+    "headerTitle": "User Profile",
+    "welcomeMessage": "Welcome, ",
+    "fallbackUser": "player",
+    "homeButton": "Home",
+    "manageAccount": "Manage Account",
+    "myGames": "Played Games",
+    "ranking": "Ranking",
+    "noGames": "You haven't played any games yet",
+    "noGamesOther": "This user hasn't played any games yet",
+    "noGamesDescription": "Join a game to appear in its rankings.",
+    "noGamesDescriptionOther": "This user is not participating in any game rankings.",
+    "playedGamesTab": "Played Games"
+  },
+  "GamePage": {
+    "metaTitleNotFound": "Game not found",
+    "metaTitleDbUnavailable": "Database unavailable",
+    "metaDescriptionFallback": "Rankings for {gameName} on Enyo.",
+    "backToGames": "Back to games",
+    "dbUnavailable": "Database unavailable in local development.",
+    "dbUnavailableDescription": "Start your Postgres instance or update `.env` with a reachable connection string to view this game page.",
+    "rankingsTitle": "Rankings",
+    "rankingsDescription": "Current ladders ordered by Elo.",
+    "ranking": "Ranking",
+    "playersCount": "players",
+    "elo": "Elo",
+    "noPlayers": "This ranking has no players yet.",
+    "noRankings": "No rankings created for this game.",
+    "noRankingsDescription": "As soon as rankings are inserted, this page will list players in Elo order.",
+    "sidebarDescription": "Track rankings and player performance for this game.",
+    "sidebarPlayers": "Players",
+    "playOnSteam": "Play on Steam"
+  },
+  "SiteFooter": {
+    "copyright": "Enyo © 2026"
+  },
+  "AuthModal": {
+    "title": "Sign in or sign up",
+    "close": "Close",
+    "signingIn": "Signing in...",
+    "continueWithDiscord": "Continue with Discord"
+  }
+}

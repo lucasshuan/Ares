@@ -59,7 +59,6 @@ export const authOptions = {
         const permissionRows = await db
           .select({
             id: permissions.id,
-            gameId: permissions.gameId,
             key: permissions.key,
             name: permissions.name,
           })

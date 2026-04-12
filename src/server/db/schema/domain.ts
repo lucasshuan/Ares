@@ -12,15 +12,11 @@ import { users } from "@/server/db/schema/auth";
 import { primaryId, timestamps } from "@/server/db/schema/shared";
 
 export const INITIAL_PERMISSION_DEFINITIONS = [
-  { key: "register_player", name: "Register Player" },
-  { key: "edit_player", name: "Edit Player" },
-  { key: "post_result", name: "Post Result" },
-  { key: "edit_result", name: "Edit Result" },
-  { key: "delete_result", name: "Delete Result" },
-  { key: "register_game", name: "Register Game" },
-  { key: "edit_game", name: "Edit Game" },
-  { key: "create_ranking", name: "Create Ranking" },
-  { key: "edit_ranking", name: "Edit Ranking" },
+  { key: "manage_games", name: "Manage Games" },
+  { key: "manage_players", name: "Manage Players" },
+  { key: "manage_rankings", name: "Manage Rankings" },
+  { key: "manage_results", name: "Manage Results" },
+  { key: "manage_permissions", name: "Manage Permissions" },
 ] as const;
 
 export type PermissionKey =
@@ -213,19 +209,12 @@ export const permissions = pgTable(
   "permissions",
   {
     ...primaryId,
-    gameId: text("game_id")
-      .notNull()
-      .references(() => games.id, { onDelete: "cascade" }),
-    key: text("key").$type<PermissionKey>().notNull(),
+    key: text("key").$type<PermissionKey>().notNull().unique(),
     name: text("name").notNull(),
     ...timestamps,
   },
   (table) => ({
-    permissionsGameKeyIdx: uniqueIndex("permissions_game_key_idx").on(
-      table.gameId,
-      table.key,
-    ),
-    permissionsGameIdIdx: index("permissions_game_id_idx").on(table.gameId),
+    permissionsKeyIdx: uniqueIndex("permissions_key_idx").on(table.key),
   }),
 );
 
@@ -257,7 +246,6 @@ export const userPermissions = pgTable(
 export const gamesRelations = relations(games, ({ many }) => ({
   players: many(players),
   rankings: many(rankings),
-  permissions: many(permissions),
 }));
 
 export const playersRelations = relations(players, ({ one, many }) => ({
@@ -334,11 +322,7 @@ export const resultAttachmentsRelations = relations(
   }),
 );
 
-export const permissionsRelations = relations(permissions, ({ one, many }) => ({
-  game: one(games, {
-    fields: [permissions.gameId],
-    references: [games.id],
-  }),
+export const permissionsRelations = relations(permissions, ({ many }) => ({
   userPermissions: many(userPermissions),
 }));
 

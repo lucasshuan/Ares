@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
 import { LoaderCircle, X } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
+import { useTranslations } from "next-intl";
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -14,6 +15,7 @@ type AuthModalProps = {
 
 export function AuthModal({ isOpen, onClose, isPending }: AuthModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("AuthModal");
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -43,19 +45,19 @@ export function AuthModal({ isOpen, onClose, isPending }: AuthModalProps) {
     <div
       ref={modalRef}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
     >
       <div className="glass-panel animate-in fade-in-0 zoom-in-95 mx-4 w-full max-w-sm rounded-[1.8rem] p-8 duration-200">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-semibold tracking-[-0.04em]">
-              Sign in or sign up
+              {t("title")}
             </h2>
           </div>
           <button
             onClick={onClose}
             className="cursor-pointer rounded-full p-2 transition-colors hover:bg-white/8"
-            aria-label="Close"
+            aria-label={t("close")}
           >
             <X className="size-5" />
           </button>
@@ -63,7 +65,7 @@ export function AuthModal({ isOpen, onClose, isPending }: AuthModalProps) {
 
         <div className="space-y-3">
           <button
-            onClick={() => signIn("discord", { callbackUrl: "/" })}
+            onClick={() => signIn("discord", { callbackUrl: "/profile" })}
             disabled={isPending}
             className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border border-[#5865F2] bg-[#5865F2] px-6 py-3 font-medium text-white transition-all hover:bg-[#4752C4] disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -72,7 +74,7 @@ export function AuthModal({ isOpen, onClose, isPending }: AuthModalProps) {
             ) : (
               <SiDiscord className="size-5" />
             )}
-            {isPending ? "Signing in..." : "Continue with Discord"}
+            {isPending ? t("signingIn") : t("continueWithDiscord")}
           </button>
         </div>
       </div>

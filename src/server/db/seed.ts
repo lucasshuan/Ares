@@ -34,40 +34,25 @@ async function seedGames() {
   }
 }
 
-async function seedPermissionsForGames() {
-  const gameList = await db
-    .select({
-      id: games.id,
-      name: games.name,
-    })
-    .from(games);
+async function seedPermissions() {
+  await db
+    .insert(permissions)
+    .values(
+      INITIAL_PERMISSION_DEFINITIONS.map((definition) => ({
+        key: definition.key,
+        name: definition.name,
+      })),
+    )
+    .onConflictDoNothing({
+      target: [permissions.key],
+    });
 
-  if (gameList.length === 0) {
-    console.log("No games found. Skipping permission seeding.");
-    return;
-  }
-
-  for (const game of gameList) {
-    await db
-      .insert(permissions)
-      .values(
-        INITIAL_PERMISSION_DEFINITIONS.map((definition) => ({
-          gameId: game.id,
-          key: definition.key,
-          name: definition.name,
-        })),
-      )
-      .onConflictDoNothing({
-        target: [permissions.gameId, permissions.key],
-      });
-
-    console.log(`Permissions seeded for game: ${game.name}`);
-  }
+  console.log("Global permissions seeded.");
 }
 
 async function main() {
   await seedGames();
-  await seedPermissionsForGames();
+  await seedPermissions();
 }
 
 main()

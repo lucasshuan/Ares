@@ -9,10 +9,12 @@ import { getPublicGames } from "@/server/db/queries/public";
 import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  const t = await getTranslations("HomePage");
   const { games: gameList, isDatabaseUnavailable } = await getPublicGames();
   const showFallbackCard = isDatabaseUnavailable || gameList.length === 0;
 
@@ -38,7 +40,7 @@ export default async function HomePage() {
             Enyo
           </h1>
           <p className="text-muted max-w-2xl text-base leading-8 sm:text-lg">
-            Rankings and tournaments for competitive games.
+            {t("heroSubtitle")}
           </p>
           <div className="flex gap-3 pt-4 sm:gap-4">
             <Link
@@ -49,11 +51,11 @@ export default async function HomePage() {
               )}
             >
               <Compass className="mr-2 size-5" />
-              Explore
+              {t("explore")}
             </Link>
             <SignInButton
               size="lg"
-              label="Join"
+              label={t("join")}
               className="text-sm sm:text-base"
             />
           </div>
@@ -61,8 +63,8 @@ export default async function HomePage() {
 
         <section className="space-y-6">
           <SectionHeader
-            title="Games"
-            description="Choose a game to view its rankings, performance history and ladders."
+            title={t("games.title")}
+            description={t("games.description")}
           />
 
           {!showFallbackCard ? (
@@ -91,8 +93,7 @@ export default async function HomePage() {
                     <div>
                       <h3 className="text-lg font-semibold">{game.name}</h3>
                       <p className="text-muted mt-1.5 line-clamp-2 text-xs leading-4">
-                        {game.description ??
-                          "Open the game page to inspect current rankings."}
+                        {game.description ?? t("games.cardFallbackDescription")}
                       </p>
                     </div>
 
@@ -112,10 +113,9 @@ export default async function HomePage() {
                 </div>
 
                 <div className="space-y-2 p-5">
-                  <h3 className="text-lg font-semibold">No games available</h3>
+                  <h3 className="text-lg font-semibold">{t("games.noGamesTitle")}</h3>
                   <p className="text-muted text-xs leading-4">
-                    Add games to the database or reconnect the current database
-                    to load the list here.
+                    {t("games.noGamesDescription")}
                   </p>
                 </div>
               </div>

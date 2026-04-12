@@ -1,14 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 import { SignInButton } from "@/components/auth/sign-in-button";
-import { SignOutButton } from "@/components/auth/sign-out-button";
+import { UserMenu } from "@/components/layout/user-menu";
 import { buttonVariants } from "@/components/ui/button";
+import { getTranslations } from "next-intl/server";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { getServerAuthSession } from "@/server/auth";
 import { hasDiscordAuth } from "@/server/auth/config";
 
 export async function SiteHeader() {
   const session = await getServerAuthSession();
+  const t = await getTranslations("Header");
 
   return (
     <header className="bg-background/88 sticky top-0 z-30 border-b border-white/6 backdrop-blur-xl">
@@ -32,24 +35,17 @@ export async function SiteHeader() {
 
         <div className="flex items-center gap-3">
           {session?.user ? (
-            <>
-              <Link
-                href="/dashboard"
-                className={buttonVariants({ intent: "secondary", size: "sm" })}
-              >
-                Dashboard
-              </Link>
-              <SignOutButton size="sm" />
-            </>
+            <UserMenu user={session.user} />
           ) : (
             <SignInButton
               size="sm"
-              label="Login"
+              label={t("login")}
               callbackUrl="/"
               disabled={!hasDiscordAuth}
               className="min-w-24"
             />
           )}
+          <LocaleSwitcher />
         </div>
       </div>
     </header>

@@ -1,16 +1,10 @@
 import "dotenv/config";
 import { db } from "@/server/db/client";
-import { games } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { permissions, userPermissions } from "@/server/db/schema";
 
 async function main() {
-  const allGames = await db.select().from(games);
-  console.log("All games in DB:", allGames);
-
-  const g = await db
-    .select()
-    .from(games)
-    .where(eq(games.slug, "superfighters-deluxe"));
-  console.log("Matching game:", g);
+  await db.delete(userPermissions);
+  await db.delete(permissions);
+  console.log("Truncated");
 }
-main().catch(console.error);
+main().catch(console.error).then(() => process.exit(0));

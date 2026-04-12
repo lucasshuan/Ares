@@ -16,11 +16,11 @@ function GameCardSkeleton() {
 
 export default function Loading() {
   return (
-    <main className="grid-surface">
+    <main className="grid-surface mt-2">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
         <section className="flex flex-col items-center space-y-4 text-center">
           <div className="flex items-center justify-center gap-4 sm:gap-6">
-            <div className="size-12 rounded-2xl animate-pulse bg-primary/30 sm:size-14 lg:size-20 shrink-0" />
+            <div className="bg-primary/30 size-12 shrink-0 animate-pulse rounded-2xl sm:size-14 lg:size-20" />
             <div className="bg-primary/30 h-12 w-48 animate-pulse rounded-2xl sm:h-14 sm:w-56 lg:h-20 lg:w-64" />
           </div>
           <div className="h-6 w-full max-w-2xl animate-pulse rounded-full bg-white/6" />
