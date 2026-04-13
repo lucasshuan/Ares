@@ -21,7 +21,7 @@ export function RegisterConfirmModal({
   rankingId,
   initialElo,
 }: RegisterConfirmModalProps) {
-  const t = useTranslations("GamePage");
+  const t = useTranslations("Modals.RegisterConfirm");
   const [isPending, startTransition] = useTransition();
 
   const onConfirm = () => {
@@ -29,7 +29,7 @@ export function RegisterConfirmModal({
       try {
         const result = await registerSelfToRanking(rankingId);
         if (result.success) {
-          toast.success(t("registerConfirmTitle"));
+          toast.success(t("success"));
           onClose();
         }
       } catch {
@@ -42,19 +42,14 @@ export function RegisterConfirmModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("registerConfirmTitle")}
-      description={t("registerConfirmDescription", { elo: initialElo })}
+      title={t("title")}
+      description={t("description", { elo: initialElo })}
+      confirmText={isPending ? t("submitting") : t("submit")}
+      cancelText={t("cancel")}
+      onConfirm={onConfirm}
+      isPending={isPending}
     >
-      <div className="flex flex-col gap-4">
-        <ActionButton
-          intent="primary"
-          icon={Trophy}
-          label={isPending ? "Registrando..." : "Confirmar Inscrição"}
-          onClick={onConfirm}
-          disabled={isPending}
-          className="w-full"
-        />
-      </div>
+      <></>
     </Modal>
   );
 }

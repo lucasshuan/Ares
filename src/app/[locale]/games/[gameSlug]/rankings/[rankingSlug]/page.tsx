@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Globe } from "lucide-react";
 
 import { getRankingData } from "@/server/db/queries/rankings";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -12,9 +12,7 @@ import { canManageGames, canManageRankings } from "@/lib/permissions";
 import { RankingRegistrationTrigger } from "@/components/triggers/ranking/ranking-registration-trigger";
 import { getLocale } from "next-intl/server";
 import { formatDate } from "@/lib/date-utils";
-import { RegisterConfirmModal } from "@/components/modals/ranking/registration-confirm-modal";
 
-// Client-side Admin Panel (migrated from RankingAdminActions)
 import { RankingAdminPanel } from "./admin-panel";
 import { type Ranking } from "@/server/db/schema";
 
@@ -66,7 +64,7 @@ async function RankingPageContent({
     : false;
 
   return (
-    <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+    <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
       {/* Sidebar (Left) */}
       <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
         <div className="sticky top-28 space-y-4">
@@ -112,7 +110,7 @@ async function RankingPageContent({
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Ranking Info
+              {t("rankingInfo")}
             </h2>
 
             <div className="space-y-1">
@@ -122,6 +120,14 @@ async function RankingPageContent({
                 </span>
                 <span className="text-secondary text-xs font-semibold">
                   {entries.length}
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-1">
+                <span className="text-[11px] opacity-60">
+                  {t("ratingSystem")}
+                </span>
+                <span className="text-xs font-semibold uppercase">
+                  {ranking.ratingSystem}
                 </span>
               </div>
               <div className="flex items-center justify-between py-1">
@@ -167,17 +173,17 @@ async function RankingPageContent({
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-white/10 bg-white/2">
-                  <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
+                  <th className="px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
                     #
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
+                  <th className="px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">
                     {t("player")}
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
-                    {t("country")}
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
+                  <th className="px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40 text-center">
                     {t("elo")}
+                  </th>
+                  <th className="px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40 text-right">
+                    {t("lastResult")}
                   </th>
                 </tr>
               </thead>
@@ -187,45 +193,37 @@ async function RankingPageContent({
                     key={entry.id}
                     className="group transition-colors hover:bg-white/5"
                   >
-                    <td className="px-6 py-5">
+                    <td className="px-5 py-3 w-16">
                       <span
-                        className={`font-mono font-bold ${entry.position <= 3 ? "text-primary" : "opacity-40"}`}
+                        className={`font-mono text-sm font-bold ${entry.position <= 3 ? "text-primary" : "opacity-30"}`}
                       >
-                        {entry.position}
+                        {entry.position}º
                       </span>
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-lg font-semibold">
-                          {entry.displayName}
-                        </span>
-                        <div className="mt-1 flex gap-1.5">
-                          {entry.usernames.slice(0, 3).map((u) => (
-                            <span
-                              key={u}
-                              className="text-muted rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] lowercase transition-all group-hover:bg-white/10"
-                            >
-                              {u}
-                            </span>
-                          ))}
+                    <td className="px-5 py-3">
+                      <div className="flex items-center">
+                        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 pr-4 pl-1.5 py-1 text-xs font-semibold ring-primary/20 transition-all hover:bg-white/10 hover:ring-2">
+                            {entry.country ? (
+                              <span
+                                className={`fi fi-${entry.country.toLowerCase()} w-5 h-3.5 shrink-0 rounded-xs bg-white/5 shadow-sm`}
+                              />
+                            ) : (
+                              <Globe className="size-3.5 text-white/30 shrink-0" />
+                            )}
+                          <span className="truncate max-w-[120px] sm:max-w-[200px]">
+                            {entry.displayName}
+                          </span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      {entry.country && (
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`fi fi-${entry.country.toLowerCase()} fis rounded-xs shadow-sm shadow-black/40`}
-                          />
-                          <span className="text-[10px] font-bold tracking-widest uppercase opacity-30">
-                            {entry.country}
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="text-secondary font-mono text-xl font-semibold">
+                    <td className="px-5 py-3 text-center">
+                      <span className="text-secondary font-mono text-base font-bold">
                         {entry.currentElo}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-right">
+                      <span className="text-[10px] font-bold tracking-widest uppercase opacity-20">
+                        —
                       </span>
                     </td>
                   </tr>
@@ -266,7 +264,24 @@ function RankingPageSkeleton() {
             <div className="h-10 w-64 rounded-full bg-white/10" />
             <div className="h-6 w-full rounded-full bg-white/5" />
           </div>
-          <div className="h-[600px] w-full rounded-4xl bg-white/5" />
+          <div className="glass-panel overflow-hidden rounded-4xl">
+            <div className="flex border-b border-white/10 bg-white/2 px-5 py-3">
+              <div className="h-4 w-8 rounded-full bg-white/10" />
+              <div className="ml-12 h-4 w-32 rounded-full bg-white/10" />
+              <div className="ml-auto h-4 w-12 rounded-full bg-white/10" />
+              <div className="ml-12 h-4 w-24 rounded-full bg-white/10" />
+            </div>
+            <div className="space-y-1 p-1">
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="flex items-center px-5 py-4">
+                  <div className="h-5 w-6 rounded-md bg-white/5" />
+                  <div className="ml-12 h-8 w-48 rounded-full bg-white/5" />
+                  <div className="ml-auto h-6 w-14 rounded-md bg-white/5" />
+                  <div className="ml-12 h-4 w-20 rounded-md bg-white/5" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

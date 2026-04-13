@@ -14,7 +14,7 @@ import {
   users,
 } from "@/server/db/schema";
 import { buttonVariants } from "@/components/ui/button";
-import { EditProfileTrigger } from "@/components/profile/edit-profile-modal";
+import { EditProfileTrigger } from "@/components/triggers/profile/edit-profile-trigger";
 import { ActionButton } from "@/components/ui/action-button";
 
 type ProfilePageProps = {
@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 export default async function UserProfilePage({ params }: ProfilePageProps) {
   const session = await getServerAuthSession();
   const t = await getTranslations("ProfilePage");
+  const tModals = await getTranslations("Modals");
   const { username } = await params;
 
   const targetUser = await getUser(username);
@@ -111,7 +112,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
 
   return (
     <main>
-      <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pt-10 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+      <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pt-10 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
         {/* Sidebar */}
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
           <div className="sticky top-28 flex flex-col gap-4">
@@ -153,7 +154,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
 
             {isOwnProfile && (
               <EditProfileTrigger user={targetUser}>
-                <ActionButton icon={Edit2} label={t("editProfileTitle")} />
+                <ActionButton icon={Edit2} label={tModals("EditProfile.trigger")} />
               </EditProfileTrigger>
             )}
           </div>

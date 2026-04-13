@@ -1,4 +1,4 @@
-﻿{
+{
   "Navbar": {
     "dashboard": "Dashboard",
     "login": "Login",
@@ -41,39 +41,12 @@
     "rankingsCount": "rankings",
     "playersCount": "jogadores",
     "tourneysCount": "torneios",
-    "postsCount": "posts",
-    "addGame": {
-      "trigger": "Sugerir Jogo",
-      "title": "Sugerir Jogo",
-      "description": "Preencha os dados iniciais para cadastrar um novo jogo.",
-      "descriptionLoggedOut": "Entre para enviar uma nova ideia de jogo.",
-      "reviewAlertTitle": "Seu jogo vai passar por publicação",
-      "reviewAlertDescription": "Jogos podem ser sugeridos por qualquer um, mas precisam ser aprovados antes de ficar disponíveis.",
-      "loginHint": "Precisamos da sua conta para registrar quem foi o autor da ideia.",
-      "loginAction": "Entrar para adicionar",
-      "nameLabel": "Nome do Jogo",
-      "namePlaceholder": "Digite o nome do jogo...",
-      "slugLabel": "Link do Jogo",
-      "slugPlaceholder": "identificador-do-jogo",
-      "slugDescription": "Personaliza a URL deste jogo (ex: /games/superfighters-deluxe).",
-      "descriptionLabel": "Descricao",
-      "descriptionPlaceholder": "Descreva a proposta do jogo...",
-      "backgroundImageLabel": "URL da Imagem de Fundo",
-      "thumbnailImageLabel": "URL da Thumbnail",
-      "steamUrlLabel": "URL da Steam",
-      "submit": "Confirmar Jogo",
-      "submitting": "Criando...",
-      "successApproved": "Jogo criado com sucesso!",
-      "successPending": "Ideia enviada! O jogo ficou pendente de aprovacao.",
-      "error": "Erro ao adicionar jogo."
-    }
+    "postsCount": "posts"
   },
   "ProfilePage": {
     "headerTitle": "Perfil do Usuário",
     "welcomeMessage": "Bem-vindo, ",
     "fallbackUser": "jogador",
-    "editProfileTitle": "Editar Perfil",
-    "editProfileDescription": "Atualize suas informações pessoais e biografia.",
     "saveChanges": "Salvar Alterações",
     "viewGames": "Ver jogos",
     "manageAccount": "Gerenciar conta",
@@ -84,22 +57,6 @@
     "noGamesDescription": "Entre em um jogo para aparecer em seus rankings.",
     "noGamesDescriptionOther": "Este usuário não está participando do ranking de nenhum jogo.",
     "playedGamesTab": "Jogos Jogados"
-  },
-  "EditProfilePage": {
-    "editProfileTitle": "Editar Perfil",
-    "editProfileDescription": "Atualize suas informações pessoais e biografia.",
-    "usernameLabel": "Link do Perfil",
-    "usernamePlaceholder": "Identificador único (sem espaços)",
-    "usernameDescription": "Personaliza a URL do seu perfil (ex: /profile/seunome).",
-    "usernameTaken": "Este link de perfil já está em uso.",
-    "nameLabel": "Nome de Exibição",
-    "namePlaceholder": "Digite como você quer ser chamado",
-    "nameTaken": "Este nome de exibição já está em uso.",
-    "bioLabel": "Biografia",
-    "bioPlaceholder": "Conte-nos um pouco sobre você...",
-    "saveChanges": "Salvar Alterações",
-    "cancelButton": "Cancelar",
-    "successMessage": "Perfil atualizado com sucesso!"
   },
   "GamePage": {
     "metaTitleNotFound": "Jogo não encontrado",
@@ -121,109 +78,243 @@
     "playOnSteam": "Jogar na Steam",
     "clickToViewFullRanking": "Clique para ver o ranking completo",
     "viewGame": "Ver jogo",
+    "rankingInfo": "Informações do Ranking",
     "totalPlayers": "Total de Jogadores",
+    "ratingSystem": "Sistema de Ranking",
     "created": "Criado em",
     "rankingInfoDescription": "Este ranking é calculado com base nos pontos Elo. Os resultados são atualizados frequentemente pelos administradores do jogo.",
     "details": "Detalhes",
     "player": "Jogador",
     "country": "País",
+    "lastResult": "Último resultado",
     "register": "Registrar-se",
     "loginToRegister": "Faça login para participar",
     "alreadyRegistered": "Já registrado",
-    "registerConfirmTitle": "Confirmar Inscrição",
-    "registerConfirmDescription": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?",
     "ideaBy": "Ideia de",
     "pendingNotice": "O jogo está pendente e precisa de aprovação"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
   },
-  "AuthModal": {
-    "title": "Entrar ou criar conta",
-    "close": "Fechar",
-    "signingIn": "Entrando...",
-    "continueWithDiscord": "Continuar com Discord"
-  },
   "Admin": {
-    "panel": "Painel Administrativo",
-    "editGame": {
+    "panel": "Painel Administrativo"
+  },
+  "Modals": {
+    "Auth": {
+      "title": "Entrar ou criar conta",
+      "close": "Fechar",
+      "signingIn": "Entrando...",
+      "continueWithDiscord": "Continuar com Discord"
+    },
+    "EditProfile": {
+      "trigger": "Editar Perfil",
+      "title": "Editar Perfil",
+      "description": "Atualize suas informações pessoais e biografia.",
+      "username": {
+        "label": "Link do Perfil",
+        "placeholder": "Identificador único (sem espaços)",
+        "description": "Personaliza a URL do seu perfil (ex: /profile/seunome).",
+        "taken": "Este link de perfil já está em uso."
+      },
+      "name": {
+        "label": "Nome de Exibição",
+        "placeholder": "Digite como você quer ser chamado",
+        "taken": "Este nome de exibição já está em uso."
+      },
+      "bio": {
+        "label": "Biografia",
+        "placeholder": "Conte-nos um pouco sobre você..."
+      },
+      "submit": "Salvar Alterações",
+      "submitting": "Salvando...",
+      "cancel": "Cancelar",
+      "success": "Perfil atualizado com sucesso!"
+    },
+    "AddGame": {
+      "trigger": "Sugerir Jogo",
+      "title": "Sugerir Jogo",
+      "description": "Preencha os dados iniciais para cadastrar um novo jogo.",
+      "descriptionLoggedOut": "Entre para enviar uma nova ideia de jogo.",
+      "reviewAlert": {
+        "title": "Seu jogo vai passar por publicação",
+        "description": "Jogos podem ser sugeridos por qualquer um, mas precisam ser aprovados antes de ficar disponíveis."
+      },
+      "loginHint": "Precisamos da sua conta para registrar quem foi o autor da ideia.",
+      "loginAction": "Entrar para adicionar",
+      "name": {
+        "label": "Nome do Jogo",
+        "placeholder": "Digite o nome do jogo..."
+      },
+      "slug": {
+        "label": "Link do Jogo",
+        "placeholder": "identificador-do-jogo",
+        "description": "Personaliza a URL deste jogo (ex: /games/superfighters-deluxe)."
+      },
+      "descriptionField": {
+        "label": "Descricao",
+        "placeholder": "Descreva a proposta do jogo..."
+      },
+      "backgroundImage": {
+        "label": "URL da Imagem de Fundo"
+      },
+      "thumbnailImage": {
+        "label": "URL da Thumbnail"
+      },
+      "steamUrl": {
+        "label": "URL da Steam"
+      },
+      "submit": "Confirmar Jogo",
+      "submitting": "Criando...",
+      "cancel": "Cancelar",
+      "successApproved": "Jogo criado com sucesso!",
+      "successPending": "Ideia enviada! O jogo ficou pendente de aprovacao.",
+      "error": "Erro ao adicionar jogo."
+    },
+    "RegisterConfirm": {
+      "title": "Confirmar Inscrição",
+      "description": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?",
+      "submit": "Confirmar Inscrição",
+      "submitting": "Registrando...",
+      "cancel": "Cancelar",
+      "success": "Inscrito com sucesso!"
+    },
+    "EditGame": {
       "trigger": "Modificar jogo",
       "title": "Modificar Jogo",
       "description": "Atualize as informações e imagens desta plataforma.",
-      "nameLabel": "Nome do Jogo",
-      "namePlaceholder": "Digite o nome do jogo...",
-      "descriptionLabel": "Descrição",
-      "descriptionPlaceholder": "Descrição do jogo...",
-      "backgroundImageLabel": "URL da Imagem de Fundo",
-      "thumbnailImageLabel": "URL da Imagem de Thumbnail",
-      "steamUrlLabel": "URL da Steam",
-      "saveChanges": "Salvar Alterações",
-      "saving": "Salvando...",
+      "name": {
+        "label": "Nome do Jogo",
+        "placeholder": "Digite o nome do jogo..."
+      },
+      "descriptionField": {
+        "label": "Descrição",
+        "placeholder": "Descrição do jogo..."
+      },
+      "backgroundImage": {
+        "label": "URL da Imagem de Fundo"
+      },
+      "thumbnailImage": {
+        "label": "URL da Imagem de Thumbnail"
+      },
+      "steamUrl": {
+        "label": "URL da Steam"
+      },
+      "submit": "Salvar Alterações",
+      "submitting": "Salvando...",
+      "cancel": "Cancelar",
       "success": "Jogo atualizado com sucesso!",
       "error": "Erro ao atualizar o jogo."
     },
-    "approveGame": {
+    "ApproveGame": {
       "trigger": "Aprovar jogo",
-      "approving": "Aprovando...",
+      "title": "Confirmar Aprovação",
+      "description": "Tem certeza que deseja aprovar '{gameName}'? Ele ficará visível para todos os usuários imediatamente.",
+      "submit": "Sim, Aprovar",
+      "submitting": "Aprovando...",
+      "cancel": "Cancelar",
       "success": "Jogo aprovado com sucesso!",
-      "error": "Erro ao aprovar o jogo.",
-      "confirmTitle": "Confirmar Aprovação",
-      "confirmDescription": "Tem certeza que deseja aprovar '{gameName}'? Ele ficará visível para todos os usuários imediatamente.",
-      "confirmAction": "Sim, Aprovar",
-      "cancelAction": "Cancelar"
+      "error": "Erro ao aprovar o jogo."
     },
-    "addRanking": {
+    "AddRanking": {
       "trigger": "Adicionar classificação",
       "title": "Adicionar Classificação",
       "description": "Crie uma nova categoria de ranking para este jogo (ex: Blitz, Rapid, Competitivo).",
-      "nameLabel": "Nome do Ranking",
-      "namePlaceholder": "Ex: Blitz, Rapid, Diário...",
-      "slugLabel": "Link do Ranking",
-      "slugPlaceholder": "identificador-do-ranking",
-      "slugDescription": "Personaliza a URL deste ranking (ex: /rankings/blitz).",
-      "descriptionLabel": "Descrição (Opcional)",
-      "descriptionPlaceholder": "Descreva este ranking...",
-      "initialEloLabel": "Pontuação Inicial (Elo)",
-      "ratingSystemLabel": "Sistema de Classificação",
-      "ratingSystemElo": "Elo",
+      "name": {
+        "label": "Nome do Ranking",
+        "placeholder": "Ex: Blitz, Rapid, Diário..."
+      },
+      "slug": {
+        "label": "Link do Ranking",
+        "placeholder": "identificador-do-ranking",
+        "description": "Personaliza a URL deste ranking (ex: /rankings/blitz)."
+      },
+      "descriptionField": {
+        "label": "Descrição (Opcional)",
+        "placeholder": "Descreva este ranking..."
+      },
+      "initialElo": {
+        "label": "Pontuação Inicial (Elo)"
+      },
+      "ratingSystem": {
+        "label": "Sistema de Classificação",
+        "elo": "Elo"
+      },
       "submit": "Confirmar Ranking",
       "submitting": "Criando...",
+      "cancel": "Cancelar",
       "success": "Classificação adicionada com sucesso!",
       "error": "Erro ao adicionar classificação."
     },
-    "addPlayer": {
+    "AddPlayer": {
       "trigger": "Adicionar jogador",
       "title": "Adicionar Jogador",
       "description": "Crie ou vincule um jogador a este jogo.",
-      "linkUserLabel": "Vincular a Usuário (Opcional)",
-      "searchUserPlaceholder": "Buscar por nome ou @username...",
-      "isSearching": "Buscando...",
-      "removeLink": "Remover",
-      "usernameLabel": "Nome de Usuário (In-game)",
-      "usernamePlaceholder": "Digite o nick do jogador...",
-      "countryLabel": "País",
-      "unknownCountry": "Desconhecido",
+      "linkUser": {
+        "label": "Vincular a Usuário (Opcional)",
+        "placeholder": "Buscar por nome ou @username...",
+        "searching": "Buscando...",
+        "remove": "Remover"
+      },
+      "username": {
+        "label": "Nome de Usuário (In-game)",
+        "placeholder": "Digite o nick do jogador..."
+      },
+      "country": {
+        "label": "País",
+        "unknown": "Desconhecido"
+      },
       "submit": "Confirmar Jogador",
       "submitting": "Adicionando...",
+      "cancel": "Cancelar",
       "success": "Jogador adicionado com sucesso!",
       "successExisting": "O usuário já tinha um cadastro para este jogo. O novo nome de usuário foi anexado ao player existente.",
       "error": "Erro ao adicionar jogador."
     },
-    "editRanking": {
+    "EditRanking": {
       "trigger": "Modificar classificação",
       "title": "Modificar Classificação",
       "description": "Atualize as informações desta categoria de ranking.",
+      "name": {
+        "label": "Nome do Ranking",
+        "placeholder": "Ex: Blitz, Rapid, Diário..."
+      },
+      "slug": {
+        "label": "Link do Ranking",
+        "placeholder": "identificador-do-ranking",
+        "description": "Personaliza a URL deste ranking (ex: /rankings/blitz)."
+      },
+      "descriptionField": {
+        "label": "Descrição (Opcional)",
+        "placeholder": "Descreva este ranking..."
+      },
+      "initialElo": {
+        "label": "Pontuação Inicial (Elo)"
+      },
+      "ratingSystem": {
+        "label": "Sistema de Classificação",
+        "elo": "Elo"
+      },
+      "submit": "Salvar Alterações",
+      "submitting": "Salvando...",
+      "cancel": "Cancelar",
       "success": "Classificação atualizada com sucesso!",
       "error": "Erro ao atualizar classificação."
     },
-    "addPlayerToRanking": {
+    "AddPlayerToRanking": {
       "trigger": "Registrar jogador",
       "title": "Registrar Jogador",
       "description": "Adicione um jogador existente ou novo a este ranking.",
-      "searchPlaceholder": "Buscar nick do jogador...",
-      "playerNotFound": "Este nick não foi encontrado para este jogo.",
-      "createPlayerWarning": "Deseja criar um novo registro de jogador com este nick?",
-      "createAndAdd": "Criar e adicionar",
+      "search": {
+        "placeholder": "Buscar nick do jogador...",
+        "notFound": "Este nick não foi encontrado para este jogo."
+      },
+      "createPlayer": {
+        "warning": "Deseja criar um novo registro de jogador com este nick?",
+        "action": "Criar e adicionar"
+      },
+      "submit": "Confirmar Jogador",
+      "submitting": "Registrando...",
+      "cancel": "Cancelar",
       "success": "Jogador registrado com sucesso!",
       "error": "Erro ao registrar jogador."
     }

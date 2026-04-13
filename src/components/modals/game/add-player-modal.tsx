@@ -38,7 +38,7 @@ export function AddPlayerModal({
   isOpen,
   onClose,
 }: AddPlayerModalProps) {
-  const t = useTranslations("Admin.addPlayer");
+  const t = useTranslations("Modals.AddPlayer");
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -141,15 +141,20 @@ export function AddPlayerModal({
       onClose={onClose}
       title={t("title")}
       description={t("description")}
+      confirmText={isPending ? t("submitting") : t("submit")}
+      cancelText={t("cancel") || "Cancelar"}
+      formId="add-player-form"
+      isPending={isPending}
+      disabled={!username}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <form id="add-player-form" onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         {/* Username Input */}
         <div className="flex flex-col gap-2">
           <label
             htmlFor="p_username"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("usernameLabel")}
+            {t("username.label")}
           </label>
           <input
             id="p_username"
@@ -157,7 +162,7 @@ export function AddPlayerModal({
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder={t("usernamePlaceholder")}
+            placeholder={t("username.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
@@ -165,7 +170,7 @@ export function AddPlayerModal({
         {/* Country Selection - NEW SEARCHABLE DROPDOWN */}
         <div className="flex flex-col gap-2">
           <label className="ml-1 text-sm font-medium text-white/70">
-            {t("countryLabel")}
+            {t("country.label")}
           </label>
           <div className="relative" ref={dropdownRef}>
             <button
@@ -193,7 +198,7 @@ export function AddPlayerModal({
                   <>
                     <Globe className="size-5 text-white/30" />
                     <span className="text-white/30">
-                      {t("unknownCountry")}
+                      {t("country.unknown")}
                     </span>
                   </>
                 )}
@@ -245,7 +250,7 @@ export function AddPlayerModal({
                   >
                     <Globe className="size-5 text-white/30" />
                     <span className="text-sm text-white">
-                      {t("unknownCountry")}
+                      {t("country.unknown")}
                     </span>
                   </button>
 
@@ -289,7 +294,7 @@ export function AddPlayerModal({
         {/* Autocomplete User Link */}
         <div className="col-span-full flex flex-col gap-2">
           <label className="ml-1 text-sm font-medium text-white/70">
-            {t("linkUserLabel")}
+            {t("linkUser.label")}
           </label>
           <div className="relative">
               {!selectedUser ? (
@@ -299,7 +304,7 @@ export function AddPlayerModal({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("searchUserPlaceholder")}
+                    placeholder={t("linkUser.placeholder")}
                     className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 pt-3 pr-4 pb-3 pl-11 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
                   />
                   {isSearching && (
@@ -379,22 +384,12 @@ export function AddPlayerModal({
                     onClick={() => setSelectedUser(null)}
                     className="text-xs text-white/40 hover:text-white"
                   >
-                    {t("removeLink")}
+                    {t("linkUser.remove")}
                   </button>
                 </div>
               )}
             </div>
           </div>
-        <div className="col-span-full mt-2">
-          <ActionButton
-            type="submit"
-            intent="primary"
-            icon={UserPlus}
-            label={isPending ? t("submitting") : t("submit")}
-            disabled={isPending || !username}
-            className="w-full"
-          />
-        </div>
       </form>
     </Modal>
   );

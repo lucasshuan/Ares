@@ -26,7 +26,7 @@ function slugify(value: string) {
 export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { user, canManageGames } = useUser();
   const isLoggedIn = !!user;
-  const t = useTranslations("GamesPage.addGame");
+  const t = useTranslations("Modals.AddGame");
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -85,6 +85,11 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
       onClose={handleClose}
       title={t("title")}
       description={isLoggedIn ? t("description") : t("descriptionLoggedOut")}
+      cancelText={isLoggedIn ? t("cancel") : undefined}
+      confirmText={isLoggedIn ? (isPending ? t("submitting") : t("submit")) : undefined}
+      formId="add-game-form"
+      isPending={isPending}
+      disabled={!name.trim() || !slug.trim()}
     >
       {!isLoggedIn ? (
         <div className="space-y-4">
@@ -96,7 +101,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           />
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+        <form id="add-game-form" onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
           {!canManageGames && (
             <div className="col-span-full rounded-3xl border border-amber-400/25 bg-amber-500/12 p-4 text-amber-50 shadow-[0_0_0_1px_rgba(251,191,36,0.06)]">
               <div className="flex items-start gap-3">
@@ -105,10 +110,10 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-amber-100">
-                    {t("reviewAlertTitle")}
+                    {t("reviewAlert.title")}
                   </p>
                   <p className="text-sm leading-6 text-amber-50/85">
-                    {t("reviewAlertDescription")}
+                    {t("reviewAlert.description")}
                   </p>
                 </div>
               </div>
@@ -120,7 +125,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_name"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("nameLabel")}
+              {t("name.label")}
             </label>
             <input
               id="game_name"
@@ -134,7 +139,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                   setSlug(slugify(nextName));
                 }
               }}
-              placeholder={t("namePlaceholder")}
+              placeholder={t("name.placeholder")}
               className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
             />
           </div>
@@ -144,7 +149,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_slug"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("slugLabel")}
+              {t("slug.label")}
             </label>
             <input
               id="game_slug"
@@ -155,11 +160,11 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                 setIsSlugDirty(true);
                 setSlug(slugify(e.target.value));
               }}
-              placeholder={t("slugPlaceholder")}
+              placeholder={t("slug.placeholder")}
               className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
             />
             <p className="ml-1 text-[11px] text-white/40 italic">
-              {t("slugDescription")}
+              {t("slug.description")}
             </p>
           </div>
 
@@ -168,14 +173,14 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_description"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("descriptionLabel")}
+              {t("descriptionField.label")}
             </label>
             <textarea
               id="game_description"
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={t("descriptionPlaceholder")}
+              placeholder={t("descriptionField.placeholder")}
               className="focus:border-primary/50 focus:ring-primary/10 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
             />
           </div>
@@ -185,7 +190,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_background_image"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("backgroundImageLabel")}
+              {t("backgroundImage.label")}
             </label>
             <input
               id="game_background_image"
@@ -201,7 +206,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_thumbnail_image"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("thumbnailImageLabel")}
+              {t("thumbnailImage.label")}
             </label>
             <input
               id="game_thumbnail_image"
@@ -217,7 +222,7 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               htmlFor="game_steam_url"
               className="ml-1 text-sm font-medium text-white/70"
             >
-              {t("steamUrlLabel")}
+              {t("steamUrl.label")}
             </label>
             <input
               id="game_steam_url"
@@ -228,16 +233,6 @@ export function AddGameModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             />
           </div>
 
-          <div className="col-span-full mt-2">
-            <ActionButton
-              type="submit"
-              intent="primary"
-              icon={Plus}
-              label={isPending ? t("submitting") : t("submit")}
-              disabled={isPending || !name.trim() || !slug.trim()}
-              className="w-full"
-            />
-          </div>
         </form>
       )}
     </Modal>

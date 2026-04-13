@@ -16,7 +16,7 @@ interface EditGameModalProps {
 }
 
 export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
-  const t = useTranslations("Admin.editGame");
+  const t = useTranslations("Modals.EditGame");
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,14 +48,18 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
       onClose={onClose}
       title={t("title")}
       description={t("description")}
+      confirmText={isPending ? t("submitting") : t("submit")}
+      cancelText={t("cancel") || "Cancelar"}
+      formId="edit-game-form"
+      isPending={isPending}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+      <form id="edit-game-form" onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
         <div className="col-span-full flex flex-col gap-2">
           <label
             htmlFor="name"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("nameLabel")}
+            {t("name.label")}
           </label>
           <input
             id="name"
@@ -63,7 +67,7 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
             type="text"
             required
             defaultValue={game.name}
-            placeholder={t("namePlaceholder")}
+            placeholder={t("name.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
@@ -73,14 +77,14 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
             htmlFor="description"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("descriptionLabel")}
+            {t("descriptionField.label")}
           </label>
           <textarea
             id="description"
             name="description"
             rows={3}
             defaultValue={game.description ?? ""}
-            placeholder={t("descriptionPlaceholder")}
+            placeholder={t("descriptionField.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
@@ -90,7 +94,7 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
             htmlFor="backgroundImage"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("backgroundImageLabel")}
+            {t("backgroundImage.label")}
           </label>
           <input
             id="backgroundImage"
@@ -106,7 +110,7 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
             htmlFor="thumbnailImage"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("thumbnailImageLabel")}
+            {t("thumbnailImage.label")}
           </label>
           <input
             id="thumbnailImage"
@@ -122,7 +126,7 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
             htmlFor="steamUrl"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("steamUrlLabel")}
+            {t("steamUrl.label")}
           </label>
           <input
             id="steamUrl"
@@ -133,16 +137,6 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
           />
         </div>
 
-        <div className="col-span-full mt-2">
-          <ActionButton
-            type="submit"
-            intent="primary"
-            icon={Save}
-            label={isPending ? t("saving") : t("saveChanges")}
-            disabled={isPending}
-            className="w-full"
-          />
-        </div>
       </form>
     </Modal>
   );

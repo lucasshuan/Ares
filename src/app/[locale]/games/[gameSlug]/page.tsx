@@ -108,37 +108,37 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   );
 
   return (
-    <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+    <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
       {/* Sidebar */}
-        <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
-          <div className="sticky top-28 space-y-6">
-            <Link
-              href="/games"
-              className="group flex items-center gap-2 text-sm font-medium text-white/40 transition-colors hover:text-white"
-            >
-              <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-              {t("backToGames")}
-            </Link>
+      <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
+        <div className="sticky top-28 space-y-6">
+          <Link
+            href="/games"
+            className="group flex items-center gap-2 text-sm font-medium text-white/40 transition-colors hover:text-white"
+          >
+            <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+            {t("backToGames")}
+          </Link>
 
-            <div className="glass-panel overflow-hidden rounded-4xl">
-              <div className="relative aspect-368/178 w-full overflow-hidden">
-                {game.thumbnailImageUrl ? (
-                  <Image
-                    src={game.thumbnailImageUrl}
-                    alt={game.name}
-                    fill
-                    priority
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 360px"
-                  />
-                ) : (
-                  <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
-                )}
-              </div>
+          <div className="glass-panel overflow-hidden rounded-4xl">
+            <div className="relative aspect-368/178 w-full overflow-hidden">
+              {game.thumbnailImageUrl ? (
+                <Image
+                  src={game.thumbnailImageUrl}
+                  alt={game.name}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 360px"
+                />
+              ) : (
+                <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
+              )}
+            </div>
 
-              <div className="space-y-8 p-6">
-                <div>
-                  {game.status === "pending" && (
+            <div className="space-y-8 p-6">
+              <div>
+                {game.status === "pending" && (
                   <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
                     <AlertCircle className="size-5 shrink-0 animate-pulse" />
                     <p className="text-xs font-semibold tracking-wider uppercase">
@@ -196,19 +196,17 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           </div>
 
           {author && (
-            <div className="flex flex-row-reverse items-center justify-center gap-3 py-2 px-1 opacity-80 transition-opacity hover:opacity-100">
+            <div className="flex flex-row-reverse items-center justify-center gap-3 px-1 py-2 opacity-80 transition-opacity hover:opacity-100">
               <div className="flex">
                 <UserChip user={author} />
               </div>
-              <span className="font-signature text-secondary text-lg italic whitespace-nowrap">
+              <span className="font-signature text-secondary text-lg whitespace-nowrap italic">
                 {t("ideaBy")}
               </span>
             </div>
           )}
 
-          {canSeeAdminActions && (
-            <GameAdminPanel game={game as Game} />
-          )}
+          {canSeeAdminActions && <GameAdminPanel game={game as Game} />}
         </div>
       </aside>
 
@@ -255,28 +253,28 @@ function GamePageSkeleton() {
               <div className="h-4 w-24 animate-pulse rounded bg-white/10" />
             </div>
             <div className="glass-panel overflow-hidden rounded-4xl">
-            <div className="aspect-368/178 w-full animate-pulse bg-white/10" />
-            <div className="space-y-8 p-6">
-              <div>
-                <div className="h-8 w-48 animate-pulse rounded bg-white/10" />
-                <div className="mt-4 space-y-2">
-                  <div className="h-4 w-full animate-pulse rounded bg-white/6" />
-                  <div className="h-4 w-5/6 animate-pulse rounded bg-white/6" />
+              <div className="aspect-368/178 w-full animate-pulse bg-white/10" />
+              <div className="space-y-8 p-6">
+                <div>
+                  <div className="h-8 w-48 animate-pulse rounded bg-white/10" />
+                  <div className="mt-4 space-y-2">
+                    <div className="h-4 w-full animate-pulse rounded bg-white/6" />
+                    <div className="h-4 w-5/6 animate-pulse rounded bg-white/6" />
+                  </div>
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="h-[76px] animate-pulse rounded-2xl bg-white/5" />
+                  <div className="h-[76px] animate-pulse rounded-2xl bg-white/5" />
+                </div>
+                <div className="h-[50px] w-full animate-pulse rounded-xl bg-white/10" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="h-[76px] animate-pulse rounded-2xl bg-white/5" />
-                <div className="h-[76px] animate-pulse rounded-2xl bg-white/5" />
-              </div>
-              <div className="h-[50px] w-full animate-pulse rounded-xl bg-white/10" />
+            </div>
+
+            <div className="flex items-center justify-center gap-3 py-2">
+              <div className="h-8 w-32 animate-pulse rounded-full bg-white/5" />
             </div>
           </div>
-
-          <div className="flex items-center justify-center gap-3 py-2">
-            <div className="h-8 w-32 animate-pulse rounded-full bg-white/5" />
-          </div>
-        </div>
-      </aside>
+        </aside>
 
         <div className="min-w-0 flex-1 space-y-6">
           <section className="space-y-6">

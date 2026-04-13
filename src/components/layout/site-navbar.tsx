@@ -38,6 +38,7 @@ export async function SiteNavbar() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <LocaleSwitcher />
           {session?.user ? (
             <UserMenu user={session.user} />
           ) : (
@@ -49,7 +50,6 @@ export async function SiteNavbar() {
               className="min-w-24"
             />
           )}
-          <LocaleSwitcher />
         </div>
       </div>
     </nav>

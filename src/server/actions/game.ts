@@ -202,39 +202,54 @@ export async function addPlayerToGame(
 
   const game = await assertGameApproved(gameId);
 
-  let playerId: string | null = null;
-  let wasAddedToExisting = false;
+  const result = await db.transaction(async (tx) => {
+    let playerId: string | null = null;
+    let wasAddedToExisting = false;
 
-  if (data.userId) {
-    const existingPlayer = await db.query.players.findFirst({
-      where: and(eq(players.gameId, gameId), eq(players.userId, data.userId)),
-    });
+    if (data.userId) {
+      const existingPlayer = await tx.query.players.findFirst({
+        where: and(eq(players.gameId, gameId), eq(players.userId, data.userId)),
+      });
 
-    if (existingPlayer) {
-      playerId = existingPlayer.id;
-      wasAddedToExisting = true;
+      if (existingPlayer) {
+        playerId = existingPlayer.id;
+        wasAddedToExisting = true;
+      }
     }
-  }
 
-  if (!playerId) {
-    const [newPlayer] = await db
-      .insert(players)
+    if (!playerId) {
+      const [newPlayer] = await tx
+        .insert(players)
+        .values({
+          gameId,
+          userId: data.userId,
+          country: data.country,
+        })
+        .returning({ id: players.id });
+      playerId = newPlayer.id;
+    }
+
+    const [newUsername] = await tx
+      .insert(playerUsernames)
       .values({
-        gameId,
-        userId: data.userId,
-        country: data.country,
+        playerId,
+        username: data.username,
       })
-      .returning({ id: players.id });
-    playerId = newPlayer.id;
-  }
+      .returning({ id: playerUsernames.id });
 
-  await db.insert(playerUsernames).values({
-    playerId,
-    username: data.username,
+    // If we just created a new player, set the first username as primary
+    if (!wasAddedToExisting) {
+      await tx
+        .update(players)
+        .set({ primaryUsernameId: newUsername.id })
+        .where(eq(players.id, playerId));
+    }
+
+    return { wasAddedToExisting, playerId };
   });
 
   revalidateGamePaths(game);
-  return { success: true, wasAddedToExisting, playerId };
+  return { success: true, ...result };
 }
 
 export async function createAndAddPlayerToRanking(
@@ -384,10 +399,19 @@ export async function registerSelfToRanking(rankingId: string) {
     player = newPlayer;
 
     // Add initial username from profile
-    await db.insert(playerUsernames).values({
-      playerId: player.id,
-      username: session.user.name || "Player",
-    });
+    const [newUsername] = await db
+      .insert(playerUsernames)
+      .values({
+        playerId: player.id,
+        username: session.user.name || "Player",
+      })
+      .returning({ id: playerUsernames.id });
+
+    // Set as primary username
+    await db
+      .update(players)
+      .set({ primaryUsernameId: newUsername.id })
+      .where(eq(players.id, player.id));
   }
 
   // Check if already in ranking

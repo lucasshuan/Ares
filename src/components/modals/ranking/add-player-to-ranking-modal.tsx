@@ -30,7 +30,7 @@ export function AddPlayerToRankingModal({
   isOpen,
   onClose,
 }: AddPlayerToRankingModalProps) {
-  const t = useTranslations("Admin.addPlayerToRanking");
+  const t = useTranslations("Modals.AddPlayerToRanking");
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PlayerResult[]>([]);
@@ -92,6 +92,7 @@ export function AddPlayerToRankingModal({
       onClose={onClose}
       title={t("title")}
       description={t("description")}
+      cancelText={t("cancel") || "Cancelar"}
     >
       <div className="space-y-6">
         <div className="relative">
@@ -101,7 +102,7 @@ export function AddPlayerToRankingModal({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("searchPlaceholder")}
+            placeholder={t("search.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 pt-3.5 pr-4 pb-3.5 pl-12 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
           {isSearching && (
@@ -135,17 +136,17 @@ export function AddPlayerToRankingModal({
                 <AlertCircle className="mt-0.5 size-5 text-yellow-500" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-yellow-500">
-                    {t("playerNotFound")}
+                    {t("search.notFound")}
                   </p>
                   <p className="mt-1 text-xs text-yellow-500/60">
-                    {t("createPlayerWarning")}
+                    {t("createPlayer.warning")}
                   </p>
                   <button
                     onClick={handleCreateAndAdd}
                     disabled={isPending}
                     className="mt-3 text-xs font-bold tracking-wider text-white uppercase hover:underline"
                   >
-                    {t("createAndAdd")}
+                    {t("createPlayer.action")}
                   </button>
                 </div>
               </div>

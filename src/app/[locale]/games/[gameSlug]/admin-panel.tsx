@@ -32,6 +32,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
     (game.status === "approved" && (canManageRankings || canManagePlayers));
 
   const t = useTranslations("Admin");
+  const tModals = useTranslations("Modals");
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
   const [isAddRankingOpen, setIsAddRankingOpen] = useState(false);
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
@@ -52,7 +53,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
       {canEditGame && (
         <ActionButton
           icon={Settings2}
-          label={t("editGame.trigger")}
+          label={tModals("EditGame.trigger")}
           onClick={() => setIsEditGameOpen(true)}
         />
       )}
@@ -61,7 +62,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         <ActionButton
           icon={CheckCheck}
           intent="primary"
-          label={t("approveGame.trigger")}
+          label={tModals("ApproveGame.trigger")}
           onClick={() => setIsApproveOpen(true)}
         />
       )}
@@ -69,7 +70,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
       {game.status === "approved" && canManageRankings && (
         <ActionButton
           icon={Trophy}
-          label={t("addRanking.trigger")}
+          label={tModals("AddRanking.trigger")}
           onClick={() => setIsAddRankingOpen(true)}
         />
       )}
@@ -77,7 +78,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
       {game.status === "approved" && canManagePlayers && (
         <ActionButton
           icon={UserPlus}
-          label={t("addPlayer.trigger")}
+          label={tModals("AddPlayer.trigger")}
           onClick={() => setIsAddPlayerOpen(true)}
         />
       )}

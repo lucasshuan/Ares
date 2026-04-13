@@ -21,7 +21,7 @@ export async function updateProfile(formData: FormData) {
       where: and(eq(users.username, username), ne(users.id, session.user.id)),
     });
     if (existingUsername) {
-      errors.username = "usernameTaken";
+      errors.username = "username.taken";
     }
   }
 
@@ -30,7 +30,7 @@ export async function updateProfile(formData: FormData) {
       where: and(eq(users.name, name), ne(users.id, session.user.id)),
     });
     if (existingName) {
-      errors.name = "nameTaken";
+      errors.name = "name.taken";
     }
   }
 

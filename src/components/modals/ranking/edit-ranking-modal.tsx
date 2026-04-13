@@ -20,8 +20,7 @@ export function EditRankingModal({
   isOpen,
   onClose,
 }: EditRankingModalProps) {
-  const t = useTranslations("Admin.addRanking");
-  const tEdit = useTranslations("Admin.editRanking");
+  const t = useTranslations("Modals.EditRanking");
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(ranking.name);
   const [slug, setSlug] = useState(ranking.slug);
@@ -42,10 +41,10 @@ export function EditRankingModal({
           initialElo,
           ratingSystem,
         });
-        toast.success(tEdit("success"));
+        toast.success(t("success"));
         onClose();
       } catch {
-        toast.error(tEdit("error"));
+        toast.error(t("error"));
       }
     });
   };
@@ -54,16 +53,21 @@ export function EditRankingModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={tEdit("title")}
-      description={tEdit("description")}
+      title={t("title")}
+      description={t("description")}
+      confirmText={isPending ? t("submitting") : t("submit")}
+      cancelText={t("cancel") || "Cancelar"}
+      formId="edit-ranking-form"
+      isPending={isPending}
+      disabled={!name || !slug}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+      <form id="edit-ranking-form" onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label
             htmlFor="rank_name"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("nameLabel")}
+            {t("name.label")}
           </label>
           <input
             id="rank_name"
@@ -71,7 +75,7 @@ export function EditRankingModal({
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={t("namePlaceholder")}
+            placeholder={t("name.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
@@ -81,7 +85,7 @@ export function EditRankingModal({
             htmlFor="rank_slug"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("slugLabel")}
+            {t("slug.label")}
           </label>
           <input
             id="rank_slug"
@@ -89,11 +93,11 @@ export function EditRankingModal({
             required
             value={slug}
             onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-            placeholder={t("slugPlaceholder")}
+            placeholder={t("slug.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
           <p className="ml-1 text-[11px] text-white/40 italic">
-            {t("slugDescription")}
+            {t("slug.description")}
           </p>
         </div>
 
@@ -102,13 +106,13 @@ export function EditRankingModal({
             htmlFor="rank_description"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("descriptionLabel")}
+            {t("descriptionField.label")}
           </label>
           <textarea
             id="rank_description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder={t("descriptionPlaceholder")}
+            placeholder={t("descriptionField.placeholder")}
             className="focus:border-primary/50 focus:ring-primary/10 min-h-[100px] w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
@@ -118,7 +122,7 @@ export function EditRankingModal({
             htmlFor="rank_initial_elo"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("initialEloLabel")}
+            {t("initialElo.label")}
           </label>
           <input
             id="rank_initial_elo"
@@ -135,7 +139,7 @@ export function EditRankingModal({
             htmlFor="rank_system"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("ratingSystemLabel")}
+            {t("ratingSystem.label")}
           </label>
           <select
             id="rank_system"
@@ -143,20 +147,10 @@ export function EditRankingModal({
             onChange={(e) => setRatingSystem(e.target.value)}
             className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all focus:bg-white/[0.07] focus:ring-4"
           >
-            <option value="elo">{t("ratingSystemElo")}</option>
+            <option value="elo">{t("ratingSystem.elo")}</option>
           </select>
         </div>
 
-        <div className="col-span-full mt-2">
-          <ActionButton
-            type="submit"
-            intent="primary"
-            icon={Plus}
-            label={isPending ? t("submitting") : t("submit")}
-            disabled={isPending || !name || !slug}
-            className="w-full"
-          />
-        </div>
       </form>
     </Modal>
   );

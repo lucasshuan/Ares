@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { AddGameModal } from "@/components/modals/game/add-game-modal";
 
 export function AddGameTrigger() {
-  const t = useTranslations("GamesPage.addGame");
+  const t = useTranslations("Modals.AddGame");
   const [isOpen, setIsOpen] = useState(false);
 
   return (

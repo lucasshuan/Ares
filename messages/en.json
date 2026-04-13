@@ -1,4 +1,4 @@
-﻿{
+{
   "Navbar": {
     "dashboard": "Dashboard",
     "login": "Login",
@@ -42,39 +42,12 @@
     "rankingsCount": "rankings",
     "playersCount": "players",
     "tourneysCount": "tourneys",
-    "postsCount": "posts",
-    "addGame": {
-      "trigger": "Suggest Game",
-      "title": "Suggest Game",
-      "description": "Fill in the initial details to register a new game.",
-      "descriptionLoggedOut": "Sign in to submit a new game idea.",
-      "reviewAlertTitle": "Your game will go through publication",
-      "reviewAlertDescription": "Because you do not have Manage Games permission, this game will be saved as pending and must be approved before becoming public to everyone.",
-      "loginHint": "We need your account so the game can keep track of who suggested it.",
-      "loginAction": "Sign in to add",
-      "nameLabel": "Game Name",
-      "namePlaceholder": "Enter game name...",
-      "slugLabel": "Game Link",
-      "slugPlaceholder": "game-identifier",
-      "slugDescription": "Customizes this game's URL (e.g. /games/superfighters-deluxe).",
-      "descriptionLabel": "Description",
-      "descriptionPlaceholder": "Describe the game idea...",
-      "backgroundImageLabel": "Background Image URL",
-      "thumbnailImageLabel": "Thumbnail Image URL",
-      "steamUrlLabel": "Steam URL",
-      "submit": "Create Game",
-      "submitting": "Creating...",
-      "successApproved": "Game created successfully!",
-      "successPending": "Game idea submitted! It is now pending approval.",
-      "error": "Error adding game."
-    }
+    "postsCount": "posts"
   },
   "ProfilePage": {
     "headerTitle": "User Profile",
     "welcomeMessage": "Welcome, ",
     "fallbackUser": "player",
-    "editProfileTitle": "Edit Profile",
-    "editProfileDescription": "Update your personal information and biography.",
     "saveChanges": "Save Changes",
     "viewGames": "View games",
     "manageAccount": "Manage Account",
@@ -85,22 +58,6 @@
     "noGamesDescription": "Join a game to appear in its rankings.",
     "noGamesDescriptionOther": "This user is not participating in any game rankings.",
     "playedGamesTab": "Played Games"
-  },
-  "EditProfilePage": {
-    "editProfileTitle": "Edit Profile",
-    "editProfileDescription": "Update your personal information and biography.",
-    "usernameLabel": "Profile Link",
-    "usernamePlaceholder": "Unique identifier (no spaces)",
-    "usernameDescription": "Customizes your profile URL (e.g., /profile/yourname).",
-    "usernameTaken": "This profile link is already taken.",
-    "nameLabel": "Display Name",
-    "namePlaceholder": "Enter how you want to be called",
-    "nameTaken": "This display name is already taken.",
-    "bioLabel": "Biography",
-    "bioPlaceholder": "Tell us a bit about yourself...",
-    "saveChanges": "Save Changes",
-    "cancelButton": "Cancel",
-    "successMessage": "Profile updated successfully!"
   },
   "GamePage": {
     "metaTitleNotFound": "Game not found",
@@ -122,109 +79,243 @@
     "playOnSteam": "Play on Steam",
     "clickToViewFullRanking": "Click to view full ranking",
     "viewGame": "View game",
+    "rankingInfo": "Ranking Info",
     "totalPlayers": "Total Players",
+    "ratingSystem": "Ranking System",
     "created": "Created",
     "rankingInfoDescription": "This ranking is calculated based on Elo points. Results are updated frequently by game administrators.",
     "details": "Details",
     "player": "Player",
     "country": "Country",
+    "lastResult": "Last result",
     "register": "Register",
     "loginToRegister": "Log in to join",
     "alreadyRegistered": "Already registered",
-    "registerConfirmTitle": "Confirm Registration",
-    "registerConfirmDescription": "You will start with {elo} Elo points. Do you want to continue?",
     "ideaBy": "Idea by",
     "pendingNotice": "Game is pending and needs approval"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
   },
-  "AuthModal": {
-    "title": "Sign in or sign up",
-    "close": "Close",
-    "signingIn": "Signing in...",
-    "continueWithDiscord": "Continue with Discord"
-  },
   "Admin": {
-    "panel": "Administrative Panel",
-    "editGame": {
+    "panel": "Administrative Panel"
+  },
+  "Modals": {
+    "Auth": {
+      "title": "Sign in or sign up",
+      "close": "Close",
+      "signingIn": "Signing in...",
+      "continueWithDiscord": "Continue with Discord"
+    },
+    "EditProfile": {
+      "trigger": "Edit Profile",
+      "title": "Edit Profile",
+      "description": "Update your personal information and biography.",
+      "username": {
+        "label": "Profile Link",
+        "placeholder": "Unique identifier (no spaces)",
+        "description": "Customizes your profile URL (e.g., /profile/yourname).",
+        "taken": "This profile link is already taken."
+      },
+      "name": {
+        "label": "Display Name",
+        "placeholder": "Enter how you want to be called",
+        "taken": "This display name is already taken."
+      },
+      "bio": {
+        "label": "Biography",
+        "placeholder": "Tell us a bit about yourself..."
+      },
+      "submit": "Save Changes",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "success": "Profile updated successfully!"
+    },
+    "AddGame": {
+      "trigger": "Suggest Game",
+      "title": "Suggest Game",
+      "description": "Fill in the initial details to register a new game.",
+      "descriptionLoggedOut": "Sign in to submit a new game idea.",
+      "reviewAlert": {
+        "title": "Your game will go through publication",
+        "description": "Because you do not have Manage Games permission, this game will be saved as pending and must be approved before becoming public to everyone."
+      },
+      "loginHint": "We need your account so the game can keep track of who suggested it.",
+      "loginAction": "Sign in to add",
+      "name": {
+        "label": "Game Name",
+        "placeholder": "Enter game name..."
+      },
+      "slug": {
+        "label": "Game Link",
+        "placeholder": "game-identifier",
+        "description": "Customizes this game's URL (e.g. /games/superfighters-deluxe)."
+      },
+      "descriptionField": {
+        "label": "Description",
+        "placeholder": "Describe the game idea..."
+      },
+      "backgroundImage": {
+        "label": "Background Image URL"
+      },
+      "thumbnailImage": {
+        "label": "Thumbnail Image URL"
+      },
+      "steamUrl": {
+        "label": "Steam URL"
+      },
+      "submit": "Create Game",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "successApproved": "Game created successfully!",
+      "successPending": "Game idea submitted! It is now pending approval.",
+      "error": "Error adding game."
+    },
+    "RegisterConfirm": {
+      "title": "Confirm Registration",
+      "description": "You will start with {elo} Elo points. Do you want to continue?",
+      "submit": "Confirm Registration",
+      "submitting": "Registering...",
+      "cancel": "Cancel",
+      "success": "Registered successfully!"
+    },
+    "EditGame": {
       "trigger": "Edit game",
       "title": "Modify Game",
       "description": "Update the information and images of this platform.",
-      "nameLabel": "Game Name",
-      "namePlaceholder": "Enter game name...",
-      "descriptionLabel": "Description",
-      "descriptionPlaceholder": "Game description...",
-      "backgroundImageLabel": "Background Image URL",
-      "thumbnailImageLabel": "Thumbnail Image URL",
-      "steamUrlLabel": "Steam URL",
-      "saveChanges": "Save Changes",
-      "saving": "Saving...",
+      "name": {
+        "label": "Game Name",
+        "placeholder": "Enter game name..."
+      },
+      "descriptionField": {
+        "label": "Description",
+        "placeholder": "Game description..."
+      },
+      "backgroundImage": {
+        "label": "Background Image URL"
+      },
+      "thumbnailImage": {
+        "label": "Thumbnail Image URL"
+      },
+      "steamUrl": {
+        "label": "Steam URL"
+      },
+      "submit": "Save Changes",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
       "success": "Game updated successfully!",
       "error": "Error updating game."
     },
-    "approveGame": {
+    "ApproveGame": {
       "trigger": "Approve game",
-      "approving": "Approving...",
+      "title": "Confirm Approval",
+      "description": "Are you sure you want to approve '{gameName}'? It will be visible to all users immediately.",
+      "submit": "Yes, Approve",
+      "submitting": "Approving...",
+      "cancel": "Cancel",
       "success": "Game approved successfully!",
-      "error": "Error approving game.",
-      "confirmTitle": "Confirm Approval",
-      "confirmDescription": "Are you sure you want to approve '{gameName}'? It will be visible to all users immediately.",
-      "confirmAction": "Yes, Approve",
-      "cancelAction": "Cancel"
+      "error": "Error approving game."
     },
-    "addRanking": {
+    "AddRanking": {
       "trigger": "Add ranking",
       "title": "Add Ranking",
       "description": "Create a new ranking category for this game (e.g., Blitz, Rapid, Competitive).",
-      "nameLabel": "Ranking Name",
-      "namePlaceholder": "e.g., Blitz, Rapid, Daily...",
-      "slugLabel": "Ranking Link",
-      "slugPlaceholder": "ranking-identifier",
-      "slugDescription": "Personalizes the URL for this ranking (e.g., /rankings/blitz).",
-      "descriptionLabel": "Description (Optional)",
-      "descriptionPlaceholder": "Describe this ranking...",
-      "initialEloLabel": "Initial Rating (Elo)",
-      "ratingSystemLabel": "Rating System",
-      "ratingSystemElo": "Elo",
+      "name": {
+        "label": "Ranking Name",
+        "placeholder": "e.g., Blitz, Rapid, Daily..."
+      },
+      "slug": {
+        "label": "Ranking Link",
+        "placeholder": "ranking-identifier",
+        "description": "Personalizes the URL for this ranking (e.g., /rankings/blitz)."
+      },
+      "descriptionField": {
+        "label": "Description (Optional)",
+        "placeholder": "Describe this ranking..."
+      },
+      "initialElo": {
+        "label": "Initial Rating (Elo)"
+      },
+      "ratingSystem": {
+        "label": "Rating System",
+        "elo": "Elo"
+      },
       "submit": "Confirm Ranking",
       "submitting": "Creating...",
+      "cancel": "Cancel",
       "success": "Ranking added successfully!",
       "error": "Error adding ranking."
     },
-    "addPlayer": {
+    "AddPlayer": {
       "trigger": "Add player",
       "title": "Add Player",
       "description": "Create or link a player to this game.",
-      "linkUserLabel": "Link to User (Optional)",
-      "searchUserPlaceholder": "Search for name or @username...",
-      "isSearching": "Searching...",
-      "removeLink": "Remove",
-      "usernameLabel": "Username (In-game)",
-      "usernamePlaceholder": "Enter player's nick...",
-      "countryLabel": "Country",
-      "unknownCountry": "Unknown",
+      "linkUser": {
+        "label": "Link to User (Optional)",
+        "placeholder": "Search for name or @username...",
+        "searching": "Searching...",
+        "remove": "Remove"
+      },
+      "username": {
+        "label": "Username (In-game)",
+        "placeholder": "Enter player's nick..."
+      },
+      "country": {
+        "label": "Country",
+        "unknown": "Unknown"
+      },
       "submit": "Confirm Player",
       "submitting": "Adding...",
+      "cancel": "Cancel",
       "success": "Player added successfully!",
       "successExisting": "The user already has a registration for this game. The new username has been attached to the existing player.",
       "error": "Error adding player."
     },
-    "editRanking": {
-      "trigger": "Modify ranking",
+    "EditRanking": {
+      "trigger": "Edit ranking",
       "title": "Modify Ranking",
       "description": "Update information for this ranking category.",
+      "name": {
+        "label": "Ranking Name",
+        "placeholder": "e.g., Blitz, Rapid, Daily..."
+      },
+      "slug": {
+        "label": "Ranking Link",
+        "placeholder": "ranking-identifier",
+        "description": "Personalizes the URL for this ranking (e.g., /rankings/blitz)."
+      },
+      "descriptionField": {
+        "label": "Description (Optional)",
+        "placeholder": "Describe this ranking..."
+      },
+      "initialElo": {
+        "label": "Initial Rating (Elo)"
+      },
+      "ratingSystem": {
+        "label": "Rating System",
+        "elo": "Elo"
+      },
+      "submit": "Save Changes",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
       "success": "Ranking updated successfully!",
       "error": "Error updating ranking."
     },
-    "addPlayerToRanking": {
+    "AddPlayerToRanking": {
       "trigger": "Register player",
       "title": "Register Player",
       "description": "Add an existing or new player to this ranking.",
-      "searchPlaceholder": "Search player nick...",
-      "playerNotFound": "This nick was not found for this game.",
-      "createPlayerWarning": "Do you want to create a new player record with this nick?",
-      "createAndAdd": "Create and add",
+      "search": {
+        "placeholder": "Search player nick...",
+        "notFound": "This nick was not found for this game."
+      },
+      "createPlayer": {
+        "warning": "Do you want to create a new player record with this nick?",
+        "action": "Create and add"
+      },
+      "submit": "Confirm Player",
+      "submitting": "Registering...",
+      "cancel": "Cancel",
       "success": "Player registered successfully!",
       "error": "Error registering player."
     }

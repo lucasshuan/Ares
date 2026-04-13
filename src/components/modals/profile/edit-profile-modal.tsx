@@ -26,7 +26,7 @@ export function EditProfileModal({
   onClose,
   user,
 }: EditProfileModalProps) {
-  const t = useTranslations("EditProfilePage");
+  const t = useTranslations("Modals.EditProfile");
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -69,7 +69,7 @@ export function EditProfileModal({
           return;
         }
 
-        toast.success(t("successMessage"));
+        toast.success(t("success"));
 
         // If the user changed their username and we are on a profile page, redirect to the new slug
         if (result.success && result.slug) {
@@ -90,16 +90,20 @@ export function EditProfileModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("editProfileTitle")}
-      description={t("editProfileDescription")}
+      title={t("title")}
+      description={t("description")}
+      cancelText={t("cancel") || "Cancelar"}
+      confirmText={isPending ? t("submitting") || "Salvando..." : t("submit") || "Salvar alterações"}
+      formId="edit-profile-form"
+      isPending={isPending}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+      <form id="edit-profile-form" onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         <div className="flex flex-col gap-2">
           <label
             htmlFor="username"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("usernameLabel")}
+            {t("username.label")}
           </label>
           <input
             type="text"
@@ -107,7 +111,7 @@ export function EditProfileModal({
             name="username"
             required
             defaultValue={user.username ?? ""}
-            placeholder={t("usernamePlaceholder")}
+            placeholder={t("username.placeholder")}
             className={`focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4 ${
               fieldErrors.username
                 ? "border-red-500/50"
@@ -120,7 +124,7 @@ export function EditProfileModal({
             </p>
           ) : (
             <p className="ml-1 text-[10px] text-white/40">
-              {t("usernameDescription")}
+              {t("username.description")}
             </p>
           )}
         </div>
@@ -130,7 +134,7 @@ export function EditProfileModal({
             htmlFor="name"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("nameLabel")}
+            {t("name.label")}
           </label>
           <input
             type="text"
@@ -138,7 +142,7 @@ export function EditProfileModal({
             name="name"
             required
             defaultValue={user.name ?? ""}
-            placeholder={t("namePlaceholder")}
+            placeholder={t("name.placeholder")}
             className={`focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4 ${
               fieldErrors.name
                 ? "border-red-500/50"
@@ -155,28 +159,18 @@ export function EditProfileModal({
             htmlFor="bio"
             className="ml-1 text-sm font-medium text-white/70"
           >
-            {t("bioLabel")}
+            {t("bio.label")}
           </label>
           <textarea
             id="bio"
             name="bio"
             defaultValue={user.bio ?? ""}
-            placeholder={t("bioPlaceholder")}
+            placeholder={t("bio.placeholder")}
             rows={3}
             className="focus:border-primary/50 focus:ring-primary/10 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
 
-        <div className="col-span-full mt-2">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-white px-8 py-3 text-sm font-semibold text-black transition-all hover:bg-white/90 focus:ring-4 focus:ring-white/20 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isPending && <LoaderCircle className="size-4 animate-spin" />}
-            {t("saveChanges")}
-          </button>
-        </div>
       </form>
     </Modal>
   );
