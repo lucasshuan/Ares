@@ -17,6 +17,7 @@ import {
 type GroupedRankingEntry = {
   id: string;
   playerId: string;
+  userId: string | null;
   country: string | null;
   currentElo: number;
   primaryUsernameId: string | null;
@@ -33,6 +34,7 @@ export type PublicGame = typeof games.$inferSelect;
 export type PublicRankingEntry = {
   id: string;
   playerId: string;
+  userId: string | null;
   country: string | null;
   currentElo: number;
   position: number;
@@ -355,6 +357,7 @@ export const getRankingData = cache(
           currentElo: rankingEntries.currentElo,
           entryUpdatedAt: rankingEntries.updatedAt,
           playerId: players.id,
+          userId: players.userId,
           country: players.country,
           primaryUsernameId: players.primaryUsernameId,
           playerUsernameId: playerUsernames.id,
@@ -381,6 +384,7 @@ export const getRankingData = cache(
           entry = {
             id: row.entryId,
             playerId: row.playerId!,
+            userId: row.userId ?? null,
             country: row.country ?? null,
             currentElo: row.currentElo ?? 0,
             primaryUsernameId: row.primaryUsernameId ?? null,
@@ -428,6 +432,7 @@ export const getRankingData = cache(
         .map((entry, index) => ({
           id: entry.id,
           playerId: entry.playerId,
+          userId: entry.userId,
           country: entry.country,
           currentElo: entry.currentElo,
           position: index + 1,

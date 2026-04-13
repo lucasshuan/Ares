@@ -112,6 +112,53 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
   return (
     <main>
       <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pt-24 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+        {/* Sidebar */}
+        <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
+          <div className="sticky top-28 flex flex-col gap-4">
+            <div className="glass-panel overflow-hidden rounded-4xl">
+              {/* Subtle gradient background decoration inside sidebar */}
+              <div className="bg-primary/20 pointer-events-none absolute -top-10 -right-10 size-40 rounded-full blur-[50px]" />
+              <div className="bg-secondary/10 pointer-events-none absolute -bottom-10 -left-10 size-40 rounded-full blur-[50px]" />
+
+              <div className="relative z-10 flex flex-col items-center p-8 text-center">
+                {targetUser.image ? (
+                  <Image
+                    src={targetUser.image}
+                    alt={targetUser.name ?? targetUser.username ?? "Avatar"}
+                    width={140}
+                    height={140}
+                    className="size-32 rounded-full border-4 border-white/10 object-cover shadow-xl"
+                  />
+                ) : (
+                  <div className="flex size-32 items-center justify-center rounded-full border-4 border-white/10 bg-white/5 shadow-xl">
+                    <UserIcon className="size-14 text-white/50" />
+                  </div>
+                )}
+
+                <h1 className="mt-6 text-2xl font-bold tracking-tight">
+                  {targetUser.name ?? targetUser.username ?? t("fallbackUser")}
+                </h1>
+
+                {targetUser.bio ? (
+                  <p className="mt-6 max-w-[280px] text-sm leading-relaxed text-white/60">
+                    {targetUser.bio}
+                  </p>
+                ) : isOwnProfile ? (
+                  <p className="mt-6 text-xs text-white/30 italic">
+                    Você ainda não definiu uma biografia.
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            {isOwnProfile && (
+              <EditProfileTrigger user={targetUser}>
+                <ActionButton icon={Edit2} label={t("editProfileTitle")} />
+              </EditProfileTrigger>
+            )}
+          </div>
+        </aside>
+
         {/* Main Content */}
         <div className="min-w-0 flex-1 space-y-6">
           <div className="space-y-2">
@@ -216,53 +263,6 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
             </section>
           </div>
         </div>
-
-        {/* Sidebar */}
-        <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
-          <div className="sticky top-28 flex flex-col gap-4">
-            <div className="glass-panel overflow-hidden rounded-4xl">
-              {/* Subtle gradient background decoration inside sidebar */}
-              <div className="bg-primary/20 pointer-events-none absolute -top-10 -right-10 size-40 rounded-full blur-[50px]" />
-              <div className="bg-secondary/10 pointer-events-none absolute -bottom-10 -left-10 size-40 rounded-full blur-[50px]" />
-
-              <div className="relative z-10 flex flex-col items-center p-8 text-center">
-                {targetUser.image ? (
-                  <Image
-                    src={targetUser.image}
-                    alt={targetUser.name ?? targetUser.username ?? "Avatar"}
-                    width={140}
-                    height={140}
-                    className="size-32 rounded-full border-4 border-white/10 object-cover shadow-xl"
-                  />
-                ) : (
-                  <div className="flex size-32 items-center justify-center rounded-full border-4 border-white/10 bg-white/5 shadow-xl">
-                    <UserIcon className="size-14 text-white/50" />
-                  </div>
-                )}
-
-                <h1 className="mt-6 text-2xl font-bold tracking-tight">
-                  {targetUser.name ?? targetUser.username ?? t("fallbackUser")}
-                </h1>
-
-                {targetUser.bio ? (
-                  <p className="mt-6 max-w-[280px] text-sm leading-relaxed text-white/60">
-                    {targetUser.bio}
-                  </p>
-                ) : isOwnProfile ? (
-                  <p className="mt-6 text-xs text-white/30 italic">
-                    Você ainda não definiu uma biografia.
-                  </p>
-                ) : null}
-              </div>
-            </div>
-
-            {isOwnProfile && (
-              <EditProfileTrigger user={targetUser}>
-                <ActionButton icon={Edit2} label={t("editProfileTitle")} />
-              </EditProfileTrigger>
-            )}
-          </div>
-        </aside>
       </div>
     </main>
   );

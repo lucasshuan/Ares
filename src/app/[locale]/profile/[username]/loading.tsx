@@ -7,28 +7,7 @@ export default async function ProfileLoading() {
 
   return (
     <main>
-      <div className="mx-auto mt-10 flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
-        {/* Main Content Skeleton */}
-        <div className="min-w-0 flex-1 space-y-6">
-          <div className="space-y-2">
-            <div className="border-b-[3px] border-white/10">
-              <nav className="-mb-[3px] flex space-x-8" aria-label="Tabs">
-                <span className="border-primary text-primary flex items-center gap-2.5 border-b-[3px] pt-4 pb-2 text-base font-medium whitespace-nowrap transition-all">
-                  <Gamepad2 className="size-5" />
-                  {t("playedGamesTab")}
-                </span>
-              </nav>
-            </div>
-
-            <section className="grid gap-6 pt-6 md:grid-cols-2">
-              <GameCardSkeleton />
-              <GameCardSkeleton />
-              <GameCardSkeleton />
-              <GameCardSkeleton />
-            </section>
-          </div>
-        </div>
-
+      <div className="mx-auto mt-24 flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
         {/* Sidebar Skeleton */}
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
           <div className="glass-panel sticky top-28 overflow-hidden rounded-4xl">
@@ -48,6 +27,29 @@ export default async function ProfileLoading() {
             </div>
           </div>
         </aside>
+
+        {/* Main Content Skeleton */}
+        <div className="min-w-0 flex-1 space-y-6">
+          <div className="space-y-2">
+            <div className="border-b-[3px] border-white/10">
+              <nav className="-mb-[3px] flex space-x-8" aria-label="Tabs">
+                <span className="border-primary text-primary flex items-center gap-2.5 border-b-[3px] pt-4 pb-2 text-base font-medium whitespace-nowrap transition-all">
+                  <Gamepad2 className="size-5" />
+                  {t("playedGamesTab")}
+                </span>
+              </nav>
+            </div>
+
+            <section className="grid gap-6 pt-6 md:grid-cols-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="glass-panel h-64 animate-pulse rounded-4xl bg-white/5"
+                />
+              ))}
+            </section>
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -97,7 +97,11 @@
     "rankingInfoDescription": "This ranking is calculated based on Elo points. Results are updated frequently by game administrators.",
     "details": "Details",
     "player": "Player",
-    "country": "Country"
+    "country": "Country",
+    "register": "Register",
+    "alreadyRegistered": "Already registered",
+    "registerConfirmTitle": "Confirm Registration",
+    "registerConfirmDescription": "You will start with {elo} Elo points. Do you want to continue?"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
@@ -135,9 +139,12 @@
       "slugLabel": "Ranking Link",
       "slugPlaceholder": "ranking-identifier",
       "slugDescription": "Personalizes the URL for this ranking (e.g., /rankings/blitz).",
-      "descriptionLabel": "Description",
+      "descriptionLabel": "Description (Optional)",
       "descriptionPlaceholder": "Describe this ranking...",
-      "submit": "Create Ranking",
+      "initialEloLabel": "Initial Rating (Elo)",
+      "ratingSystemLabel": "Rating System",
+      "ratingSystemElo": "Elo",
+      "submit": "Confirm Ranking",
       "submitting": "Creating...",
       "success": "Ranking added successfully!",
       "error": "Error adding ranking."
@@ -159,6 +166,24 @@
       "success": "Player added successfully!",
       "successExisting": "The user already has a registration for this game. The new username has been attached to the existing player.",
       "error": "Error adding player."
+    },
+    "editRanking": {
+      "trigger": "Modify ranking",
+      "title": "Modify Ranking",
+      "description": "Update information for this ranking category.",
+      "success": "Ranking updated successfully!",
+      "error": "Error updating ranking."
+    },
+    "addPlayerToRanking": {
+      "trigger": "Register player",
+      "title": "Register Player",
+      "description": "Add an existing or new player to this ranking.",
+      "searchPlaceholder": "Search player nick...",
+      "playerNotFound": "This nick was not found for this game.",
+      "createPlayerWarning": "Do you want to create a new player record with this nick?",
+      "createAndAdd": "Create and add",
+      "success": "Player registered successfully!",
+      "error": "Error registering player."
     }
   }
 }

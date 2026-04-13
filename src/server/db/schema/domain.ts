@@ -107,6 +107,8 @@ export const rankings = pgTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description"),
+    initialElo: integer("initial_elo").default(1000).notNull(),
+    ratingSystem: text("rating_system").default("elo").notNull(),
     ...timestamps,
   },
   (table) => ({

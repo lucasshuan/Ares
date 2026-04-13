@@ -95,7 +95,11 @@
     "rankingInfoDescription": "Este ranking é calculado com base nos pontos Elo. Os resultados são atualizados frequentemente pelos administradores do jogo.",
     "details": "Detalhes",
     "player": "Jogador",
-    "country": "País"
+    "country": "País",
+    "register": "Registrar-se",
+    "alreadyRegistered": "Já registrado",
+    "registerConfirmTitle": "Confirmar Inscrição",
+    "registerConfirmDescription": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
@@ -133,9 +137,12 @@
       "slugLabel": "Link do Ranking",
       "slugPlaceholder": "identificador-do-ranking",
       "slugDescription": "Personaliza a URL deste ranking (ex: /rankings/blitz).",
-      "descriptionLabel": "Descrição",
+      "descriptionLabel": "Descrição (Opcional)",
       "descriptionPlaceholder": "Descreva este ranking...",
-      "submit": "Criar Ranking",
+      "initialEloLabel": "Pontuação Inicial (Elo)",
+      "ratingSystemLabel": "Sistema de Classificação",
+      "ratingSystemElo": "Elo",
+      "submit": "Confirmar Ranking",
       "submitting": "Criando...",
       "success": "Classificação adicionada com sucesso!",
       "error": "Erro ao adicionar classificação."
@@ -157,6 +164,24 @@
       "success": "Jogador adicionado com sucesso!",
       "successExisting": "O usuário já tinha um cadastro para este jogo. O novo nome de usuário foi anexado ao player existente.",
       "error": "Erro ao adicionar jogador."
+    },
+    "editRanking": {
+      "trigger": "Modificar classificação",
+      "title": "Modificar Classificação",
+      "description": "Atualize as informações desta categoria de ranking.",
+      "success": "Classificação atualizada com sucesso!",
+      "error": "Erro ao atualizar classificação."
+    },
+    "addPlayerToRanking": {
+      "trigger": "Registrar jogador",
+      "title": "Registrar Jogador",
+      "description": "Adicione um jogador existente ou novo a este ranking.",
+      "searchPlaceholder": "Buscar nick do jogador...",
+      "playerNotFound": "Este nick não foi encontrado para este jogo.",
+      "createPlayerWarning": "Deseja criar um novo registro de jogador com este nick?",
+      "createAndAdd": "Criar e adicionar",
+      "success": "Jogador registrado com sucesso!",
+      "error": "Erro ao registrar jogador."
     }
   }
 }

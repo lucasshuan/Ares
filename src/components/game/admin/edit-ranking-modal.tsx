@@ -4,28 +4,30 @@ import { useTransition, useState } from "react";
 import { Plus } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ActionButton } from "@/components/ui/action-button";
-import { addRanking } from "@/server/game-actions";
+import { updateRanking } from "@/server/game-actions";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { type Ranking } from "@/server/db/schema";
 
-interface AddRankingModalProps {
-  gameId: string;
+interface EditRankingModalProps {
+  ranking: Ranking;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function AddRankingModal({
-  gameId,
+export function EditRankingModal({
+  ranking,
   isOpen,
   onClose,
-}: AddRankingModalProps) {
+}: EditRankingModalProps) {
   const t = useTranslations("Admin.addRanking");
+  const tEdit = useTranslations("Admin.editRanking");
   const [isPending, startTransition] = useTransition();
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
-  const [initialElo, setInitialElo] = useState(1000);
-  const [ratingSystem, setRatingSystem] = useState("elo");
+  const [name, setName] = useState(ranking.name);
+  const [slug, setSlug] = useState(ranking.slug);
+  const [description, setDescription] = useState(ranking.description || "");
+  const [initialElo, setInitialElo] = useState(ranking.initialElo);
+  const [ratingSystem, setRatingSystem] = useState(ranking.ratingSystem);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,23 +35,17 @@ export function AddRankingModal({
 
     startTransition(async () => {
       try {
-        await addRanking({
-          gameId,
+        await updateRanking(ranking.id, {
           name,
           slug,
-          description,
+          description: description || null,
           initialElo,
           ratingSystem,
         });
-        toast.success(t("success"));
-        setName("");
-        setSlug("");
-        setDescription("");
-        setInitialElo(1000);
-        setRatingSystem("elo");
+        toast.success(tEdit("success"));
         onClose();
       } catch {
-        toast.error(t("error"));
+        toast.error(tEdit("error"));
       }
     });
   };
@@ -58,8 +54,8 @@ export function AddRankingModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("title")}
-      description={t("description")}
+      title={tEdit("title")}
+      description={tEdit("description")}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col gap-2">

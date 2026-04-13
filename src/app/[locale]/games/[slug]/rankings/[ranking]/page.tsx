@@ -7,34 +7,40 @@ import { ChevronLeft } from "lucide-react";
 
 import { getRankingData } from "@/server/db/queries/public";
 import { SectionHeader } from "@/components/ui/section-header";
+import { getServerAuthSession } from "@/server/auth";
+import { hasPermission } from "@/lib/permissions";
+import { RankingAdminActions } from "@/components/game/admin/ranking-admin-actions";
+import { RankingRegistration } from "@/components/game/ranking-registration";
 
 interface RankingPageProps {
   params: Promise<{
-    gameSlug: string;
-    rankingSlug: string;
+    slug: string;
+    ranking: string;
   }>;
 }
 
 export default async function RankingPage({ params }: RankingPageProps) {
-  const { gameSlug, rankingSlug } = await params;
+  const { slug, ranking } = await params;
 
   return (
     <main>
       <Suspense fallback={<RankingPageSkeleton />}>
-        <RankingPageContent gameSlug={gameSlug} rankingSlug={rankingSlug} />
+        <RankingPageContent slug={slug} ranking={ranking} />
       </Suspense>
     </main>
   );
 }
 
 async function RankingPageContent({
-  gameSlug,
-  rankingSlug,
+  slug: gameSlug,
+  ranking: rankingSlug,
 }: {
-  gameSlug: string;
-  rankingSlug: string;
+  slug: string;
+  ranking: string;
 }) {
   const data = await getRankingData(gameSlug, rankingSlug);
+  const session = await getServerAuthSession();
+  const isEditor = hasPermission(session, "manage_rankings");
   const t = await getTranslations("GamePage");
 
   if (!data) {
@@ -42,6 +48,10 @@ async function RankingPageContent({
   }
 
   const { ranking, game, entries } = data;
+
+  const isUserRegistered = session?.user?.id
+    ? entries.some((e) => e.userId === session.user.id)
+    : false;
 
   return (
     <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
@@ -69,7 +79,7 @@ async function RankingPageContent({
               <span className="text-muted text-[9px] font-bold tracking-widest uppercase opacity-50">
                 {game.name}
               </span>
-              <span className="text-secondary group-hover:text-primary text-[11px] font-bold uppercase tracking-wider transition-colors">
+              <span className="text-secondary group-hover:text-primary text-[11px] font-bold tracking-wider uppercase transition-colors">
                 {t("viewGame")}
               </span>
             </div>
@@ -117,6 +127,15 @@ async function RankingPageContent({
               </div>
             </div>
           </div>
+
+          <RankingRegistration
+            rankingId={ranking.id}
+            initialElo={ranking.initialElo}
+            isRegistered={isUserRegistered}
+            isLoggedIn={!!session?.user}
+          />
+
+          {isEditor && <RankingAdminActions ranking={ranking} />}
         </div>
       </aside>
 
@@ -124,7 +143,7 @@ async function RankingPageContent({
       <div className="min-w-0 flex-1 space-y-8">
         <SectionHeader
           title={ranking.name}
-          description={ranking.description || game.name}
+          description={ranking.description || undefined}
         />
 
         <div className="glass-panel overflow-hidden rounded-4xl">
@@ -168,7 +187,7 @@ async function RankingPageContent({
                           {entry.usernames.slice(0, 3).map((u) => (
                             <span
                               key={u}
-                              className="text-muted border-white/10 bg-white/5 rounded-full border px-2 py-0.5 text-[10px] lowercase transition-all group-hover:bg-white/10"
+                              className="text-muted rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] lowercase transition-all group-hover:bg-white/10"
                             >
                               {u}
                             </span>
@@ -199,7 +218,7 @@ async function RankingPageContent({
                   <tr>
                     <td
                       colSpan={4}
-                      className="px-6 py-12 text-center text-muted"
+                      className="text-muted px-6 py-12 text-center"
                     >
                       {t("noPlayers")}
                     </td>
@@ -217,9 +236,22 @@ async function RankingPageContent({
 function RankingPageSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="mx-auto mt-4 flex max-w-7xl flex-col gap-12 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
-        <div className="h-96 w-full rounded-4xl bg-white/5 lg:w-[360px]" />
-        <div className="h-[600px] flex-1 rounded-4xl bg-white/5" />
+      <div className="mx-auto mt-4 flex max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+        {/* Sidebar */}
+        <div className="w-full space-y-4 lg:w-[320px] xl:w-[360px]">
+          <div className="h-14 w-full rounded-3xl bg-white/5" />
+          <div className="h-64 w-full rounded-4xl bg-white/5" />
+          <div className="h-14 w-full rounded-2xl bg-white/5" />
+        </div>
+
+        {/* Main Content */}
+        <div className="min-w-0 flex-1 space-y-8">
+          <div className="space-y-4">
+            <div className="h-10 w-64 rounded-full bg-white/10" />
+            <div className="h-6 w-full rounded-full bg-white/5" />
+          </div>
+          <div className="h-[600px] w-full rounded-4xl bg-white/5" />
+        </div>
       </div>
     </div>
   );

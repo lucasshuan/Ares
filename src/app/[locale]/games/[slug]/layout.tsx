@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 interface GameLayoutProps {
   children: React.ReactNode;
   params: Promise<{
-    gameSlug: string;
+    slug: string;
     locale: string;
   }>;
 }
@@ -13,7 +13,7 @@ export default async function GameLayout({
   children,
   params,
 }: GameLayoutProps) {
-  const { gameSlug } = await params;
+  const { slug: gameSlug } = await params;
   const data = await getGamePageData(gameSlug);
 
   if (!data || !data.game) {
