@@ -89,7 +89,13 @@
     "sidebarPlayers": "Jogadores",
     "playOnSteam": "Jogar na Steam",
     "clickToViewFullRanking": "Clique para ver o ranking completo",
-    "viewGame": "Ver jogo"
+    "viewGame": "Ver jogo",
+    "totalPlayers": "Total de Jogadores",
+    "created": "Criado em",
+    "rankingInfoDescription": "Este ranking é calculado com base nos pontos Elo. Os resultados são atualizados frequentemente pelos administradores do jogo.",
+    "details": "Detalhes",
+    "player": "Jogador",
+    "country": "País"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"

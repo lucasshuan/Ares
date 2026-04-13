@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
+import { ChevronLeft } from "lucide-react";
 
 import { getRankingData } from "@/server/db/queries/public";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -49,9 +50,10 @@ async function RankingPageContent({
         <div className="sticky top-28 space-y-4">
           <Link
             href={`/games/${gameSlug}`}
-            className="glass-panel group flex items-center gap-4 overflow-hidden rounded-3xl p-2.5 transition-all hover:bg-white/5 active:scale-[0.98]"
+            className="glass-panel group flex items-center gap-3 overflow-hidden rounded-3xl p-2 transition-all hover:bg-white/5 active:scale-[0.98]"
           >
-            <div className="relative aspect-video h-12 shrink-0 overflow-hidden rounded-2xl shadow-2xl">
+            <ChevronLeft className="size-4 shrink-0 opacity-40 transition-transform group-hover:-translate-x-0.5" />
+            <div className="relative aspect-video h-10 shrink-0 overflow-hidden rounded-xl shadow-2xl">
               {game.thumbnailImageUrl ? (
                 <Image
                   src={game.thumbnailImageUrl}
@@ -64,10 +66,10 @@ async function RankingPageContent({
               )}
             </div>
             <div className="flex flex-col">
-              <span className="text-muted text-[10px] font-bold tracking-widest uppercase opacity-50">
+              <span className="text-muted text-[9px] font-bold tracking-widest uppercase opacity-50">
                 {game.name}
               </span>
-              <span className="text-secondary group-hover:text-primary text-xs font-bold uppercase tracking-wider transition-colors">
+              <span className="text-secondary group-hover:text-primary text-[11px] font-bold uppercase tracking-wider transition-colors">
                 {t("viewGame")}
               </span>
             </div>
@@ -93,13 +95,15 @@ async function RankingPageContent({
 
             <div className="space-y-1">
               <div className="flex items-center justify-between py-1">
-                <span className="text-[11px] opacity-60">Total Players</span>
+                <span className="text-[11px] opacity-60">
+                  {t("totalPlayers")}
+                </span>
                 <span className="text-secondary text-xs font-semibold">
                   {entries.length}
                 </span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-[11px] opacity-60">Created</span>
+                <span className="text-[11px] opacity-60">{t("created")}</span>
                 <span className="text-xs font-semibold">
                   {ranking.createdAt
                     ? new Date(ranking.createdAt).toLocaleDateString()
@@ -108,8 +112,7 @@ async function RankingPageContent({
               </div>
               <div className="pt-3">
                 <p className="text-muted text-[10px] leading-relaxed italic opacity-50">
-                  This ranking is calculated based on Elo points. Results are
-                  updated frequently by game administrators.
+                  {t("rankingInfoDescription")}
                 </p>
               </div>
             </div>
@@ -119,7 +122,10 @@ async function RankingPageContent({
 
       {/* Main Content (Right) */}
       <div className="min-w-0 flex-1 space-y-8">
-        <SectionHeader title={ranking.name} description={game.name} />
+        <SectionHeader
+          title={ranking.name}
+          description={ranking.description || game.name}
+        />
 
         <div className="glass-panel overflow-hidden rounded-4xl">
           <div className="overflow-x-auto">
@@ -130,13 +136,13 @@ async function RankingPageContent({
                     #
                   </th>
                   <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
-                    {t("ranking")}
+                    {t("player")}
                   </th>
                   <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
-                    Elo
+                    {t("country")}
                   </th>
-                  <th className="hidden px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50 sm:table-cell">
-                    Details
+                  <th className="px-6 py-4 text-xs font-bold tracking-[0.2em] uppercase opacity-50">
+                    {t("elo")}
                   </th>
                 </tr>
               </thead>
@@ -171,16 +177,21 @@ async function RankingPageContent({
                       </div>
                     </td>
                     <td className="px-6 py-5">
+                      {entry.country && (
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`fi fi-${entry.country.toLowerCase()} fis rounded-xs shadow-sm shadow-black/40`}
+                          />
+                          <span className="text-[10px] font-bold tracking-widest uppercase opacity-30">
+                            {entry.country}
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-5">
                       <span className="text-secondary font-mono text-xl font-semibold">
                         {entry.currentElo}
                       </span>
-                    </td>
-                    <td className="hidden px-6 py-5 sm:table-cell">
-                      {entry.country && (
-                        <span className="text-[10px] tracking-widest uppercase opacity-40">
-                          {entry.country}
-                        </span>
-                      )}
                     </td>
                   </tr>
                 ))}

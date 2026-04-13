@@ -144,106 +144,6 @@ export function AddPlayerModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
-          {/* Autocomplete User Link */}
-          <div className="flex flex-col gap-2">
-            <label className="ml-1 text-sm font-medium text-white/70">
-              {t("linkUserLabel")}
-            </label>
-            <div className="relative">
-              {!selectedUser ? (
-                <>
-                  <Search className="absolute top-3 left-4 size-4 text-white/30" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("searchUserPlaceholder")}
-                    className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 pt-3 pr-4 pb-3 pl-11 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
-                  />
-                  {isSearching && (
-                    <LoaderCircle className="absolute top-3 right-4 size-4 animate-spin text-white/30" />
-                  )}
-                  {displayResults.length > 0 && (
-                    <div className="glass-panel absolute top-full left-0 z-20 mt-2 max-h-60 w-full overflow-y-auto rounded-2xl p-1 shadow-2xl">
-                      {displayResults.map((user) => (
-                        <button
-                          key={user.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            if (!username) setUsername(user.username);
-                            setSearchResults([]);
-                            setSearchQuery("");
-                          }}
-                          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white/10"
-                        >
-                          <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
-                            {user.image ? (
-                              <Image
-                                src={user.image}
-                                alt={user.name}
-                                fill
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center">
-                                <span className="text-xs">{user.name[0]}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-white">
-                              {user.name}
-                            </p>
-                            <p className="truncate text-xs text-white/40">
-                              @{user.username}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="border-primary/30 bg-primary/5 flex items-center justify-between rounded-2xl border px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="relative size-8 shrink-0 overflow-hidden rounded-full">
-                      {selectedUser.image ? (
-                        <Image
-                          src={selectedUser.image}
-                          alt={selectedUser.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-white/10">
-                          <span className="text-xs">
-                            {selectedUser.name[0]}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-white">
-                        {selectedUser.name}
-                      </p>
-                      <p className="text-xs text-white/40">
-                        @{selectedUser.username}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedUser(null)}
-                    className="text-xs text-white/40 hover:text-white"
-                  >
-                    {t("removeLink")}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* Username Input */}
           <div className="flex flex-col gap-2">
             <label
@@ -382,6 +282,106 @@ export function AddPlayerModal({
                       </button>
                     ))}
                   </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Autocomplete User Link */}
+          <div className="flex flex-col gap-2">
+            <label className="ml-1 text-sm font-medium text-white/70">
+              {t("linkUserLabel")}
+            </label>
+            <div className="relative">
+              {!selectedUser ? (
+                <>
+                  <Search className="absolute top-3 left-4 size-4 text-white/30" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t("searchUserPlaceholder")}
+                    className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 pt-3 pr-4 pb-3 pl-11 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
+                  />
+                  {isSearching && (
+                    <LoaderCircle className="absolute top-3 right-4 size-4 animate-spin text-white/30" />
+                  )}
+                  {displayResults.length > 0 && (
+                    <div className="glass-panel absolute top-full left-0 z-20 mt-2 max-h-60 w-full overflow-y-auto rounded-2xl p-1 shadow-2xl">
+                      {displayResults.map((user) => (
+                        <button
+                          key={user.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            if (!username) setUsername(user.username);
+                            setSearchResults([]);
+                            setSearchQuery("");
+                          }}
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white/10"
+                        >
+                          <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
+                            {user.image ? (
+                              <Image
+                                src={user.image}
+                                alt={user.name}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center">
+                                <span className="text-xs">{user.name[0]}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-white">
+                              {user.name}
+                            </p>
+                            <p className="truncate text-xs text-white/40">
+                              @{user.username}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="border-primary/30 bg-primary/5 flex items-center justify-between rounded-2xl border px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative size-8 shrink-0 overflow-hidden rounded-full">
+                      {selectedUser.image ? (
+                        <Image
+                          src={selectedUser.image}
+                          alt={selectedUser.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-white/10">
+                          <span className="text-xs">
+                            {selectedUser.name[0]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        {selectedUser.name}
+                      </p>
+                      <p className="text-xs text-white/40">
+                        @{selectedUser.username}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUser(null)}
+                    className="text-xs text-white/40 hover:text-white"
+                  >
+                    {t("removeLink")}
+                  </button>
                 </div>
               )}
             </div>

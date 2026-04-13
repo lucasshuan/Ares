@@ -91,7 +91,13 @@
     "sidebarPlayers": "Players",
     "playOnSteam": "Play on Steam",
     "clickToViewFullRanking": "Click to view full ranking",
-    "viewGame": "View game"
+    "viewGame": "View game",
+    "totalPlayers": "Total Players",
+    "created": "Created",
+    "rankingInfoDescription": "This ranking is calculated based on Elo points. Results are updated frequently by game administrators.",
+    "details": "Details",
+    "player": "Player",
+    "country": "Country"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
