@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { AlertCircle, ChevronRight } from "lucide-react";
 import type { PublicGame } from "@/server/db/queries/types";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface GameCardProps {
   game: PublicGame;
@@ -21,17 +22,20 @@ export function GameCard({
       className="glass-panel group flex w-full flex-col overflow-hidden rounded-4xl"
     >
       <div className="relative aspect-368/178 w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{
-            backgroundImage: game.thumbnailImageUrl
-              ? `url(${game.thumbnailImageUrl})`
-              : "linear-gradient(135deg, color-mix(in srgb, var(--primary) 48%, transparent), rgba(11,8,15,0.92))",
-          }}
-        />
-        {game.thumbnailImageUrl && (
-          <div className="absolute inset-0 bg-linear-to-b from-[#0b080f]/5 to-[#0b080f]/75 transition-opacity duration-500 group-hover:opacity-0" />
+        {game.thumbnailImageUrl ? (
+          <Image
+            src={game.thumbnailImageUrl}
+            alt={game.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            quality={85}
+          />
+        ) : (
+          <div className="from-primary/48 h-full w-full bg-linear-to-br to-[#0b080f]/92 transition-transform duration-500 group-hover:scale-105" />
         )}
+        
+        <div className="absolute inset-0 bg-linear-to-b from-[#0b080f]/0 to-[#0b080f]/80 transition-opacity duration-500 group-hover:opacity-40" />
       </div>
 
       <div className="flex items-center justify-between gap-4 p-5">

@@ -106,31 +106,54 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   );
 
   return (
-    <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
-      {/* Sidebar */}
-      <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
-        <div className="sticky top-28 space-y-6">
-          <Link
-            href="/games"
-            className="group flex items-center gap-2 text-sm font-medium text-white/40 transition-colors hover:text-white"
-          >
-            <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-            {t("backToGames")}
-          </Link>
+    <div className="relative min-h-screen">
+      {/* Hero Background */}
+      {game.backgroundImageUrl && (
+        <div className="absolute inset-0 -z-10 h-[500px] w-full overflow-hidden opacity-30">
+          <Image
+            src={game.backgroundImageUrl}
+            alt=""
+            fill
+            priority
+            className="object-cover transition-transform duration-1000 group-hover:scale-105"
+            sizes="100vw"
+            quality={90}
+          />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent to-[#0b080f]" />
+        </div>
+      )}
 
-          <div className="glass-panel overflow-hidden rounded-4xl">
-            {game.thumbnailImageUrl ? (
-              <div
-                className="aspect-368/178 w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${game.thumbnailImageUrl})` }}
-              />
-            ) : (
-              <div className="from-primary/20 to-primary/5 aspect-368/178 w-full bg-linear-to-br" />
-            )}
+      <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
+        {/* Sidebar */}
+        <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
+          <div className="sticky top-28 space-y-6">
+            <Link
+              href="/games"
+              className="group flex items-center gap-2 text-sm font-medium text-white/40 transition-colors hover:text-white"
+            >
+              <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+              {t("backToGames")}
+            </Link>
 
-            <div className="space-y-8 p-6">
-              <div>
-                {game.status === "pending" && (
+            <div className="glass-panel overflow-hidden rounded-4xl">
+              <div className="relative aspect-368/178 w-full overflow-hidden">
+                {game.thumbnailImageUrl ? (
+                  <Image
+                    src={game.thumbnailImageUrl}
+                    alt={game.name}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 360px"
+                  />
+                ) : (
+                  <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
+                )}
+              </div>
+
+              <div className="space-y-8 p-6">
+                <div>
+                  {game.status === "pending" && (
                   <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
                     <AlertCircle className="size-5 shrink-0 animate-pulse" />
                     <p className="text-xs font-semibold tracking-wider uppercase">
