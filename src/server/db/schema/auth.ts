@@ -105,6 +105,7 @@ export const verificationTokens = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
+  authoredGames: many(games),
   players: many(players),
   userPermissions: many(userPermissions),
 }));
@@ -132,4 +133,4 @@ export type NewSession = typeof sessions.$inferInsert;
 export type VerificationToken = typeof verificationTokens.$inferSelect;
 export type NewVerificationToken = typeof verificationTokens.$inferInsert;
 
-import { players, userPermissions } from "@/server/db/schema/domain";
+import { games, players, userPermissions } from "@/server/db/schema/domain";

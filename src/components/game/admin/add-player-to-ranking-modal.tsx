@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { Search, UserPlus, AlertCircle, LoaderCircle } from "lucide-react";
+import { Search, UserPlus, AlertCircle, LoaderCircle, Plus } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   searchPlayersByGame,
   addPlayerToRanking,
   createAndAddPlayerToRanking,
-} from "@/server/game-actions";
+} from "@/server/actions/game";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";

@@ -3,13 +3,16 @@
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function SearchInput({
   defaultValue,
   placeholder,
+  className,
 }: {
   defaultValue?: string;
   placeholder: string;
+  className?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +32,7 @@ export function SearchInput({
   }
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className={cn("relative w-full max-w-md", className)}>
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
         <Search
           className={`size-5 transition-colors ${isPending ? "text-primary animate-pulse" : "text-white/20"}`}

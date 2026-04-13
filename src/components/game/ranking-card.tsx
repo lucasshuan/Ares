@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import type { PublicRanking } from "@/server/db/queries/public";
+import type { PublicRanking } from "@/server/db/queries/types";
 import { useTranslations } from "next-intl";
 
 interface RankingCardProps {

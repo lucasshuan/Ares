@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { LoaderCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { updateProfile } from "@/server/user-actions";
+import { updateProfile } from "@/server/actions/user";
 import { useRouter, usePathname } from "@/i18n/routing";
 
 type UserData = {

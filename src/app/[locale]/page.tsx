@@ -5,11 +5,13 @@ import { buttonVariants } from "@/components/ui/button";
 
 import { SignInButton } from "@/components/auth/sign-in-button";
 import { LoginErrorHandler } from "@/components/auth/login-error-handler";
-import { getPublicGames } from "@/server/db/queries/public";
+import { getPublicGames } from "@/server/db/queries/games";
 import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils";
 import { GameCard, GameCardSkeleton } from "@/components/brand/game-card";
 import { getTranslations } from "next-intl/server";
+import { getServerAuthSession } from "@/server/auth";
+import { canManageGames } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 

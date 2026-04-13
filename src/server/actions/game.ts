@@ -1,11 +1,65 @@
 "use server";
 
 import { db } from "@/server/db";
-import { games, players, playerUsernames, rankings, rankingEntries } from "@/server/db/schema";
+import {
+  games,
+  players,
+  playerUsernames,
+  rankings,
+  rankingEntries,
+  type Game,
+} from "@/server/db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { getServerAuthSession } from "@/server/auth";
-import { hasPermission } from "@/lib/permissions";
+import {
+  canEditGame,
+  canManageGames,
+  canManagePlayers,
+  canManageRankings,
+} from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
+
+function normalizeOptionalText(value: string | null | undefined) {
+  const normalized = value?.trim();
+  return normalized ? normalized : null;
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
+async function getGameRecord(gameId: string) {
+  return await db.query.games.findFirst({
+    where: eq(games.id, gameId),
+  });
+}
+
+async function assertGameApproved(gameId: string) {
+  const game = await getGameRecord(gameId);
+
+  if (!game) {
+    throw new Error("Game not found");
+  }
+
+  if (game.status !== "approved") {
+    throw new Error("Pending games cannot receive rankings or players");
+  }
+
+  return game;
+}
+
+function revalidateGamePaths(game: Pick<Game, "slug">) {
+  revalidatePath("/");
+  revalidatePath("/games");
+  revalidatePath(`/games/${game.slug}`);
+}
 
 export async function updateGame(
   gameId: string,
@@ -18,11 +72,99 @@ export async function updateGame(
   },
 ) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_games")) throw new Error("Unauthorized");
+  const game = await getGameRecord(gameId);
 
-  await db.update(games).set(data).where(eq(games.id, gameId));
-  revalidatePath("/games");
-  revalidatePath(`/games/${gameId}`);
+  if (!game) {
+    throw new Error("Game not found");
+  }
+
+  if (!canEditGame(session, game.authorId)) {
+    throw new Error("Unauthorized");
+  }
+
+  await db
+    .update(games)
+    .set({
+      name: data.name.trim(),
+      description: normalizeOptionalText(data.description),
+      backgroundImageUrl: normalizeOptionalText(data.backgroundImageUrl),
+      thumbnailImageUrl: normalizeOptionalText(data.thumbnailImageUrl),
+      steamUrl: normalizeOptionalText(data.steamUrl),
+    })
+    .where(eq(games.id, gameId));
+
+  revalidateGamePaths(game);
+  return { success: true };
+}
+
+export async function createGame(data: {
+  name: string;
+  slug: string;
+  description: string | null;
+  backgroundImageUrl: string | null;
+  thumbnailImageUrl: string | null;
+  steamUrl: string | null;
+}) {
+  const session = await getServerAuthSession();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const name = data.name.trim();
+  const slug = slugify(data.slug || data.name);
+
+  if (!name || !slug) {
+    throw new Error("Invalid game data");
+  }
+
+  const status = canManageGames(session) ? "approved" : "pending";
+
+  const [game] = await db
+    .insert(games)
+    .values({
+      name,
+      slug,
+      description: normalizeOptionalText(data.description),
+      backgroundImageUrl: normalizeOptionalText(data.backgroundImageUrl),
+      thumbnailImageUrl: normalizeOptionalText(data.thumbnailImageUrl),
+      steamUrl: normalizeOptionalText(data.steamUrl),
+      status,
+      authorId: session.user.id,
+    })
+    .returning();
+
+  revalidateGamePaths(game);
+
+  return {
+    success: true,
+    game,
+    status,
+  };
+}
+
+export async function approveGame(gameId: string) {
+  const session = await getServerAuthSession();
+
+  if (!canManageGames(session)) {
+    throw new Error("Unauthorized");
+  }
+
+  const game = await getGameRecord(gameId);
+
+  if (!game) {
+    throw new Error("Game not found");
+  }
+
+  await db
+    .update(games)
+    .set({
+      status: "approved",
+    })
+    .where(eq(games.id, gameId));
+
+  revalidateGamePaths(game);
+
   return { success: true };
 }
 
@@ -35,20 +177,14 @@ export async function addRanking(data: {
   ratingSystem: string;
 }) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_rankings"))
+  if (!canManageRankings(session))
     throw new Error("Unauthorized");
 
-  await db.insert(rankings).values(data);
-  
-  const game = await db.query.games.findFirst({
-    where: eq(games.id, data.gameId),
-    columns: { slug: true }
-  });
+  const game = await assertGameApproved(data.gameId);
 
-  if (game) {
-    revalidatePath(`/games/${game.slug}`);
-  }
-  
+  await db.insert(rankings).values(data);
+
+  revalidateGamePaths(game);
   return { success: true };
 }
 
@@ -61,8 +197,10 @@ export async function addPlayerToGame(
   },
 ) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_players"))
+  if (!canManagePlayers(session))
     throw new Error("Unauthorized");
+
+  const game = await assertGameApproved(gameId);
 
   let playerId: string | null = null;
   let wasAddedToExisting = false;
@@ -95,7 +233,7 @@ export async function addPlayerToGame(
     username: data.username,
   });
 
-  revalidatePath(`/games/${gameId}`);
+  revalidateGamePaths(game);
   return { success: true, wasAddedToExisting, playerId };
 }
 
@@ -128,7 +266,7 @@ export async function updateRanking(
   },
 ) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_rankings"))
+  if (!canManageRankings(session))
     throw new Error("Unauthorized");
 
   await db.update(rankings).set(data).where(eq(rankings.id, rankingId));
@@ -139,7 +277,7 @@ export async function updateRanking(
   });
 
   if (ranking?.game) {
-    revalidatePath(`/games/${ranking.game.slug}`);
+    revalidateGamePaths(ranking.game);
     revalidatePath(`/games/${ranking.game.slug}/rankings/${ranking.slug}`);
   }
 
@@ -148,8 +286,10 @@ export async function updateRanking(
 
 export async function searchPlayersByGame(gameId: string, query: string) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_players"))
+  if (!canManagePlayers(session))
     throw new Error("Unauthorized");
+
+  await assertGameApproved(gameId);
 
   const results = await db.query.playerUsernames.findMany({
     where: and(
@@ -176,14 +316,20 @@ export async function addPlayerToRanking(
   initialElo?: number,
 ) {
   const session = await getServerAuthSession();
-  if (!hasPermission(session, "manage_players"))
+  if (!canManagePlayers(session))
     throw new Error("Unauthorized");
 
   const ranking = await db.query.rankings.findFirst({
     where: eq(rankings.id, rankingId),
+    with: {
+      game: true,
+    },
   });
 
   if (!ranking) throw new Error("Ranking not found");
+  if (!ranking.game || ranking.game.status !== "approved") {
+    throw new Error("Pending games cannot receive rankings or players");
+  }
 
   await db.insert(rankingEntries).values({
     rankingId,
@@ -197,6 +343,7 @@ export async function addPlayerToRanking(
   });
 
   if (fullRanking?.game) {
+    revalidateGamePaths(fullRanking.game);
     revalidatePath(`/games/${fullRanking.game.slug}/rankings/${fullRanking.slug}`);
   }
 
@@ -213,6 +360,9 @@ export async function registerSelfToRanking(rankingId: string) {
   });
 
   if (!ranking) throw new Error("Ranking not found");
+  if (!ranking.game || ranking.game.status !== "approved") {
+    throw new Error("Pending games cannot receive rankings or players");
+  }
 
   // Check if player already exists for this game and user
   let player = await db.query.players.findFirst({
@@ -257,6 +407,7 @@ export async function registerSelfToRanking(rankingId: string) {
   });
 
   if (ranking.game) {
+    revalidateGamePaths(ranking.game);
     revalidatePath(`/games/${ranking.game.slug}/rankings/${ranking.slug}`);
   }
 

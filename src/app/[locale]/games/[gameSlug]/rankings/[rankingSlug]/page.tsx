@@ -5,42 +5,47 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ChevronLeft } from "lucide-react";
 
-import { getRankingData } from "@/server/db/queries/public";
+import { getRankingData } from "@/server/db/queries/rankings";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getServerAuthSession } from "@/server/auth";
-import { hasPermission } from "@/lib/permissions";
+import { canManageGames, canManageRankings } from "@/lib/permissions";
 import { RankingAdminActions } from "@/components/game/admin/ranking-admin-actions";
 import { RankingRegistration } from "@/components/game/ranking-registration";
 
 interface RankingPageProps {
   params: Promise<{
-    slug: string;
-    ranking: string;
+    gameSlug: string;
+    rankingSlug: string;
   }>;
 }
 
 export default async function RankingPage({ params }: RankingPageProps) {
-  const { slug, ranking } = await params;
+  const { gameSlug, rankingSlug } = await params;
 
   return (
     <main>
       <Suspense fallback={<RankingPageSkeleton />}>
-        <RankingPageContent slug={slug} ranking={ranking} />
+        <RankingPageContent gameSlug={gameSlug} rankingSlug={rankingSlug} />
       </Suspense>
     </main>
   );
 }
 
 async function RankingPageContent({
-  slug: gameSlug,
-  ranking: rankingSlug,
+  gameSlug,
+  rankingSlug,
 }: {
-  slug: string;
-  ranking: string;
+  gameSlug: string;
+  rankingSlug: string;
 }) {
-  const data = await getRankingData(gameSlug, rankingSlug);
   const session = await getServerAuthSession();
-  const isEditor = hasPermission(session, "manage_rankings");
+  const data = await getRankingData(
+    gameSlug,
+    rankingSlug,
+    session?.user?.id,
+    canManageGames(session),
+  );
+  const isEditor = canManageRankings(session);
   const t = await getTranslations("GamePage");
 
   if (!data) {
@@ -128,14 +133,18 @@ async function RankingPageContent({
             </div>
           </div>
 
-          <RankingRegistration
-            rankingId={ranking.id}
-            initialElo={ranking.initialElo}
-            isRegistered={isUserRegistered}
-            isLoggedIn={!!session?.user}
-          />
+          {game.status === "approved" && (
+            <RankingRegistration
+              rankingId={ranking.id}
+              initialElo={ranking.initialElo}
+              isRegistered={isUserRegistered}
+              isLoggedIn={!!session?.user}
+            />
+          )}
 
-          {isEditor && <RankingAdminActions ranking={ranking} />}
+          {game.status === "approved" && isEditor && (
+            <RankingAdminActions ranking={ranking} />
+          )}
         </div>
       </aside>
 

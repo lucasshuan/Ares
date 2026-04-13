@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 import { cache } from "react";
 
 import { db } from "@/server/db";
@@ -13,157 +13,72 @@ import {
   rankings,
   users,
 } from "@/server/db/schema";
+import type {
+  FullRankingData,
+  GamePageData,
+  GroupedRankingEntry,
+  PublicRanking,
+} from "./types";
 
-type GroupedRankingEntry = {
-  id: string;
-  playerId: string;
-  userId: string | null;
-  country: string | null;
-  currentElo: number;
-  primaryUsernameId: string | null;
-  usernames: Array<{
-    id: string;
-    username: string;
-  }>;
-  fallbackName: string;
-  updatedAt: Date | null;
-};
+function buildGameVisibilityCondition(
+  viewerId?: string,
+  canManageGames = false,
+) {
+  if (canManageGames) {
+    return undefined;
+  }
 
-export type PublicGame = typeof games.$inferSelect;
+  if (viewerId) {
+    return or(eq(games.status, "approved"), eq(games.authorId, viewerId));
+  }
 
-export type PublicRankingEntry = {
-  id: string;
-  playerId: string;
-  userId: string | null;
-  country: string | null;
-  currentElo: number;
-  position: number;
-  displayName: string;
-  usernames: string[];
-};
-
-export type PublicRanking = {
-  id: string;
-  name: string;
-  slug: string;
-  entries: PublicRankingEntry[];
-};
-
-export type PublicGamesState = {
-  games: PublicGame[];
-  isDatabaseUnavailable: boolean;
-};
-
-export type GamePageData =
-  | {
-      game: typeof games.$inferSelect;
-      rankings: PublicRanking[];
-      isDatabaseUnavailable: false;
-    }
-  | {
-      game: null;
-      rankings: [];
-      isDatabaseUnavailable: true;
-    }
-  | null;
-
-export type FullRankingData = {
-  ranking: typeof rankings.$inferSelect;
-  game: typeof games.$inferSelect;
-  entries: PublicRankingEntry[];
-};
-
-export type PublicGamesOptions = {
-  limit?: number;
-  search?: string;
-  orderBy?: "name" | "popular";
-};
-
-export const getPublicGames = cache(
-  async (options: PublicGamesOptions = {}) => {
-    const { limit, search, orderBy = "name" } = options;
-    try {
-      const playerCounts = db
-        .select({
-          gameId: players.gameId,
-          count: sql<number>`count(*)`.as("player_count"),
-        })
-        .from(players)
-        .groupBy(players.gameId)
-        .as("player_counts");
-
-      const query = db
-        .select({
-          id: games.id,
-          name: games.name,
-          slug: games.slug,
-          description: games.description,
-          thumbnailImageUrl: games.thumbnailImageUrl,
-          backgroundImageUrl: games.backgroundImageUrl,
-          steamUrl: games.steamUrl,
-          createdAt: games.createdAt,
-          updatedAt: games.updatedAt,
-          playerCount: sql<number>`COALESCE(${playerCounts.count}, 0)`,
-        })
-        .from(games)
-        .leftJoin(playerCounts, eq(games.id, playerCounts.gameId));
-
-      if (search) {
-        query.where(
-          sql`lower(${games.name}) LIKE ${`%${search.toLowerCase()}%`}`,
-        );
-      }
-
-      if (orderBy === "popular") {
-        query.orderBy(
-          desc(sql`COALESCE(${playerCounts.count}, 0)`),
-          asc(games.name),
-        );
-      } else {
-        query.orderBy(asc(games.name));
-      }
-
-      if (limit) {
-        query.limit(limit);
-      }
-
-      const gameList = await query;
-
-      return {
-        games: gameList,
-        isDatabaseUnavailable: false,
-      } satisfies PublicGamesState;
-    } catch (error) {
-      if (isDatabaseUnavailableError(error)) {
-        return {
-          games: [],
-          isDatabaseUnavailable: true,
-        } satisfies PublicGamesState;
-      }
-
-      throw error;
-    }
-  },
-);
+  return eq(games.status, "approved");
+}
 
 export const getGamePageData = cache(
-  async (gameSlug: string): Promise<GamePageData> => {
-    console.log(`[getGamePageData] Fetching data for slug: "${gameSlug}"`);
+  async (
+    gameSlug: string,
+    viewerId?: string,
+    canManageGames = false,
+  ): Promise<GamePageData> => {
     try {
-      const [game] = await db
-        .select()
+      const visibilityCondition = buildGameVisibilityCondition(
+        viewerId,
+        canManageGames,
+      );
+
+      const [result] = await db
+        .select({
+          game: games,
+          authorId: users.id,
+          authorName: users.name,
+          authorUsername: users.username,
+          authorImage: users.image,
+        })
         .from(games)
-        .where(eq(sql`lower(${games.slug})`, gameSlug.toLowerCase().trim()))
+        .leftJoin(users, eq(users.id, games.authorId))
+        .where(
+          and(
+            eq(sql`lower(${games.slug})`, gameSlug.toLowerCase().trim()),
+            visibilityCondition,
+          ),
+        )
         .limit(1);
 
-      if (!game) {
-        console.log(`[getGamePageData] Game not found for slug: "${gameSlug}"`);
+      if (!result) {
         return null;
       }
 
-      console.log(
-        `[getGamePageData] Game found: ${game.name} (ID: ${game.id})`,
-      );
+      const game = result.game;
+      const author =
+        result.authorId && result.authorName
+          ? {
+              id: result.authorId,
+              name: result.authorName,
+              username: result.authorUsername,
+              image: result.authorImage,
+            }
+          : null;
 
       const rows = await db
         .select({
@@ -232,6 +147,7 @@ export const getGamePageData = cache(
             const created = {
               id: row.entryId,
               playerId: row.playerId!,
+              userId: null, // userId isn't in original rows for getGamePageData but in GroupedRankingEntry
               country: row.country ?? null,
               currentElo: row.currentElo ?? 0,
               primaryUsernameId: row.primaryUsernameId ?? null,
@@ -289,6 +205,7 @@ export const getGamePageData = cache(
           .map((entry, index) => ({
             id: entry.id,
             playerId: entry.playerId,
+            userId: entry.userId, // Included even if null
             country: entry.country,
             currentElo: entry.currentElo,
             position: index + 1,
@@ -313,6 +230,7 @@ export const getGamePageData = cache(
 
       return {
         game,
+        author,
         rankings: rankingList,
         isDatabaseUnavailable: false,
       };
@@ -320,6 +238,7 @@ export const getGamePageData = cache(
       if (isDatabaseUnavailableError(error)) {
         return {
           game: null,
+          author: null,
           rankings: [],
           isDatabaseUnavailable: true,
         };
@@ -331,8 +250,18 @@ export const getGamePageData = cache(
 );
 
 export const getRankingData = cache(
-  async (gameSlug: string, rankingSlug: string): Promise<FullRankingData | null> => {
+  async (
+    gameSlug: string,
+    rankingSlug: string,
+    viewerId?: string,
+    canManageGames = false,
+  ): Promise<FullRankingData | null> => {
     try {
+      const visibilityCondition = buildGameVisibilityCondition(
+        viewerId,
+        canManageGames,
+      );
+
       const results = await db
         .select({
           ranking: rankings,
@@ -344,6 +273,7 @@ export const getRankingData = cache(
           and(
             eq(sql`lower(${games.slug})`, gameSlug.toLowerCase().trim()),
             eq(sql`lower(${rankings.slug})`, rankingSlug.toLowerCase().trim()),
+            visibilityCondition,
           ),
         )
         .limit(1);

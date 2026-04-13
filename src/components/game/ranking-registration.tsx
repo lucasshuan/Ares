@@ -5,7 +5,7 @@ import { Trophy, CheckCircle2 } from "lucide-react";
 import { PrimaryAction } from "@/components/ui/primary-action";
 import { Modal } from "@/components/ui/modal";
 import { ActionButton } from "@/components/ui/action-button";
-import { registerSelfToRanking } from "@/server/game-actions";
+import { registerSelfToRanking } from "@/server/actions/game";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 

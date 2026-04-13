@@ -1,23 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { Settings2, Trophy, UserPlus } from "lucide-react";
+import { CheckCheck, Settings2, Trophy, UserPlus } from "lucide-react";
 import { ActionButton } from "@/components/ui/action-button";
 import { EditGameModal } from "./edit-game-modal";
 import { AddRankingModal } from "./add-ranking-modal";
 import { AddPlayerModal } from "./add-player-modal";
 import { type Game } from "@/server/db/schema";
 import { useTranslations } from "next-intl";
+import { ApproveGameModal } from "./approve-game-modal";
 
 interface GameAdminActionsProps {
   game: Game;
+  canEditGame: boolean;
+  canApproveGame: boolean;
+  canManagePlayers: boolean;
+  canManageRankings: boolean;
 }
 
-export function GameAdminActions({ game }: GameAdminActionsProps) {
+export function GameAdminActions({
+  game,
+  canEditGame,
+  canApproveGame,
+  canManagePlayers,
+  canManageRankings,
+}: GameAdminActionsProps) {
   const t = useTranslations("Admin");
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
   const [isAddRankingOpen, setIsAddRankingOpen] = useState(false);
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
+  const [isApproveOpen, setIsApproveOpen] = useState(false);
 
   return (
     <div className="mt-8 space-y-3">
@@ -29,41 +41,71 @@ export function GameAdminActions({ game }: GameAdminActionsProps) {
         <div className="h-px flex-1 bg-white/5" />
       </div>
 
-      <ActionButton
-        icon={Settings2}
-        label={t("editGame.trigger")}
-        onClick={() => setIsEditGameOpen(true)}
-      />
+      {canEditGame && (
+        <ActionButton
+          icon={Settings2}
+          label={t("editGame.trigger")}
+          onClick={() => setIsEditGameOpen(true)}
+        />
+      )}
 
-      <ActionButton
-        icon={Trophy}
-        label={t("addRanking.trigger")}
-        onClick={() => setIsAddRankingOpen(true)}
-      />
+      {game.status === "pending" && canApproveGame && (
+        <ActionButton
+          icon={CheckCheck}
+          intent="primary"
+          label={t("approveGame.trigger")}
+          onClick={() => setIsApproveOpen(true)}
+        />
+      )}
 
-      <ActionButton
-        icon={UserPlus}
-        label={t("addPlayer.trigger")}
-        onClick={() => setIsAddPlayerOpen(true)}
-      />
+      {game.status === "approved" && canManageRankings && (
+        <ActionButton
+          icon={Trophy}
+          label={t("addRanking.trigger")}
+          onClick={() => setIsAddRankingOpen(true)}
+        />
+      )}
 
-      <EditGameModal
-        game={game}
-        isOpen={isEditGameOpen}
-        onClose={() => setIsEditGameOpen(false)}
-      />
+      {game.status === "approved" && canManagePlayers && (
+        <ActionButton
+          icon={UserPlus}
+          label={t("addPlayer.trigger")}
+          onClick={() => setIsAddPlayerOpen(true)}
+        />
+      )}
 
-      <AddRankingModal
-        gameId={game.id}
-        isOpen={isAddRankingOpen}
-        onClose={() => setIsAddRankingOpen(false)}
-      />
+      {canEditGame && (
+        <EditGameModal
+          game={game}
+          isOpen={isEditGameOpen}
+          onClose={() => setIsEditGameOpen(false)}
+        />
+      )}
 
-      <AddPlayerModal
-        gameId={game.id}
-        isOpen={isAddPlayerOpen}
-        onClose={() => setIsAddPlayerOpen(false)}
-      />
+      {game.status === "approved" && canManageRankings && (
+        <AddRankingModal
+          gameId={game.id}
+          isOpen={isAddRankingOpen}
+          onClose={() => setIsAddRankingOpen(false)}
+        />
+      )}
+
+      {game.status === "approved" && canManagePlayers && (
+        <AddPlayerModal
+          gameId={game.id}
+          isOpen={isAddPlayerOpen}
+          onClose={() => setIsAddPlayerOpen(false)}
+        />
+      )}
+
+      {game.status === "pending" && canApproveGame && (
+        <ApproveGameModal
+          gameId={game.id}
+          gameName={game.name}
+          isOpen={isApproveOpen}
+          onClose={() => setIsApproveOpen(false)}
+        />
+      )}
     </div>
   );
 }

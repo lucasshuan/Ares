@@ -4,7 +4,7 @@ import { useTransition, useState } from "react";
 import { Plus } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ActionButton } from "@/components/ui/action-button";
-import { addRanking } from "@/server/game-actions";
+import { addRanking } from "@/server/actions/game";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 

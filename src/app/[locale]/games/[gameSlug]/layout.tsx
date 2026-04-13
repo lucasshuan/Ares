@@ -1,10 +1,12 @@
-import { getGamePageData } from "@/server/db/queries/public";
+import { getGamePageData } from "@/server/db/queries/rankings";
 import { notFound } from "next/navigation";
+import { getServerAuthSession } from "@/server/auth";
+import { canManageGames } from "@/lib/permissions";
 
 interface GameLayoutProps {
   children: React.ReactNode;
   params: Promise<{
-    slug: string;
+    gameSlug: string;
     locale: string;
   }>;
 }
@@ -13,8 +15,13 @@ export default async function GameLayout({
   children,
   params,
 }: GameLayoutProps) {
-  const { slug: gameSlug } = await params;
-  const data = await getGamePageData(gameSlug);
+  const { gameSlug } = await params;
+  const session = await getServerAuthSession();
+  const data = await getGamePageData(
+    gameSlug,
+    session?.user?.id,
+    canManageGames(session),
+  );
 
   if (!data || !data.game) {
     notFound();

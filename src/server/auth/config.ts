@@ -25,7 +25,7 @@ export const hasDiscordAuth =
 
 const providers: NextAuthOptions["providers"] = [];
 
-import { generateUniqueUsername } from "@/server/user-utils";
+import { generateUniqueUsername } from "@/server/utils/user";
 
 if (hasDiscordAuth) {
   const clientId = env.AUTH_DISCORD_ID!;

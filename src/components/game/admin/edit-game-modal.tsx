@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { Save } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ActionButton } from "@/components/ui/action-button";
-import { updateGame } from "@/server/game-actions";
+import { updateGame } from "@/server/actions/game";
 import { toast } from "sonner";
 import { type Game } from "@/server/db/schema";
 import { useTranslations } from "next-intl";

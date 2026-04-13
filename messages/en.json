@@ -35,9 +35,35 @@
     "searchPlaceholder": "Search for a game...",
     "sortPopular": "Most Popular",
     "sortAlphabetical": "Alphabetical (A-Z)",
+    "pendingBadge": "Pending",
     "noGamesFound": "No games found for this search",
     "noGamesFoundDescription": "Try searching for another game title or check for typos.",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "addGame": {
+      "trigger": "Suggest Game",
+      "title": "Suggest Game",
+      "description": "Fill in the initial details to register a new game.",
+      "descriptionLoggedOut": "Sign in to submit a new game idea.",
+      "reviewAlertTitle": "Your game will go through publication",
+      "reviewAlertDescription": "Because you do not have Manage Games permission, this game will be saved as pending and must be approved before becoming public to everyone.",
+      "loginHint": "We need your account so the game can keep track of who suggested it.",
+      "loginAction": "Sign in to add",
+      "nameLabel": "Game Name",
+      "namePlaceholder": "Enter game name...",
+      "slugLabel": "Game Link",
+      "slugPlaceholder": "game-identifier",
+      "slugDescription": "Customizes this game's URL (e.g. /games/superfighters-deluxe).",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe the game idea...",
+      "backgroundImageLabel": "Background Image URL",
+      "thumbnailImageLabel": "Thumbnail Image URL",
+      "steamUrlLabel": "Steam URL",
+      "submit": "Create Game",
+      "submitting": "Creating...",
+      "successApproved": "Game created successfully!",
+      "successPending": "Game idea submitted! It is now pending approval.",
+      "error": "Error adding game."
+    }
   },
   "ProfilePage": {
     "headerTitle": "User Profile",
@@ -101,7 +127,9 @@
     "register": "Register",
     "alreadyRegistered": "Already registered",
     "registerConfirmTitle": "Confirm Registration",
-    "registerConfirmDescription": "You will start with {elo} Elo points. Do you want to continue?"
+    "registerConfirmDescription": "You will start with {elo} Elo points. Do you want to continue?",
+    "ideaBy": "Idea by",
+    "pendingNotice": "Game is pending and needs approval"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
@@ -129,6 +157,16 @@
       "saving": "Saving...",
       "success": "Game updated successfully!",
       "error": "Error updating game."
+    },
+    "approveGame": {
+      "trigger": "Approve game",
+      "approving": "Approving...",
+      "success": "Game approved successfully!",
+      "error": "Error approving game.",
+      "confirmTitle": "Confirm Approval",
+      "confirmDescription": "Are you sure you want to approve '{gameName}'? It will be visible to all users immediately.",
+      "confirmAction": "Yes, Approve",
+      "cancelAction": "Cancel"
     },
     "addRanking": {
       "trigger": "Add ranking",

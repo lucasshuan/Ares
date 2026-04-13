@@ -34,8 +34,35 @@
     "searchPlaceholder": "Pesquisar por um jogo...",
     "sortPopular": "Mais Populares",
     "sortAlphabetical": "Alfabética (A-Z)",
+    "pendingBadge": "Pendente",
     "noGamesFound": "Nenhum jogo encontrado para esta pesquisa",
-    "noGamesFoundDescription": "Tente pesquisar por outro título de jogo ou verifique se há erros ortográficos."
+    "noGamesFoundDescription": "Tente pesquisar por outro título de jogo ou verifique se há erros ortográficos.",
+    "clearSearch": "Limpar pesquisa",
+    "addGame": {
+      "trigger": "Sugerir Jogo",
+      "title": "Sugerir Jogo",
+      "description": "Preencha os dados iniciais para cadastrar um novo jogo.",
+      "descriptionLoggedOut": "Entre para enviar uma nova ideia de jogo.",
+      "reviewAlertTitle": "Seu jogo vai passar por publicação",
+      "reviewAlertDescription": "Jogos podem ser sugeridos por qualquer um, mas precisam ser aprovados antes de ficar disponíveis.",
+      "loginHint": "Precisamos da sua conta para registrar quem foi o autor da ideia.",
+      "loginAction": "Entrar para adicionar",
+      "nameLabel": "Nome do Jogo",
+      "namePlaceholder": "Digite o nome do jogo...",
+      "slugLabel": "Link do Jogo",
+      "slugPlaceholder": "identificador-do-jogo",
+      "slugDescription": "Personaliza a URL deste jogo (ex: /games/superfighters-deluxe).",
+      "descriptionLabel": "Descricao",
+      "descriptionPlaceholder": "Descreva a proposta do jogo...",
+      "backgroundImageLabel": "URL da Imagem de Fundo",
+      "thumbnailImageLabel": "URL da Thumbnail",
+      "steamUrlLabel": "URL da Steam",
+      "submit": "Confirmar Jogo",
+      "submitting": "Criando...",
+      "successApproved": "Jogo criado com sucesso!",
+      "successPending": "Ideia enviada! O jogo ficou pendente de aprovacao.",
+      "error": "Erro ao adicionar jogo."
+    }
   },
   "ProfilePage": {
     "headerTitle": "Perfil do Usuário",
@@ -99,7 +126,9 @@
     "register": "Registrar-se",
     "alreadyRegistered": "Já registrado",
     "registerConfirmTitle": "Confirmar Inscrição",
-    "registerConfirmDescription": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?"
+    "registerConfirmDescription": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?",
+    "ideaBy": "Ideia de",
+    "pendingNotice": "O jogo está pendente e precisa de aprovação"
   },
   "SiteFooter": {
     "copyright": "Ares © 2026"
@@ -127,6 +156,16 @@
       "saving": "Salvando...",
       "success": "Jogo atualizado com sucesso!",
       "error": "Erro ao atualizar o jogo."
+    },
+    "approveGame": {
+      "trigger": "Aprovar jogo",
+      "approving": "Aprovando...",
+      "success": "Jogo aprovado com sucesso!",
+      "error": "Erro ao aprovar o jogo.",
+      "confirmTitle": "Confirmar Aprovação",
+      "confirmDescription": "Tem certeza que deseja aprovar '{gameName}'? Ele ficará visível para todos os usuários imediatamente.",
+      "confirmAction": "Sim, Aprovar",
+      "cancelAction": "Cancelar"
     },
     "addRanking": {
       "trigger": "Adicionar classificação",

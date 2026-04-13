@@ -33,6 +33,9 @@ export const videoPlatformEnum = pgEnum("video_platform", [
   "other",
 ]);
 
+export const gameStatusEnum = pgEnum("game_status", ["approved", "pending"]);
+export type GameStatus = (typeof gameStatusEnum.enumValues)[number];
+
 export const games = pgTable(
   "games",
   {
@@ -43,10 +46,16 @@ export const games = pgTable(
     backgroundImageUrl: text("background_image_url"),
     thumbnailImageUrl: text("thumbnail_image_url"),
     steamUrl: text("steam_url"),
+    status: gameStatusEnum("status").default("approved").notNull(),
+    authorId: text("author_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     ...timestamps,
   },
   (table) => ({
     gamesNameIdx: uniqueIndex("games_name_idx").on(table.name),
+    gamesStatusIdx: index("games_status_idx").on(table.status),
+    gamesAuthorIdIdx: index("games_author_id_idx").on(table.authorId),
   }),
 );
 
@@ -251,7 +260,11 @@ export const userPermissions = pgTable(
   }),
 );
 
-export const gamesRelations = relations(games, ({ many }) => ({
+export const gamesRelations = relations(games, ({ many, one }) => ({
+  author: one(users, {
+    fields: [games.authorId],
+    references: [users.id],
+  }),
   players: many(players),
   rankings: many(rankings),
 }));

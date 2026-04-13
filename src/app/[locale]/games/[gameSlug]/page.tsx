@@ -2,17 +2,26 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { getGamePageData } from "@/server/db/queries/public";
+import { getGamePageData } from "@/server/db/queries/rankings";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getTranslations } from "next-intl/server";
 import { getServerAuthSession } from "@/server/auth";
-import { hasPermission } from "@/lib/permissions";
+import {
+  canEditGame,
+  canManageGames,
+  canManagePlayers,
+  canManageRankings,
+} from "@/lib/permissions";
 import { GameAdminActions } from "@/components/game/admin/game-admin-actions";
 import { RankingCard } from "@/components/game/ranking-card";
+import { AlertCircle, ChevronLeft } from "lucide-react";
+import { UserChip } from "@/components/ui/user-chip";
+import { Link } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 type GamePageProps = {
   params: Promise<{
-    slug: string;
+    gameSlug: string;
   }>;
 };
 
@@ -21,8 +30,13 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: GamePageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const data = await getGamePageData(slug);
+  const { gameSlug } = await params;
+  const session = await getServerAuthSession();
+  const data = await getGamePageData(
+    gameSlug,
+    session?.user?.id,
+    canManageGames(session),
+  );
 
   const t = await getTranslations("GamePage");
   if (!data || data.isDatabaseUnavailable) {
@@ -42,26 +56,26 @@ export async function generateMetadata({
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const { game } = await params;
+  const { gameSlug } = await params;
 
   return (
     <main>
       <Suspense fallback={<GamePageSkeleton />}>
-        <GamePageContent slug={slug} />
+        <GamePageContent gameSlug={gameSlug} />
       </Suspense>
     </main>
   );
 }
 
-async function GamePageContent({ slug: gameSlug }: { slug: string }) {
-  const data = await getGamePageData(gameSlug);
-  const t = await getTranslations("GamePage");
+async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   const session = await getServerAuthSession();
-
-  const isEditor =
-    hasPermission(session, "manage_games") ||
-    hasPermission(session, "manage_players") ||
-    hasPermission(session, "manage_rankings");
+  const viewerCanManageGames = canManageGames(session);
+  const data = await getGamePageData(
+    gameSlug,
+    session?.user?.id,
+    viewerCanManageGames,
+  );
+  const t = await getTranslations("GamePage");
 
   if (!data) {
     notFound();
@@ -80,7 +94,12 @@ async function GamePageContent({ slug: gameSlug }: { slug: string }) {
     );
   }
 
-  const { game, rankings } = data;
+  const { game, author, rankings } = data;
+  const canEditCurrentGame = canEditGame(session, game.authorId);
+  const viewerCanManagePlayers = canManagePlayers(session);
+  const viewerCanManageRankings = canManageRankings(session);
+  const canSeeAdminActions =
+    canEditCurrentGame || viewerCanManagePlayers || viewerCanManageRankings;
   const totalPlayersNumber = rankings.reduce(
     (acc, ranking) => acc + ranking.entries.length,
     0,
@@ -91,6 +110,14 @@ async function GamePageContent({ slug: gameSlug }: { slug: string }) {
       {/* Sidebar */}
       <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
         <div className="sticky top-28 space-y-6">
+          <Link
+            href="/games"
+            className="group flex items-center gap-2 text-sm font-medium text-white/40 transition-colors hover:text-white"
+          >
+            <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+            {t("backToGames")}
+          </Link>
+
           <div className="glass-panel overflow-hidden rounded-4xl">
             {game.thumbnailImageUrl ? (
               <div
@@ -103,6 +130,14 @@ async function GamePageContent({ slug: gameSlug }: { slug: string }) {
 
             <div className="space-y-8 p-6">
               <div>
+                {game.status === "pending" && (
+                  <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
+                    <AlertCircle className="size-5 shrink-0 animate-pulse" />
+                    <p className="text-xs font-semibold tracking-wider uppercase">
+                      {t("pendingNotice")}
+                    </p>
+                  </div>
+                )}
                 <h1 className="text-foreground text-3xl font-bold tracking-tight">
                   {game.name}
                 </h1>
@@ -110,6 +145,8 @@ async function GamePageContent({ slug: gameSlug }: { slug: string }) {
                   {game.description ?? t("sidebarDescription")}
                 </p>
               </div>
+
+              {game.status === "pending" && <></>}
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
@@ -150,7 +187,26 @@ async function GamePageContent({ slug: gameSlug }: { slug: string }) {
             </div>
           </div>
 
-          {isEditor && <GameAdminActions game={game} />}
+          {author && (
+            <div className="flex flex-row-reverse items-center justify-center gap-3 py-2 px-1 opacity-80 transition-opacity hover:opacity-100">
+              <div className="flex">
+                <UserChip user={author} />
+              </div>
+              <span className="font-signature text-secondary text-lg italic whitespace-nowrap">
+                {t("ideaBy")}
+              </span>
+            </div>
+          )}
+
+          {canSeeAdminActions && (
+            <GameAdminActions
+              game={game}
+              canEditGame={canEditCurrentGame}
+              canApproveGame={viewerCanManageGames}
+              canManagePlayers={viewerCanManagePlayers}
+              canManageRankings={viewerCanManageRankings}
+            />
+          )}
         </div>
       </aside>
 
@@ -191,7 +247,12 @@ function GamePageSkeleton() {
     <>
       <div className="relative z-10 mx-auto mt-4 flex w-full max-w-7xl flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
-          <div className="glass-panel sticky top-28 overflow-hidden rounded-4xl">
+          <div className="sticky top-28 space-y-6">
+            <div className="flex items-center gap-2">
+              <div className="size-4 animate-pulse rounded bg-white/10" />
+              <div className="h-4 w-24 animate-pulse rounded bg-white/10" />
+            </div>
+            <div className="glass-panel overflow-hidden rounded-4xl">
             <div className="aspect-368/178 w-full animate-pulse bg-white/10" />
             <div className="space-y-8 p-6">
               <div>
@@ -208,7 +269,12 @@ function GamePageSkeleton() {
               <div className="h-[50px] w-full animate-pulse rounded-xl bg-white/10" />
             </div>
           </div>
-        </aside>
+
+          <div className="flex items-center justify-center gap-3 py-2">
+            <div className="h-8 w-32 animate-pulse rounded-full bg-white/5" />
+          </div>
+        </div>
+      </aside>
 
         <div className="min-w-0 flex-1 space-y-6">
           <section className="space-y-6">

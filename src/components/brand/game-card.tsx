@@ -1,15 +1,20 @@
 import type { Route } from "next";
 import { Link } from "@/i18n/routing";
-import { ChevronRight } from "lucide-react";
-import type { PublicGame } from "@/server/db/queries/public";
+import { AlertCircle, ChevronRight } from "lucide-react";
+import type { PublicGame } from "@/server/db/queries/types";
 import { cn } from "@/lib/utils";
 
 interface GameCardProps {
   game: PublicGame;
   fallbackDescription?: string;
+  pendingLabel?: string;
 }
 
-export function GameCard({ game, fallbackDescription }: GameCardProps) {
+export function GameCard({
+  game,
+  fallbackDescription,
+  pendingLabel,
+}: GameCardProps) {
   return (
     <Link
       href={`/games/${game.slug}` as Route}
@@ -31,7 +36,15 @@ export function GameCard({ game, fallbackDescription }: GameCardProps) {
 
       <div className="flex items-center justify-between gap-4 p-5">
         <div className="min-w-0">
-          <h3 className="truncate text-lg font-semibold">{game.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-lg font-semibold">{game.name}</h3>
+            {game.status === "pending" && pendingLabel && (
+              <span className="animate-pending-pulse inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/12 px-2.5 py-1 text-[10px] font-semibold tracking-[0.18em] text-amber-200 uppercase">
+                <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
+                {pendingLabel}
+              </span>
+            )}
+          </div>
           <p className="text-muted mt-1.5 line-clamp-2 text-xs leading-4">
             {game.description ?? fallbackDescription}
           </p>
