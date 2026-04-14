@@ -1,0 +1,16 @@
+{
+  "name": "@ares/core",
+  "version": "0.1.0",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit"
+  },
+  "main": "./index.ts",
+  "dependencies": {
+    "@theinternetfolks/snowflake": "^1.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

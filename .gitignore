@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -11,18 +11,24 @@
 !.yarn/versions
 
 # testing
-/coverage
+coverage
 
 # next.js
-/.next/
-/out/
+.next/
+out/
+
+# turbo
+.turbo/
 
 # production
-/build
+build/
+dist/
 
 # misc
 .DS_Store
 *.pem
+.prettier-ignore
+lint.txt
 
 # debug
 npm-debug.log*
