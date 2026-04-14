@@ -18,6 +18,7 @@ import {
   users,
   verificationTokens,
   type User,
+  type PermissionKey,
 } from "@/server/db/schema";
 
 export const hasDiscordAuth =
@@ -91,8 +92,13 @@ export const authOptions = {
         session.user.username = dbUser.username;
         session.user.name = dbUser.name;
         session.user.bio = dbUser.bio ?? null;
+        session.user.profileColor = dbUser.profileColor ?? null;
         session.user.isAdmin = dbUser.isAdmin;
-        session.user.permissions = permissionRows;
+        session.user.permissions = permissionRows as Array<{
+          id: string;
+          key: PermissionKey;
+          name: string;
+        }>;
       }
 
       return session;

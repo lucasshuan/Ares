@@ -47,7 +47,7 @@ export async function SiteNavbar() {
               label={t("login")}
               callbackUrl="/"
               disabled={!hasDiscordAuth}
-              className="min-w-24"
+              className="w-auto min-w-24"
             />
           )}
         </div>

@@ -8,7 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AddGameModal } from "@/components/modals/game/add-game-modal";
 
-export function AddGameTrigger() {
+export function AddGameTrigger({ isAdmin = false }: { isAdmin?: boolean }) {
   const t = useTranslations("Modals.AddGame");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +23,7 @@ export function AddGameTrigger() {
         )}
       >
         <Plus className="mr-2 size-4 transition-transform duration-500 group-hover:rotate-90" />
-        {t("trigger")}
+        {t(isAdmin ? "triggerAdmin" : "trigger")}
       </button>
 
       <AddGameModal

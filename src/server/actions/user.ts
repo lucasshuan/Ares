@@ -14,6 +14,9 @@ export async function updateProfile(formData: FormData) {
   const name = formData.get("name") as string;
   const username = formData.get("username") as string;
 
+  const profileColor = formData.get("profileColor") as string;
+  const country = formData.get("country") as string;
+
   const errors: { username?: string; name?: string } = {};
 
   if (username) {
@@ -44,6 +47,8 @@ export async function updateProfile(formData: FormData) {
       bio,
       name,
       username,
+      profileColor,
+      country,
     })
     .where(eq(users.id, session.user.id));
 

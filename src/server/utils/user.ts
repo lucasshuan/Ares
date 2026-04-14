@@ -12,7 +12,7 @@ export async function generateUniqueUsername(base: string): Promise<string> {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") // Remove accents
-    .replace(/[^a-z0-profile\d]/g, "") // Remove non-alphanumeric
+    .replace(/[^a-z0-9]/g, "") // Remove non-alphanumeric
     .substring(0, 20); // Limit length
 
   if (!username) username = "user";

@@ -41,7 +41,7 @@ export function SignInButton({
         intent={intent}
         disabled={disabled || isPending}
         onClick={handleOpenModal}
-        className={cn("w-full sm:w-auto", className)}
+        className={cn("w-full", className)}
       >
         <LogIn className="mr-2 size-4" />
         {label}

@@ -175,14 +175,31 @@ export async function addRanking(data: {
   description: string | null;
   initialElo: number;
   ratingSystem: string;
+  allowDraw: boolean;
+  kFactor: number;
+  scoreRelevance: number;
+  inactivityDecay: number;
+  inactivityThresholdHours: number;
+  inactivityDecayFloor: number;
+  pointsPerWin: number;
+  pointsPerDraw: number;
+  pointsPerLoss: number;
+  startDate: Date | null;
+  endDate: Date | null;
 }) {
   const session = await getServerAuthSession();
-  if (!canManageRankings(session))
-    throw new Error("Unauthorized");
+  if (!session?.user) throw new Error("Unauthorized");
 
   const game = await assertGameApproved(data.gameId);
 
-  await db.insert(rankings).values(data);
+  // If user can manage rankings, it's auto-approved. Otherwise it's pending.
+  const isApproved = canManageRankings(session);
+
+  await db.insert(rankings).values({
+    ...data,
+    authorId: session.user.id,
+    isApproved,
+  });
 
   revalidateGamePaths(game);
   return { success: true };
@@ -192,7 +209,6 @@ export async function addPlayerToGame(
   gameId: string,
   data: {
     username: string;
-    country: string | null;
     userId: string | null;
   },
 ) {
@@ -223,7 +239,6 @@ export async function addPlayerToGame(
         .values({
           gameId,
           userId: data.userId,
-          country: data.country,
         })
         .returning({ id: players.id });
       playerId = newPlayer.id;
@@ -259,7 +274,6 @@ export async function createAndAddPlayerToRanking(
 ) {
   const result = await addPlayerToGame(gameId, {
     username,
-    country: null,
     userId: null,
   });
 
@@ -278,6 +292,15 @@ export async function updateRanking(
     description: string | null;
     initialElo: number;
     ratingSystem: string;
+    allowDraw: boolean;
+    kFactor: number;
+    scoreRelevance: number;
+    inactivityDecay: number;
+    inactivityThresholdHours: number;
+    inactivityDecayFloor: number;
+    pointsPerWin: number;
+    pointsPerDraw: number;
+    pointsPerLoss: number;
   },
 ) {
   const session = await getServerAuthSession();
@@ -313,7 +336,11 @@ export async function searchPlayersByGame(gameId: string, query: string) {
       sql`${playerUsernames.playerId} IN (SELECT id FROM players WHERE game_id = ${gameId})`,
     ),
     with: {
-      player: true,
+      player: {
+        with: {
+          user: true,
+        },
+      },
     },
     limit: 10,
   });
@@ -321,7 +348,7 @@ export async function searchPlayersByGame(gameId: string, query: string) {
   return results.map((r) => ({
     id: r.player.id,
     username: r.username,
-    country: r.player.country,
+    country: r.player.user?.country ?? null,
   }));
 }
 

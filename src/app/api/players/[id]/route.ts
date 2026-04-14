@@ -17,6 +17,7 @@ export async function GET(
         accountName: users.name,
         accountUsername: users.username,
         accountImage: users.image,
+        accountCountry: users.country,
       })
       .from(players)
       .leftJoin(users, eq(users.id, players.userId))
@@ -27,7 +28,7 @@ export async function GET(
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
 
-    const { player, accountName, accountUsername, accountImage } = result[0];
+    const { player, accountName, accountUsername, accountImage, accountCountry } = result[0];
 
     const usernames = await db
       .select()
@@ -36,7 +37,7 @@ export async function GET(
 
     return NextResponse.json({
       displayName: accountName || usernames[0]?.username || "Unknown Player",
-      country: player.country,
+      country: accountCountry,
       usernames: usernames.map((u) => u.username),
       joinedAt: formatDate(player.createdAt, "en"), // Simplified, could use locale from request
       avatarUrl: accountImage,

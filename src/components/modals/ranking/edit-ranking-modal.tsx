@@ -1,13 +1,28 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { Plus } from "lucide-react";
+import { 
+  Trophy, 
+  FileText, 
+  Settings2, 
+  Swords, 
+  Zap, 
+  Clock, 
+  Hash,
+  ArrowUpRight,
+  ArrowDownRight,
+  Equal,
+  Activity,
+  TrendingUp
+} from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { ActionButton } from "@/components/ui/action-button";
 import { updateRanking } from "@/server/actions/game";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { Slider } from "@/components/ui/slider";
+import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { type Ranking } from "@/server/db/schema";
+import { cn } from "@/lib/utils";
 
 interface EditRankingModalProps {
   ranking: Ranking;
@@ -20,13 +35,28 @@ export function EditRankingModal({
   isOpen,
   onClose,
 }: EditRankingModalProps) {
-  const t = useTranslations("Modals.EditRanking");
+  const t = useTranslations("Modals.AddRanking"); // Using AddRanking for shared keys
+  const tEdit = useTranslations("Modals.EditRanking");
   const [isPending, startTransition] = useTransition();
+  
+  // States initialized from ranking prop
   const [name, setName] = useState(ranking.name);
   const [slug, setSlug] = useState(ranking.slug);
   const [description, setDescription] = useState(ranking.description || "");
+  
+  const [ratingSystem, setRatingSystem] = useState(ranking.ratingSystem || "elo");
   const [initialElo, setInitialElo] = useState(ranking.initialElo);
-  const [ratingSystem, setRatingSystem] = useState(ranking.ratingSystem);
+  const [allowDraw, setAllowDraw] = useState(ranking.allowDraw);
+  
+  const [kFactor, setKFactor] = useState(ranking.kFactor);
+  const [scoreRelevance, setScoreRelevance] = useState(ranking.scoreRelevance);
+  const [inactivityDecay, setInactivityDecay] = useState(ranking.inactivityDecay);
+  const [inactivityThresholdHours, setInactivityThresholdHours] = useState(ranking.inactivityThresholdHours);
+  const [inactivityDecayFloor, setInactivityDecayFloor] = useState(ranking.inactivityDecayFloor);
+  
+  const [pointsPerWin, setPointsPerWin] = useState(ranking.pointsPerWin);
+  const [pointsPerDraw, setPointsPerDraw] = useState(ranking.pointsPerDraw);
+  const [pointsPerLoss, setPointsPerLoss] = useState(ranking.pointsPerLoss);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,14 +67,23 @@ export function EditRankingModal({
         await updateRanking(ranking.id, {
           name,
           slug,
-          description: description || null,
+          description,
           initialElo,
           ratingSystem,
+          allowDraw,
+          kFactor,
+          scoreRelevance,
+          inactivityDecay,
+          inactivityThresholdHours,
+          inactivityDecayFloor,
+          pointsPerWin,
+          pointsPerDraw,
+          pointsPerLoss,
         });
-        toast.success(t("success"));
+        toast.success(tEdit("success"));
         onClose();
       } catch {
-        toast.error(t("error"));
+        toast.error(tEdit("error"));
       }
     });
   };
@@ -53,104 +92,307 @@ export function EditRankingModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("title")}
-      description={t("description")}
-      confirmText={isPending ? t("submitting") : t("submit")}
-      cancelText={t("cancel") || "Cancelar"}
+      title={tEdit("title")}
+      description={tEdit("description")}
+      confirmText={isPending ? tEdit("submitting") : tEdit("submit")}
+      cancelText={tEdit("cancel") || "Cancelar"}
       formId="edit-ranking-form"
       isPending={isPending}
       disabled={!name || !slug}
+      className="max-w-3xl"
     >
-      <form id="edit-ranking-form" onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="rank_name"
-            className="ml-1 text-sm font-medium text-white/70"
-          >
-            {t("name.label")}
-          </label>
-          <input
-            id="rank_name"
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("name.placeholder")}
-            className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
-          />
-        </div>
+      <form id="edit-ranking-form" onSubmit={handleSubmit} className="space-y-10">
+        {/* Section 1: General Data */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 text-white/40">
+            <FileText className="size-4" />
+            <h3 className="text-xs font-bold tracking-widest uppercase">
+              {t("sections.general")}
+            </h3>
+          </div>
 
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="rank_slug"
-            className="ml-1 text-sm font-medium text-white/70"
-          >
-            {t("slug.label")}
-          </label>
-          <input
-            id="rank_slug"
-            type="text"
-            required
-            value={slug}
-            onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-            placeholder={t("slug.placeholder")}
-            className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
-          />
-          <p className="ml-1 text-[11px] text-white/40 italic">
-            {t("slug.description")}
-          </p>
-        </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <LabelTooltip label={t("name.label")} required />
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("name.placeholder")}
+                className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-none transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
+              />
+            </div>
 
-        <div className="col-span-full flex flex-col gap-2">
-          <label
-            htmlFor="rank_description"
-            className="ml-1 text-sm font-medium text-white/70"
-          >
-            {t("descriptionField.label")}
-          </label>
-          <textarea
-            id="rank_description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t("descriptionField.placeholder")}
-            className="focus:border-primary/50 focus:ring-primary/10 min-h-[100px] w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
-          />
-        </div>
+            <div className="flex flex-col gap-2">
+              <LabelTooltip label={t("slug.label")} tooltip={t("slug.tooltip")} required />
+              <input
+                type="text"
+                required
+                value={slug}
+                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
+                placeholder={t("slug.placeholder")}
+                className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-none transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
+              />
+            </div>
 
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="rank_initial_elo"
-            className="ml-1 text-sm font-medium text-white/70"
-          >
-            {t("initialElo.label")}
-          </label>
-          <input
-            id="rank_initial_elo"
-            type="number"
-            required
-            value={initialElo}
-            onChange={(e) => setInitialElo(Number(e.target.value))}
-            className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all focus:bg-white/[0.07] focus:ring-4"
-          />
-        </div>
+            <div className="col-span-full flex flex-col gap-2">
+              <LabelTooltip label={t("descriptionField.label")} />
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={t("descriptionField.placeholder")}
+                className="focus:border-primary/50 focus:ring-primary/10 min-h-[80px] w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-none transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
+              />
+            </div>
+          </div>
+        </section>
 
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="rank_system"
-            className="ml-1 text-sm font-medium text-white/70"
-          >
-            {t("ratingSystem.label")}
-          </label>
-          <select
-            id="rank_system"
-            value={ratingSystem}
-            onChange={(e) => setRatingSystem(e.target.value)}
-            className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all focus:bg-white/[0.07] focus:ring-4"
-          >
-            <option value="elo">{t("ratingSystem.elo")}</option>
-          </select>
-        </div>
+        {/* Section 2: Format Logic */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 text-white/40">
+            <Settings2 className="size-4" />
+            <h3 className="text-xs font-bold tracking-widest uppercase">
+              {t("sections.format")}
+            </h3>
+          </div>
 
+          <div className="grid gap-8 md:grid-cols-5">
+            {/* System Selector */}
+            <div className="md:col-span-2 space-y-6">
+              <div className="flex flex-col gap-3">
+                <LabelTooltip label={t("ratingSystem.label")} />
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRatingSystem("elo")}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-bold transition-all",
+                      ratingSystem === "elo"
+                        ? "border-primary/50 bg-primary/10 text-primary"
+                        : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10"
+                    )}
+                  >
+                    <Trophy className="size-3.5" />
+                    {t("ratingSystem.elo")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRatingSystem("points")}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-bold transition-all",
+                      ratingSystem === "points"
+                        ? "border-primary/50 bg-primary/10 text-primary"
+                        : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10"
+                    )}
+                  >
+                    <Hash className="size-3.5" />
+                    {t("ratingSystem.points")}
+                  </button>
+                </div>
+              </div>
+
+              {/* Allow Draw Toggle */}
+              <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] p-4">
+                <LabelTooltip 
+                  label={t("allowDraw.label")} 
+                  tooltip={t("allowDraw.tooltip")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setAllowDraw(!allowDraw)}
+                  className={cn(
+                    "relative h-6 w-11 rounded-full transition-colors outline-none ring-primary/20 focus:ring-4",
+                    allowDraw ? "bg-primary" : "bg-white/10"
+                  )}
+                >
+                  <div className={cn(
+                    "absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-all",
+                    allowDraw ? "translate-x-5" : "translate-x-0"
+                  )} />
+                </button>
+              </div>
+
+              {/* System Specific Inputs */}
+              <div className="space-y-6 pt-2">
+                {ratingSystem === "elo" ? (
+                  <div className="grid gap-6">
+                    <div className="flex flex-col gap-2">
+                      <LabelTooltip label={t("initialElo.label")} />
+                      <input
+                        type="number"
+                        value={initialElo}
+                        onChange={(e) => setInitialElo(Number(e.target.value))}
+                        className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-none transition-all focus:bg-white/[0.07] focus:ring-4"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <LabelTooltip label={t("kFactor.label")} tooltip={t("kFactor.tooltip")} />
+                      <input
+                        type="number"
+                        value={kFactor}
+                        onChange={(e) => setKFactor(Number(e.target.value))}
+                        className="focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-none transition-all focus:bg-white/[0.07] focus:ring-4"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <LabelTooltip label={t("scoreRelevance.label")} tooltip={t("scoreRelevance.tooltip")} />
+                      <Slider
+                        value={scoreRelevance}
+                        onChange={(e) => setScoreRelevance(Number(e.target.value))}
+                        min={0}
+                        max={1}
+                        step={0.1}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-wider">{t("pointsPerWin.label")}</label>
+                      <input
+                        type="number"
+                        value={pointsPerWin}
+                        onChange={(e) => setPointsPerWin(Number(e.target.value))}
+                        className="w-20 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center text-sm text-white"
+                      />
+                    </div>
+                    {allowDraw && (
+                      <div className="flex items-center justify-between gap-4">
+                        <label className="text-xs font-bold text-white/40 uppercase tracking-wider">{t("pointsPerDraw.label")}</label>
+                        <input
+                          type="number"
+                          value={pointsPerDraw}
+                          onChange={(e) => setPointsPerDraw(Number(e.target.value))}
+                          className="w-20 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center text-sm text-white"
+                        />
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between gap-4">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-wider">{t("pointsPerLoss.label")}</label>
+                      <input
+                        type="number"
+                        value={pointsPerLoss}
+                        onChange={(e) => setPointsPerLoss(Number(e.target.value))}
+                        className="w-20 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center text-sm text-white"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Inactivity & Explanation Box */}
+            <div className="md:col-span-3 space-y-6">
+              {/* Inactivity Settings (Elo only) */}
+              {ratingSystem === "elo" && (
+                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5 space-y-4">
+                  <div className="flex items-center gap-2 text-white/40">
+                    <Clock className="size-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{t("inactivityDecay.label")}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <LabelTooltip label="Dmg/Day" tooltip={t("inactivityDecay.tooltip")} className="!gap-1 opacity-60" />
+                      <input
+                        type="number"
+                        value={inactivityDecay}
+                        onChange={(e) => setInactivityDecay(Number(e.target.value))}
+                        className="w-full rounded-xl border border-white/10 bg-white/5 p-2 text-sm text-white text-center"
+                      />
+                    </div>
+                    {inactivityDecay > 0 && (
+                      <div className="space-y-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                        <LabelTooltip label="Delay (h)" tooltip={t("inactivityThreshold.tooltip")} className="!gap-1 opacity-60" />
+                        <input
+                          type="number"
+                          value={inactivityThresholdHours}
+                          onChange={(e) => setInactivityThresholdHours(Number(e.target.value))}
+                          className="w-full rounded-xl border border-white/10 bg-white/5 p-2 text-sm text-white text-center"
+                        />
+                      </div>
+                    )}
+                    <div className="col-span-full space-y-1.5 pt-2">
+                       <LabelTooltip label={t("inactivityFloor.label")} tooltip={t("inactivityFloor.tooltip")} className="!gap-1 opacity-60" />
+                       <input
+                        type="number"
+                        value={inactivityDecayFloor}
+                        onChange={(e) => setInactivityDecayFloor(Number(e.target.value))}
+                        className="w-full rounded-xl border border-white/10 bg-white/5 p-2 text-sm text-white transition-all focus:bg-white/10"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Explanation Box */}
+              <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-primary/[0.03] p-6 shadow-2xl shadow-primary/5">
+                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/5 blur-3xl" />
+                
+                <h4 className="mb-4 flex items-center gap-2 text-sm font-bold text-primary">
+                  <Zap className="size-4" />
+                  {t("explanation.title")}
+                </h4>
+                
+                <div className="space-y-5 text-xs leading-relaxed text-white/60">
+                  <p className="font-medium text-white/80 italic">
+                    {ratingSystem === "elo" ? t("explanation.elo.description") : t("explanation.points.description")}
+                  </p>
+                  
+                  <div className="grid gap-3 pt-2">
+                    {ratingSystem === "elo" ? (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <div className={cn("flex h-6 w-6 items-center justify-center rounded-lg bg-white/5", scoreRelevance > 0.5 ? "text-primary" : "text-white/40")}>
+                            <TrendingUp className="size-3" />
+                          </div>
+                          <span>{scoreRelevance > 0.5 ? t("explanation.elo.relevance_high") : t("explanation.elo.relevance_low")}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className={cn("flex h-6 w-6 items-center justify-center rounded-lg bg-white/5", allowDraw ? "text-primary" : "text-white/40")}>
+                            {allowDraw ? <Equal className="size-3" /> : <Swords className="size-3" />}
+                          </div>
+                          <span>{allowDraw ? t("explanation.elo.draws_enabled") : t("explanation.elo.draws_disabled")}</span>
+                        </div>
+                        {inactivityDecay > 0 && (
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/5 text-red-500/50">
+                              <Activity className="size-3" />
+                            </div>
+                            <span>
+                              {t("explanation.elo.decay", { 
+                                amount: inactivityDecay, 
+                                hours: inactivityThresholdHours,
+                                floor: inactivityDecayFloor
+                              })}
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <ArrowUpRight className="size-4 text-emerald-500" />
+                          <span className="text-white/80">{t("explanation.points.win", { amount: pointsPerWin })}</span>
+                        </div>
+                        {allowDraw && (
+                          <div className="flex items-center gap-3">
+                            <Equal className="size-4 text-amber-500" />
+                            <span className="text-white/80">{t("explanation.points.draw", { amount: pointsPerDraw })}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-3">
+                          <ArrowDownRight className="size-4 text-rose-500" />
+                          <span className="text-white/80">{t("explanation.points.loss", { amount: pointsPerLoss })}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </form>
     </Modal>
   );

@@ -22,8 +22,8 @@
     "explore": "Explore",
     "join": "Join",
     "games": {
-      "title": "Games",
-      "description": "Choose a game to view its rankings, performance history and ladders.",
+      "title": "Communities",
+      "description": "Join the community, follow the leaderboards, and leave your mark.",
       "cardFallbackDescription": "Open the game page to inspect current rankings.",
       "noGamesTitle": "No games available",
       "noGamesDescription": "Add games to the database or reconnect the current database to load the list here.",
@@ -31,7 +31,7 @@
     }
   },
   "GamesPage": {
-    "title": "Games",
+    "title": "Communities",
     "description": "Choose a game to view its rankings, performance history and ladders.",
     "cardFallbackDescription": "Open the game page to inspect current rankings.",
     "noGamesTitle": "No games available",
@@ -44,10 +44,12 @@
     "noGamesFound": "No games found for this search",
     "noGamesFoundDescription": "Try searching for another game title or check for typos.",
     "clearSearch": "Clear search",
-    "rankingsCount": "rankings",
-    "playersCount": "players",
-    "tourneysCount": "tourneys",
-    "postsCount": "posts"
+    "events": "Events",
+    "players": "Players",
+    "posts": "Posts",
+    "eventsCount": "{formatted} {count, plural, one {event} other {events}}",
+    "playersCount": "{formatted} {count, plural, one {player} other {players}}",
+    "postsCount": "{formatted} {count, plural, one {post} other {posts}}"
   },
   "ProfilePage": {
     "headerTitle": "User Profile",
@@ -56,10 +58,11 @@
     "saveChanges": "Save Changes",
     "viewGames": "View games",
     "manageAccount": "Manage Account",
+    "joined": "Joined",
     "myGames": "Played Games",
     "ranking": "Ranking",
-    "noGames": "You haven't played any games yet",
-    "noGamesOther": "This user hasn't played any games yet",
+    "noGames": "You haven't been part of any competition yet",
+    "noGamesOther": "This user hasn't been part of any competition yet",
     "noGamesDescription": "Join a game to appear in its rankings.",
     "noGamesDescriptionOther": "This user is not participating in any game rankings.",
     "playedGamesTab": "Played Games"
@@ -71,8 +74,8 @@
     "backToGames": "Back to games",
     "dbUnavailable": "Database unavailable in local development.",
     "dbUnavailableDescription": "Start your Postgres instance or update `.env` with a reachable connection string to view this game page.",
-    "rankingsTitle": "Rankings",
-    "rankingsDescription": "Ranking tables for {gameName}.",
+    "eventsTitle": "Events",
+    "eventsDescription": "Track and participate in competitive rankings and tournaments for {gameName}.",
     "ranking": "Ranking",
     "playersCount": "players",
     "elo": "Points",
@@ -97,6 +100,8 @@
     "loginToRegister": "Log in to join",
     "alreadyRegistered": "Already registered",
     "ideaBy": "Idea by",
+    "events": "Events",
+    "posts": "Posts",
     "pendingNotice": "Game is pending and needs approval",
     "noDescription": "No description."
   },
@@ -129,16 +134,25 @@
         "taken": "This display name is already taken."
       },
       "bio": {
-        "label": "Biography",
+        "label": "Bio",
         "placeholder": "Tell us a bit about yourself..."
       },
-      "submit": "Save Changes",
+      "color": {
+        "label": "Profile Color",
+        "description": "This color will be used as the accent color throughout your public profile."
+      },
+      "country": {
+        "label": "Country",
+        "placeholder": "Select your country"
+      },
+      "submit": "Save changes",
       "submitting": "Saving...",
       "cancel": "Cancel",
       "success": "Profile updated successfully!"
     },
     "AddGame": {
       "trigger": "Suggest Game",
+      "triggerAdmin": "Add game",
       "title": "Suggest Game",
       "description": "Fill in the initial details to register a new game.",
       "descriptionLoggedOut": "Sign in to submit a new game idea.",
@@ -223,53 +237,119 @@
       "error": "Error approving game."
     },
     "AddRanking": {
-      "trigger": "Add ranking",
+      "trigger": "Add event",
       "title": "Add Ranking",
-      "description": "Create a new ranking category for this game (e.g., Blitz, Rapid, Competitive).",
+      "description": "Fill in the details for the new event or competition.",
+      "sections": {
+        "general": "General Data",
+        "dates": "Dates",
+        "format": "Format Settings"
+      },
       "name": {
-        "label": "Ranking Name",
-        "placeholder": "e.g., Blitz, Rapid, Daily..."
+        "label": "Title",
+        "placeholder": "e.g., Pro League, Summer Tournament..."
       },
       "slug": {
-        "label": "Ranking Link",
+        "label": "Identifier",
         "placeholder": "ranking-identifier",
-        "description": "Personalizes the URL for this ranking (e.g., /rankings/blitz)."
+        "tooltip": "Personalizes the URL for this ranking (e.g., /rankings/pro-league)."
       },
       "descriptionField": {
         "label": "Description (Optional)",
         "placeholder": "Describe this ranking..."
       },
+      "ratingSystem": {
+        "label": "Classification System",
+        "elo": "Elo",
+        "points": "Points (Ladder)"
+      },
+      "allowDraw": {
+        "label": "Allow Draw",
+        "tooltip": "Specify if draws are possible in this game's business rules."
+      },
+      "kFactor": {
+        "label": "K-Factor",
+        "tooltip": "Determines how much the ranking changes after a match. Higher values make it more volatile."
+      },
+      "scoreRelevance": {
+        "label": "Score Relevance",
+        "tooltip": "0.0: Win margin doesn't matter. 1.0: Margin is extremely relevant for the Elo calculation."
+      },
+      "inactivityDecay": {
+        "label": "Inactivity Decay (daily)",
+        "tooltip": "Points lost per day of inactivity."
+      },
+      "inactivityThreshold": {
+        "label": "Hours until inactivity",
+        "tooltip": "Time without games before decay starts."
+      },
+      "inactivityFloor": {
+        "label": "Decay Floor",
+        "tooltip": "Minimum rating a player can reach via inactivity decay."
+      },
+      "pointsPerWin": {
+        "label": "Points per win"
+      },
+      "pointsPerDraw": {
+        "label": "Points per draw"
+      },
+      "pointsPerLoss": {
+        "label": "Points per loss"
+      },
+      "explanation": {
+        "title": "Format Logic",
+        "elo": {
+          "title": "Elo System",
+          "description": "Players gain points by winning and lose by losing. The amount depends on the opponent's skill.",
+          "relevance_low": "Victory margin is ignored.",
+          "relevance_high": "Victory margin is highly impactful.",
+          "draws_enabled": "Draws are permitted.",
+          "draws_disabled": "Matches must have a winner.",
+          "decay": "Inactive players lose {amount} points daily after {hours}h (Floor: {floor})."
+        },
+        "points": {
+          "title": "Points System",
+          "description": "A fixed amount of points is awarded for each match outcome.",
+          "win": "Win: +{amount} pts",
+          "draw": "Draw: +{amount} pts",
+          "loss": "Loss: +{amount} pts"
+        }
+      },
+      "dates": {
+        "start": {
+          "label": "Start Date",
+          "placeholder": "Select start date"
+        },
+        "end": {
+          "label": "End Date (Optional)",
+          "placeholder": "Select end date"
+        }
+      },
       "initialElo": {
         "label": "Initial Rating (Elo)"
       },
-      "ratingSystem": {
-        "label": "Rating System",
-        "elo": "Elo"
-      },
-      "submit": "Confirm Ranking",
+      "submit": "Create Event",
       "submitting": "Creating...",
       "cancel": "Cancel",
-      "success": "Ranking added successfully!",
+      "success": "Event suggested successfully!",
       "error": "Error adding ranking."
     },
     "AddPlayer": {
       "trigger": "Add player",
       "title": "Add Player",
       "description": "Create or link a player to this game.",
-      "linkUser": {
-        "label": "Link to User (Optional)",
-        "placeholder": "Search for name or @username...",
-        "searching": "Searching...",
-        "remove": "Remove"
-      },
       "username": {
         "label": "Username (In-game)",
         "placeholder": "Enter player's nick..."
       },
-      "country": {
-        "label": "Country",
-        "unknown": "Unknown"
+      "link": {
+        "label": "Link to User (Optional)",
+        "placeholder": "Search name or @username...",
+        "selected": "Linked to @{username}",
+        "selectedDesc": "Nationality and history will be synced with this profile.",
+        "remove": "Remove"
       },
+      "info": "If you pick and link an Ares user, we will use the nationality (flag) defined in their global profile.",
       "submit": "Confirm Player",
       "submitting": "Adding...",
       "cancel": "Cancel",

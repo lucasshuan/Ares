@@ -38,7 +38,7 @@ async function seedPermissions() {
   await db
     .insert(permissions)
     .values(
-      INITIAL_PERMISSION_DEFINITIONS.map((definition) => ({
+      INITIAL_PERMISSION_DEFINITIONS.map((definition: { key: string; name: string }) => ({
         key: definition.key,
         name: definition.name,
       })),

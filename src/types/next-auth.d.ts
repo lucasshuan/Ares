@@ -8,6 +8,7 @@ declare module "next-auth" {
       username: string;
       name: string;
       bio: string | null;
+      profileColor: string | null;
       isAdmin: boolean;
       permissions: Array<{
         id: string;

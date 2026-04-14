@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CheckCheck, AlertTriangle } from "lucide-react";
 
-import { Modal } from "@/components/ui/modal";
+
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { approveGame } from "@/server/actions/game";
 

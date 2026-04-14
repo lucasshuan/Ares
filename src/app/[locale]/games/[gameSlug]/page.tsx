@@ -17,9 +17,11 @@ import { RankingCard } from "@/components/cards/ranking-card";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import { UserChip } from "@/components/ui/user-chip";
 import { Link } from "@/i18n/routing";
+import { formatCompactNumber } from "@/lib/utils";
 
 // Client-side Admin Panel (migrated from GameAdminActions)
 import { GameAdminPanel } from "./admin-panel";
+import { AddEventButton } from "./add-event-button";
 import { type Game } from "@/server/db/schema";
 type GamePageProps = {
   params: Promise<{
@@ -78,7 +80,6 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
     viewerCanManageGames,
   );
   const t = await getTranslations("GamePage");
-  const tPlural = await getTranslations("GamesPage");
 
   if (!data) {
     notFound();
@@ -154,37 +155,29 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
               {game.status === "pending" && <></>}
 
               {game.status !== "pending" && (
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="rounded-2xl border border-white/5 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] tracking-wider uppercase opacity-60">
-                      {tPlural("rankingsCount")}
+                    <p className="text-muted font-mono text-[9px] opacity-60">
+                      {t("events")}
                     </p>
                     <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {game.rankingCount}
+                      {formatCompactNumber((game.rankingCount || 0) + (game.tourneyCount || 0))}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white/5 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] tracking-wider uppercase opacity-60">
-                      {tPlural("playersCount")}
+                    <p className="text-muted font-mono text-[9px] opacity-60">
+                      {t("sidebarPlayers")}
                     </p>
                     <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {game.playerCount}
+                      {formatCompactNumber(game.playerCount || 0)}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white/5 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] tracking-wider uppercase opacity-60">
-                      {tPlural("tourneysCount")}
+                    <p className="text-muted font-mono text-[9px] opacity-60">
+                      {t("posts")}
                     </p>
                     <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {game.tourneyCount}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-white/5 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] tracking-wider uppercase opacity-60">
-                      {tPlural("postsCount")}
-                    </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {game.postCount}
+                      {formatCompactNumber(game.postCount || 0)}
                     </p>
                   </div>
                 </div>
@@ -222,6 +215,9 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           )}
 
           {canSeeAdminActions && <GameAdminPanel game={game as Game} />}
+          <div className="mt-4">
+            <AddEventButton gameId={game.id} />
+          </div>
         </div>
       </aside>
 
@@ -229,8 +225,8 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
       <div className="min-w-0 flex-1 space-y-6">
         <section className="space-y-6">
           <SectionHeader
-            title={t("rankingsTitle")}
-            description={t("rankingsDescription", { gameName: game.name })}
+            title={t("eventsTitle")}
+            description={t("eventsDescription", { gameName: game.name })}
           />
 
           {rankings.length > 0 ? (
@@ -277,8 +273,8 @@ function GamePageSkeleton() {
                     <div className="h-4 w-5/6 animate-pulse rounded bg-white/6" />
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {[...Array(4)].map((_, i) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
                       className="h-14 animate-pulse rounded-2xl bg-white/5"

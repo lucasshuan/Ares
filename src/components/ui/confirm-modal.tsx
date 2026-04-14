@@ -44,7 +44,7 @@ export function ConfirmModal({
     danger: "danger",
     success: "primary",
     warning: "secondary",
-  }[variant] as any;
+  }[variant] as "primary" | "danger" | "secondary";
 
   return (
     <Modal

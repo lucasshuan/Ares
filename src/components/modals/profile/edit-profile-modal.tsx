@@ -1,19 +1,43 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { LoaderCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useEffect, useState, useTransition, useRef } from "react";
+import { 
+  Globe, 
+  ChevronDown, 
+  Search, 
+  X, 
+  Check 
+} from "lucide-react";
+import { createPortal } from "react-dom";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { updateProfile } from "@/server/actions/user";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { Modal } from "@/components/ui/modal";
+import { COUNTRIES } from "@/lib/countries";
+import { cn } from "@/lib/utils";
 
 export type UserData = {
   id: string;
   name: string;
   username: string;
   bio?: string | null;
+  profileColor?: string | null;
+  country?: string | null;
 };
+
+const PROFILE_COLORS = [
+  "#c00b3b", // Original Red
+  "#3b82f6", // Blue
+  "#8b5cf6", // Violet
+  "#10b981", // Emerald
+  "#f59e0b", // Amber
+  "#db2777", // Pink
+  "#06b6d4", // Cyan
+  "#84cc16", // Lime
+  "#d946ef", // Fuschia
+  "#64748b", // Slate
+];
 
 type EditProfileModalProps = {
   isOpen: boolean;
@@ -27,33 +51,77 @@ export function EditProfileModal({
   user,
 }: EditProfileModalProps) {
   const t = useTranslations("Modals.EditProfile");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  
+  const [selectedColor, setSelectedColor] = useState(
+    user.profileColor || PROFILE_COLORS[0],
+  );
+  
+  // Country State
+  const [country, setCountry] = useState<string | null>(user.country || null);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [countryCoords, setCountryCoords] = useState({ top: 0, left: 0, width: 0 });
+  const [countrySearch, setCountrySearch] = useState("");
+  
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const countryTriggerRef = useRef<HTMLButtonElement>(null);
+
   const [fieldErrors, setFieldErrors] = useState<{
     username?: string;
     name?: string;
   }>({});
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+  // Localized and sorted countries
+  const localizedCountries = COUNTRIES.map((c) => {
+    try {
+      const displayNames = new Intl.DisplayNames([locale], { type: "region" });
+      return {
+        code: c.code,
+        name: displayNames.of(c.code) || c.name,
+      };
+    } catch {
+      return c;
     }
+  }).sort((a, b) => a.name.localeCompare(b.name, locale));
 
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, onClose]);
+  const filteredCountries = localizedCountries.filter(
+    (c) =>
+      c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+      c.code.toLowerCase().includes(countrySearch.toLowerCase()),
+  );
+
+  const selectedCountryData = localizedCountries.find(
+    (c) => c.code === country,
+  );
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        !(event.target instanceof Element && event.target.closest('.country-portal-content'))
+      ) {
+        setIsCountryDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleCountryDropdown = () => {
+    if (!isCountryDropdownOpen && countryTriggerRef.current) {
+      const rect = countryTriggerRef.current.getBoundingClientRect();
+      setCountryCoords({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+    setIsCountryDropdownOpen(!isCountryDropdownOpen);
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -71,7 +139,6 @@ export function EditProfileModal({
 
         toast.success(t("success"));
 
-        // If the user changed their username and we are on a profile page, redirect to the new slug
         if (result.success && result.slug) {
           const isProfilePage = pathname.includes("/profile/");
           if (isProfilePage) {
@@ -154,6 +221,139 @@ export function EditProfileModal({
           )}
         </div>
 
+        {/* Country Selector */}
+        <div className="flex flex-col gap-2">
+          <label className="ml-1 text-sm font-medium text-white/70">
+            {t("country.label")}
+          </label>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              ref={countryTriggerRef}
+              type="button"
+              onClick={toggleCountryDropdown}
+              className="focus:border-primary/50 focus:ring-primary/10 flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all hover:bg-white/[0.07] focus:ring-4"
+            >
+              <div className="flex items-center gap-3">
+                {country ? (
+                  <>
+                    <div className="flex size-5 items-center justify-center overflow-hidden rounded-sm">
+                      <span
+                        className={cn(
+                          "fi",
+                          `fi-${country.toLowerCase()} fis`,
+                          "h-full w-full object-cover",
+                        )}
+                      />
+                    </div>
+                    <span className="font-medium text-white">
+                      {selectedCountryData?.name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Globe className="size-5 text-white/30" />
+                    <span className="text-white/30">
+                      {t("country.placeholder")}
+                    </span>
+                  </>
+                )}
+              </div>
+              <ChevronDown
+                className={cn(
+                  "size-4 text-white/30 transition-transform",
+                  isCountryDropdownOpen && "rotate-180",
+                )}
+              />
+            </button>
+            <input type="hidden" name="country" value={country || ""} />
+
+            {isCountryDropdownOpen && typeof document !== "undefined" && createPortal(
+              <div 
+                className="glass-panel country-portal-content custom-scrollbar fixed z-[9999] mt-2 flex max-h-[250px] flex-col overflow-hidden rounded-2xl shadow-2xl"
+                style={{
+                  top: countryCoords.top,
+                  left: countryCoords.left,
+                  width: countryCoords.width
+                }}
+              >
+                <div className="relative border-b border-white/10 p-2">
+                  <Search className="absolute top-5 left-5 size-4 text-white/30" />
+                  <input
+                    autoFocus
+                    type="text"
+                    value={countrySearch}
+                    onChange={(e) => setCountrySearch(e.target.value)}
+                    placeholder="Search country..."
+                    className="w-full rounded-xl border-none bg-white/5 py-3 pr-4 pl-10 text-sm text-white outline-hidden focus:bg-white/10"
+                  />
+                  {countrySearch && (
+                    <button
+                      type="button"
+                      onClick={() => setCountrySearch("")}
+                      className="absolute top-5 right-5 text-white/30 hover:text-white"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="custom-scrollbar overflow-y-auto px-1 py-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCountry(null);
+                      setIsCountryDropdownOpen(false);
+                      setCountrySearch("");
+                    }}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-white/10",
+                      country === null && "bg-white/5",
+                    )}
+                  >
+                    <Globe className="size-5 text-white/30" />
+                    <span className="text-sm text-white">
+                      {t("country.placeholder")}
+                    </span>
+                  </button>
+
+                  {filteredCountries.map((c) => (
+                    <button
+                      key={c.code}
+                      type="button"
+                      onClick={() => {
+                        setCountry(c.code);
+                        setIsCountryDropdownOpen(false);
+                        setCountrySearch("");
+                      }}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-white/10",
+                        country === c.code && "bg-white/5",
+                      )}
+                    >
+                      <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-sm">
+                        <span
+                          className={cn(
+                            "fi",
+                            `fi-${c.code.toLowerCase()} fis`,
+                            "h-full w-full object-cover",
+                          )}
+                        />
+                      </div>
+                      <span className="truncate text-sm text-white">
+                        {c.name}
+                      </span>
+                      {country === c.code && (
+                        <Check className="text-primary ml-auto size-4" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>,
+              document.body
+            )}
+          </div>
+        </div>
+
         <div className="col-span-full flex flex-col gap-2">
           <label
             htmlFor="bio"
@@ -170,7 +370,34 @@ export function EditProfileModal({
             className="focus:border-primary/50 focus:ring-primary/10 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white outline-hidden transition-all placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4"
           />
         </div>
-
+        <div className="col-span-full flex flex-col gap-3">
+          <label className="ml-1 text-sm font-medium text-white/70">
+            {t("color.label")}
+          </label>
+          <div className="flex flex-wrap gap-3 p-1">
+            {PROFILE_COLORS.map((color) => (
+              <button
+                key={color}
+                type="button"
+                onClick={() => setSelectedColor(color)}
+                className={`relative flex size-8 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-110 active:scale-95 ${
+                  selectedColor === color
+                    ? "ring-primary ring-2 ring-offset-2 ring-offset-[#0b080f]"
+                    : ""
+                }`}
+                style={{ backgroundColor: color }}
+              >
+                {selectedColor === color && (
+                  <div className="size-2 rounded-full bg-white shadow-sm" />
+                )}
+              </button>
+            ))}
+          </div>
+          <input type="hidden" name="profileColor" value={selectedColor} />
+          <p className="ml-1 text-[10px] text-white/40">
+            {t("color.description")}
+          </p>
+        </div>
       </form>
     </Modal>
   );

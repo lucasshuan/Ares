@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { AlertTriangle, Plus } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { SignInButton } from "@/components/triggers/auth/sign-in-button";
-import { ActionButton } from "@/components/ui/action-button";
+
 import { Modal } from "@/components/ui/modal";
 import { createGame } from "@/server/actions/game";
 

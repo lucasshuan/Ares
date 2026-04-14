@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCheck, Settings2, Trophy, UserPlus } from "lucide-react";
+import { CheckCheck, Settings2, UserPlus } from "lucide-react";
 import { ActionButton } from "@/components/ui/action-button";
 import { EditGameModal } from "@/components/modals/game/edit-game-modal";
-import { AddRankingModal } from "@/components/modals/ranking/add-ranking-modal";
 import { AddPlayerModal } from "@/components/modals/game/add-player-modal";
 import { ApproveGameModal } from "@/components/modals/game/approve-game-modal";
 import { type Game } from "@/server/db/schema";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/components/providers";
+
+
 
 interface GameAdminPanelProps {
   game: Game;
@@ -34,7 +35,6 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
   const t = useTranslations("Admin");
   const tModals = useTranslations("Modals");
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
-  const [isAddRankingOpen, setIsAddRankingOpen] = useState(false);
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
   const [isApproveOpen, setIsApproveOpen] = useState(false);
 
@@ -67,13 +67,6 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         />
       )}
 
-      {game.status === "approved" && canManageRankings && (
-        <ActionButton
-          icon={Trophy}
-          label={tModals("AddRanking.trigger")}
-          onClick={() => setIsAddRankingOpen(true)}
-        />
-      )}
 
       {game.status === "approved" && canManagePlayers && (
         <ActionButton
@@ -88,14 +81,6 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
           game={game}
           isOpen={isEditGameOpen}
           onClose={() => setIsEditGameOpen(false)}
-        />
-      )}
-
-      {game.status === "approved" && canManageRankings && (
-        <AddRankingModal
-          gameId={game.id}
-          isOpen={isAddRankingOpen}
-          onClose={() => setIsAddRankingOpen(false)}
         />
       )}
 

@@ -22,8 +22,8 @@
     "explore": "Explorar",
     "join": "Entrar",
     "games": {
-      "title": "Jogos",
-      "description": "Escolha um jogo para visualizar seus rankings, histórico de desempenho e tabelas.",
+      "title": "Comunidades",
+      "description": "Faça parte da comunidade, acompanhe os rankings e deixe sua marca.",
       "cardFallbackDescription": "Abra a página do jogo para inspecionar os rankings atuais.",
       "noGamesTitle": "Nenhum jogo disponível",
       "noGamesDescription": "Adicione jogos ao banco de dados ou reconecte o banco atual para carregar a lista aqui.",
@@ -31,7 +31,7 @@
     }
   },
   "GamesPage": {
-    "title": "Jogos",
+    "title": "Comunidades",
     "description": "Escolha um jogo para visualizar seus rankings, histórico de desempenho e tabelas.",
     "cardFallbackDescription": "Abra a página do jogo para inspecionar os rankings atuais.",
     "noGamesTitle": "Nenhum jogo disponível",
@@ -43,10 +43,12 @@
     "noGamesFound": "Nenhum jogo encontrado para esta pesquisa",
     "noGamesFoundDescription": "Tente pesquisar por outro título de jogo ou verifique se há erros ortográficos.",
     "clearSearch": "Limpar pesquisa",
-    "rankingsCount": "rankings",
-    "playersCount": "jogadores",
-    "tourneysCount": "torneios",
-    "postsCount": "posts"
+    "events": "Eventos",
+    "players": "Jogadores",
+    "posts": "Postagens",
+    "eventsCount": "{formatted} {count, plural, one {evento} other {eventos}}",
+    "playersCount": "{formatted} {count, plural, one {jogador} other {jogadores}}",
+    "postsCount": "{formatted} {count, plural, one {postagem} other {postagens}}"
   },
   "ProfilePage": {
     "headerTitle": "Perfil do Usuário",
@@ -55,10 +57,11 @@
     "saveChanges": "Salvar Alterações",
     "viewGames": "Ver jogos",
     "manageAccount": "Gerenciar conta",
+    "joined": "Membro desde",
     "myGames": "Jogos Jogados",
     "ranking": "Ranking",
-    "noGames": "Você ainda não jogou nenhum jogo",
-    "noGamesOther": "Este usuário ainda não jogou nenhum jogo",
+    "noGames": "Você ainda não participou de nenhuma competição",
+    "noGamesOther": "Este usuário ainda não participou de nenhuma competição",
     "noGamesDescription": "Entre em um jogo para aparecer em seus rankings.",
     "noGamesDescriptionOther": "Este usuário não está participando do ranking de nenhum jogo.",
     "playedGamesTab": "Jogos Jogados"
@@ -70,13 +73,13 @@
     "backToGames": "Voltar aos jogos",
     "dbUnavailable": "Banco de dados indisponível no desenvolvimento local.",
     "dbUnavailableDescription": "Inicie sua instância do Postgres ou atualize `.env` com uma string de conexão alcançável para ver a página deste jogo.",
-    "rankingsTitle": "Classificações",
-    "rankingsDescription": "Tabelas de classificação de {gameName}.",
-    "ranking": "Classificação",
+    "eventsTitle": "Eventos",
+    "eventsDescription": "Acompanhe e participe dos rankings e torneios competitivos de {gameName}.",
+    "ranking": "Ranking",
     "playersCount": "jogadores",
     "elo": "Pontos",
     "noPlayers": "Este ranking ainda não tem jogadores.",
-    "noRankings": "Nenhuma classificação criada para este jogo.",
+    "noRankings": "Nenhum ranking criada para este jogo.",
     "noRankingsDescription": "Assim que as classificações forem inseridas, esta página listará os jogadores na ordem de Elo.",
     "sidebarDescription": "Acompanhe classificações e desempenho de jogadores para este jogo.",
     "sidebarPlayers": "Jogadores",
@@ -96,6 +99,8 @@
     "loginToRegister": "Faça login para participar",
     "alreadyRegistered": "Já registrado",
     "ideaBy": "Ideia de",
+    "events": "Eventos",
+    "posts": "Postagens",
     "pendingNotice": "O jogo está pendente e precisa de aprovação",
     "noDescription": "Sem descrição."
   },
@@ -131,13 +136,22 @@
         "label": "Biografia",
         "placeholder": "Conte-nos um pouco sobre você..."
       },
-      "submit": "Salvar Alterações",
+      "color": {
+        "label": "Cor do Perfil",
+        "description": "Esta cor será usada como destaque em todo o seu perfil público."
+      },
+      "country": {
+        "label": "País",
+        "placeholder": "Selecione seu país"
+      },
+      "submit": "Salvar alterações",
       "submitting": "Salvando...",
       "cancel": "Cancelar",
       "success": "Perfil atualizado com sucesso!"
     },
     "AddGame": {
       "trigger": "Sugerir Jogo",
+      "triggerAdmin": "Adicionar jogo",
       "title": "Sugerir Jogo",
       "description": "Preencha os dados iniciais para cadastrar um novo jogo.",
       "descriptionLoggedOut": "Entre para enviar uma nova ideia de jogo.",
@@ -222,53 +236,119 @@
       "error": "Erro ao aprovar o jogo."
     },
     "AddRanking": {
-      "trigger": "Adicionar classificação",
-      "title": "Adicionar Classificação",
-      "description": "Crie uma nova categoria de ranking para este jogo (ex: Blitz, Rapid, Competitivo).",
+      "trigger": "Adicionar evento",
+      "title": "Adicionar Ranking",
+      "description": "Preencha os dados de uma nova competição.",
+      "sections": {
+        "general": "Dados Gerais",
+        "dates": "Datas",
+        "format": "Configurações do Formato"
+      },
       "name": {
-        "label": "Nome do Ranking",
-        "placeholder": "Ex: Blitz, Rapid, Diário..."
+        "label": "Título",
+        "placeholder": "Ex: Pro League, Torneio de Verão..."
       },
       "slug": {
-        "label": "Link do Ranking",
+        "label": "Identificador",
         "placeholder": "identificador-do-ranking",
-        "description": "Personaliza a URL deste ranking (ex: /rankings/blitz)."
+        "tooltip": "Personaliza a URL deste ranking (ex: /rankings/pro-league)."
       },
       "descriptionField": {
         "label": "Descrição (Opcional)",
         "placeholder": "Descreva este ranking..."
       },
+      "ratingSystem": {
+        "label": "Sistema de Classificação",
+        "elo": "Elo",
+        "points": "Pontos Corridos"
+      },
+      "allowDraw": {
+        "label": "Permitir Empate",
+        "tooltip": "Especifica se empates são possíveis conforme a regra de negócio do jogo."
+      },
+      "kFactor": {
+        "label": "Fator K",
+        "tooltip": "O Fator K determina o quanto o ranking muda após uma partida. Valores altos tornam o ranking mais volátil."
+      },
+      "scoreRelevance": {
+        "label": "Relevância da Pontuação",
+        "tooltip": "0.0: Margem de vitória não importa. 1.0: Margem é extremamente relevante para o cálculo."
+      },
+      "inactivityDecay": {
+        "label": "Decaimento por inatividade (diário)",
+        "tooltip": "Pontos perdidos por cada dia de inatividade."
+      },
+      "inactivityThreshold": {
+        "label": "Horas até inatividade",
+        "tooltip": "Tempo sem jogos antes do decaimento começar."
+      },
+      "inactivityFloor": {
+        "label": "Piso de Decaimento",
+        "tooltip": "Pontuação mínima que um jogador pode atingir via decaimento."
+      },
+      "pointsPerWin": {
+        "label": "Pontos por vitória"
+      },
+      "pointsPerDraw": {
+        "label": "Pontos por empate"
+      },
+      "pointsPerLoss": {
+        "label": "Pontos por derrota"
+      },
+      "explanation": {
+        "title": "Lógica do Formato",
+        "elo": {
+          "title": "Sistema Elo",
+          "description": "Jogadores ganham pontos ao vencer e perdem ao perder. A quantidade depende da habilidade do oponente.",
+          "relevance_low": "Margem de vitória é ignorada.",
+          "relevance_high": "Margem de vitória é altamente impactante.",
+          "draws_enabled": "Empates são permitidos.",
+          "draws_disabled": "Partidas devem ter um vencedor.",
+          "decay": "Inativos perdem {amount} pts por dia após {hours}h (Piso: {floor})."
+        },
+        "points": {
+          "title": "Pontos Corridos",
+          "description": "Uma quantia fixa de pontos é atribuída para cada resultado da partida.",
+          "win": "Vitória: +{amount} pts",
+          "draw": "Empate: +{amount} pts",
+          "loss": "Derrota: +{amount} pts"
+        }
+      },
+      "dates": {
+        "start": {
+          "label": "Data de Início",
+          "placeholder": "Selecione a data de início"
+        },
+        "end": {
+          "label": "Data de Término (Opcional)",
+          "placeholder": "Selecione a data de término"
+        }
+      },
       "initialElo": {
         "label": "Pontuação Inicial (Elo)"
       },
-      "ratingSystem": {
-        "label": "Sistema de Classificação",
-        "elo": "Elo"
-      },
-      "submit": "Confirmar Ranking",
+      "submit": "Criar Evento",
       "submitting": "Criando...",
       "cancel": "Cancelar",
-      "success": "Classificação adicionada com sucesso!",
-      "error": "Erro ao adicionar classificação."
+      "success": "Evento sugerido com sucesso!",
+      "error": "Erro ao adicionar ranking."
     },
     "AddPlayer": {
       "trigger": "Adicionar jogador",
       "title": "Adicionar Jogador",
       "description": "Crie ou vincule um jogador a este jogo.",
-      "linkUser": {
-        "label": "Vincular a Usuário (Opcional)",
-        "placeholder": "Buscar por nome ou @username...",
-        "searching": "Buscando...",
-        "remove": "Remover"
-      },
       "username": {
         "label": "Nome de Usuário (In-game)",
         "placeholder": "Digite o nick do jogador..."
       },
-      "country": {
-        "label": "País",
-        "unknown": "Desconhecido"
+      "link": {
+        "label": "Vincular a Usuário (Opcional)",
+        "placeholder": "Buscar por nome ou @username...",
+        "selected": "Vinculado a @{username}",
+        "selectedDesc": "A nacionalidade e o histórico serão sincronizados com este perfil.",
+        "remove": "Remover"
       },
+      "info": "Se você pesquisar e vincular um usuário do Ares, utilizaremos a nacionalidade (bandeira) definida no perfil global dele.",
       "submit": "Confirmar Jogador",
       "submitting": "Adicionando...",
       "cancel": "Cancelar",
@@ -277,8 +357,8 @@
       "error": "Erro ao adicionar jogador."
     },
     "EditRanking": {
-      "trigger": "Modificar classificação",
-      "title": "Modificar Classificação",
+      "trigger": "Modificar ranking",
+      "title": "Modificar Ranking",
       "description": "Atualize as informações desta categoria de ranking.",
       "name": {
         "label": "Nome do Ranking",
@@ -297,14 +377,14 @@
         "label": "Pontuação Inicial (Elo)"
       },
       "ratingSystem": {
-        "label": "Sistema de Classificação",
+        "label": "Sistema de Ranking",
         "elo": "Elo"
       },
       "submit": "Salvar Alterações",
       "submitting": "Salvando...",
       "cancel": "Cancelar",
-      "success": "Classificação atualizada com sucesso!",
-      "error": "Erro ao atualizar classificação."
+      "success": "Ranking atualizada com sucesso!",
+      "error": "Erro ao atualizar ranking."
     },
     "AddPlayerToRanking": {
       "trigger": "Registrar jogador",

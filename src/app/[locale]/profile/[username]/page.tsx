@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
-import { User as UserIcon, Medal, Gamepad2, Edit2 } from "lucide-react";
+import { User as UserIcon, Medal, Gamepad2, Edit2, Calendar } from "lucide-react";
 import { eq, or, sql, inArray } from "drizzle-orm";
 import { cache } from "react";
 
@@ -16,10 +16,12 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { EditProfileTrigger } from "@/components/triggers/profile/edit-profile-trigger";
 import { ActionButton } from "@/components/ui/action-button";
+import { ProfileTabs } from "@/components/ui/tabs";
 
 type ProfilePageProps = {
   params: Promise<{
     username: string;
+    locale: string;
   }>;
 };
 
@@ -50,7 +52,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
   const session = await getServerAuthSession();
   const t = await getTranslations("ProfilePage");
   const tModals = await getTranslations("Modals");
-  const { username } = await params;
+  const { username, locale } = await params;
 
   const targetUser = await getUser(username);
 
@@ -110,9 +112,59 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
     };
   });
 
+  const finalProfileColor = targetUser.profileColor || "#c00b3b";
+
   return (
-    <main>
-      <div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pt-10 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
+    <main
+      className="relative min-h-screen overflow-hidden"
+      style={
+        {
+          "--primary": finalProfileColor,
+          "--primary-strong": `color-mix(in srgb, ${finalProfileColor}, black 35%)`,
+          "--primary-light": `color-mix(in srgb, ${finalProfileColor}, white 10%)`,
+          "--color-primary": finalProfileColor,
+          "--color-primary-strong": `color-mix(in srgb, ${finalProfileColor}, black 35%)`,
+          "--border": `color-mix(in srgb, ${finalProfileColor} 18%, transparent)`,
+          "--color-border": `color-mix(in srgb, ${finalProfileColor} 18%, transparent)`,
+        } as React.CSSProperties
+      }
+    >
+      {/* Background Glows & Floating Blobs */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 aspect-square w-150 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_15%,transparent)_0%,transparent_70%)] blur-[80px]" />
+        <div className="absolute top-1/2 -right-24 aspect-square w-120 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_10%,transparent)_0%,transparent_70%)] blur-[60px]" />
+
+        {/* Animated Blobs with Breathing Effect */}
+        <div className="animate-float animate-breathe absolute top-[10%] left-[5%] h-64 w-64 rounded-full bg-primary/20 blur-[80px]" />
+        <div className="animate-float-slow animate-breathe absolute top-[55%] right-[5%] h-[450px] w-[450px] rounded-full bg-primary/10 blur-[120px]" style={{ animationDelay: "-2s" }} />
+        <div
+          className="animate-float animate-breathe absolute bottom-[5%] left-[20%] h-80 w-80 rounded-full bg-primary/15 blur-[90px]"
+          style={{ animationDelay: "-5s", animationDuration: "17s" }}
+        />
+        <div className="animate-float-slow animate-breathe absolute top-[25%] left-[45%] h-32 w-32 rounded-full bg-primary/30 blur-[50px]" style={{ animationDelay: "-1.5s" }} />
+        <div className="animate-float animate-breathe absolute bottom-[35%] right-[20%] h-72 w-72 rounded-full bg-primary/10 blur-[100px]" style={{ animationDelay: "-4s" }} />
+      </div>
+
+      {/* Profile Header Background */}
+      <div className="pointer-events-none absolute top-0 right-0 left-0 z-0 h-40 overflow-hidden" style={{ backgroundColor: 'var(--primary-strong)' }}>
+        <div 
+          className="animate-float-slow absolute -top-1/2 -left-1/4 h-[200%] w-[150%] opacity-50"
+          style={{
+            background: `radial-gradient(circle at center, var(--primary-light) 0%, transparent 70%)`,
+            filter: 'blur(40px)',
+          }}
+        />
+        <div 
+          className="animate-float absolute -bottom-1/2 -right-1/4 h-[150%] w-[120%] opacity-30"
+          style={{
+            background: `radial-gradient(circle at center, var(--primary) 0%, transparent 60%)`,
+            filter: 'blur(60px)',
+            animationDirection: 'reverse',
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pt-16 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
         {/* Sidebar */}
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
           <div className="sticky top-28 flex flex-col gap-4">
@@ -128,10 +180,10 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                     alt={targetUser.name ?? targetUser.username ?? "Avatar"}
                     width={140}
                     height={140}
-                    className="size-32 rounded-full border-4 border-white/10 object-cover shadow-xl"
+                    className="size-32 rounded-full object-cover shadow-xl"
                   />
                 ) : (
-                  <div className="flex size-32 items-center justify-center rounded-full border-4 border-white/10 bg-white/5 shadow-xl">
+                  <div className="flex size-32 items-center justify-center rounded-full bg-white/5 shadow-xl">
                     <UserIcon className="size-14 text-white/50" />
                   </div>
                 )}
@@ -149,6 +201,16 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                     Você ainda não definiu uma biografia.
                   </p>
                 ) : null}
+
+                <div className="mt-6 flex items-center gap-2 text-xs font-medium text-white/40">
+                  <Calendar className="size-3.5" />
+                  <span>
+                    {t("joined")} {new Intl.DateTimeFormat(locale, {
+                      month: "long",
+                      year: "numeric",
+                    }).format(new Date(targetUser.createdAt))}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -161,16 +223,18 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
         </aside>
 
         {/* Main Content */}
-        <div className="min-w-0 flex-1 space-y-6">
-          <div className="space-y-2">
-            <div className="border-b-[3px] border-white/10">
-              <nav className="-mb-[3px] flex space-x-8" aria-label="Tabs">
-                <span className="border-primary text-primary flex items-center gap-2.5 border-b-[3px] pt-4 pb-2 text-base font-medium whitespace-nowrap transition-all">
-                  <Gamepad2 className="size-5" />
-                  {t("playedGamesTab")}
-                </span>
-              </nav>
-            </div>
+        <div className="mt-16 min-w-0 flex-1 space-y-6 lg:mt-24">
+          <div className="space-y-4">
+            <ProfileTabs
+              tabs={[
+                {
+                  id: "games",
+                  label: t("playedGamesTab"),
+                  icon: Gamepad2,
+                  active: true,
+                },
+              ]}
+            />
 
             <section className="flex flex-col gap-6">
               {calculatedPositions.length === 0 ? (

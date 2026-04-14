@@ -31,7 +31,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
         <div className="flex flex-col gap-6">
           <SectionHeader title={t("title")} description={t("description")} />
           <div className="w-full max-w-xs">
-            <AddGameTrigger />
+            <AddGameTrigger isAdmin={viewerCanManageGames} />
           </div>
         </div>
 
@@ -119,12 +119,6 @@ async function GamesGrid({
     viewerId,
     canManageGames,
   });
-  const statsLabels = {
-    rankings: t("rankingsCount"),
-    players: t("playersCount"),
-    tourneys: t("tourneysCount"),
-    posts: t("postsCount"),
-  };
 
   const showEmptySearch = gameList.length === 0 && !!search;
 
@@ -137,7 +131,6 @@ async function GamesGrid({
             game={game}
             fallbackDescription={t("cardFallbackDescription")}
             pendingLabel={t("pendingBadge")}
-            statsLabels={statsLabels}
           />
         ))}
       </div>

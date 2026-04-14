@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Suspense } from "react";
 import { ChevronRight, Compass } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -17,14 +17,18 @@ export default async function HomePage() {
   const t = await getTranslations("HomePage");
 
   return (
-    <main>
+    <main className="relative overflow-hidden">
+      {/* Background Glows */}
+      <div className="pointer-events-none absolute -top-24 -left-24 -z-10 aspect-square w-150 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_15%,transparent)_0%,transparent_70%)] blur-[80px] opacity-60" />
+      <div className="pointer-events-none absolute -top-24 -right-24 -z-10 aspect-square w-120 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_8%,transparent)_0%,transparent_70%)] blur-[60px] opacity-40" />
+
       <LoginErrorHandler />
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-6 pt-16 pb-12 sm:px-10 lg:px-12 lg:pt-24 lg:pb-16">
         <section className="relative flex flex-col items-center space-y-4 text-center">
           <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 aspect-square w-125 -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_8%,transparent)_0%,transparent_70%)] sm:w-200" />
-          <h1 className="text-primary flex items-center justify-center gap-4 text-9xl font-semibold tracking-[-0.06em] sm:gap-6 sm:text-6xl lg:text-7xl">
+          <h1 className="text-primary flex items-center justify-center gap-0! text-8xl! font-semibold tracking-[-0.06em] sm:gap-6 sm:text-6xl lg:text-7xl">
             <div
-              className="bg-primary size-12 shrink-0 sm:size-14 lg:size-20"
+              className="bg-primary size-16 shrink-0 sm:size-20 lg:size-28"
               style={{
                 maskImage: `url(/icon.svg)`,
                 WebkitMaskImage: `url(/icon.svg)`,
