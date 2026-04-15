@@ -4,7 +4,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { format, parseISO, isValid } from "date-fns";
 
 interface DateInputProps {

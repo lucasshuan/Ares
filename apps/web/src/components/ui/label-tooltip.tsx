@@ -1,7 +1,13 @@
 "use client";
 
 import { Info } from "lucide-react";
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +32,7 @@ export function LabelTooltip({
   const triggerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  const updatePosition = () => {
+  const updatePosition = useCallback(() => {
     if (triggerRef.current && show) {
       const rect = triggerRef.current.getBoundingClientRect();
       setPosition({
@@ -34,11 +40,11 @@ export function LabelTooltip({
         left: rect.left + rect.width / 2,
       });
     }
-  };
+  }, [show]);
 
   useLayoutEffect(() => {
     updatePosition();
-  }, [show]);
+  }, [show, updatePosition]);
 
   useEffect(() => {
     if (show) {
@@ -49,7 +55,7 @@ export function LabelTooltip({
         window.removeEventListener("resize", updatePosition);
       };
     }
-  }, [show]);
+  }, [show, updatePosition]);
 
   return (
     <div
@@ -82,7 +88,7 @@ export function LabelTooltip({
           {show &&
             createPortal(
               <div
-                className="pointer-events-none fixed isolate z-[9999] w-64 -translate-x-1/2 -translate-y-full transform-gpu rounded-xl border border-white/20 bg-[#0a0a0a]/80 p-3 text-[11px] leading-relaxed text-white/80 shadow-2xl"
+                className="pointer-events-none fixed isolate z-9999 w-64 -translate-x-1/2 -translate-y-full transform-gpu rounded-xl border border-white/20 bg-[#0a0a0a]/80 p-3 text-[11px] leading-relaxed text-white/80 shadow-2xl"
                 style={{
                   top: position.top,
                   left: position.left,
@@ -91,13 +97,6 @@ export function LabelTooltip({
                 }}
               >
                 <div className="relative z-10">{tooltip}</div>
-                <div
-                  className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-r border-b border-white/20 bg-[#0a0a0a]/80"
-                  style={{
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                  }}
-                />
               </div>,
               document.body,
             )}
