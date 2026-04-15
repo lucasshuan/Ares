@@ -5,7 +5,7 @@ import { AddPlayerToGameInput } from './dto/players.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { Prisma } from '@ares/db';
 
-function mapRankingWithEvent<
+function mapLeagueWithEvent<
   T extends {
     eventId: string;
     event: {
@@ -21,19 +21,19 @@ function mapRankingWithEvent<
       updatedAt: Date;
     };
   },
->(ranking: T) {
+>(league: T) {
   return {
-    ...ranking,
-    id: ranking.event.id ?? ranking.eventId,
-    gameId: ranking.event.gameId,
-    name: ranking.event.name,
-    slug: ranking.event.slug,
-    description: ranking.event.description,
-    startDate: ranking.event.startDate,
-    endDate: ranking.event.endDate,
-    isApproved: !!ranking.event.approvedAt,
-    createdAt: ranking.event.createdAt,
-    updatedAt: ranking.event.updatedAt,
+    ...league,
+    id: league.event.id ?? league.eventId,
+    gameId: league.event.gameId,
+    name: league.event.name,
+    slug: league.event.slug,
+    description: league.event.description,
+    startDate: league.event.startDate,
+    endDate: league.event.endDate,
+    isApproved: !!league.event.approvedAt,
+    createdAt: league.event.createdAt,
+    updatedAt: league.event.updatedAt,
   };
 }
 
@@ -102,8 +102,8 @@ export class GamesService {
     });
   }
 
-  async getRankings(gameId: string) {
-    const rankings = await this.databaseProvider.ranking.findMany({
+  async getLeagues(gameId: string) {
+    const leagues = await this.databaseProvider.league.findMany({
       where: {
         event: {
           gameId: gameId,
@@ -119,7 +119,7 @@ export class GamesService {
       },
     });
 
-    return rankings.map(mapRankingWithEvent);
+    return leagues.map(mapLeagueWithEvent);
   }
 
   async create(data: CreateGameInput, authorId?: string) {

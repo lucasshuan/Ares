@@ -18,7 +18,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
   const {
     canManageGames,
     canManagePlayers,
-    canManageRankings,
+    canManageLeagues,
     canEditGame: checkCanEditGame,
   } = useUser();
 
@@ -27,8 +27,8 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
 
   const hasAnyAction =
     canEditGame ||
-    (game.status === "pending" && canApproveGame) ||
-    (game.status === "approved" && (canManageRankings || canManagePlayers));
+    (game.status === "PENDING" && canApproveGame) ||
+    (game.status === "APPROVED" && (canManageLeagues || canManagePlayers));
 
   const t = useTranslations();
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
@@ -55,7 +55,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         />
       )}
 
-      {game.status === "pending" && canApproveGame && (
+      {game.status === "PENDING" && canApproveGame && (
         <ActionButton
           icon={CheckCheck}
           intent="primary"
@@ -64,7 +64,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         />
       )}
 
-      {game.status === "approved" && canManagePlayers && (
+      {game.status === "APPROVED" && canManagePlayers && (
         <ActionButton
           icon={UserPlus}
           label={t("Modals.AddPlayer.trigger")}
@@ -80,7 +80,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         />
       )}
 
-      {game.status === "approved" && canManagePlayers && (
+      {game.status === "APPROVED" && canManagePlayers && (
         <AddPlayerModal
           gameId={game.id}
           isOpen={isAddPlayerOpen}
@@ -88,7 +88,7 @@ export function GameAdminPanel({ game }: GameAdminPanelProps) {
         />
       )}
 
-      {game.status === "pending" && canApproveGame && (
+      {game.status === "PENDING" && canApproveGame && (
         <ApproveGameModal
           gameId={game.id}
           gameName={game.name}

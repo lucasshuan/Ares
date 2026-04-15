@@ -1,6 +1,6 @@
 # Ares
 
-Monorepo para um produto de ranking e torneios com web em `Next.js`, API em `NestJS` e pacote compartilhado de banco com Prisma.
+Monorepo para um produto de league e torneios com web em `Next.js`, API em `NestJS` e pacote compartilhado de banco com Prisma.
 
 ## Stack
 

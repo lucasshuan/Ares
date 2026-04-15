@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getServerAuthSession } from "@/auth";
-import { canManageRankings } from "@/lib/permissions";
-import { RankingTemplate } from "@/components/templates/events/ranking";
+import { canManageLeagues } from "@/lib/permissions";
+import { LeagueTemplate } from "@/components/templates/events/league";
 
-import { GET_RANKING } from "@/lib/apollo/queries/rankings";
-import { Ranking } from "@/lib/apollo/types";
+import { GET_LEAGUE } from "@/lib/apollo/queries/leagues";
+import { League } from "@/lib/apollo/types";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 interface EventPageProps {
@@ -42,36 +42,32 @@ async function EventPageContent({
 }) {
   const session = await getServerAuthSession();
 
-  // For now, we use GET_RANKING as it handles the Event fetching behind the scenes
-  const data = await safeServerQuery<{ ranking: Ranking }>({
-    query: GET_RANKING,
-    variables: { gameSlug, rankingSlug: eventSlug },
+  // For now, we use GET_LEAGUE as it handles the Event fetching behind the scenes
+  const data = await safeServerQuery<{ league: League }>({
+    query: GET_LEAGUE,
+    variables: { gameSlug, leagueSlug: eventSlug },
   });
 
-  if (!data?.ranking) {
+  if (!data?.league) {
     notFound();
   }
 
-  const { ranking } = data;
-  const isEditor = canManageRankings(session);
+  const { league } = data;
+  const isEditor = canManageLeagues(session);
 
   // Dynamic Template Selection
-  if (ranking.type === "RANKING") {
+  if (league.type === "LEAGUE") {
     return (
-      <RankingTemplate
-        ranking={ranking}
-        session={session}
-        isEditor={isEditor}
-      />
+      <LeagueTemplate league={league} session={session} isEditor={isEditor} />
     );
   }
 
   // Fallback for other event types (Tournaments, etc.)
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center p-12 text-center">
-      <h1 className="text-3xl font-bold">{ranking.name}</h1>
+      <h1 className="text-3xl font-bold">{league.name}</h1>
       <p className="text-muted mt-4">
-        Template for {ranking.type} not implemented yet.
+        Template for {league.type} not implemented yet.
       </p>
     </div>
   );

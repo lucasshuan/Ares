@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import { getLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
@@ -14,14 +14,14 @@ export const metadata: Metadata = {
     default: "Ares",
     template: "%s | Ares",
   },
-  description: "Plataforma de ranking e torneios para jogos.",
+  description: "Plataforma de league e torneios para jogos.",
   icons: {
     icon: "/icon.svg",
     apple: "/icon.svg",
   },
   openGraph: {
     title: "Ares",
-    description: "Plataforma de ranking e torneios para jogos.",
+    description: "Plataforma de league e torneios para jogos.",
     images: [
       {
         url: "/icon.svg",

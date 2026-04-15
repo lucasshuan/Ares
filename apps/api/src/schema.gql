@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Ranking {
+type League {
   id: ID!
   gameId: String!
   name: String!
@@ -17,7 +17,7 @@ type Ranking {
   createdAt: DateTime!
   updatedAt: DateTime!
   game: Game!
-  entries: [RankingEntry!]!
+  entries: [LeagueEntry!]!
 }
 
 """
@@ -25,14 +25,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type RankingEntry {
+type LeagueEntry {
   id: ID!
-  rankingId: String!
+  leagueId: String!
   playerId: String!
   currentElo: Int!
   position: Int
   player: Player
-  ranking: Ranking
+  league: League
 }
 
 type Player {
@@ -42,7 +42,7 @@ type Player {
   currentElo: Int!
   user: User
   game: Game
-  rankingEntries: [RankingEntry!]
+  leagueEntries: [LeagueEntry!]
   usernames: [PlayerUsername!]!
 }
 
@@ -66,7 +66,7 @@ type User {
 }
 
 type GameCounts {
-  rankings: Int!
+  leagues: Int!
   players: Int!
 }
 
@@ -83,7 +83,7 @@ type Game {
   createdAt: DateTime!
   updatedAt: DateTime!
   author: User
-  rankings: [Ranking!]!
+  leagues: [League!]!
   _count: GameCounts
 }
 
@@ -99,8 +99,8 @@ type PaginatedPlayers {
   hasNextPage: Boolean!
 }
 
-type PaginatedRankings {
-  nodes: [Ranking!]!
+type PaginatedLeagues {
+  nodes: [League!]!
   totalCount: Int!
   hasNextPage: Boolean!
 }
@@ -117,8 +117,8 @@ type Query {
   player(id: ID!): Player
   searchPlayers(gameId: ID!, query: String!, pagination: PaginationInput): PaginatedPlayers!
   me: User
-  rankings(pagination: PaginationInput): PaginatedRankings!
-  ranking(gameSlug: String!, slug: String!): Ranking
+  leagues(pagination: PaginationInput): PaginatedLeagues!
+  league(gameSlug: String!, slug: String!): League
   user(username: String!): User
   searchUsers(pagination: PaginationInput, query: String): PaginatedUsers!
 }
@@ -134,10 +134,10 @@ type Mutation {
   approveGame(id: ID!): Game!
   addPlayerToGame(input: AddPlayerToGameInput!): Player!
   updateProfile(input: UpdateProfileInput!): User!
-  updateRanking(id: ID!, input: UpdateRankingInput!): Ranking!
-  createRanking(input: CreateRankingInput!): Ranking!
-  addPlayerToRanking(rankingId: ID!, playerId: ID!, initialElo: Int): RankingEntry!
-  registerSelfToRanking(rankingId: ID!): RankingEntry!
+  updateLeague(id: ID!, input: UpdateLeagueInput!): League!
+  createLeague(input: CreateLeagueInput!): League!
+  addPlayerToLeague(leagueId: ID!, playerId: ID!, initialElo: Int): LeagueEntry!
+  registerSelfToLeague(leagueId: ID!): LeagueEntry!
 }
 
 input CreateGameInput {
@@ -172,7 +172,7 @@ input UpdateProfileInput {
   country: String
 }
 
-input UpdateRankingInput {
+input UpdateLeagueInput {
   name: String
   slug: String
   description: String
@@ -189,8 +189,9 @@ input UpdateRankingInput {
   pointsPerLoss: Int
 }
 
-input CreateRankingInput {
-  gameId: String!
+input CreateLeagueInput {
+  gameId: String
+  gameName: String
   name: String!
   slug: String!
   description: String

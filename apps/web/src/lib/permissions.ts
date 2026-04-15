@@ -1,6 +1,6 @@
 import { type Session } from "next-auth";
 
-type PermissionKey = string; // Migrating away from @ares/db types
+import { type PermissionKey } from "@ares/core";
 
 export function hasPermission(
   session: Session | null,
@@ -20,8 +20,8 @@ export function canManagePlayers(session: Session | null) {
   return hasPermission(session, "manage_players");
 }
 
-export function canManageRankings(session: Session | null) {
-  return hasPermission(session, "manage_rankings");
+export function canManageLeagues(session: Session | null) {
+  return hasPermission(session, "manage_leagues");
 }
 
 export function canEditGame(

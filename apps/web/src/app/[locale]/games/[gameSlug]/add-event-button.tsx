@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { Trophy, Swords, ChevronRight, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/components/providers";
-import { AddRankingModal } from "@/components/modals/ranking/add-ranking-modal";
+import { AddLeagueModal } from "@/components/modals/league/add-league-modal";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { DropdownMenu, DropdownItem } from "@/components/ui/dropdown-menu";
 
@@ -17,10 +17,10 @@ export function AddEventButton({
   gameId,
   variant = "sidebar",
 }: AddEventButtonProps) {
-  const t = useTranslations("Modals.AddRanking");
+  const t = useTranslations("Modals.AddLeague");
   const { user } = useUser();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAddRankingOpen, setIsAddRankingOpen] = useState(false);
+  const [isAddLeagueOpen, setIsAddLeagueOpen] = useState(false);
   const [isPending] = useTransition();
 
   const handleTriggerClick = () => {
@@ -70,8 +70,8 @@ export function AddEventButton({
           align={variant === "header" ? "end" : "center"}
           width={300}
         >
-          <DropdownItem icon={Trophy} onClick={() => setIsAddRankingOpen(true)}>
-            {t("types.ranking")}
+          <DropdownItem icon={Trophy} onClick={() => setIsAddLeagueOpen(true)}>
+            {t("types.league")}
           </DropdownItem>
           <DropdownItem
             icon={Swords}
@@ -92,10 +92,10 @@ export function AddEventButton({
         menuButton
       )}
 
-      <AddRankingModal
+      <AddLeagueModal
         gameId={gameId}
-        isOpen={isAddRankingOpen}
-        onClose={() => setIsAddRankingOpen(false)}
+        isOpen={isAddLeagueOpen}
+        onClose={() => setIsAddLeagueOpen(false)}
       />
 
       <AuthModal

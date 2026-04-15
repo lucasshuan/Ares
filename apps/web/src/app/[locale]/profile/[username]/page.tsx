@@ -259,19 +259,19 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                         </h3>
 
                         <div className="mt-4 flex flex-col gap-3">
-                          {player.rankingEntries?.length &&
-                          player.rankingEntries.length > 0 ? (
-                            player.rankingEntries.map((entry) => (
+                          {player.leagueEntries?.length &&
+                          player.leagueEntries.length > 0 ? (
+                            player.leagueEntries.map((entry) => (
                               <div
                                 key={entry.id}
                                 className="flex items-center justify-between rounded-xl bg-white/5 p-4 transition-colors group-hover:bg-white/10"
                               >
                                 <div>
                                   <p className="text-xs tracking-wider text-white/50 uppercase">
-                                    {t("ranking")}
+                                    {t("league")}
                                   </p>
                                   <p className="font-medium">
-                                    {entry.ranking?.name}
+                                    {entry.league?.name}
                                   </p>
                                 </div>
                                 <div className="text-right">
@@ -286,7 +286,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                             ))
                           ) : (
                             <p className="text-sm text-white/40 italic">
-                              Sem posições em rankings ainda.
+                              Sem posições em leagues ainda.
                             </p>
                           )}
                         </div>

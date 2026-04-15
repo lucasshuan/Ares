@@ -46,7 +46,7 @@ export function GameCard({
           <h3 className="line-clamp-2 flex-1 text-lg leading-tight font-semibold">
             {game.name}
           </h3>
-          {game.status === "pending" && pendingLabel && (
+          {game.status === "PENDING" && pendingLabel && (
             <span className="animate-pending-pulse inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/12 px-2.5 py-1 text-[10px] font-semibold tracking-[0.18em] text-amber-200 uppercase">
               <span className="size-2 animate-pulse rounded-full bg-amber-400" />
               {pendingLabel}

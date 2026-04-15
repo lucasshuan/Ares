@@ -13,6 +13,5 @@ export function Paginated<T>(classRef: Type<T>) {
     @Field(() => Boolean)
     hasNextPage: boolean;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return PaginatedType as any;
+  return PaginatedType as Type<PaginatedType>;
 }

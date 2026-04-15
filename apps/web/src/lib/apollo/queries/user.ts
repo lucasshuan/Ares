@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+﻿import { gql } from "@apollo/client";
 
 export const GET_USER = gql`
   query GetUser($username: String!) {
@@ -19,11 +19,11 @@ export const GET_USER = gql`
           slug
           backgroundImageUrl
         }
-        rankingEntries {
+        leagueEntries {
           id
           currentElo
           position
-          ranking {
+          league {
             id
             name
           }

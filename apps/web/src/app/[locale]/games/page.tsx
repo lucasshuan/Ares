@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/routing";
+﻿import { Link } from "@/i18n/routing";
 import { Trophy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
@@ -101,7 +101,7 @@ async function GamesGrid({ search }: { search?: string }) {
   const games = data?.games?.nodes || [];
   const gameList = games.map((game) => ({
     ...game,
-    rankingCount: game._count?.events || 0,
+    leagueCount: game._count?.events || 0,
     playerCount: game._count?.players || 0,
     tourneyCount: 0,
     postCount: 0,

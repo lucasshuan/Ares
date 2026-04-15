@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { createContext, useContext, ReactNode } from "react";
 import { type Session } from "next-auth";
@@ -11,7 +11,7 @@ import { Toaster } from "sonner";
 import {
   canManageGames,
   canManagePlayers,
-  canManageRankings,
+  canManageLeagues,
   canEditGame as libCanEditGame,
 } from "@/lib/permissions";
 
@@ -21,7 +21,7 @@ type UserContextType = {
   isAdmin: boolean;
   canManageGames: boolean;
   canManagePlayers: boolean;
-  canManageRankings: boolean;
+  canManageLeagues: boolean;
   canEditGame: (authorId: string | null | undefined) => boolean;
 };
 
@@ -41,7 +41,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         isAdmin: !!user?.isAdmin,
         canManageGames: canManageGames(session),
         canManagePlayers: canManagePlayers(session),
-        canManageRankings: canManageRankings(session),
+        canManageLeagues: canManageLeagues(session),
         canEditGame: (authorId) => libCanEditGame(session, authorId),
       }}
     >

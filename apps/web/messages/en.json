@@ -30,13 +30,13 @@
     "pt": "Português"
   },
   "HomePage": {
-    "heroSubtitle": "Rankings and tournaments for competitive games.",
+    "heroSubtitle": "Leagues and tournaments for competitive games.",
     "explore": "Explore",
     "join": "Join",
     "games": {
       "title": "Communities",
       "description": "Join the community, follow the leaderboards, and leave your mark.",
-      "cardFallbackDescription": "Open the game page to inspect current rankings.",
+      "cardFallbackDescription": "Open the game page to inspect current leagues.",
       "noGamesTitle": "No games available",
       "noGamesDescription": "Add games to the database or reconnect the current database to load the list here.",
       "viewAll": "View all games"
@@ -44,8 +44,8 @@
   },
   "GamesPage": {
     "title": "Communities",
-    "description": "Choose a game to view its rankings, performance history and ladders.",
-    "cardFallbackDescription": "Open the game page to inspect current rankings.",
+    "description": "Choose a game to view its leagues, performance history and ladders.",
+    "cardFallbackDescription": "Open the game page to inspect current leagues.",
     "noGamesTitle": "No games available",
     "noGamesDescription": "Add games to the database or reconnect the current database to load the list here.",
     "viewAll": "View all games",
@@ -72,38 +72,38 @@
     "manageAccount": "Manage Account",
     "joined": "Joined",
     "myGames": "Played Games",
-    "ranking": "Ranking",
+    "league": "League",
     "noGames": "You haven't been part of any competition yet",
     "noGamesOther": "This user hasn't been part of any competition yet",
-    "noGamesDescription": "Join a game to appear in its rankings.",
-    "noGamesDescriptionOther": "This user is not participating in any game rankings.",
+    "noGamesDescription": "Join a game to appear in its leagues.",
+    "noGamesDescriptionOther": "This user is not participating in any game leagues.",
     "playedGamesTab": "Played Games"
   },
   "GamePage": {
     "metaTitleNotFound": "Game not found",
     "metaTitleDbUnavailable": "Database unavailable",
-    "metaDescriptionFallback": "Rankings for {gameName} on Ares.",
+    "metaDescriptionFallback": "Leagues for {gameName} on Ares.",
     "backToGames": "Back to games",
     "dbUnavailable": "Database unavailable in local development.",
     "dbUnavailableDescription": "Start your Postgres instance or update `.env` with a reachable connection string to view this game page.",
     "eventsTitle": "Events",
-    "eventsDescription": "Track and participate in competitive rankings and tournaments for {gameName}.",
-    "ranking": "Ranking",
+    "eventsDescription": "Track and participate in competitive leagues and tournaments for {gameName}.",
+    "league": "League",
     "playersCount": "players",
     "elo": "Points",
-    "noPlayers": "This ranking doesn't have players yet.",
+    "noPlayers": "This league doesn't have players yet.",
     "noEvents": "No events created for this game.",
-    "noEventsDescription": "Once events are entered, this page will list rankings and tournaments.",
-    "sidebarDescription": "Track player rankings and performance for this game.",
+    "noEventsDescription": "Once events are entered, this page will list leagues and tournaments.",
+    "sidebarDescription": "Track player leagues and performance for this game.",
     "sidebarPlayers": "Players",
     "playOnSteam": "Play on Steam",
-    "clickToViewFullRanking": "Click to view full ranking",
+    "clickToViewFullLeague": "Click to view full league",
     "viewGame": "View game",
-    "rankingInfo": "Ranking Info",
+    "leagueInfo": "League Info",
     "totalPlayers": "Total Players",
     "ratingSystem": "Rating System",
     "created": "Created on",
-    "rankingInfoDescription": "This ranking is calculated based on points. The results are frequently updated by game administrators.",
+    "leagueInfoDescription": "This league is calculated based on points. The results are frequently updated by game administrators.",
     "details": "Details",
     "player": "Player",
     "country": "Country",
@@ -207,13 +207,13 @@
       "success": "Game approved successfully!",
       "error": "Error approving game."
     },
-    "AddRanking": {
+    "AddLeague": {
       "trigger": "Add event",
       "headerTrigger": "New Event",
-      "title": "Add Ranking",
+      "title": "Add League",
       "description": "Fill in the details for the new event or competition.",
       "types": {
-        "ranking": "New Ranking",
+        "league": "New League",
         "tournament": "New Tournament"
       },
       "sections": {
@@ -227,12 +227,12 @@
       },
       "slug": {
         "label": "Identifier",
-        "placeholder": "ranking-identifier",
-        "tooltip": "Personalizes the URL for this ranking (e.g., /events/pro-league)."
+        "placeholder": "league-identifier",
+        "tooltip": "Personalizes the URL for this league (e.g., /events/pro-league)."
       },
       "descriptionField": {
         "label": "Description",
-        "placeholder": "Describe this ranking..."
+        "placeholder": "Describe this league..."
       },
       "ratingSystem": {
         "label": "Classification System",
@@ -245,7 +245,7 @@
       },
       "kFactor": {
         "label": "K-Factor",
-        "tooltip": "Determines how much the ranking changes after a match. Higher values make it more volatile."
+        "tooltip": "Determines how much the league changes after a match. Higher values make it more volatile."
       },
       "scoreRelevance": {
         "label": "Score Relevance",
@@ -312,11 +312,26 @@
       "initialElo": {
         "label": "Initial Rating (Elo)"
       },
-      "submit": "Create Event",
+      "steps": {
+        "game": "Game",
+        "general": "General",
+        "format": "Format"
+      },
+      "gameSelect": {
+        "label": "Choose the Game",
+        "placeholder": "Select or type the game name...",
+        "noOptions": "No games found.",
+        "newGameWarning": "This game does not exist yet and will be created automatically.",
+        "newGameInstructions": "Make absolutely sure the game doesn't exist before proceeding.",
+        "searchNew": "Create new game: \"{name}\""
+      },
+      "next": "Next Step",
+      "back": "Back",
+      "submit": "Create League",
       "submitting": "Creating...",
       "cancel": "Cancel",
-      "success": "Event suggested successfully!",
-      "error": "Error adding ranking.",
+      "success": "League created successfully!",
+      "error": "Error creating league.",
       "soon": "Soon"
     },
     "AddPlayer": {
@@ -342,22 +357,22 @@
       "successExisting": "The user already has a registration for this game. The new username has been attached to the existing player.",
       "error": "Error adding player."
     },
-    "EditRanking": {
-      "trigger": "Edit ranking",
-      "title": "Modify Ranking",
-      "description": "Update information for this ranking category.",
+    "EditLeague": {
+      "trigger": "Edit league",
+      "title": "Modify League",
+      "description": "Update information for this league category.",
       "name": {
-        "label": "Ranking Name",
+        "label": "League Name",
         "placeholder": "e.g., Blitz, Rapid, Daily..."
       },
       "slug": {
-        "label": "Ranking Link",
-        "placeholder": "ranking-identifier",
-        "description": "Personalizes the URL for this ranking (e.g., /events/blitz)."
+        "label": "League Link",
+        "placeholder": "league-identifier",
+        "description": "Personalizes the URL for this league (e.g., /events/blitz)."
       },
       "descriptionField": {
         "label": "Description",
-        "placeholder": "Describe this ranking..."
+        "placeholder": "Describe this league..."
       },
       "initialElo": {
         "label": "Initial Rating (Elo)"
@@ -369,13 +384,13 @@
       "submit": "Save Changes",
       "submitting": "Saving...",
       "cancel": "Cancel",
-      "success": "Ranking updated successfully!",
-      "error": "Error updating ranking."
+      "success": "League updated successfully!",
+      "error": "Error updating league."
     },
-    "AddPlayerToRanking": {
+    "AddPlayerToLeague": {
       "trigger": "Register player",
       "title": "Register Player",
-      "description": "Add an existing or new player to this ranking.",
+      "description": "Add an existing or new player to this league.",
       "search": {
         "placeholder": "Search player nick...",
         "notFound": "This nick was not found for this game."

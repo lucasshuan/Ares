@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\app.controller.spec.ts",
     "messages": [],
@@ -306,7 +306,7 @@
     "usedDeprecatedRules": []
   },
   {
-    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\rankings\\ranking.model.ts",
+    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\leagues\\league.model.ts",
     "messages": [],
     "suppressedMessages": [],
     "errorCount": 0,
@@ -317,7 +317,7 @@
     "usedDeprecatedRules": []
   },
   {
-    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\rankings\\rankings.module.ts",
+    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\leagues\\leagues.module.ts",
     "messages": [],
     "suppressedMessages": [],
     "errorCount": 0,
@@ -328,7 +328,7 @@
     "usedDeprecatedRules": []
   },
   {
-    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\rankings\\rankings.resolver.ts",
+    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\leagues\\leagues.resolver.ts",
     "messages": [],
     "suppressedMessages": [],
     "errorCount": 0,
@@ -339,7 +339,7 @@
     "usedDeprecatedRules": []
   },
   {
-    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\rankings\\rankings.service.ts",
+    "filePath": "C:\\Desenvolvimento\\Ares\\apps\\api\\src\\modules\\leagues\\leagues.service.ts",
     "messages": [],
     "suppressedMessages": [],
     "errorCount": 0,

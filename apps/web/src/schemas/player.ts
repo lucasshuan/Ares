@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ export const getAddPlayerSchema = (t: TFunction) =>
     userId: z.string().nullable().optional(),
   });
 
-export const getAddPlayerToRankingSchema = (t: TFunction) =>
+export const getAddPlayerToLeagueSchema = (t: TFunction) =>
   z.object({
     username: z
       .string()
@@ -29,12 +29,12 @@ export const useAddPlayerSchema = () => {
   return useMemo(() => getAddPlayerSchema(t), [t]);
 };
 
-export const useAddPlayerToRankingSchema = () => {
+export const useAddPlayerToLeagueSchema = () => {
   const t = useTranslations("Validations");
-  return useMemo(() => getAddPlayerToRankingSchema(t), [t]);
+  return useMemo(() => getAddPlayerToLeagueSchema(t), [t]);
 };
 
 export type AddPlayerValues = z.infer<ReturnType<typeof getAddPlayerSchema>>;
-export type AddPlayerToRankingValues = z.infer<
-  ReturnType<typeof getAddPlayerToRankingSchema>
+export type AddPlayerToLeagueValues = z.infer<
+  ReturnType<typeof getAddPlayerToLeagueSchema>
 >;

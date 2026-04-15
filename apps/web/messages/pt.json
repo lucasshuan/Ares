@@ -30,13 +30,13 @@
     "pt": "Português"
   },
   "HomePage": {
-    "heroSubtitle": "Rankings e torneios para jogos competitivos.",
+    "heroSubtitle": "Ligas e torneios para jogos competitivos.",
     "explore": "Explorar",
     "join": "Entrar",
     "games": {
       "title": "Comunidades",
-      "description": "Faça parte da comunidade, acompanhe os rankings e deixe sua marca.",
-      "cardFallbackDescription": "Abra a página do jogo para inspecionar os rankings atuais.",
+      "description": "Faça parte da comunidade, acompanhe as ligas e deixe sua marca.",
+      "cardFallbackDescription": "Abra a página do jogo para inspecionar as ligas atuais.",
       "noGamesTitle": "Nenhum jogo disponível",
       "noGamesDescription": "Adicione jogos ao banco de dados ou reconecte o banco atual para carregar a lista aqui.",
       "viewAll": "Ver todos os jogos"
@@ -44,8 +44,8 @@
   },
   "GamesPage": {
     "title": "Comunidades",
-    "description": "Escolha um jogo para visualizar seus rankings, histórico de desempenho e tabelas.",
-    "cardFallbackDescription": "Abra a página do jogo para inspecionar os rankings atuais.",
+    "description": "Escolha um jogo para visualizar suas ligas, histórico de desempenho e tabelas.",
+    "cardFallbackDescription": "Abra a página do jogo para inspecionar as ligas atuais.",
     "noGamesTitle": "Nenhum jogo disponível",
     "noGamesDescription": "Adicione jogos ao banco de dados ou reconecte o banco atual para carregar a lista aqui.",
     "searchPlaceholder": "Pesquisar por um jogo...",
@@ -71,38 +71,38 @@
     "manageAccount": "Gerenciar conta",
     "joined": "Membro desde",
     "myGames": "Jogos Jogados",
-    "ranking": "Ranking",
+    "league": "Liga",
     "noGames": "Você ainda não participou de nenhuma competição",
     "noGamesOther": "Este usuário ainda não participou de nenhuma competição",
-    "noGamesDescription": "Entre em um jogo para aparecer em seus rankings.",
-    "noGamesDescriptionOther": "Este usuário não está participando do ranking de nenhum jogo.",
+    "noGamesDescription": "Entre em um jogo para aparecer em suas ligas.",
+    "noGamesDescriptionOther": "Este usuário não está participando de nenhuma liga.",
     "playedGamesTab": "Jogos Jogados"
   },
   "GamePage": {
     "metaTitleNotFound": "Jogo não encontrado",
     "metaTitleDbUnavailable": "Banco de dados indisponível",
-    "metaDescriptionFallback": "Classificações para {gameName} no Ares.",
+    "metaDescriptionFallback": "Ligas para {gameName} no Ares.",
     "backToGames": "Voltar aos jogos",
     "dbUnavailable": "Banco de dados indisponível no desenvolvimento local.",
     "dbUnavailableDescription": "Inicie sua instância do Postgres ou atualize `.env` com uma string de conexão alcançável para ver a página deste jogo.",
     "eventsTitle": "Eventos",
-    "eventsDescription": "Acompanhe e participe dos rankings e torneios competitivos de {gameName}.",
-    "ranking": "Ranking",
+    "eventsDescription": "Acompanhe e participe das ligas e torneios competitivos de {gameName}.",
+    "league": "Liga",
     "playersCount": "jogadores",
     "elo": "Pontos",
     "noPlayers": "Este evento ainda não tem jogadores.",
     "noEvents": "Nenhum evento criado para este jogo.",
-    "noEventsDescription": "Assim que eventos forem inseridos, esta página listará rankings e torneios.",
+    "noEventsDescription": "Assim que eventos forem inseridos, esta página listará ligas e torneios.",
     "sidebarDescription": "Acompanhe classificações e desempenho de jogadores para este jogo.",
     "sidebarPlayers": "Jogadores",
     "playOnSteam": "Jogar na Steam",
-    "clickToViewFullRanking": "Clique para ver o ranking completo",
+    "clickToViewFullLeague": "Clique para ver a liga completa",
     "viewGame": "Ver jogo",
-    "rankingInfo": "Informações do Ranking",
+    "leagueInfo": "Informações da Liga",
     "totalPlayers": "Total de Jogadores",
-    "ratingSystem": "Sistema de Ranking",
+    "ratingSystem": "Sistema de Classificação",
     "created": "Criado em",
-    "rankingInfoDescription": "Este ranking é calculado com base nos pontos. Os resultados são atualizados frequentemente pelos administradores do jogo.",
+    "leagueInfoDescription": "Esta liga é calculada com base nos pontos. Os resultados são atualizados frequentemente pelos administradores do jogo.",
     "details": "Detalhes",
     "player": "Jogador",
     "country": "País",
@@ -163,7 +163,7 @@
     },
     "RegisterConfirm": {
       "title": "Confirmar Inscrição",
-      "description": "Você iniciará no ranking com {elo} pontos Elo. Deseja continuar?",
+      "description": "Você iniciará na liga com {elo} pontos Elo. Deseja continuar?",
       "submit": "Confirmar Inscrição",
       "submitting": "Registrando...",
       "cancel": "Cancelar",
@@ -206,13 +206,13 @@
       "success": "Jogo aprovado com sucesso!",
       "error": "Erro ao aprovar o jogo."
     },
-    "AddRanking": {
+    "AddLeague": {
       "trigger": "Adicionar evento",
       "headerTrigger": "Novo Evento",
-      "title": "Adicionar Ranking",
+      "title": "Adicionar Liga",
       "description": "Preencha os dados de uma nova competição.",
       "types": {
-        "ranking": "Novo Ranking",
+        "league": "Nova Liga",
         "tournament": "Novo Torneio"
       },
       "sections": {
@@ -226,12 +226,12 @@
       },
       "slug": {
         "label": "Identificador",
-        "placeholder": "identificador-do-ranking",
-        "tooltip": "Personaliza a URL deste ranking (ex: /events/pro-league)."
+        "placeholder": "identificador-da-liga",
+        "tooltip": "Personaliza a URL desta liga (ex: /events/pro-league)."
       },
       "descriptionField": {
         "label": "Descrição",
-        "placeholder": "Descreva este ranking..."
+        "placeholder": "Descreva esta liga..."
       },
       "ratingSystem": {
         "label": "Sistema de Classificação",
@@ -244,7 +244,7 @@
       },
       "kFactor": {
         "label": "Fator K",
-        "tooltip": "O Fator K determina o quanto o ranking muda após uma partida. Valores altos tornam o ranking mais volátil."
+        "tooltip": "O Fator K determina o quanto a liga muda após uma partida. Valores altos tornam a liga mais volátil."
       },
       "scoreRelevance": {
         "label": "Relevância da Pontuação",
@@ -311,11 +311,26 @@
       "initialElo": {
         "label": "Pontuação Inicial (Elo)"
       },
-      "submit": "Criar Evento",
+      "steps": {
+        "game": "Jogo",
+        "general": "Geral",
+        "format": "Formato"
+      },
+      "gameSelect": {
+        "label": "Escolha o Jogo",
+        "placeholder": "Selecione ou digite o nome do jogo...",
+        "noOptions": "Nenhum jogo encontrado.",
+        "newGameWarning": "Este jogo ainda não existe e será criado automaticamente.",
+        "newGameInstructions": "Tenha certeza absoluta de que o jogo não existe antes de continuar.",
+        "searchNew": "Criar novo jogo: \"{name}\""
+      },
+      "next": "Próxima Etapa",
+      "back": "Voltar",
+      "submit": "Criar Liga",
       "submitting": "Criando...",
       "cancel": "Cancelar",
-      "success": "Evento sugerido com sucesso!",
-      "error": "Erro ao adicionar ranking.",
+      "success": "Liga criada com sucesso!",
+      "error": "Erro ao criar liga.",
       "soon": "Em breve"
     },
     "AddPlayer": {
@@ -341,40 +356,40 @@
       "successExisting": "O usuário já tinha um cadastro para este jogo. O novo nome de usuário foi anexado ao player existente.",
       "error": "Erro ao adicionar jogador."
     },
-    "EditRanking": {
-      "trigger": "Modificar ranking",
-      "title": "Modificar Ranking",
-      "description": "Atualize as informações desta categoria de ranking.",
+    "EditLeague": {
+      "trigger": "Modificar liga",
+      "title": "Modificar Liga",
+      "description": "Atualize as informações desta categoria de liga.",
       "name": {
-        "label": "Nome do Ranking",
+        "label": "Nome da Liga",
         "placeholder": "Ex: Blitz, Rapid, Diário..."
       },
       "slug": {
-        "label": "Link do Ranking",
-        "placeholder": "identificador-do-ranking",
-        "description": "Personaliza a URL deste ranking (ex: /events/blitz)."
+        "label": "Link da Liga",
+        "placeholder": "identificador-da-liga",
+        "description": "Personaliza a URL desta liga (ex: /events/blitz)."
       },
       "descriptionField": {
         "label": "Descrição",
-        "placeholder": "Descreva este ranking..."
+        "placeholder": "Descreva esta liga..."
       },
       "initialElo": {
         "label": "Pontuação Inicial (Elo)"
       },
       "ratingSystem": {
-        "label": "Sistema de Ranking",
+        "label": "Sistema de Liga",
         "elo": "Elo"
       },
       "submit": "Salvar Alterações",
       "submitting": "Salvando...",
       "cancel": "Cancelar",
-      "success": "Ranking atualizada com sucesso!",
-      "error": "Erro ao atualizar ranking."
+      "success": "Liga atualizada com sucesso!",
+      "error": "Erro ao atualizar liga."
     },
-    "AddPlayerToRanking": {
+    "AddPlayerToLeague": {
       "trigger": "Registrar jogador",
       "title": "Registrar Jogador",
-      "description": "Adicione um jogador existente ou novo a este ranking.",
+      "description": "Adicione um jogador existente ou novo a esta liga.",
       "search": {
         "placeholder": "Buscar nick do jogador...",
         "notFound": "Este nick não foi encontrado para este jogo."

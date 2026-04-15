@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../../database/database.provider';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { Prisma } from '@ares/db';
@@ -50,9 +50,9 @@ export class UsersService {
       where: { userId },
       include: {
         game: true,
-        rankingEntries: {
+        leagueEntries: {
           include: {
-            ranking: {
+            league: {
               include: {
                 event: true,
               },
@@ -74,15 +74,15 @@ export class UsersService {
           player_id, 
           event_id, 
           RANK() OVER (PARTITION BY event_id ORDER BY current_elo DESC) as position
-        FROM ranking_entries
+        FROM league_entries
       ) ranked_entries
       WHERE player_id IN (${playerIds.join(',')})
     `;
 
     return players.map((player) => {
-      const rankingsWithPos = player.rankingEntries.map((entry) => {
+      const leaguesWithPos = player.leagueEntries.map((entry) => {
         const rankInfo = userRanks.find(
-          (r) => r.player_id === player.id && r.event_id === entry.rankingId,
+          (r) => r.player_id === player.id && r.event_id === entry.leagueId,
         );
         return {
           ...entry,
@@ -91,7 +91,7 @@ export class UsersService {
       });
       return {
         ...player,
-        rankingEntries: rankingsWithPos,
+        leagueEntries: leaguesWithPos,
       };
     });
   }

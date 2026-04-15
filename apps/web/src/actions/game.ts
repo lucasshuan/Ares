@@ -7,27 +7,27 @@ import {
   CREATE_GAME,
   UPDATE_GAME,
 } from "@/lib/apollo/queries/game-mutations";
-import { Game } from "@/lib/apollo/types";
+import { Game, Player } from "@/lib/apollo/types";
 import { getServerAuthSession } from "@/auth";
 import {
   canEditGame,
   canManageGames,
   canManagePlayers,
-  canManageRankings,
+  canManageLeagues,
 } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 
 import {
-  ADD_PLAYER_TO_RANKING,
-  CREATE_RANKING,
-  REGISTER_SELF_TO_RANKING,
-  UPDATE_RANKING,
-} from "@/lib/apollo/queries/ranking-mutations";
+  ADD_PLAYER_TO_LEAGUE,
+  CREATE_LEAGUE,
+  REGISTER_SELF_TO_LEAGUE,
+  UPDATE_LEAGUE,
+} from "@/lib/apollo/queries/league-mutations";
 import {
   ADD_PLAYER_TO_GAME,
   SEARCH_PLAYERS,
 } from "@/lib/apollo/queries/player-mutations";
-import { Ranking } from "@/lib/apollo/types";
+import { League } from "@/lib/apollo/types";
 
 function normalizeOptionalText(value: string | null | undefined) {
   const normalized = value?.trim();
@@ -173,8 +173,9 @@ export async function approveGame(gameId: string) {
   return { success: true };
 }
 
-export async function addRanking(data: {
-  gameId: string;
+export async function addLeague(data: {
+  gameId?: string;
+  gameName?: string;
   name: string;
   slug: string;
   description: string | null;
@@ -193,14 +194,16 @@ export async function addRanking(data: {
   endDate: Date | null;
 }) {
   const session = await getServerAuthSession();
-  if (!session?.user) throw new Error("Unauthorized");
+  if (!session?.user?.id) throw new Error("Unauthorized");
 
-  // Fetch game by ID to get the slug for revalidation
-  const game = await getGameRecord(data.gameId);
-  if (!game) throw new Error("Game not found");
+  // If gameId is provided, we can try to revalidate specifically for that game
+  let game = null;
+  if (data.gameId) {
+    game = await getGameRecord(data.gameId);
+  }
 
   await getClient().mutate({
-    mutation: CREATE_RANKING,
+    mutation: CREATE_LEAGUE,
     variables: {
       input: {
         ...data,
@@ -209,7 +212,13 @@ export async function addRanking(data: {
     },
   });
 
-  revalidateGamePaths(game);
+  if (game) {
+    revalidateGamePaths(game);
+  } else {
+    revalidatePath("/");
+    revalidatePath("/games");
+  }
+
   return { success: true };
 }
 
@@ -227,7 +236,7 @@ export async function addPlayerToGame(
   if (!game) throw new Error("Game not found");
 
   const { data: resultData } = await getClient().mutate<{
-    addPlayerToGame: Game;
+    addPlayerToGame: Player;
   }>({
     mutation: ADD_PLAYER_TO_GAME,
     variables: {
@@ -243,9 +252,9 @@ export async function addPlayerToGame(
   return { success: true, playerId: resultData?.addPlayerToGame.id };
 }
 
-export async function createAndAddPlayerToRanking(
+export async function createAndAddPlayerToLeague(
   gameId: string,
-  rankingId: string,
+  leagueId: string,
   username: string,
 ) {
   const result = await addPlayerToGame(gameId, {
@@ -254,14 +263,14 @@ export async function createAndAddPlayerToRanking(
   });
 
   if (result.success && result.playerId) {
-    return await addPlayerToRanking(rankingId, result.playerId);
+    return await addPlayerToLeague(leagueId, result.playerId);
   }
 
   return { success: false };
 }
 
-export async function updateRanking(
-  rankingId: string,
+export async function updateLeague(
+  leagueId: string,
   data: {
     name: string;
     slug: string;
@@ -280,11 +289,11 @@ export async function updateRanking(
   },
 ) {
   const session = await getServerAuthSession();
-  if (!canManageRankings(session)) throw new Error("Unauthorized");
+  if (!canManageLeagues(session)) throw new Error("Unauthorized");
 
-  await getClient().mutate<{ updateRanking: Ranking }>({
-    mutation: UPDATE_RANKING,
-    variables: { id: rankingId, input: data },
+  await getClient().mutate<{ updateLeague: League }>({
+    mutation: UPDATE_LEAGUE,
+    variables: { id: leagueId, input: data },
   });
 
   // Revalidate
@@ -319,8 +328,8 @@ export async function searchPlayersByGame(gameId: string, query: string) {
   }));
 }
 
-export async function addPlayerToRanking(
-  rankingId: string,
+export async function addPlayerToLeague(
+  leagueId: string,
   playerId: string,
   initialElo?: number,
 ) {
@@ -328,21 +337,21 @@ export async function addPlayerToRanking(
   if (!canManagePlayers(session)) throw new Error("Unauthorized");
 
   await getClient().mutate({
-    mutation: ADD_PLAYER_TO_RANKING,
-    variables: { rankingId, playerId, initialElo },
+    mutation: ADD_PLAYER_TO_LEAGUE,
+    variables: { leagueId, playerId, initialElo },
   });
 
   revalidatePath("/");
   return { success: true };
 }
 
-export async function registerSelfToRanking(rankingId: string) {
+export async function registerSelfToLeague(leagueId: string) {
   const session = await getServerAuthSession();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   await getClient().mutate({
-    mutation: REGISTER_SELF_TO_RANKING,
-    variables: { rankingId, userId: session.user.id },
+    mutation: REGISTER_SELF_TO_LEAGUE,
+    variables: { leagueId, userId: session.user.id },
   });
 
   revalidatePath("/");

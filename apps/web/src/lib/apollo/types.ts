@@ -11,7 +11,7 @@ export interface User {
   players?: Player[];
 }
 
-export type GameStatus = "APPROVED" | "PENDING" | "approved" | "pending";
+import { type GameStatus } from "@ares/core";
 
 export interface Game {
   id: string;
@@ -26,7 +26,7 @@ export interface Game {
   createdAt: string;
   updatedAt: string;
   author?: User;
-  rankings?: Ranking[];
+  leagues?: League[];
   _count?: {
     events: number;
     players: number;
@@ -35,12 +35,12 @@ export interface Game {
   };
 }
 
-export interface Ranking {
+export interface League {
   id: string;
   gameId: string;
   name: string;
   slug: string;
-  type: "RANKING" | "TOURNAMENT";
+  type: "LEAGUE" | "TOURNAMENT";
   description: string | null;
   initialElo: number;
   ratingSystem: string;
@@ -58,7 +58,7 @@ export interface Ranking {
   createdAt: string;
   updatedAt: string;
   game: Game;
-  entries: RankingEntry[];
+  entries: LeagueEntry[];
 }
 
 export interface PlayerUsername {
@@ -73,18 +73,18 @@ export interface Player {
   currentElo: number;
   user?: User;
   game?: Game;
-  rankingEntries?: RankingEntry[];
+  leagueEntries?: LeagueEntry[];
   usernames?: PlayerUsername[];
 }
 
-export interface RankingEntry {
+export interface LeagueEntry {
   id: string;
-  rankingId: string;
+  leagueId: string;
   playerId: string;
   currentElo: number;
   position: number;
   player?: Player;
-  ranking?: Ranking;
+  league?: League;
 }
 export interface Paginated<T> {
   nodes: T[];
@@ -99,4 +99,4 @@ export interface PaginationInput {
 
 export type PaginatedGames = Paginated<Game>;
 export type PaginatedUsers = Paginated<User>;
-export type PaginatedRankings = Paginated<Ranking>;
+export type PaginatedLeagues = Paginated<League>;

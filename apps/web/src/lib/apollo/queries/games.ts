@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+﻿import { gql } from "@apollo/client";
 
 export const GET_GAMES = gql`
   query GetGames($pagination: PaginationInput, $search: String) {
@@ -15,7 +15,7 @@ export const GET_GAMES = gql`
         createdAt
         updatedAt
         _count {
-          rankings
+          leagues
           players
         }
       }
@@ -45,7 +45,7 @@ export const GET_GAME = gql`
         username
         image
       }
-      rankings {
+      leagues {
         id
         name
         slug
@@ -58,9 +58,24 @@ export const GET_GAME = gql`
         createdAt
       }
       _count {
-        rankings
+        leagues
         players
       }
+    }
+  }
+`;
+export const GET_GAMES_SIMPLE = gql`
+  query GetGamesSimple($pagination: PaginationInput, $search: String) {
+    games(pagination: $pagination, search: $search) {
+      nodes {
+        id
+        name
+        slug
+        description
+        thumbnailImageUrl
+      }
+      totalCount
+      hasNextPage
     }
   }
 `;

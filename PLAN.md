@@ -19,7 +19,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 - Monorepo com `pnpm workspaces` e `turbo`
 - Separação física entre `apps/web`, `apps/api`, `packages/db` e `packages/core`
 - Prisma + Postgres adequados ao domínio
-- Modelagem central já cobre `Game`, `Event`, `Ranking`, `Player`, `Result` e `AuditLog`
+- Modelagem central já cobre `Game`, `Event`, `League`, `Player`, `Result` e `AuditLog`
 - Validação de env existe nos apps
 - `tsc --noEmit` passou em `apps/web`, `apps/api`, `packages/core` e `packages/db`
 - Há uma base inicial de `DataLoader`
@@ -39,7 +39,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 #### Mutations sensíveis não estão protegidas na API
 
-- Problema: `games`, `players` e `rankings` expõem mutations sem guardas e sem checagem real de permissão ou ownership.
+- Problema: `games`, `players` e `leagues` expõem mutations sem guardas e sem checagem real de permissão ou ownership.
 - Impacto: qualquer cliente que alcance o GraphQL pode contornar as restrições aplicadas no frontend.
 - Gravidade: alta
 - Modificação: mover autenticação e autorização para o Nest com `GqlAuthGuard`, controle por permissão e ownership nos services.
@@ -55,7 +55,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 #### Models GraphQL não representam corretamente o shape do Prisma
 
-- Problema: `Game`, `Ranking`, `Player` e `_count` esperam campos que o Prisma não entrega diretamente nesse formato.
+- Problema: `Game`, `League`, `Player` e `_count` esperam campos que o Prisma não entrega diretamente nesse formato.
 - Impacto: campos não nulos podem resolver como `undefined`, e o schema vira uma representação enganosa do backend.
 - Gravidade: alta
 - Modificação: mapear explicitamente Prisma -> DTO GraphQL ou resolver todos os campos derivados com `ResolveField`.
@@ -67,10 +67,10 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 - Gravidade: alta
 - Modificação: adotar GraphQL codegen, eliminar tipos manuais do Apollo e validar documentos automaticamente.
 
-#### Posição de ranking está inconsistente
+#### Posição de league está inconsistente
 
 - Problema: a lógica de `position` não está consolidada; perfil e tabela dependem de comportamento incompleto ou SQL bruto frágil.
-- Impacto: usuário pode ver ranking errado, vazio ou inconsistente entre telas.
+- Impacto: usuário pode ver league errado, vazio ou inconsistente entre telas.
 - Gravidade: alta
 - Modificação: centralizar a lógica de posição no backend e expor isso como contrato explícito.
 
@@ -155,7 +155,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 #### Cobertura real é quase zero
 
 - Problema: a API só cobre o boilerplate `Hello World`; o web não tem testes.
-- Impacto: auth, RBAC, contrato GraphQL e ranking podem quebrar sem alarme.
+- Impacto: auth, RBAC, contrato GraphQL e league podem quebrar sem alarme.
 - Gravidade: alta
 - Modificação: criar testes reais na API e testes selecionados no web.
 
@@ -270,14 +270,14 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **1.4 Corrigir os DTOs e resolvers GraphQL**
   - [ ] Definir classes de DTO específicas no NestJS que escondam campos sensíveis ou internos do Prisma.
-  - [ ] Implementar `ResolveField` para campos agregados como `rankingCount` e `playerCount`, evitando fan-out ineficiente.
+  - [ ] Implementar `ResolveField` para campos agregados como `leagueCount` e `playerCount`, evitando fan-out ineficiente.
   - [ ] Adicionar validações de input usando `class-validator` e `Zod` (onde aplicável).
   - arquivos afetados: `apps/api/src/modules/**/*.model.ts`, `apps/api/src/modules/**/*.input.ts`
   - dificuldade: alta | impacto: alto
 
 - [ ] **1.5 Adotar GraphQL codegen no frontend**
   - [ ] Configurar `@graphql-codegen` no `apps/web` para gerar tipos TypeScript e hooks Apollo.
-  - [ ] Substituir definições de tipos manuais (ex: `Game`, `Ranking`) pelas versões geradas.
+  - [ ] Substituir definições de tipos manuais (ex: `Game`, `League`) pelas versões geradas.
   - [ ] Configurar validação de schema no build para detectar drifts de contrato imediatamente.
   - arquivos afetados: `apps/web/codegen.ts`, `apps/web/package.json`, `apps/web/src/lib/apollo/queries/*`
   - dificuldade: média | impacto: alto
@@ -293,21 +293,20 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **2.2 Criar a primeira suíte de testes real**
   - [ ] Configurar Vitest no `apps/web` com `React Testing Library`.
-  - [ ] Implementar testes de integração na API para os fluxos de criação de Jogo e Registro em Ranking.
+  - [ ] Implementar testes de integração na API para os fluxos de criação de Jogo e Registro em League.
   - [ ] Criar testes unitários para a lógica de cálculo de ELO/Pontos no backend.
   - arquivos afetados: `apps/api/test/*`, `apps/web/src/**/*.test.tsx`
   - dificuldade: alta | impacto: alto
 
 - [ ] **2.3 Expandir o uso de `DataLoader` e revisar N+1**
-  - [ ] Criar loaders para relações `Game -> Rankings` e `Ranking -> Entries`.
+  - [ ] Criar loaders para relações `Game -> Leagues` e `League -> Entries`.
   - [ ] Auditar performance das queries principais usando ferramenta de trace ou logs de query.
   - arquivos afetados: `apps/api/src/common/dataloaders/dataloader.service.ts`
   - dificuldade: média | impacto: alto
 
-- [ ] **2.5 Formalizar migrations versionadas**
-  - [ ] Migrar de `prisma db push` para `prisma migrate dev` para manter histórico formal.
-  - [ ] Documentar o fluxo de alteração de schema no README.
-  - arquivos afetados: `packages/db/prisma/migrations/*`, `README.md`
+- [x] **2.5 Formalizar migrations versionadas**
+  - [x] Migrar de `prisma db push` para `prisma migrate dev` para manter histórico formal.
+  - arquivos afetados: `packages/db/prisma/migrations/*`
   - dificuldade: média | impacto: médio
 
 ### Etapa 3. Reduzir complexidade e alinhar operação
@@ -319,7 +318,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - dificuldade: baixa | impacto: baixo
 
 - [ ] **3.2 Reduzir hotspots de complexidade**
-  - [ ] Refatorar `apps/web/src/actions/game.ts` movendo lógica pesada para services/hooks.
+  - [ ] Refatorar `apps/web/src/actions/*` movendo lógica pesada para services/hooks.
   - arquivos afetados: `apps/web/src/actions/*`
   - dificuldade: média | impacto: médio
 

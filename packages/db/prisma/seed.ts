@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+﻿import { PrismaClient } from "@prisma/client";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required to run the Prisma seed.");
@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const INITIAL_PERMISSION_DEFINITIONS = [
   { key: "manage_games", name: "Manage Games" },
   { key: "manage_players", name: "Manage Players" },
-  { key: "manage_rankings", name: "Manage Rankings" },
+  { key: "manage_leagues", name: "Manage Leagues" },
   { key: "manage_users", name: "Manage Users" }, // New permission added
 ] as const;
 

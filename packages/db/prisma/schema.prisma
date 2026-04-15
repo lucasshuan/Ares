@@ -14,7 +14,7 @@ enum GameStatus {
 }
 
 enum EventType {
-  RANKING
+  LEAGUE
   TOURNAMENT
 }
 
@@ -118,7 +118,7 @@ model Game {
   slug               String     @unique
   description        String?
   backgroundImageUrl String?    @map("background_image_url")
-  thumbnailImageUrl  String?    @map("thumbnail_image_url")
+  thumbnailImageUrl  String?    @map("thumbnail_image_url") // Tip: Usually 460x215
   steamUrl           String?    @map("steam_url")
   status             GameStatus @default(APPROVED)
   authorId           String?    @map("author_id")
@@ -153,7 +153,7 @@ model Event {
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   // Specific extensions
-  ranking Ranking?
+  league League?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -162,7 +162,7 @@ model Event {
   @@map("events")
 }
 
-model Ranking {
+model League {
   eventId String @id @map("event_id")
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
@@ -180,10 +180,10 @@ model Ranking {
   pointsPerDraw Int @default(1) @map("points_per_draw")
   pointsPerLoss Int @default(0) @map("points_per_loss")
 
-  entries RankingEntry[]
+  entries LeagueEntry[]
   results Result[]
 
-  @@map("rankings")
+  @@map("leagues")
 }
 
 model Player {
@@ -194,9 +194,9 @@ model Player {
   user              User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   primaryUsernameId String? @map("primary_username_id")
 
-  usernames      PlayerUsername[]
-  rankingEntries RankingEntry[]
-  resultEntries  ResultEntry[]
+  usernames     PlayerUsername[]
+  leagueEntries LeagueEntry[]
+  resultEntries ResultEntry[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -218,26 +218,26 @@ model PlayerUsername {
   @@map("player_usernames")
 }
 
-model RankingEntry {
-  id        String  @id @default(cuid())
-  rankingId String  @map("event_id") // References Ranking.eventId
-  ranking   Ranking @relation(fields: [rankingId], references: [eventId], onDelete: Cascade)
-  playerId  String  @map("player_id")
-  player    Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+model LeagueEntry {
+  id       String @id @default(cuid())
+  leagueId String @map("event_id") // References League.eventId
+  league   League @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+  playerId String @map("player_id")
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   currentElo Int @default(1000) @map("current_elo")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([rankingId, playerId])
-  @@map("ranking_entries")
+  @@unique([leagueId, playerId])
+  @@map("league_entries")
 }
 
 model Result {
-  id        String  @id @default(cuid())
-  rankingId String  @map("event_id")
-  ranking   Ranking @relation(fields: [rankingId], references: [eventId], onDelete: Cascade)
+  id       String @id @default(cuid())
+  leagueId String @map("event_id")
+  league   League @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
 
   description String?
 

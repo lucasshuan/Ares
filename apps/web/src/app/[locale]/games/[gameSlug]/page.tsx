@@ -9,9 +9,9 @@ import { Suspense } from "react";
 import {
   canEditGame,
   canManagePlayers,
-  canManageRankings,
+  canManageLeagues,
 } from "@/lib/permissions";
-import { RankingCard } from "@/components/cards/ranking-card";
+import { LeagueCard } from "@/components/cards/league-card";
 import { AlertCircle, ChevronLeft, Ghost } from "lucide-react";
 import { UserChip } from "@/components/ui/user-chip";
 import { Link } from "@/i18n/routing";
@@ -31,7 +31,7 @@ type GamePageProps = {
 export const dynamic = "force-dynamic";
 
 import { GET_GAME } from "@/lib/apollo/queries/games";
-import { Game, Ranking } from "@/lib/apollo/types";
+import { Game, League } from "@/lib/apollo/types";
 
 export async function generateMetadata({
   params,
@@ -86,17 +86,17 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
 
   const { game } = data;
   const author = game.author;
-  const rankings = game.rankings || [];
+  const leagues = game.leagues || [];
 
   const canEditCurrentGame = canEditGame(session, game.authorId);
   const viewerCanManagePlayers = canManagePlayers(session);
-  const viewerCanManageRankings = canManageRankings(session);
+  const viewerCanManageLeagues = canManageLeagues(session);
   const canSeeAdminActions =
-    canEditCurrentGame || viewerCanManagePlayers || viewerCanManageRankings;
+    canEditCurrentGame || viewerCanManagePlayers || viewerCanManageLeagues;
 
   const gameWithCounts = {
     ...game,
-    rankingCount: game._count?.events || 0,
+    leagueCount: game._count?.events || 0,
     playerCount: game._count?.players || 0,
     tourneyCount: 0,
     postCount: 0,
@@ -133,7 +133,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
 
             <div className="space-y-6 p-5">
               <div>
-                {game.status === "pending" && (
+                {game.status === "PENDING" && (
                   <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
                     <AlertCircle className="size-5 shrink-0 animate-pulse" />
                     <p className="text-xs font-semibold tracking-wider uppercase">
@@ -149,9 +149,9 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
                 </p>
               </div>
 
-              {game.status === "pending" && <></>}
+              {game.status === "PENDING" && <></>}
 
-              {game.status !== "pending" && (
+              {game.status !== "PENDING" && (
                 <div className="grid grid-cols-3 gap-2">
                   <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
                     <p className="text-muted font-mono text-[9px] opacity-60">
@@ -159,7 +159,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
                     </p>
                     <p className="text-secondary mt-0.5 text-lg font-bold">
                       {formatCompactNumber(
-                        (gameWithCounts.rankingCount || 0) +
+                        (gameWithCounts.leagueCount || 0) +
                           (gameWithCounts.tourneyCount || 0),
                       )}
                     </p>
@@ -227,14 +227,10 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
             actions={<AddEventButton gameId={game.id} variant="header" />}
           />
 
-          {rankings.length > 0 ? (
+          {leagues.length > 0 ? (
             <div className="grid gap-5 xl:grid-cols-2">
-              {rankings.map((ranking: Ranking) => (
-                <RankingCard
-                  key={ranking.id}
-                  ranking={ranking}
-                  game={gameSlug}
-                />
+              {leagues.map((league: League) => (
+                <LeagueCard key={league.id} league={league} game={gameSlug} />
               ))}
             </div>
           ) : (
