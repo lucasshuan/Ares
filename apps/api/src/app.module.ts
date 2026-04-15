@@ -17,8 +17,8 @@ import { CommonModule } from './common/common.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
+        resolve(process.cwd(), '.env.local'),
         resolve(process.cwd(), '.env'),
-        resolve(process.cwd(), '../../.env'),
       ],
       validate: (config) => parseEnv(config),
     }),

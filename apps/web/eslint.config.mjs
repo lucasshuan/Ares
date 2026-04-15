@@ -20,6 +20,7 @@ const eslintConfig = [
     "next-env.d.ts",
     "eslint.config.mjs",
     "postcss.config.mjs",
+    "scripts/**/*.mjs",
   ]),
 ];
 

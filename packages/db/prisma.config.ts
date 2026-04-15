@@ -1,8 +1,9 @@
 import path from "node:path";
-import { loadEnvFile } from "node:process";
 import { defineConfig } from "prisma/config";
 
-loadEnvFile(path.resolve(__dirname, "../../.env"));
+const prismaGenerateUrl =
+  process.env.DATABASE_URL ??
+  "postgresql://prisma:prisma@127.0.0.1:5432/prisma";
 
 export default defineConfig({
   schema: path.join(__dirname, "prisma/schema.prisma"),
@@ -11,6 +12,7 @@ export default defineConfig({
     seed: path.join(__dirname, "prisma/seed.ts"),
   },
   datasource: {
-    url: process.env.DATABASE_URL!,
+    // Prisma Client generation does not need a live database connection.
+    url: prismaGenerateUrl,
   },
 });

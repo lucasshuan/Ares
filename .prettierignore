@@ -1,5 +1,8 @@
 node_modules
 .next
+**/.next
 dist
+**/dist
 build
+**/build
 pnpm-lock.yaml

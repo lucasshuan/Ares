@@ -1,8 +1,8 @@
-import path from "node:path";
-import { loadEnvFile } from "node:process";
 import { PrismaClient } from "@prisma/client";
 
-loadEnvFile(path.resolve(__dirname, "../../../.env"));
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required to run the Prisma seed.");
+}
 
 const prisma = new PrismaClient();
 

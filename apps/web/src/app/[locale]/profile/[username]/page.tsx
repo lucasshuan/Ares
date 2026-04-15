@@ -8,7 +8,6 @@ import {
   Edit2,
   Calendar,
 } from "lucide-react";
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_USER } from "@/lib/apollo/queries/user";
 import { User } from "@/lib/apollo/types";
 import { getServerAuthSession } from "@/auth";

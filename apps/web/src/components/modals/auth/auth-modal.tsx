@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, LoaderCircle, Swords, Shield, Zap } from "lucide-react";
+import { X, LoaderCircle } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { useTranslations } from "next-intl";
 import { env } from "@/env";
@@ -21,7 +21,7 @@ function BackgroundOrbs() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]"
+      className="pointer-events-none absolute inset-0 overflow-hidden rounded-4xl"
     >
       {/* Main crimson glow */}
       <div
@@ -41,7 +41,7 @@ function BackgroundOrbs() {
       />
       {/* Subtle top-right crimson */}
       <div
-        className="absolute top-0 right-1/4 size-32 rounded-full opacity-15 blur-[40px]"
+        className="absolute top-0 right-1/4 size-32 rounded-full opacity-15 blur-2xl"
         style={{
           background: "radial-gradient(circle, #c00b3b 0%, transparent 70%)",
           animation: "auth-orb-drift 6s ease-in-out infinite 2s",
@@ -57,7 +57,7 @@ function ScanLines() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.03]"
+      className="pointer-events-none absolute inset-0 rounded-4xl opacity-[0.03]"
       style={{
         backgroundImage:
           "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.8) 2px, rgba(255,255,255,0.8) 3px)",
@@ -67,24 +67,24 @@ function ScanLines() {
   );
 }
 
-// ─── Feature list item ────────────────────────────────────────────────────────
+// // ─── Feature list item ────────────────────────────────────────────────────────
 
-function Feature({
-  icon: Icon,
-  label,
-}: {
-  icon: React.ElementType;
-  label: string;
-}) {
-  return (
-    <div className="flex items-center gap-2.5 text-xs text-white/40">
-      <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5">
-        <Icon className="size-2.5 text-[#c00b3b]" />
-      </div>
-      {label}
-    </div>
-  );
-}
+// function Feature({
+//   icon: Icon,
+//   label,
+// }: {
+//   icon: React.ElementType;
+//   label: string;
+// }) {
+//   return (
+//     <div className="flex items-center gap-2.5 text-xs text-white/40">
+//       <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5">
+//         <Icon className="size-2.5 text-[#c00b3b]" />
+//       </div>
+//       {label}
+//     </div>
+//   );
+// }
 
 // ─── Main modal ───────────────────────────────────────────────────────────────
 
@@ -142,13 +142,13 @@ function AuthModalInner({
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      className="fixed inset-0 z-200 flex items-center justify-center p-4"
       style={{ background: "rgba(5,3,8,0.75)", backdropFilter: "blur(12px)" }}
     >
       {/* Panel */}
       <div
         ref={panelRef}
-        className="relative w-full max-w-[400px] overflow-hidden rounded-[2rem]"
+        className="relative w-full max-w-[400px] overflow-hidden rounded-4xl"
         style={{
           background:
             "linear-gradient(160deg, rgb(18 10 22 / 0.98), rgb(10 6 14 / 0.98))",
@@ -208,7 +208,7 @@ function AuthModalInner({
             {/* Wordmark */}
             <div className="space-y-1 text-center">
               <h2 className="text-2xl font-black tracking-tight text-white">
-                Entrar no{" "}
+                Junte-se à{" "}
                 <span
                   className="bg-clip-text text-transparent"
                   style={{
@@ -216,12 +216,10 @@ function AuthModalInner({
                       "linear-gradient(135deg, #f7f0f3, #c00b3b)",
                   }}
                 >
-                  Ares
+                  guerra
                 </span>
               </h2>
-              <p className="text-xs leading-5 text-white/40">
-                {t("title")} — acesso rápido via provedor
-              </p>
+              <p className="text-sm leading-5 text-white/40">{t("title")}</p>
             </div>
           </div>
 
