@@ -1,0 +1,11 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "cache": false,
+      "inputs": ["index.ts", "package.json", "prisma/**", "prisma.config.ts"],
+      "outputs": []
+    }
+  }
+}

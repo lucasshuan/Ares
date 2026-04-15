@@ -20,6 +20,7 @@ import { formatCompactNumber } from "@/lib/utils";
 // Client-side Admin Panel (migrated from GameAdminActions)
 import { GameAdminPanel } from "./admin-panel";
 import { AddEventButton } from "./add-event-button";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 type GamePageProps = {
   params: Promise<{
@@ -29,7 +30,6 @@ type GamePageProps = {
 
 export const dynamic = "force-dynamic";
 
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { Game, Ranking } from "@/lib/apollo/types";
 
@@ -38,7 +38,7 @@ export async function generateMetadata({
 }: GamePageProps): Promise<Metadata> {
   const { gameSlug } = await params;
 
-  const { data } = await getClient().query<{ game: Game }>({
+  const data = await safeServerQuery<{ game: Game }>({
     query: GET_GAME,
     variables: { slug: gameSlug },
   });
@@ -73,7 +73,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
 async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   const session = await getServerAuthSession();
-  const { data } = await getClient().query<{ game: Game }>({
+  const data = await safeServerQuery<{ game: Game }>({
     query: GET_GAME,
     variables: { slug: gameSlug },
   });

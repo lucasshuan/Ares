@@ -14,9 +14,9 @@ import { formatDate } from "@/lib/date-utils";
 import { RankingTable } from "@/components/tables/ranking-table";
 import { RankingAdminPanel } from "./admin-panel";
 
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_RANKING } from "@/lib/apollo/queries/rankings";
 import { Ranking } from "@/lib/apollo/types";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 interface RankingPageProps {
   params: Promise<{
@@ -45,7 +45,7 @@ async function RankingPageContent({
   rankingSlug: string;
 }) {
   const session = await getServerAuthSession();
-  const { data } = await getClient().query<{ ranking: Ranking }>({
+  const data = await safeServerQuery<{ ranking: Ranking }>({
     query: GET_RANKING,
     variables: { gameSlug, rankingSlug },
   });

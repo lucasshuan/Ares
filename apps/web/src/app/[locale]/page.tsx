@@ -9,9 +9,9 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils";
 import { GameCard, GameCardSkeleton } from "@/components/cards/game-card";
 import { getTranslations } from "next-intl/server";
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { Game } from "@/lib/apollo/types";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 export const dynamic = "force-dynamic";
 
@@ -120,7 +120,7 @@ async function PublicGamesList({
   noGamesTitle,
   noGamesDescription,
 }: PublicGamesListProps) {
-  const { data } = await getClient().query<{ games: { nodes: Game[] } }>({
+  const data = await safeServerQuery<{ games: { nodes: Game[] } }>({
     query: GET_GAMES,
     variables: { pagination: { skip: 0, take: 4 } },
   });

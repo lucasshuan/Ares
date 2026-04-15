@@ -18,6 +18,7 @@ import { EditProfileTrigger } from "@/components/triggers/profile/edit-profile-t
 import { ActionButton } from "@/components/ui/action-button";
 import { ProfileTabs } from "@/components/ui/tabs";
 import { Metadata } from "next";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 type ProfilePageProps = {
   params: Promise<{
@@ -32,7 +33,7 @@ export async function generateMetadata({
   const t = await getTranslations("ProfilePage");
   const { username } = await params;
 
-  const { data } = await getClient().query<{ user: User }>({
+  const data = await safeServerQuery<{ user: User }>({
     query: GET_USER,
     variables: { username },
   });
@@ -52,7 +53,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
   const tModals = await getTranslations("Modals");
   const { username, locale } = await params;
 
-  const { data } = await getClient().query<{ user: User }>({
+  const data = await safeServerQuery<{ user: User }>({
     query: GET_USER,
     variables: { username },
   });

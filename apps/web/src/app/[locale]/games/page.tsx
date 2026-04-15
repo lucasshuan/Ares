@@ -1,7 +1,6 @@
 import { Link } from "@/i18n/routing";
 import { Trophy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { Game } from "@/lib/apollo/types";
 import { GameCard, GameCardSkeleton } from "@/components/cards/game-card";
@@ -13,6 +12,7 @@ import { Suspense } from "react";
 import { getServerAuthSession } from "@/auth";
 import { canManageGames } from "@/lib/permissions";
 import { AddGameTrigger } from "@/components/triggers/game/add-game-trigger";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 interface GamesPageProps {
   params: Promise<{ locale: string }>;
@@ -101,7 +101,7 @@ function GamesGridSkeleton() {
 async function GamesGrid({ search }: { search?: string }) {
   const t = await getTranslations("GamesPage");
 
-  const { data } = await getClient().query<{ games: { nodes: Game[] } }>({
+  const data = await safeServerQuery<{ games: { nodes: Game[] } }>({
     query: GET_GAMES,
     variables: { search, pagination: { skip: 0, take: 50 } },
   });

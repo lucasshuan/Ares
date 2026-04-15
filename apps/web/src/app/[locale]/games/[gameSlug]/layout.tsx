@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { getClient } from "@/lib/apollo/apollo-client";
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { Game } from "@/lib/apollo/types";
+import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export default async function GameLayout({
   params,
 }: GameLayoutProps) {
   const { gameSlug } = await params;
-  const { data } = await getClient().query<{ game: Game }>({
+  const data = await safeServerQuery<{ game: Game }>({
     query: GET_GAME,
     variables: { slug: gameSlug },
   });

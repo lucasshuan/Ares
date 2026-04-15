@@ -5,11 +5,14 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
+    "build": "prisma generate --schema=./prisma/schema.prisma",
     "format": "prettier --write .",
     "lint": "eslint . --max-warnings=0",
+    "postinstall": "prisma generate --schema=./prisma/schema.prisma",
     "typecheck": "tsc --noEmit"
   },
   "prisma": {
+    "schema": "./prisma/schema.prisma",
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
