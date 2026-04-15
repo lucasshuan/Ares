@@ -16,6 +16,7 @@ import {
   canManageLeagues,
 } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
+import { normalizeOptionalText, slugify } from "@/lib/utils";
 
 import {
   ADD_PLAYER_TO_LEAGUE,
@@ -28,22 +29,6 @@ import {
   SEARCH_PLAYERS,
 } from "@/lib/apollo/queries/player-mutations";
 import { League } from "@/lib/apollo/types";
-
-function normalizeOptionalText(value: string | null | undefined) {
-  const normalized = value?.trim();
-  return normalized ? normalized : null;
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .replace(/-{2,}/g, "-");
-}
 
 async function getGameRecord(gameIdOrSlug: string) {
   const { data } = await getClient().query<{ game: Game }>({

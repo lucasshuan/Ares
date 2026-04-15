@@ -1,5 +1,5 @@
-﻿import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join, resolve } from 'path';
@@ -23,11 +23,17 @@ import { CommonModule } from './common/common.module';
       validate: (config) => parseEnv(config),
     }),
     CommonModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,
-      introspection: true, // Habilitado para o Apollo Sandbox funcionar bem
+      useFactory: (configService: ConfigService) => {
+        const isProduction = configService.get('NODE_ENV') === 'production';
+        return {
+          autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          playground: !isProduction,
+          introspection: !isProduction,
+        };
+      },
+      inject: [ConfigService],
     }),
     DatabaseModule,
     AuditModule,

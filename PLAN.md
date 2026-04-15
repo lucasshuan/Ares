@@ -248,46 +248,47 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 ### Etapa 1. Fechar segurança e contratos principais
 
 - [ ] **1.1 Unificar o fluxo de autenticação**
-  - [ ] Criar endpoint de `/auth/me` na API para validar IDs de sessão.
+  - [x] Criar endpoint de `/auth/me` na API para validar IDs de sessão.
   - [ ] Remover o `token` da query string no redirecionamento da API (migrar para cookie ou via callback interno).
   - [ ] Configurar o NextAuth para processar o callback do Discord no frontend e trocar código por JWT via backend.
-  - [ ] Ajustar o Apollo Link no `apps/web` para injetar o JWT no header `Authorization`.
+  - [x] Ajustar o Apollo Link no `apps/web` para injetar o JWT no header `Authorization`.
   - arquivos afetados: `apps/web/src/auth/*`, `apps/api/src/modules/auth/*`, `apps/web/src/lib/apollo/apollo-client.ts`
   - dificuldade: alta | impacto: alto
 
-- [ ] **1.2 Unificar enums e permissões em `@ares/core`**
-  - [ ] Mover `GameStatus`, `EventStatus` e `EventType` do Prisma para o pacote core.
-  - [ ] Sincronizar casing (UPPERCASE) em todas as camadas (DB, API, Web).
-  - [ ] Centralizar as chaves de permissão (ex: `manage_games`) no `@ares/core`.
+- [x] **1.2 Unificar enums e permissões em `@ares/core`**
+  - [x] Mover `GameStatus`, `EventStatus` e `EventType` do Prisma para o pacote core.
+  - [x] Sincronizar casing (UPPERCASE) em todas as camadas (DB, API, Web).
+  - [x] Centralizar as chaves de permissão (ex: `manage_games`) no `@ares/core`.
   - arquivos afetados: `packages/core/index.ts`, `packages/db/prisma/schema.prisma`, `apps/web/src/lib/permissions.ts`
   - dificuldade: média | impacto: médio
 
-- [ ] **1.3 Levar autorização para o Nest**
-  - [ ] Implementar `AuthGuard` baseado em Passport-JWT no NestJS.
-  - [ ] Criar `PermissionsGuard` que consome as permissões centralizadas do `@ares/core`.
+- [x] **1.3 Levar autorização para o Nest**
+  - [x] Implementar `AuthGuard` baseado em Passport-JWT no NestJS.
+  - [x] Criar `PermissionsGuard` que consome as permissões centralizadas do `@ares/core`.
   - arquivos afetados: `apps/api/src/modules/auth/guards/*`, `apps/api/src/modules/**/*.resolver.ts`
   - dificuldade: alta | impacto: alto
 
-- [ ] **1.4 Corrigir os DTOs e resolvers GraphQL**
-  - [ ] Definir classes de DTO específicas no NestJS que escondam campos sensíveis ou internos do Prisma.
-  - [ ] Implementar `ResolveField` para campos agregados como `leagueCount` e `playerCount`, evitando fan-out ineficiente.
-  - [ ] Adicionar validações de input usando `class-validator` e `Zod` (onde aplicável).
+- [ ] **1.4 Otimização de Performance e Blindagem de Contrato (API)**
+  - [ ] Definir classes de DTO específicas no NestJS para garantir que o Schema GraphQL não mude acidentalmente se o Prisma mudar.
+  - [ ] Realizar auditoria N+1: Implementar `ResolveField` com DataLoaders para todas as relações (ex: `Game.leagues`, `League.entries`).
+  - [ ] Adicionar validações de input rigorosas em todos os `Inputs` usando `class-validator`.
   - arquivos afetados: `apps/api/src/modules/**/*.model.ts`, `apps/api/src/modules/**/*.input.ts`
   - dificuldade: alta | impacto: alto
 
-- [ ] **1.5 Adotar GraphQL codegen no frontend**
-  - [ ] Configurar `@graphql-codegen` no `apps/web` para gerar tipos TypeScript e hooks Apollo.
-  - [ ] Substituir definições de tipos manuais (ex: `Game`, `League`) pelas versões geradas.
-  - [ ] Configurar validação de schema no build para detectar drifts de contrato imediatamente.
+- [ ] **1.5 Adotar GraphQL Codegen (Frontend "Elite Setup")**
+  - [ ] Configurar `@graphql-codegen` no `apps/web` integrando com Apollo Client.
+  - [ ] Adicionar script `codegen:watch` para gerar tipos em tempo real durante o desenvolvimento.
+  - [ ] Configurar validação de contrato no `pre-commit` (Husky/lint-staged) para impedir drift de tipos.
+  - [ ] Substituir todas as interfaces manuais (ex: `SimpleGame`) pelos tipos gerados automaticamente.
   - arquivos afetados: `apps/web/codegen.ts`, `apps/web/package.json`, `apps/web/src/lib/apollo/queries/*`
   - dificuldade: média | impacto: alto
 
 ### Etapa 2. Endurecer backend e dados
 
-- [ ] **2.1 Endurecer o bootstrap da API**
-  - [ ] Configurar `ValidationPipe` global com `forbidNonWhitelisted: true`.
-  - [ ] Implementar restrição de `Introspection` e `Playground` apenas para ambientes não-produção.
-  - [ ] Configurar `CORS` com whitelist rígida vinda de variáveis de ambiente.
+- [x] **2.1 Endurecer o bootstrap da API**
+  - [x] Configurar `ValidationPipe` global com `forbidNonWhitelisted: true`.
+  - [x] Implementar restrição de `Introspection` e `Playground` apenas para ambientes não-produção.
+  - [x] Configurar `CORS` com whitelist rígida vinda de variáveis de ambiente.
   - arquivos afetados: `apps/api/src/main.ts`, `apps/api/src/app.module.ts`
   - dificuldade: média | impacto: alto
 
@@ -313,12 +314,11 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **3.1 Reestruturar Documentação**
   - [ ] Atualizar o README principal com instruções claras de setup do monorepo e variáveis de ambiente.
-  - [ ] Criar guias rápidos para as tarefas comuns (ex: "Como adicionar um novo módulo na API").
   - arquivos afetados: `README.md`
   - dificuldade: baixa | impacto: baixo
 
-- [ ] **3.2 Reduzir hotspots de complexidade**
-  - [ ] Refatorar `apps/web/src/actions/*` movendo lógica pesada para services/hooks.
+- [x] **3.2 Reduzir hotspots de complexidade**
+  - [x] Refatorar `apps/web/src/actions/*` movendo lógica pesada para services/hooks.
   - arquivos afetados: `apps/web/src/actions/*`
   - dificuldade: média | impacto: médio
 

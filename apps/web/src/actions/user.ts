@@ -6,29 +6,24 @@ import { getServerAuthSession } from "@/auth";
 import { revalidatePath } from "next/cache";
 
 import { User } from "@/lib/apollo/types";
+import { normalizeOptionalText } from "@/lib/utils";
 
 export async function updateProfile(formData: FormData) {
   const session = await getServerAuthSession();
-  if (!session?.user) throw new Error("Unauthorized");
+  if (!session?.user?.id) throw new Error("Unauthorized");
 
-  const bio = formData.get("bio") as string;
-  const name = formData.get("name") as string;
-  const username = formData.get("username") as string;
-  const profileColor = formData.get("profileColor") as string;
-  const country = formData.get("country") as string;
+  const data = {
+    name: (formData.get("name") as string).trim(),
+    username: (formData.get("username") as string).trim(),
+    bio: normalizeOptionalText(formData.get("bio") as string),
+    profileColor: formData.get("profileColor") as string,
+    country: normalizeOptionalText(formData.get("country") as string),
+  };
 
   try {
     const { data: result } = await getClient().mutate<{ updateProfile: User }>({
       mutation: UPDATE_PROFILE,
-      variables: {
-        input: {
-          bio,
-          name,
-          username,
-          profileColor,
-          country,
-        },
-      },
+      variables: { input: data },
     });
 
     if (result?.updateProfile) {
