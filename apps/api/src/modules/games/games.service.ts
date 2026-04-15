@@ -22,7 +22,7 @@ export class GamesService {
       : undefined;
 
     const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.db.game.findMany({
+      this.databaseProvider.game.findMany({
         where,
         skip,
         take,
@@ -38,7 +38,7 @@ export class GamesService {
           name: 'asc',
         },
       }),
-      this.databaseProvider.db.game.count({ where }),
+      this.databaseProvider.game.count({ where }),
     ]);
 
     return {
@@ -49,7 +49,7 @@ export class GamesService {
   }
 
   async findBySlug(slug: string) {
-    return this.databaseProvider.db.game.findFirst({
+    return this.databaseProvider.game.findFirst({
       where: {
         slug: slug,
       },
@@ -65,13 +65,13 @@ export class GamesService {
   }
 
   async getAuthor(authorId: string) {
-    return this.databaseProvider.db.user.findUnique({
+    return this.databaseProvider.user.findUnique({
       where: { id: authorId },
     });
   }
 
   async getRankings(gameId: string) {
-    return this.databaseProvider.db.ranking.findMany({
+    return this.databaseProvider.ranking.findMany({
       where: {
         event: {
           gameId: gameId,
@@ -86,7 +86,7 @@ export class GamesService {
   }
 
   async create(data: CreateGameInput, authorId?: string) {
-    return this.databaseProvider.db.game.create({
+    return this.databaseProvider.game.create({
       data: {
         ...data,
         authorId,
@@ -96,7 +96,7 @@ export class GamesService {
 
   async update(id: string, data: UpdateGameInput, userId?: string) {
     if (userId) {
-      const game = await this.databaseProvider.db.game.findUnique({
+      const game = await this.databaseProvider.game.findUnique({
         where: { id },
         select: { authorId: true },
       });
@@ -107,14 +107,14 @@ export class GamesService {
         throw new Error('You do not have permission to edit this game');
       }
     }
-    return this.databaseProvider.db.game.update({
+    return this.databaseProvider.game.update({
       where: { id },
       data,
     });
   }
 
   async approve(id: string) {
-    return this.databaseProvider.db.game.update({
+    return this.databaseProvider.game.update({
       where: { id },
       data: {
         status: 'APPROVED',
@@ -123,20 +123,20 @@ export class GamesService {
   }
 
   async getPlayer(id: string) {
-    return this.databaseProvider.db.player.findUnique({
+    return this.databaseProvider.player.findUnique({
       where: { id },
     });
   }
 
   async getPlayerUsernames(playerId: string) {
-    return this.databaseProvider.db.playerUsername.findMany({
+    return this.databaseProvider.playerUsername.findMany({
       where: { playerId },
     });
   }
 
   async addPlayerToGame(data: AddPlayerToGameInput) {
     const { gameId, username, userId } = data;
-    return this.databaseProvider.db.$transaction(async (tx) => {
+    return this.databaseProvider.$transaction(async (tx) => {
       let playerId: string | null = null;
       let wasAddedToExisting = false;
 
@@ -184,7 +184,7 @@ export class GamesService {
     };
 
     const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.db.playerUsername.findMany({
+      this.databaseProvider.playerUsername.findMany({
         where,
         skip,
         take,
@@ -196,7 +196,7 @@ export class GamesService {
           },
         },
       }),
-      this.databaseProvider.db.playerUsername.count({ where }),
+      this.databaseProvider.playerUsername.count({ where }),
     ]);
 
     return {

@@ -29,7 +29,7 @@ export class AuthService {
     const provider = 'discord';
 
     // 1. Check if account already exists
-    const existingAccount = await this.databaseProvider.db.account.findUnique({
+    const existingAccount = await this.databaseProvider.account.findUnique({
       where: {
         provider_providerAccountId: {
           provider,
@@ -50,7 +50,7 @@ export class AuthService {
       ? `https://cdn.discordapp.com/avatars/${providerAccountId}/${avatar}.png`
       : null;
 
-    const user = await this.databaseProvider.db.user.create({
+    const user = await this.databaseProvider.user.create({
       data: {
         name: global_name || username,
         username: username,
@@ -71,7 +71,7 @@ export class AuthService {
 
   async login(user: User) {
     // Buscar permissões reais do banco
-    const permissions = await this.databaseProvider.db.userPermission.findMany({
+    const permissions = await this.databaseProvider.userPermission.findMany({
       where: { userId: user.id },
       include: { permission: true },
     });

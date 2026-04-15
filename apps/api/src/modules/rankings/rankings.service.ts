@@ -11,7 +11,7 @@ export class RankingsService {
     const { skip, take } = pagination;
 
     const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.db.ranking.findMany({
+      this.databaseProvider.ranking.findMany({
         skip,
         take,
         include: {
@@ -27,7 +27,7 @@ export class RankingsService {
           },
         },
       }),
-      this.databaseProvider.db.ranking.count(),
+      this.databaseProvider.ranking.count(),
     ]);
 
     return {
@@ -38,13 +38,13 @@ export class RankingsService {
   }
 
   async getGame(gameId: string) {
-    return this.databaseProvider.db.game.findUnique({
+    return this.databaseProvider.game.findUnique({
       where: { id: gameId },
     });
   }
 
   async getEntries(rankingId: string) {
-    return this.databaseProvider.db.rankingEntry.findMany({
+    return this.databaseProvider.rankingEntry.findMany({
       where: { rankingId },
       include: {
         player: {
@@ -60,12 +60,12 @@ export class RankingsService {
   }
 
   async findByGameAndSlug(gameSlug: string, eventSlug: string) {
-    const game = await this.databaseProvider.db.game.findFirst({
+    const game = await this.databaseProvider.game.findFirst({
       where: { slug: gameSlug },
     });
     if (!game) return null;
 
-    return this.databaseProvider.db.ranking.findFirst({
+    return this.databaseProvider.ranking.findFirst({
       where: {
         event: {
           gameId: game.id,
@@ -84,7 +84,7 @@ export class RankingsService {
 
   async update(id: string, data: UpdateRankingInput, userId?: string) {
     if (userId) {
-      const ranking = await this.databaseProvider.db.ranking.findUnique({
+      const ranking = await this.databaseProvider.ranking.findUnique({
         where: { eventId: id },
         include: { event: { select: { authorId: true } } },
       });
@@ -94,7 +94,7 @@ export class RankingsService {
     }
 
     const { name, slug, description, ...rankingData } = data;
-    return this.databaseProvider.db.ranking.update({
+    return this.databaseProvider.ranking.update({
       where: { eventId: id },
       data: {
         event: {
@@ -121,7 +121,7 @@ export class RankingsService {
       authorId,
       ...rankingData
     } = data;
-    return this.databaseProvider.db.ranking.create({
+    return this.databaseProvider.ranking.create({
       data: {
         event: {
           create: {
@@ -144,13 +144,13 @@ export class RankingsService {
   async addPlayer(rankingId: string, playerId: string, initialElo?: number) {
     let elo = initialElo;
     if (elo === undefined) {
-      const ranking = await this.databaseProvider.db.ranking.findUnique({
+      const ranking = await this.databaseProvider.ranking.findUnique({
         where: { eventId: rankingId },
       });
       elo = ranking?.initialElo ?? 1000;
     }
 
-    return this.databaseProvider.db.rankingEntry.create({
+    return this.databaseProvider.rankingEntry.create({
       data: {
         rankingId,
         playerId,
@@ -161,18 +161,18 @@ export class RankingsService {
 
   async registerSelf(rankingId: string, userId: string) {
     // 1. Find or create player for this game
-    const ranking = await this.databaseProvider.db.ranking.findUnique({
+    const ranking = await this.databaseProvider.ranking.findUnique({
       where: { eventId: rankingId },
       include: { event: true },
     });
     if (!ranking) throw new Error('Ranking not found');
 
-    let player = await this.databaseProvider.db.player.findUnique({
+    let player = await this.databaseProvider.player.findUnique({
       where: { gameId_userId: { gameId: ranking.event.gameId, userId } },
     });
 
     if (!player) {
-      player = await this.databaseProvider.db.player.create({
+      player = await this.databaseProvider.player.create({
         data: {
           gameId: ranking.event.gameId,
           userId,
@@ -181,7 +181,7 @@ export class RankingsService {
     }
 
     // 2. Add to ranking entries
-    return this.databaseProvider.db.rankingEntry.create({
+    return this.databaseProvider.rankingEntry.create({
       data: {
         rankingId,
         playerId: player.id,

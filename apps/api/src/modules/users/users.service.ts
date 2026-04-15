@@ -8,7 +8,7 @@ export class UsersService {
   constructor(private databaseProvider: DatabaseProvider) {}
 
   async findByUsername(username: string) {
-    return this.databaseProvider.db.user.findFirst({
+    return this.databaseProvider.user.findFirst({
       where: {
         username,
       },
@@ -30,12 +30,12 @@ export class UsersService {
       : undefined;
 
     const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.db.user.findMany({
+      this.databaseProvider.user.findMany({
         where,
         skip,
         take,
       }),
-      this.databaseProvider.db.user.count({ where }),
+      this.databaseProvider.user.count({ where }),
     ]);
 
     return {
@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   async getPlayersWithRanks(userId: string) {
-    const players = await this.databaseProvider.db.player.findMany({
+    const players = await this.databaseProvider.player.findMany({
       where: { userId },
       include: {
         game: true,
@@ -66,7 +66,7 @@ export class UsersService {
     if (playerIds.length === 0) return players;
 
     // Rank calculation logic
-    const userRanks = await this.databaseProvider.db.$queryRaw<
+    const userRanks = await this.databaseProvider.$queryRaw<
       { player_id: string; event_id: string; position: bigint }[]
     >`
       SELECT player_id, event_id, position FROM (

@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   typedRoutes: false,
   images: {
+    qualities: [75],
     remotePatterns: [
       {
         protocol: "https",

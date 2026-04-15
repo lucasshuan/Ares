@@ -14,7 +14,7 @@ export class AuthResolver {
   @Query(() => User, { name: 'me', nullable: true })
   @UseGuards(GqlAuthGuard)
   async getMe(@CurrentUser() user: { id: string }) {
-    return this.databaseProvider.db.user.findFirst({
+    return this.databaseProvider.user.findFirst({
       where: {
         id: user.id,
       },
@@ -31,13 +31,13 @@ export class AuthResolver {
 
     // Simple availability check
     if (input.username) {
-      const existing = await this.databaseProvider.db.user.findFirst({
+      const existing = await this.databaseProvider.user.findFirst({
         where: { username: input.username, id: { not: userId } },
       });
       if (existing) throw new Error('Username taken');
     }
 
-    return this.databaseProvider.db.user.update({
+    return this.databaseProvider.user.update({
       where: { id: userId },
       data: {
         ...input,

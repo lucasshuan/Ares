@@ -12,7 +12,7 @@ export class AuditService {
     entityType: string;
     entityId: string;
   }) {
-    return this.databaseProvider.db.auditLog.create({
+    return this.databaseProvider.auditLog.create({
       data: {
         userId: params.userId,
         action: params.action,

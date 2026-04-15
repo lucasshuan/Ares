@@ -14,8 +14,4 @@ export class DatabaseProvider extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
   }
-
-  get db() {
-    return this;
-  }
 }

@@ -10,7 +10,7 @@ export class DataLoaderService {
 
   public readonly userLoader = new DataLoader<string, User | null>(
     async (ids: string[]) => {
-      const users = await this.databaseProvider.db.user.findMany({
+      const users = await this.databaseProvider.user.findMany({
         where: { id: { in: ids } },
       });
       const userMap = new Map(users.map((u) => [u.id, u]));
@@ -22,7 +22,7 @@ export class DataLoaderService {
 
   public readonly gameLoader = new DataLoader<string, Game | null>(
     async (ids: string[]) => {
-      const games = await this.databaseProvider.db.game.findMany({
+      const games = await this.databaseProvider.game.findMany({
         where: { id: { in: ids } },
       });
       const gameMap = new Map(games.map((g) => [g.id, g]));

@@ -257,3 +257,24 @@ button:hover {
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }
+
+@keyframes glitch-shake {
+  0% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+  20% {
+    transform: translate(-3px, 1px) skewX(-2deg);
+  }
+  40% {
+    transform: translate(3px, -1px) skewX(1.5deg);
+  }
+  60% {
+    transform: translate(-2px, 2px) skewX(0.5deg);
+  }
+  80% {
+    transform: translate(2px, -1px) skewX(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+}
