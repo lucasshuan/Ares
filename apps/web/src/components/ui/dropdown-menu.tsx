@@ -12,6 +12,49 @@ interface DropdownMenuProps {
   width?: number;
 }
 
+function getDropdownCoords({
+  element,
+  side,
+  align,
+  customWidth,
+}: {
+  element: HTMLDivElement;
+  side: "bottom" | "right";
+  align: "start" | "center" | "end";
+  customWidth?: number;
+}) {
+  const rect = element.getBoundingClientRect();
+  const dropdownWidth = customWidth ?? Math.max(rect.width, 240);
+
+  let finalSide = side;
+  if (side === "right" && rect.right + dropdownWidth + 20 > window.innerWidth) {
+    finalSide = "bottom";
+  }
+
+  if (finalSide === "right") {
+    return {
+      top: rect.top + window.scrollY,
+      left: rect.right + window.scrollX + 12,
+      width: dropdownWidth,
+      actualSide: "right" as const,
+    };
+  }
+
+  let left = rect.left + window.scrollX;
+  if (align === "center") {
+    left = rect.left + window.scrollX + rect.width / 2 - dropdownWidth / 2;
+  } else if (align === "end") {
+    left = rect.left + window.scrollX + rect.width - dropdownWidth;
+  }
+
+  return {
+    top: rect.bottom + window.scrollY + 8,
+    left: Math.max(12, left),
+    width: dropdownWidth,
+    actualSide: "bottom" as const,
+  };
+}
+
 export function DropdownMenu({
   trigger,
   children,
@@ -49,42 +92,48 @@ export function DropdownMenu({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let frameId = 0;
+
+    const handleViewportChange = () => {
+      cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(() => {
+        if (!containerRef.current) return;
+
+        setCoords(
+          getDropdownCoords({
+            element: containerRef.current,
+            side,
+            align,
+            customWidth,
+          }),
+        );
+      });
+    };
+
+    handleViewportChange();
+    window.addEventListener("resize", handleViewportChange);
+    window.addEventListener("scroll", handleViewportChange, true);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", handleViewportChange);
+      window.removeEventListener("scroll", handleViewportChange, true);
+    };
+  }, [align, customWidth, isOpen, side]);
+
   const toggleDropdown = () => {
     if (!isOpen && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const dropdownWidth = customWidth ?? Math.max(rect.width, 240);
-
-      let finalSide = side;
-      if (
-        side === "right" &&
-        rect.right + dropdownWidth + 20 > window.innerWidth
-      ) {
-        finalSide = "bottom";
-      }
-
-      if (finalSide === "right") {
-        setCoords({
-          top: rect.top + window.scrollY,
-          left: rect.right + window.scrollX + 12,
-          width: dropdownWidth,
-          actualSide: "right",
-        });
-      } else {
-        let left = rect.left + window.scrollX;
-        if (align === "center") {
-          left =
-            rect.left + window.scrollX + rect.width / 2 - dropdownWidth / 2;
-        } else if (align === "end") {
-          left = rect.left + window.scrollX + rect.width - dropdownWidth;
-        }
-
-        setCoords({
-          top: rect.bottom + window.scrollY + 8,
-          left: Math.max(12, left), // Keep away from screen edges
-          width: dropdownWidth,
-          actualSide: "bottom",
-        });
-      }
+      setCoords(
+        getDropdownCoords({
+          element: containerRef.current,
+          side,
+          align,
+          customWidth,
+        }),
+      );
     }
     setIsOpen(!isOpen);
   };
