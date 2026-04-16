@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { env } from "@/env";
+import { getApiUrl } from "@/lib/api";
 
 function AuthCallbackContent() {
   const router = useRouter();
@@ -20,16 +20,13 @@ function AuthCallbackContent() {
 
     void (async () => {
       try {
-        const response = await fetch(
-          `${env.NEXT_PUBLIC_API_URL}/auth/exchange`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ code }),
+        const response = await fetch(getApiUrl("/auth/exchange"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({ code }),
+        });
 
         if (!response.ok) {
           router.replace("/?error=Callback");

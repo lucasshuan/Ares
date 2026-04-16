@@ -123,6 +123,14 @@
   "Admin": {
     "panel": "Administrative Panel"
   },
+  "Auth": {
+    "Errors": {
+      "title": "Login failed",
+      "callback": "We couldn't finish the Discord sign-in flow. Please try again.",
+      "generic": "We couldn't sign you in right now. Please try again.",
+      "dismiss": "Dismiss login error"
+    }
+  },
   "Modals": {
     "Auth": {
       "title": "Sign in or sign up",

@@ -5,7 +5,8 @@ import { createPortal } from "react-dom";
 import { X, LoaderCircle } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { useTranslations } from "next-intl";
-import { env } from "@/env";
+
+import { getApiUrl } from "@/lib/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -97,10 +98,7 @@ function AuthModalInner({
   const panelRef = useRef<HTMLDivElement>(null);
 
   const handleDiscord = useCallback(() => {
-    window.location.href = env.NEXT_PUBLIC_API_URL.replace(
-      "/graphql",
-      "/auth/discord",
-    );
+    window.location.href = getApiUrl("/auth/discord");
   }, []);
 
   // Close on backdrop click

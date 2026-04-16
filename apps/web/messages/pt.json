@@ -122,6 +122,14 @@
   "Admin": {
     "panel": "Painel Administrativo"
   },
+  "Auth": {
+    "Errors": {
+      "title": "Falha no login",
+      "callback": "Não foi possível concluir o login com Discord. Tente novamente.",
+      "generic": "Não foi possível fazer login agora. Tente novamente.",
+      "dismiss": "Dispensar erro de login"
+    }
+  },
   "Modals": {
     "Auth": {
       "title": "Entrar ou criar conta",
