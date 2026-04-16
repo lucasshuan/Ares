@@ -6,14 +6,13 @@ import {
   IsNumber,
   IsBoolean,
   IsDate,
-  IsUUID,
   Min,
 } from 'class-validator';
 
 @InputType()
 export class CreateLeagueInput {
   @Field({ nullable: true })
-  @IsUUID()
+  @IsString()
   @IsOptional()
   gameId?: string;
 
@@ -98,7 +97,7 @@ export class CreateLeagueInput {
   endDate?: Date;
 
   @Field()
-  @IsUUID()
+  @IsString()
   authorId: string;
 }
 

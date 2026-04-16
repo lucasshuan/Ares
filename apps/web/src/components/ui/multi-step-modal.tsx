@@ -161,9 +161,7 @@ export function MultiStepModal({
 
         {/* Content - Scrollable */}
         <div className="custom-scrollbar relative flex-1 overflow-y-auto p-6 lg:px-8">
-          <div key={currentStep} className="animate-in">
-            {children}
-          </div>
+          <div className="animate-in">{children}</div>
         </div>
 
         {/* Footer - Fixed */}

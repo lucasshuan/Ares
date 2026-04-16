@@ -42,6 +42,7 @@ interface AddLeagueFormProps {
   onStepValidationChange?: (isValid: boolean) => void;
   formId: string;
   currentStep: number;
+  initialGame?: SimpleGame;
 }
 
 export function AddLeagueForm({
@@ -52,6 +53,7 @@ export function AddLeagueForm({
   onStepValidationChange,
   formId,
   currentStep,
+  initialGame,
 }: AddLeagueFormProps) {
   const t = useTranslations("Modals.AddLeague");
   const schema = useAddLeagueSchema();
@@ -107,8 +109,10 @@ export function AddLeagueForm({
   const [isSlugModified, setIsSlugModified] = useState(false);
   const [games, setGames] = useState<SimpleGame[]>([]);
   const [isGamesLoading, setIsGamesLoading] = useState(false);
-  const [gameSearch, setGameSearch] = useState("");
-  const [selectedGame, setSelectedGame] = useState<SimpleGame | null>(null);
+  const [gameSearch, setGameSearch] = useState(initialGame?.name || "");
+  const [selectedGame, setSelectedGame] = useState<SimpleGame | null>(
+    initialGame || null,
+  );
   const [showResults, setShowResults] = useState(false);
 
   const hasExactMatch = useMemo(() => {
@@ -118,10 +122,20 @@ export function AddLeagueForm({
     );
   }, [games, gameSearch]);
 
-  const hasInitialized = useRef(false);
+  const hasInitialized = useRef(!!initialGame);
 
   // Load games for step 1
   useEffect(() => {
+    // Avoid fetching if we already have the initial game and search matches
+    if (
+      initialGame &&
+      gameSearch === initialGame.name &&
+      !hasInitialized.current
+    ) {
+      hasInitialized.current = true;
+      return;
+    }
+
     const fetchGames = async () => {
       setIsGamesLoading(true);
       const result = await getGamesSimple(gameSearch);
@@ -145,7 +159,14 @@ export function AddLeagueForm({
       setIsGamesLoading(false);
     };
     fetchGames();
-  }, [gameSearch, gameId, setValue, setSelectedGame, setGameSearch]);
+  }, [
+    gameSearch,
+    gameId,
+    setValue,
+    setSelectedGame,
+    setGameSearch,
+    initialGame,
+  ]);
 
   // Sync validation state when game selection or search changes (refined to avoid redundant renders)
   useEffect(() => {

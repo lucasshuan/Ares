@@ -1,18 +1,21 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { MultiStepModal } from "@/components/ui/multi-step-modal";
 import { AddLeagueForm } from "@/components/forms/league/add-league-form";
 import { useTranslations } from "next-intl";
+import type { SimpleGame } from "@/actions/get-games";
 
 interface AddLeagueModalProps {
   gameId: string;
+  initialGame?: SimpleGame;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function AddLeagueModal({
   gameId,
+  initialGame,
   isOpen,
   onClose,
 }: AddLeagueModalProps) {
@@ -78,6 +81,7 @@ export function AddLeagueModal({
       <AddLeagueForm
         formId="add-league-form"
         gameId={gameId}
+        initialGame={initialGame}
         currentStep={currentStep}
         onSuccess={handleClose}
         onLoadingChange={setIsLoading}

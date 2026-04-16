@@ -7,14 +7,17 @@ import { useUser } from "@/components/providers";
 import { AddLeagueModal } from "@/components/modals/league/add-league-modal";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { DropdownMenu, DropdownItem } from "@/components/ui/dropdown-menu";
+import type { SimpleGame } from "@/actions/get-games";
 
 interface AddEventButtonProps {
   gameId: string;
+  game?: SimpleGame;
   variant?: "sidebar" | "header";
 }
 
 export function AddEventButton({
   gameId,
+  game,
   variant = "sidebar",
 }: AddEventButtonProps) {
   const t = useTranslations("Modals.AddLeague");
@@ -96,6 +99,7 @@ export function AddEventButton({
 
       <AddLeagueModal
         gameId={gameId}
+        initialGame={game}
         isOpen={isAddLeagueOpen}
         onClose={() => setIsAddLeagueOpen(false)}
       />

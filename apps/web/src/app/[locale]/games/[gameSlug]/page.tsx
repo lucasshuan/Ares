@@ -21,6 +21,7 @@ import { formatCompactNumber } from "@/lib/utils";
 import { GameAdminPanel } from "./admin-panel";
 import { AddEventButton } from "./add-event-button";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import type { SimpleGame } from "@/actions/get-games";
 
 type GamePageProps = {
   params: Promise<{
@@ -224,7 +225,13 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           <SectionHeader
             title={t("eventsTitle")}
             description={t("eventsDescription", { gameName: game.name })}
-            actions={<AddEventButton gameId={game.id} variant="header" />}
+            actions={
+              <AddEventButton
+                gameId={game.id}
+                game={game as SimpleGame}
+                variant="header"
+              />
+            }
           />
 
           {leagues.length > 0 ? (

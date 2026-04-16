@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsString, IsOptional, IsUrl, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsUrl } from 'class-validator';
 
 @InputType()
 export class CreateGameInput {
@@ -32,7 +32,7 @@ export class CreateGameInput {
   steamUrl?: string;
 
   @Field()
-  @IsUUID()
+  @IsString()
   authorId: string;
 }
 
