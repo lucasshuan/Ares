@@ -13,8 +13,10 @@ import { AuditModule } from './modules/audit/audit.module';
 import { parseEnv } from './env';
 import { CommonModule } from './common/common.module';
 import { pinoLoggerConfig } from './common/configs/pino-logger.config';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
