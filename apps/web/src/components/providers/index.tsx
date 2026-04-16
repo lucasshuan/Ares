@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, Suspense } from "react";
 import { type Session } from "next-auth";
 import {
   SessionProvider as NextAuthSessionProvider,
@@ -8,6 +8,7 @@ import {
 } from "next-auth/react";
 import { Toaster } from "sonner";
 
+import { LoginErrorHandler } from "@/components/auth/login-error-handler";
 import {
   canManageGames,
   canManagePlayers,
@@ -69,6 +70,9 @@ export function Providers({
     <NextAuthSessionProvider session={session}>
       <UserProvider>
         {children}
+        <Suspense fallback={null}>
+          <LoginErrorHandler />
+        </Suspense>
         <Toaster theme="dark" position="top-center" richColors closeButton />
       </UserProvider>
     </NextAuthSessionProvider>
