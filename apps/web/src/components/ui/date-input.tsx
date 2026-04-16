@@ -43,7 +43,7 @@ export function DateInput({ value, onChange, min, className }: DateInputProps) {
         value={value}
         min={min}
         onChange={(e) => onChange(e.target.value)}
-        className="h-full flex-1 bg-transparent p-0 text-center text-sm font-bold text-white scheme-dark transition-all outline-none placeholder:text-white/20 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden [&::-webkit-datetime-edit]:flex [&::-webkit-datetime-edit]:justify-center [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-inner-spin-button]:hidden"
+        className="h-full flex-1 appearance-none bg-transparent p-0 text-center text-sm font-bold text-white scheme-dark transition-all outline-none placeholder:text-white/20 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-clear-button]:hidden [&::-webkit-datetime-edit]:flex [&::-webkit-datetime-edit]:justify-center [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-inner-spin-button]:hidden"
       />
 
       <Popover.Root>

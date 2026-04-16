@@ -122,6 +122,13 @@ input[type="number"] {
   appearance: none !important;
 }
 
+/* Hide native date picker icon in Firefox */
+@-moz-document url-prefix() {
+  input[type="date"] {
+    appearance: none !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }

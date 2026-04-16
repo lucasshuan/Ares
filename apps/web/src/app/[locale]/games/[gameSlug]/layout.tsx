@@ -30,7 +30,15 @@ export default async function GameLayout({
 
   return (
     <>
-      <section className="relative min-h-[320px] w-full overflow-hidden">
+      <section
+        className="relative min-h-[320px] w-full overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
+        }}
+      >
         {game.backgroundImageUrl ? (
           <>
             <Image
@@ -38,23 +46,14 @@ export default async function GameLayout({
               alt=""
               fill
               priority
-              className="object-cover opacity-60"
+              className="object-cover opacity-40"
               sizes="100vw"
             />
-            <div className="from-background/40 to-background absolute inset-0 bg-linear-to-b" />
+            <div className="to-background absolute inset-0 bg-linear-to-b from-transparent" />
           </>
         ) : (
           <div className="from-primary/20 to-background/94 absolute inset-0 bg-linear-to-br" />
         )}
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, black 50%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 50%, transparent 100%)",
-          }}
-        />
       </section>
       {children}
     </>

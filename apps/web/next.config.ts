@@ -46,9 +46,13 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "img-src 'self' data: blob: cdn.discordapp.com shared.fastly.steamstatic.com *.googleusercontent.com",
               "font-src 'self' data: fonts.gstatic.com",
-              "connect-src 'self' *.supabase.co vitals.vercel-insights.com va.vercel-insights.com",
+              `connect-src 'self' vitals.vercel-insights.com va.vercel-insights.com ${
+                process.env.NEXT_PUBLIC_API_URL ?? ""
+              }`.trim(),
               "frame-ancestors 'none'",
-              "upgrade-insecure-requests",
+              ...(process.env.NODE_ENV === "production"
+                ? ["upgrade-insecure-requests"]
+                : []),
             ].join("; "),
           },
           {
