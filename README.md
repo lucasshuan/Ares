@@ -41,7 +41,6 @@ Preencha no `apps/api/.env`:
 Preencha no `apps/web/.env`:
 
 - `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
 - `NEXT_PUBLIC_API_URL`
 
 ## Scripts úteis

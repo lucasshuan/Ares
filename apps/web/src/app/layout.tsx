@@ -11,7 +11,7 @@ import "./[locale]/globals.css";
 import "flag-icons/css/flag-icons.min.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(env.NEXTAUTH_URL),
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
     default: "Ares",
     template: "%s | Ares",
