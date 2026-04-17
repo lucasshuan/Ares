@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiOrigin = apiUrl ? new URL(apiUrl).origin : "";
+
     return [
       {
         source: "/(.*)",
@@ -46,9 +49,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "img-src 'self' data: blob: cdn.discordapp.com shared.fastly.steamstatic.com *.googleusercontent.com",
               "font-src 'self' data: fonts.gstatic.com",
-              `connect-src 'self' vitals.vercel-insights.com va.vercel-insights.com ${
-                process.env.NEXT_PUBLIC_API_URL ?? ""
-              }`.trim(),
+              `connect-src 'self' vitals.vercel-insights.com va.vercel-insights.com ${apiOrigin}`.trim(),
               "frame-ancestors 'none'",
               ...(process.env.NODE_ENV === "production"
                 ? ["upgrade-insecure-requests"]

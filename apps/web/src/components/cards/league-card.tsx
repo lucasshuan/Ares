@@ -50,12 +50,12 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
                   className="flex items-center gap-3 border-b border-white/5 py-2 last:border-0"
                 >
                   <span className="text-primary w-6 shrink-0 font-mono text-[10px] font-bold">
-                    {entry.position}º
+                    {entry.position || i + 1}º
                   </span>
 
                   {country ? (
                     <span
-                      className={`fi fi-${country.toLowerCase()} h-3 w-4 shrink-0 rounded-xs bg-white/5 shadow-sm`}
+                      className={`fi fi-${country.toLowerCase()} h-3 w-4 shrink-0 rounded-xs`}
                     />
                   ) : (
                     <Globe className="size-3 shrink-0 text-white/30" />

@@ -306,18 +306,21 @@ export function EditProfileForm({
                 : "focus:border-primary/50 border-white/10",
             )}
           />
-          {isUsernameChecking && (
-            <LoaderCircle className="text-primary absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
-          )}
+          {isUsernameChecking ? (
+            <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+          ) : canCheckUsername && !errors.username ? (
+            hasUsernameConflict ? (
+              <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-red-500" />
+            ) : (
+              <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-emerald-500" />
+            )
+          ) : null}
         </div>
         {errors.username && (
           <p className="ml-1 text-xs text-red-400">{errors.username.message}</p>
         )}
         {!errors.username && hasUsernameConflict && (
           <p className="ml-1 text-xs text-red-400">{t("username.taken")}</p>
-        )}
-        {!errors.username && !hasUsernameConflict && isUsernameChecking && (
-          <p className="text-primary ml-1 text-xs">{t("username.checking")}</p>
         )}
       </div>
 
@@ -338,8 +341,8 @@ export function EditProfileForm({
                     <span
                       className={cn(
                         "fi",
-                        `fi-${country.toLowerCase()} fis`,
-                        "h-full w-full object-cover",
+                        `fi-${country.toLowerCase()}`,
+                        "h-3 w-4 rounded-xs object-cover",
                       )}
                     />
                   </div>
@@ -439,8 +442,8 @@ export function EditProfileForm({
                               <span
                                 className={cn(
                                   "fi",
-                                  `fi-${c.code.toLowerCase()} fis`,
-                                  "h-full w-full object-cover",
+                                  `fi-${c.code.toLowerCase()}`,
+                                  "h-3 w-4 rounded-xs object-cover",
                                 )}
                               />
                             </div>

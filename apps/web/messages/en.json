@@ -317,11 +317,11 @@
       "dates": {
         "start": {
           "label": "Start Date",
-          "placeholder": "Select start date"
+          "placeholder": "MM/DD/YYYY"
         },
         "end": {
           "label": "End Date",
-          "placeholder": "Select end date"
+          "placeholder": "MM/DD/YYYY"
         }
       },
       "initialElo": {

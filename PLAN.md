@@ -335,11 +335,11 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - arquivos afetados: `apps/web/src/**/*.tsx`
   - dificuldade: média | impacto: baixo
 
-- [ ] **4.2 Adicionar Logger**
-  - [ ] Adicionar logger em camadas estratégicas na API para monitorar requisições e erros.
-  - [ ] Adicionar logger em camadas estratégicas na Web para monitorar requisições e erros.
-  - [ ] Garantir que apenas logs de erro relevantes sejam exibidos em produção.
-  - [ ] Usar camadas diferentes de relevância de logs (debug, info, warn, error) e permitir filtrar por elas.
+- [x] **4.2 Adicionar Logger**
+  - [x] Adicionar logger em camadas estratégicas na API para monitorar requisições e erros.
+  - [x] Adicionar logger em camadas estratégicas na Web para monitorar requisições e erros.
+  - [x] Garantir que apenas logs de erro relevantes sejam exibidos em produção.
+  - [x] Usar camadas diferentes de relevância de logs (debug, info, warn, error) e permitir filtrar por elas.
   - dificuldade: média | impacto: médio
 
 ## Validation Basis

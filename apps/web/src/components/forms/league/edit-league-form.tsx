@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState, useEffect } from "react";
+import { useTransition, useState, useEffect, useRef } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditLeagueSchema, type EditLeagueValues } from "@/schemas/league";
@@ -15,8 +15,11 @@ import {
   Equal,
   Activity,
   TrendingUp,
+  LoaderCircle,
+  Check,
+  X,
 } from "lucide-react";
-import { updateLeague } from "@/actions/game";
+import { updateLeague, checkLeagueSlugAvailability } from "@/actions/game";
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { Slider } from "@/components/ui/slider";
@@ -24,7 +27,7 @@ import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { NumberInput } from "@/components/ui/number-input";
 import { type League } from "@/lib/apollo/generated/graphql";
 import { formatHoursDuration } from "@/lib/date-utils";
-import { cn } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils";
 
 interface EditLeagueFormProps {
   league: League;
@@ -111,11 +114,67 @@ export function EditLeagueForm({
   };
 
   const [isSlugModified, setIsSlugModified] = useState(false);
+  const [slugAvailability, setSlugAvailability] = useState<{
+    value: string;
+    status: "idle" | "available" | "conflict";
+  }>({
+    value: league.slug,
+    status: "available",
+  });
+  const slugRequestRef = useRef(0);
+
+  const slug = useWatch({ control, name: "slug" }) || "";
+  const canCheckSlug = !!slug && slugify(slug).length > 0;
+  const isSlugChecking =
+    canCheckSlug && slug !== league.slug && slugAvailability.value !== slug;
+  const hasSlugConflict =
+    canCheckSlug &&
+    slug !== league.slug &&
+    slugAvailability.value === slug &&
+    slugAvailability.status === "conflict";
+
+  useEffect(() => {
+    if (!canCheckSlug || slug === league.slug) {
+      slugRequestRef.current += 1;
+      return;
+    }
+
+    const requestId = ++slugRequestRef.current;
+
+    const timeoutId = window.setTimeout(async () => {
+      const result = await checkLeagueSlugAvailability(
+        league.gameId,
+        slug,
+        league.id,
+      );
+
+      if (slugRequestRef.current !== requestId) {
+        return;
+      }
+
+      if (!result.success) {
+        setSlugAvailability({
+          value: slug,
+          status: "available",
+        });
+        return;
+      }
+
+      setSlugAvailability({
+        value: slug,
+        status: result.data?.available ? "available" : "conflict",
+      });
+    }, 400);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [canCheckSlug, slug, league.gameId, league.id, league.slug]);
 
   // Auto-generate slug from name if not manually modified
   useEffect(() => {
     if (!isSlugModified && name !== league.name) {
-      setValue("slug", name.toLowerCase().replace(/[^a-z0-9-]/g, "-"), {
+      setValue("slug", slugify(name), {
         shouldValidate: true,
       });
     }
@@ -127,9 +186,11 @@ export function EditLeagueForm({
   }, [isPending, onLoadingChange]);
 
   // Notify parent about validation state
+  const isFormValid = isValid && !isSlugChecking && !hasSlugConflict;
+
   useEffect(() => {
-    onValidationChange?.(isValid);
-  }, [isValid, onValidationChange]);
+    onValidationChange?.(isFormValid);
+  }, [isFormValid, onValidationChange]);
 
   const onSubmit = async (values: EditLeagueValues) => {
     startTransition(async () => {
@@ -214,25 +275,41 @@ export function EditLeagueForm({
               tooltip={t("AddLeague.slug.tooltip")}
               required
             />
-            <input
-              type="text"
-              {...register("slug")}
-              onChange={(e) => {
-                setValue(
-                  "slug",
-                  e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
-                  { shouldValidate: true },
-                );
-                setIsSlugModified(true);
-              }}
-              placeholder={t("AddLeague.slug.placeholder")}
-              className={cn(
-                "focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 text-sm text-white transition-all outline-none placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4",
-                errors.slug ? "border-red-500/50" : "border-white/10",
-              )}
-            />
+            <div className="relative">
+              <input
+                type="text"
+                {...register("slug")}
+                onChange={(e) => {
+                  setValue("slug", slugify(e.target.value), {
+                    shouldValidate: true,
+                  });
+                  setIsSlugModified(true);
+                }}
+                placeholder={t("AddLeague.slug.placeholder")}
+                className={cn(
+                  "focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 pr-12 text-sm text-white transition-all outline-none placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4",
+                  errors.slug || hasSlugConflict
+                    ? "border-red-500/50"
+                    : "border-white/10",
+                )}
+              />
+              {isSlugChecking ? (
+                <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+              ) : canCheckSlug && slug !== league.slug && !errors.slug ? (
+                hasSlugConflict ? (
+                  <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-red-500" />
+                ) : (
+                  <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-emerald-500" />
+                )
+              ) : null}
+            </div>
             {errors.slug && (
               <p className="ml-1 text-xs text-red-400">{errors.slug.message}</p>
+            )}
+            {!errors.slug && hasSlugConflict && (
+              <p className="ml-1 text-xs text-red-400">
+                {t("AddLeague.slug.taken")}
+              </p>
             )}
           </div>
 
@@ -595,7 +672,6 @@ export function EditLeagueForm({
                           </span>
                         </div>
 
-                        {/* Win Margin Thresholds */}
                         <div className="mt-1 space-y-2 rounded-2xl bg-white/2 p-4">
                           <p className="text-[10px] font-bold tracking-wider text-white/30 uppercase">
                             {t("AddLeague.explanation.elo.thresholds")}

@@ -170,7 +170,7 @@ export function AddPlayerToLeagueForm({
               <div className="flex items-center gap-3">
                 {player.country && (
                   <span
-                    className={`fi fi-${player.country.toLowerCase()} fis rounded-xs`}
+                    className={`fi fi-${player.country.toLowerCase()} h-3 w-4 rounded-xs`}
                   />
                 )}
                 <span className="font-medium text-white">

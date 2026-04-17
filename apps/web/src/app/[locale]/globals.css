@@ -113,20 +113,26 @@
 /* Hide spin buttons in numeric inputs */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-  margin: 0 !important;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type="number"] {
-  -moz-appearance: textfield !important;
-  appearance: none !important;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-/* Hide native date picker icon in Firefox */
-@-moz-document url-prefix() {
-  input[type="date"] {
-    appearance: none !important;
-  }
+/* Hide native date picker icons and UI */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+  display: none;
+  -webkit-appearance: none;
+}
+
+input[type="date"] {
+  -moz-appearance: textfield;
+  appearance: none;
 }
 
 html {

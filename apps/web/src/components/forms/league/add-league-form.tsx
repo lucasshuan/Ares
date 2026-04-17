@@ -23,6 +23,8 @@ import {
   Search,
   LoaderCircle,
   AlertTriangle,
+  Check,
+  X,
 } from "lucide-react";
 // Removido Popover import se não for usado em outro lugar, mas vou manter se necessário.
 import { addLeague, checkLeagueSlugAvailability } from "@/actions/game";
@@ -608,9 +610,15 @@ export function AddLeagueForm({
                       : "border-white/10",
                   )}
                 />
-                {isSlugChecking && (
-                  <LoaderCircle className="text-primary absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
-                )}
+                {isSlugChecking ? (
+                  <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+                ) : canCheckSlug && !errors.slug ? (
+                  hasSlugConflict ? (
+                    <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-red-500" />
+                  ) : (
+                    <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-emerald-500" />
+                  )
+                ) : null}
               </div>
               {errors.slug && touchedFields.slug && (
                 <p className="ml-1 text-xs text-red-400">
@@ -619,11 +627,6 @@ export function AddLeagueForm({
               )}
               {!errors.slug && hasSlugConflict && (
                 <p className="ml-1 text-xs text-red-400">{t("slug.taken")}</p>
-              )}
-              {!errors.slug && !hasSlugConflict && isSlugChecking && (
-                <p className="text-primary ml-1 text-xs">
-                  {t("slug.checking")}
-                </p>
               )}
             </div>
 

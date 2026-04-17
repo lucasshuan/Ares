@@ -23,7 +23,7 @@ interface DataTableProps<T> {
   columns: {
     header: string;
     accessorKey?: keyof T;
-    cell?: (item: T) => React.ReactNode;
+    cell?: (item: T, index: number) => React.ReactNode;
     className?: string;
     headerClassName?: string;
   }[];
@@ -174,7 +174,10 @@ export function DataTable<T>({
                     className={cn("px-6", rowPadding, col.className)}
                   >
                     {col.cell
-                      ? col.cell(item)
+                      ? col.cell(
+                          item,
+                          (currentPage - 1) * rowsPerPage + rowIdx + 1,
+                        )
                       : col.accessorKey
                         ? String(item[col.accessorKey] ?? "")
                         : null}

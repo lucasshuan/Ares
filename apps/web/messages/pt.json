@@ -316,11 +316,11 @@
       "dates": {
         "start": {
           "label": "Data de Início",
-          "placeholder": "Selecione a data de início"
+          "placeholder": "DD/MM/AAAA"
         },
         "end": {
           "label": "Data de Término",
-          "placeholder": "Selecione a data de término"
+          "placeholder": "DD/MM/AAAA"
         }
       },
       "initialElo": {

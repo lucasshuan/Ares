@@ -122,7 +122,7 @@ export function PlayerHoverCard({
                     {(data?.user?.country ?? country) && (
                       <div className="flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-[10px] font-bold tracking-tight text-white/60">
                         <span
-                          className={`fi fi-${(data?.user?.country ?? country)?.toLowerCase()} size-3 rounded-xs`}
+                          className={`fi fi-${(data?.user?.country ?? country)?.toLowerCase()} h-3 w-4 rounded-xs`}
                         />
                         {data?.user?.country ?? country}
                       </div>

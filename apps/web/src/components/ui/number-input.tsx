@@ -76,7 +76,7 @@ export function NumberInput({
               width: `${Math.max(String(value).length, 1)}ch`,
               minWidth: "2ch",
             }}
-            className="h-10 appearance-none bg-transparent text-center text-sm font-bold text-white transition-all outline-none placeholder:text-white/20"
+            className="h-10 appearance-none bg-transparent text-center text-sm font-bold text-white transition-all outline-none [-moz-appearance:textfield] placeholder:text-white/20"
           />
           {unit && (
             <span className="pointer-events-none ml-1 text-[10px] font-bold whitespace-nowrap text-white/20">

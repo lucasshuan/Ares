@@ -27,13 +27,13 @@ export function LeagueTable({ entries }: LeagueTableProps) {
     () => [
       {
         header: "#",
-        cell: (entry: LeagueEntry) => (
+        cell: (entry: LeagueEntry, index: number) => (
           <span
             className={`font-mono text-sm font-bold ${
-              entry.position <= 3 ? "text-primary" : "opacity-30"
+              (entry.position || index) <= 3 ? "text-primary" : "opacity-30"
             }`}
           >
-            {entry.position}º
+            {entry.position || index}º
           </span>
         ),
         className: "w-16",
@@ -50,11 +50,9 @@ export function LeagueTable({ entries }: LeagueTableProps) {
               <div className="flex cursor-pointer items-center gap-2.5">
                 <div className="flex shrink-0 items-center justify-center transition-all">
                   {entry.country ? (
-                    <div className="overflow-hidden rounded-xs bg-white/5">
-                      <span
-                        className={`fi fi-${entry.country.toLowerCase()} h-3 w-4 shadow-sm`}
-                      />
-                    </div>
+                    <span
+                      className={`fi fi-${entry.country.toLowerCase()} h-3 w-4 rounded-xs`}
+                    />
                   ) : (
                     <Globe className="size-3.5 text-white" />
                   )}
