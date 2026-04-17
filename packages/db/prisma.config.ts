@@ -9,7 +9,7 @@ export default defineConfig({
   schema: path.join(__dirname, "prisma/schema.prisma"),
   migrations: {
     path: path.join(__dirname, "prisma/migrations"),
-    seed: path.join(__dirname, "prisma/seed.ts"),
+    seed: "node --env-file=.env --import tsx ./prisma/seed.ts",
   },
   datasource: {
     // Prisma Client generation does not need a live database connection.

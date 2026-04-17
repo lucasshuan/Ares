@@ -1,7 +1,7 @@
 export const INITIAL_PERMISSION_DEFINITIONS = [
   { key: "manage_games", name: "Manage Games" },
   { key: "manage_players", name: "Manage Players" },
-  { key: "manage_leagues", name: "Manage Leagues" },
+  { key: "manage_events", name: "Manage Leagues" },
 ] as const;
 
 export type PermissionKey =
