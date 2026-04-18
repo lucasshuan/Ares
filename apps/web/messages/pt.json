@@ -155,6 +155,9 @@
       "trigger": "Editar Perfil",
       "title": "Editar Perfil",
       "description": "Atualize suas informações pessoais e biografia.",
+      "avatar": {
+        "label": "Foto de Perfil"
+      },
       "username": {
         "label": "Link do Perfil",
         "placeholder": "Identificador único (sem espaços)",

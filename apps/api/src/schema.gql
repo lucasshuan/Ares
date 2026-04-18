@@ -110,6 +110,11 @@ type PaginatedPlayers {
   hasNextPage: Boolean!
 }
 
+type UploadUrlResponse {
+  uploadUrl: String!
+  finalUrl: String!
+}
+
 type PaginatedLeagues {
   nodes: [League!]!
   totalCount: Int!
@@ -120,11 +125,6 @@ type PaginatedUsers {
   nodes: [User!]!
   totalCount: Int!
   hasNextPage: Boolean!
-}
-
-type UploadUrlResponse {
-  uploadUrl: String!
-  finalUrl: String!
 }
 
 type Query {
@@ -149,12 +149,12 @@ type Mutation {
   updateGame(id: ID!, input: UpdateGameInput!): Game!
   approveGame(id: ID!): Game!
   addPlayerToGame(input: AddPlayerToGameInput!): Player!
+  requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
   updateProfile(input: UpdateProfileInput!): User!
   updateLeague(id: ID!, input: UpdateLeagueInput!): League!
   createLeague(input: CreateLeagueInput!): League!
   addPlayerToLeague(leagueId: ID!, playerId: ID!, initialElo: Int): LeagueEntry!
   registerSelfToLeague(leagueId: ID!): LeagueEntry!
-  requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
 }
 
 input CreateGameInput {
@@ -187,6 +187,7 @@ input UpdateProfileInput {
   bio: String
   profileColor: String
   country: String
+  imageUrl: String
 }
 
 input UpdateLeagueInput {

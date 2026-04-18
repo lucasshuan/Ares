@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
 import { Env } from '../../env';
@@ -63,5 +67,17 @@ export class StorageService {
     });
 
     return { uploadUrl, finalUrl: `${this.cdnUrl}/${key}` };
+  }
+
+  isOwnedUrl(url: string): boolean {
+    return url.startsWith(this.cdnUrl);
+  }
+
+  async deleteFile(url: string): Promise<void> {
+    if (!this.isOwnedUrl(url)) return;
+    const key = url.slice(this.cdnUrl.length + 1); // strip leading slash
+    await this.s3.send(
+      new DeleteObjectCommand({ Bucket: this.bucket, Key: key }),
+    );
   }
 }

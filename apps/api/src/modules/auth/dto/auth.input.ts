@@ -27,4 +27,9 @@ export class UpdateProfileInput {
   @IsString()
   @IsOptional()
   country?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }

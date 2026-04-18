@@ -9,6 +9,7 @@ import { DiscordStrategy } from './discord.strategy';
 import { JwtStrategy } from './jwt.strategy';
 
 import { PermissionsGuard } from './guards/permissions.guard';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PermissionsGuard } from './guards/permissions.guard';
         signOptions: { expiresIn: '7d' },
       }),
     }),
+    StorageModule,
   ],
   providers: [
     AuthService,

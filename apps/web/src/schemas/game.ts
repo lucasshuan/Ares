@@ -14,6 +14,11 @@ export const getEditGameSchema = (t: TFunction) => {
     .nullable()
     .optional();
 
+  const imageFieldSchema = z
+    .union([z.instanceof(File), z.string()])
+    .nullable()
+    .optional();
+
   return z.object({
     name: z
       .string()
@@ -23,8 +28,8 @@ export const getEditGameSchema = (t: TFunction) => {
       .string()
       .max(500, t("descMax", { count: 500 }))
       .optional(),
-    backgroundImageUrl: urlSchema,
-    thumbnailImageUrl: urlSchema,
+    backgroundImageUrl: imageFieldSchema,
+    thumbnailImageUrl: imageFieldSchema,
     steamUrl: urlSchema,
   });
 };

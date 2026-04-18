@@ -78,6 +78,7 @@ function AuthCallbackContent() {
           console.log(
             "[AuthCallback] Sign in successful, redirecting to /profile",
           );
+          router.refresh();
           redirectWithLocale("/profile");
           return;
         }
@@ -98,13 +99,17 @@ function AuthCallbackContent() {
         });
       }
     })();
-  }, [redirectWithLocale, searchParams]);
+  }, [redirectWithLocale, router, searchParams]);
+
+  const locale = getPreferredClientLocale();
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-        <p className="text-muted-foreground animate-pulse">Autenticando...</p>
+        <p className="text-muted-foreground animate-pulse">
+          {locale === "pt" ? "Autenticando..." : "Authenticating..."}
+        </p>
       </div>
     </div>
   );

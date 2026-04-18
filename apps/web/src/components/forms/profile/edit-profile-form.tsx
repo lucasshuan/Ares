@@ -25,6 +25,8 @@ import { useSession } from "next-auth/react";
 import { COUNTRIES } from "@/lib/countries";
 import { cn } from "@/lib/utils";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
+import { ImageUploadInput } from "@/components/ui/image-upload-input";
+import { resolveImageValue } from "@/lib/upload";
 
 export type UserData = {
   id: string;
@@ -33,6 +35,7 @@ export type UserData = {
   bio?: string | null;
   profileColor?: string | null;
   country?: string | null;
+  imageUrl?: string | null;
 };
 
 const PROFILE_COLORS = [
@@ -84,6 +87,7 @@ export function EditProfileForm({
       bio: user.bio || "",
       country: user.country || null,
       profileColor: user.profileColor || PROFILE_COLORS[0],
+      imageUrl: user.imageUrl ?? null,
     },
     mode: "onChange",
   });
@@ -229,12 +233,24 @@ export function EditProfileForm({
     }
 
     startTransition(async () => {
+      let resolvedImageUrl: string | null;
+      try {
+        resolvedImageUrl = await resolveImageValue(values.imageUrl);
+      } catch {
+        toast.error("Failed to upload image.");
+        return;
+      }
+
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) => {
+        if (key === "imageUrl") return;
         if (value !== null && value !== undefined) {
-          formData.append(key, value);
+          formData.append(key, value as string);
         }
       });
+      if (resolvedImageUrl) {
+        formData.append("imageUrl", resolvedImageUrl);
+      }
 
       const result = await updateProfile(formData);
       if (!result.success) {
@@ -248,6 +264,7 @@ export function EditProfileForm({
       await update({
         username: values.username,
         name: values.name,
+        imageUrl: resolvedImageUrl ?? undefined,
       });
 
       if (result.success && result.data) {
@@ -267,6 +284,21 @@ export function EditProfileForm({
       onSubmit={handleSubmit(onSubmit)}
       className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2"
     >
+      <div className="md:col-span-2">
+        <Controller
+          name="imageUrl"
+          control={control}
+          render={({ field }) => (
+            <ImageUploadInput
+              value={field.value}
+              onChange={field.onChange}
+              label={t("avatar.label")}
+              dropzoneClassName="h-32"
+            />
+          )}
+        />
+      </div>
+
       <div className="flex flex-col gap-2">
         <LabelTooltip label={t("name.label")} htmlFor="name" required />
         <input

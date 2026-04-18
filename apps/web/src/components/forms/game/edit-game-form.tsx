@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { updateGame } from "@/actions/game";
 import { type Game } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils";
+import { resolveImageValue } from "@/lib/upload";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
 
 interface EditGameFormProps {
@@ -59,10 +60,22 @@ export function EditGameForm({
 
   const onSubmit = async (values: EditGameValues) => {
     startTransition(async () => {
+      let backgroundImageUrl: string | null;
+      let thumbnailImageUrl: string | null;
+      try {
+        [backgroundImageUrl, thumbnailImageUrl] = await Promise.all([
+          resolveImageValue(values.backgroundImageUrl),
+          resolveImageValue(values.thumbnailImageUrl),
+        ]);
+      } catch {
+        toast.error(t("uploadError") || "Failed to upload image.");
+        return;
+      }
+
       const result = await updateGame(game.id, {
         ...values,
-        backgroundImageUrl: values.backgroundImageUrl || null,
-        thumbnailImageUrl: values.thumbnailImageUrl || null,
+        backgroundImageUrl,
+        thumbnailImageUrl,
         steamUrl: values.steamUrl || null,
         description: values.description ?? null,
       });

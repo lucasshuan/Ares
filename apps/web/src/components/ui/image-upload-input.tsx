@@ -1,16 +1,15 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { ImageIcon, UploadCloud, X, Loader2 } from "lucide-react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { ImageIcon, UploadCloud, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { requestUploadUrl } from "@/actions/game";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 interface ImageUploadInputProps {
-  value?: string | null;
-  onChange: (url: string | null) => void;
+  value?: File | string | null;
+  onChange: (value: File | string | null) => void;
   label: string;
   dropzoneClassName?: string;
   error?: string;
@@ -27,47 +26,36 @@ export function ImageUploadInput({
 }: ImageUploadInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const previewUrl = useMemo(() => {
+    if (value instanceof File) {
+      return URL.createObjectURL(value);
+    }
+    return typeof value === "string" && value ? value : null;
+  }, [value]);
+
+  useEffect(() => {
+    if (!(value instanceof File) || !previewUrl) return;
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl, value]);
 
   const handleFile = useCallback(
-    async (file: File) => {
-      setUploadError(null);
+    (file: File) => {
+      setLocalError(null);
 
       if (!ACCEPTED_TYPES.includes(file.type)) {
-        setUploadError("Accepted: JPEG, PNG, WebP, GIF");
+        setLocalError("Accepted: JPEG, PNG, WebP, GIF");
         return;
       }
 
       if (file.size > MAX_SIZE_BYTES) {
-        setUploadError("Max size: 5 MB");
+        setLocalError("Max size: 5 MB");
         return;
       }
 
-      try {
-        setLoading(true);
-        const result = await requestUploadUrl(file.name, file.type);
-
-        if (!result.success || !result.data) {
-          throw new Error(result.error ?? "Upload failed");
-        }
-
-        const { uploadUrl, finalUrl } = result.data;
-
-        const res = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
-
-        if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
-
-        onChange(finalUrl);
-      } catch (err) {
-        setUploadError(err instanceof Error ? err.message : "Upload failed");
-      } finally {
-        setLoading(false);
-      }
+      onChange(file);
     },
     [onChange],
   );
@@ -95,18 +83,17 @@ export function ImageUploadInput({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onChange(null);
-    setUploadError(null);
+    setLocalError(null);
   };
 
-  const isLoading = loading;
-  const hasError = !!(error || uploadError);
+  const hasError = !!(error || localError);
 
   return (
     <div className="flex flex-col gap-2">
       <label className="ml-1 text-sm font-medium text-zinc-400">{label}</label>
 
       <div
-        onClick={() => !disabled && !isLoading && inputRef.current?.click()}
+        onClick={() => !disabled && inputRef.current?.click()}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -118,15 +105,15 @@ export function ImageUploadInput({
             : isDragging
               ? "border-white/50 bg-white/5"
               : "border-white/20 hover:border-white/40",
-          !disabled && !isLoading && "cursor-pointer",
+          !disabled && "cursor-pointer",
           disabled && "opacity-50",
         )}
       >
         {/* Background image preview */}
-        {value && (
+        {previewUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={value}
+            src={previewUrl}
             alt="preview"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -136,14 +123,12 @@ export function ImageUploadInput({
         <div
           className={cn(
             "absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all",
-            value
+            previewUrl
               ? "bg-black/50 opacity-0 group-hover:opacity-100"
               : "bg-white/3",
           )}
         >
-          {isLoading ? (
-            <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-          ) : value ? (
+          {previewUrl ? (
             <>
               <UploadCloud className="h-5 w-5 text-zinc-200" />
               <span className="text-xs font-medium text-zinc-200">
@@ -166,7 +151,7 @@ export function ImageUploadInput({
         </div>
 
         {/* Clear button */}
-        {value && !isLoading && !disabled && (
+        {previewUrl && !disabled && (
           <button
             type="button"
             onClick={handleClear}
@@ -177,8 +162,8 @@ export function ImageUploadInput({
         )}
       </div>
 
-      {(error || uploadError) && (
-        <p className="field-error-text">{error ?? uploadError}</p>
+      {(error || localError) && (
+        <p className="field-error-text">{error ?? localError}</p>
       )}
 
       <input
@@ -187,7 +172,7 @@ export function ImageUploadInput({
         accept={ACCEPTED_TYPES.join(",")}
         className="hidden"
         onChange={handleInputChange}
-        disabled={disabled || isLoading}
+        disabled={disabled}
       />
     </div>
   );

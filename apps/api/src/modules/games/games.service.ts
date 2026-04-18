@@ -4,6 +4,7 @@ import { CreateGameInput, UpdateGameInput } from './dto/games.input';
 import { AddPlayerToGameInput } from './dto/players.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { Prisma } from '@ares/db';
+import { StorageService } from '../storage/storage.service';
 
 function mapLeagueWithEvent<
   T extends {
@@ -39,7 +40,10 @@ function mapLeagueWithEvent<
 
 @Injectable()
 export class GamesService {
-  constructor(private databaseProvider: DatabaseProvider) {}
+  constructor(
+    private databaseProvider: DatabaseProvider,
+    private storageService: StorageService,
+  ) {}
 
   async findAll(pagination: PaginationInput, search?: string) {
     const { skip, take } = pagination;
@@ -132,18 +136,44 @@ export class GamesService {
   }
 
   async update(id: string, data: UpdateGameInput, userId?: string) {
+    const current = await this.databaseProvider.game.findUnique({
+      where: { id },
+      select: {
+        authorId: true,
+        backgroundImageUrl: true,
+        thumbnailImageUrl: true,
+      },
+    });
+
     if (userId) {
-      const game = await this.databaseProvider.game.findUnique({
-        where: { id },
-        select: { authorId: true },
-      });
       // Apenas o autor ou admin pode editar.
-      // Nota: o check de admin será feito pelo guard ou aqui.
-      // Se tivermos o userId aqui, assumimos que é uma tentativa de edição "normal".
-      if (game && game.authorId && game.authorId !== userId) {
+      if (current && current.authorId && current.authorId !== userId) {
         throw new Error('You do not have permission to edit this game');
       }
     }
+
+    // Delete old CDN images when they are replaced
+    const deletions: Promise<void>[] = [];
+    if (
+      data.backgroundImageUrl !== undefined &&
+      current?.backgroundImageUrl &&
+      current.backgroundImageUrl !== data.backgroundImageUrl
+    ) {
+      deletions.push(
+        this.storageService.deleteFile(current.backgroundImageUrl),
+      );
+    }
+    if (
+      data.thumbnailImageUrl !== undefined &&
+      current?.thumbnailImageUrl &&
+      current.thumbnailImageUrl !== data.thumbnailImageUrl
+    ) {
+      deletions.push(this.storageService.deleteFile(current.thumbnailImageUrl));
+    }
+    if (deletions.length > 0) {
+      await Promise.all(deletions);
+    }
+
     return this.databaseProvider.game.update({
       where: { id },
       data,
