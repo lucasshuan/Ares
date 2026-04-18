@@ -329,7 +329,43 @@
       "steps": {
         "game": "Jogo",
         "general": "Geral",
-        "format": "Formato"
+        "format": "Formato",
+        "matchFormats": "Partida"
+      },
+      "matchFormats": {
+        "title": "Tipos de Partida Permitidos",
+        "help": "Escolha todos os tipos de partida aceitos nesta liga.",
+        "required": "Selecione pelo menos um tipo de partida.",
+        "options": {
+          "ONE_V_ONE": {
+            "label": "1v1",
+            "description": "Um jogador por lado."
+          },
+          "TWO_V_TWO": {
+            "label": "2v2",
+            "description": "Dois jogadores por lado."
+          },
+          "THREE_V_THREE": {
+            "label": "3v3",
+            "description": "Três jogadores por lado."
+          },
+          "FOUR_V_FOUR": {
+            "label": "4v4",
+            "description": "Quatro jogadores por lado."
+          },
+          "FIVE_V_FIVE": {
+            "label": "5v5",
+            "description": "Cinco jogadores por lado."
+          },
+          "SIX_V_SIX": {
+            "label": "6v6",
+            "description": "Seis jogadores por lado."
+          },
+          "FREE_FOR_ALL": {
+            "label": "Todos Contra Todos",
+            "description": "Todo mundo joga contra todo mundo."
+          }
+        }
       },
       "gameSelect": {
         "label": "Escolha o Jogo",

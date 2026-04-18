@@ -29,13 +29,25 @@ function makeClient() {
     };
   });
 
-  const errorLink = onError(({ networkError, graphQLErrors }) => {
+  const errorLink = onError(({ error }) => {
+    const statusCode =
+      typeof error === "object" &&
+      error !== null &&
+      "statusCode" in error &&
+      typeof error.statusCode === "number"
+        ? error.statusCode
+        : undefined;
+
+    const graphQLErrors =
+      typeof error === "object" &&
+      error !== null &&
+      "errors" in error &&
+      Array.isArray(error.errors)
+        ? (error.errors as Array<{ extensions?: Record<string, unknown> }>)
+        : [];
+
     // Network-level auth failure (REST or HTTP transport)
-    if (
-      networkError &&
-      "statusCode" in networkError &&
-      (networkError.statusCode === 401 || networkError.statusCode === 403)
-    ) {
+    if (statusCode === 401 || statusCode === 403) {
       void signOut({ callbackUrl: "/auth/signin" });
       return;
     }
@@ -44,7 +56,10 @@ function makeClient() {
     // NOTE: verify that NestJS maps UnauthorizedException to extensions.code === "UNAUTHENTICATED"
     // before relying on this branch. If the code is different, update the check below.
     if (
-      graphQLErrors?.some((e) => e.extensions?.["code"] === "UNAUTHENTICATED")
+      graphQLErrors.some(
+        (graphQLError) =>
+          graphQLError.extensions?.["code"] === "UNAUTHENTICATED",
+      )
     ) {
       void signOut({ callbackUrl: "/auth/signin" });
     }

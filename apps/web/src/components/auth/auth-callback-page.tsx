@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useCallback, useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -15,12 +15,13 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
   const processing = useRef(false);
 
-  const redirectWithLocale = (
-    href: string | { pathname: string; query?: Record<string, string> },
-  ) => {
-    const locale = getPreferredClientLocale();
-    router.replace(getLocalizedPathname(href, locale));
-  };
+  const redirectWithLocale = useCallback(
+    (href: string | { pathname: string; query?: Record<string, string> }) => {
+      const locale = getPreferredClientLocale();
+      router.replace(getLocalizedPathname(href, locale));
+    },
+    [router],
+  );
 
   useEffect(() => {
     const code = searchParams.get("code");
@@ -97,7 +98,7 @@ function AuthCallbackContent() {
         });
       }
     })();
-  }, [router, searchParams]);
+  }, [redirectWithLocale, searchParams]);
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center">

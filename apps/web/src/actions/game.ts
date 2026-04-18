@@ -195,6 +195,7 @@ export const addLeague = createSafeAction(
     pointsPerWin: number;
     pointsPerDraw: number;
     pointsPerLoss: number;
+    allowedFormats: string[];
     startDate: Date | null;
     endDate: Date | null;
   }) => {
@@ -320,6 +321,7 @@ export const updateLeague = createSafeAction(
       pointsPerWin: number;
       pointsPerDraw: number;
       pointsPerLoss: number;
+      allowedFormats: string[];
     },
   ) => {
     const session = await getServerAuthSession();

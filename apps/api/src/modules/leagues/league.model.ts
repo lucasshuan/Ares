@@ -54,6 +54,9 @@ export class League {
   @Field(() => Int)
   pointsPerLoss: number;
 
+  @Field(() => [String])
+  allowedFormats: string[];
+
   @Field()
   isApproved: boolean;
 

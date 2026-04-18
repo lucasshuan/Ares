@@ -26,3 +26,14 @@ export type ResultAttachmentType = (typeof RESULT_ATTACHMENT_TYPES)[number];
 
 export const VIDEO_PLATFORMS = ["TWITCH", "YOUTUBE", "OTHER"] as const;
 export type VideoPlatform = (typeof VIDEO_PLATFORMS)[number];
+
+export const MATCH_FORMATS = [
+  "ONE_V_ONE",
+  "TWO_V_TWO",
+  "THREE_V_THREE",
+  "FOUR_V_FOUR",
+  "FIVE_V_FIVE",
+  "SIX_V_SIX",
+  "FREE_FOR_ALL",
+] as const;
+export type MatchFormat = (typeof MATCH_FORMATS)[number];

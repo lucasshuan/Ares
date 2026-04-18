@@ -2,6 +2,7 @@
 
 import { useTransition, useState, useEffect, useRef } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditLeagueSchema, type EditLeagueValues } from "@/schemas/league";
 import {
@@ -28,12 +29,15 @@ import { NumberInput } from "@/components/ui/number-input";
 import { type League } from "@/lib/apollo/generated/graphql";
 import { formatHoursDuration } from "@/lib/date-utils";
 import { cn, slugify } from "@/lib/utils";
+import { MATCH_FORMATS } from "@ares/core";
 
 interface EditLeagueFormProps {
   league: League;
   onSuccess: () => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
+  onStepValidationChange?: (isValid: boolean) => void;
+  currentStep: number;
   formId: string;
 }
 
@@ -42,6 +46,8 @@ export function EditLeagueForm({
   onSuccess,
   onLoadingChange,
   onValidationChange,
+  onStepValidationChange,
+  currentStep,
   formId,
 }: EditLeagueFormProps) {
   const t = useTranslations("Modals");
@@ -54,6 +60,7 @@ export function EditLeagueForm({
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { errors, isValid },
   } = useForm<EditLeagueValues>({
     resolver: zodResolver(schema),
@@ -72,6 +79,10 @@ export function EditLeagueForm({
       pointsPerWin: league.pointsPerWin,
       pointsPerDraw: league.pointsPerDraw,
       pointsPerLoss: league.pointsPerLoss,
+      allowedFormats:
+        league.allowedFormats?.length > 0
+          ? [...league.allowedFormats]
+          : ["ONE_V_ONE"],
     },
     mode: "onChange",
   });
@@ -89,6 +100,7 @@ export function EditLeagueForm({
   const pointsPerWin = useWatch({ control, name: "pointsPerWin" }) || 0;
   const pointsPerDraw = useWatch({ control, name: "pointsPerDraw" }) || 0;
   const pointsPerLoss = useWatch({ control, name: "pointsPerLoss" }) || 0;
+  const allowedFormats = useWatch({ control, name: "allowedFormats" }) || [];
   const name = useWatch({ control, name: "name" }) || "";
   const formattedInactivityWindow = formatHoursDuration(
     inactivityThresholdHours,
@@ -192,6 +204,52 @@ export function EditLeagueForm({
     onValidationChange?.(isFormValid);
   }, [isFormValid, onValidationChange]);
 
+  useEffect(() => {
+    let valid = false;
+
+    if (currentStep === 0) {
+      valid = true;
+    } else if (currentStep === 1) {
+      const values = {
+        name: name.trim(),
+        slug: slug.trim(),
+      };
+      valid = values.name.length >= 2 && values.slug.length >= 2;
+      if (valid) {
+        valid = !isSlugChecking && !hasSlugConflict;
+      }
+    } else if (currentStep === 2) {
+      valid = true;
+    } else if (currentStep === 3) {
+      valid = allowedFormats.length > 0;
+    }
+
+    onStepValidationChange?.(valid);
+  }, [
+    currentStep,
+    name,
+    slug,
+    isSlugChecking,
+    hasSlugConflict,
+    allowedFormats.length,
+    onStepValidationChange,
+  ]);
+
+  const matchFormatOptions = MATCH_FORMATS.map((value) => ({
+    value,
+    label: t(`AddLeague.matchFormats.options.${value}.label`),
+    description: t(`AddLeague.matchFormats.options.${value}.description`),
+  }));
+
+  const toggleMatchFormat = (format: string) => {
+    const values = getValues("allowedFormats") || [];
+    const nextValues = values.includes(format)
+      ? values.filter((item) => item !== format)
+      : [...values, format];
+
+    setValue("allowedFormats", nextValues, { shouldValidate: true });
+  };
+
   const onSubmit = async (values: EditLeagueValues) => {
     startTransition(async () => {
       const isElo = values.ratingSystem === "elo";
@@ -217,6 +275,7 @@ export function EditLeagueForm({
           pointsPerWin: league.pointsPerWin,
           pointsPerDraw: league.pointsPerDraw,
           pointsPerLoss: league.pointsPerLoss,
+          allowedFormats: values.allowedFormats,
         });
       } else {
         result = await updateLeague(league.id, {
@@ -236,6 +295,7 @@ export function EditLeagueForm({
           inactivityDecay: league.inactivityDecay,
           inactivityThresholdHours: league.inactivityThresholdHours,
           inactivityDecayFloor: league.inactivityDecayFloor,
+          allowedFormats: values.allowedFormats,
         });
       }
 
@@ -250,8 +310,53 @@ export function EditLeagueForm({
 
   return (
     <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-      {/* Section 1: General Data */}
-      <section className="space-y-6">
+      {/* Step 1: Game */}
+      {currentStep === 0 && (
+      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
+        <div className="space-y-2">
+          <h3 className="text-lg font-bold text-white">
+            {t("AddLeague.gameSelect.label")}
+          </h3>
+          <p className="text-sm text-white/50">{league.game.name}</p>
+        </div>
+
+        <div className="relative flex h-[180px] flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/2 p-6 transition-all">
+          <div className="animate-in fade-in zoom-in-95 flex w-full flex-col gap-4 duration-300">
+            <div className="flex items-center gap-4">
+              <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-2xl">
+                {league.game.thumbnailImageUrl ? (
+                  <Image
+                    src={league.game.thumbnailImageUrl}
+                    alt={league.game.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center">
+                    <Trophy className="size-6 text-white/10" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h4 className="text-lg leading-tight font-bold text-white">
+                  {league.game.name}
+                </h4>
+                <p className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase">
+                  {league.game.slug}
+                </p>
+              </div>
+            </div>
+            <p className="line-clamp-3 text-sm leading-relaxed text-white/50">
+              {league.game.description || "No description."}
+            </p>
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* Step 2: General Data */}
+      {currentStep === 1 && (
+      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
         <div className="grid gap-6 md:grid-cols-2">
           <div className="flex flex-col gap-2">
             <LabelTooltip label={t("AddLeague.name.label")} required />
@@ -331,9 +436,11 @@ export function EditLeagueForm({
           </div>
         </div>
       </section>
+      )}
 
-      {/* Section 2: Format Logic */}
-      <section className="space-y-6">
+      {/* Step 3: Rating Logic */}
+      {currentStep === 2 && (
+      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
         <div className="flex flex-col gap-10">
           {/* System Selector - Full Width Row */}
           <div className="flex flex-col gap-4">
@@ -764,6 +871,52 @@ export function EditLeagueForm({
           </div>
         </div>
       </section>
+      )}
+
+      {/* Step 4: Match Formats */}
+      {currentStep === 3 && (
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
+          <LabelTooltip
+            label={t("AddLeague.matchFormats.title")}
+            tooltip={t("AddLeague.matchFormats.help")}
+            required
+          />
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {matchFormatOptions.map((option) => {
+              const isSelected = allowedFormats.includes(option.value);
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggleMatchFormat(option.value)}
+                  className={cn(
+                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    isSelected
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                      : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10",
+                  )}
+                >
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <span className="text-sm font-bold">{option.label}</span>
+                    {isSelected && <Check className="size-4" />}
+                  </div>
+                  <span className="text-xs text-white/50">
+                    {option.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {allowedFormats.length === 0 && (
+            <p className="text-xs text-red-400">
+              {t("AddLeague.matchFormats.required")}
+            </p>
+          )}
+        </section>
+      )}
     </form>
   );
 }

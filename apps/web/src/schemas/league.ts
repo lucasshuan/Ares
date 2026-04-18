@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
+import { MATCH_FORMATS } from "@ares/core";
 
 type TFunction = (
   key: string,
@@ -40,6 +41,13 @@ export const getAddLeagueSchema = (t: TFunction) => {
       pointsPerWin: z.number().min(0).optional(),
       pointsPerDraw: z.number().min(0).optional(),
       pointsPerLoss: z.number().min(0).optional(),
+      allowedFormats: z
+        .array(z.string())
+        .refine(
+          (formats) => formats.every((format) => MATCH_FORMATS.includes(format as (typeof MATCH_FORMATS)[number])),
+          t("required"),
+        )
+        .min(1, t("required")),
     })
     .superRefine((data, ctx) => {
       if (!data.gameId && !data.gameName) {
@@ -156,6 +164,13 @@ export const getEditLeagueSchema = (t: TFunction) => {
       pointsPerWin: z.number().min(0).optional(),
       pointsPerDraw: z.number().min(0).optional(),
       pointsPerLoss: z.number().min(0).optional(),
+      allowedFormats: z
+        .array(z.string())
+        .refine(
+          (formats) => formats.every((format) => MATCH_FORMATS.includes(format as (typeof MATCH_FORMATS)[number])),
+          t("required"),
+        )
+        .min(1, t("required")),
     })
     .superRefine((data, ctx) => {
       if (data.ratingSystem === "elo") {
@@ -260,4 +275,5 @@ export const LEAGUE_DEFAULT_SETTINGS = {
   pointsPerWin: 3,
   pointsPerDraw: 1,
   pointsPerLoss: 0,
+  allowedFormats: ["ONE_V_ONE"] as const,
 } as const;

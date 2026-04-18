@@ -37,6 +37,7 @@ import { DateInput } from "@/components/ui/date-input";
 import { NumberInput } from "@/components/ui/number-input";
 import { formatHoursDuration } from "@/lib/date-utils";
 import { cn, slugify } from "@/lib/utils";
+import { MATCH_FORMATS } from "@ares/core";
 
 interface AddLeagueFormProps {
   gameId: string;
@@ -95,6 +96,7 @@ export function AddLeagueForm({
       pointsPerWin: LEAGUE_DEFAULT_SETTINGS.pointsPerWin,
       pointsPerDraw: LEAGUE_DEFAULT_SETTINGS.pointsPerDraw,
       pointsPerLoss: LEAGUE_DEFAULT_SETTINGS.pointsPerLoss,
+      allowedFormats: [...LEAGUE_DEFAULT_SETTINGS.allowedFormats],
     },
     mode: "onChange",
   });
@@ -117,6 +119,7 @@ export function AddLeagueForm({
   const pointsPerWin = useWatch({ control, name: "pointsPerWin" }) || 0;
   const pointsPerDraw = useWatch({ control, name: "pointsPerDraw" }) || 0;
   const pointsPerLoss = useWatch({ control, name: "pointsPerLoss" }) || 0;
+  const allowedFormats = useWatch({ control, name: "allowedFormats" }) || [];
   const formattedInactivityWindow = formatHoursDuration(
     inactivityThresholdHours,
     locale,
@@ -323,7 +326,9 @@ export function AddLeagueForm({
           isStepValid = !isSlugChecking && !hasSlugConflict;
         }
       } else if (currentStep === 2) {
-        isStepValid = true; // Step 3 has defaults
+        isStepValid = true; // Rating config step has defaults
+      } else if (currentStep === 3) {
+        isStepValid = allowedFormats.length > 0;
       }
       onStepValidationChange?.(isStepValid);
     };
@@ -341,7 +346,23 @@ export function AddLeagueForm({
     hasSlugConflict,
     isSlugChecking,
     schema,
+    allowedFormats.length,
   ]);
+
+  const matchFormatOptions = MATCH_FORMATS.map((value) => ({
+    value,
+    label: t(`matchFormats.options.${value}.label`),
+    description: t(`matchFormats.options.${value}.description`),
+  }));
+
+  const toggleMatchFormat = (format: string) => {
+    const values = getValues("allowedFormats") || [];
+    const nextValues = values.includes(format)
+      ? values.filter((item) => item !== format)
+      : [...values, format];
+
+    setValue("allowedFormats", nextValues, { shouldValidate: true });
+  };
 
   const onSubmit = async (values: AddLeagueValues) => {
     if (isSlugChecking || hasSlugConflict) {
@@ -689,7 +710,7 @@ export function AddLeagueForm({
         </section>
       )}
 
-      {/* Step 3: Format Logic */}
+      {/* Step 3: Rating Logic */}
       {currentStep === 2 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
           <div className="flex flex-col gap-10">
@@ -1101,6 +1122,49 @@ export function AddLeagueForm({
               </div>
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Step 4: Match Formats */}
+      {currentStep === 3 && (
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
+          <LabelTooltip
+            label={t("matchFormats.title")}
+            tooltip={t("matchFormats.help")}
+            required
+          />
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {matchFormatOptions.map((option) => {
+              const isSelected = allowedFormats.includes(option.value);
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggleMatchFormat(option.value)}
+                  className={cn(
+                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    isSelected
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                      : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10",
+                  )}
+                >
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <span className="text-sm font-bold">{option.label}</span>
+                    {isSelected && <Check className="size-4" />}
+                  </div>
+                  <span className="text-xs text-white/50">
+                    {option.description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {allowedFormats.length === 0 && (
+            <p className="text-xs text-red-400">{t("matchFormats.required")}</p>
+          )}
         </section>
       )}
     </form>

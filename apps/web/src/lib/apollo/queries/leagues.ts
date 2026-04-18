@@ -21,6 +21,7 @@ export const GET_LEAGUE = gql`
       gameId
       isApproved
       pointsPerLoss
+      allowedFormats
       createdAt
       updatedAt
       game {

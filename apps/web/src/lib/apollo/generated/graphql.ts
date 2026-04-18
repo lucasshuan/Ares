@@ -49,6 +49,7 @@ export type CreateGameInput = {
 
 export type CreateLeagueInput = {
   allowDraw: Scalars["Boolean"]["input"];
+  allowedFormats: Array<Scalars["String"]["input"]>;
   authorId: Scalars["String"]["input"];
   description?: InputMaybe<Scalars["String"]["input"]>;
   endDate?: InputMaybe<Scalars["DateTime"]["input"]>;
@@ -96,6 +97,7 @@ export type GameCounts = {
 export type League = {
   __typename?: "League";
   allowDraw: Scalars["Boolean"]["output"];
+  allowedFormats: Array<Scalars["String"]["output"]>;
   createdAt: Scalars["DateTime"]["output"];
   description?: Maybe<Scalars["String"]["output"]>;
   endDate?: Maybe<Scalars["DateTime"]["output"]>;
@@ -297,6 +299,7 @@ export type UpdateGameInput = {
 
 export type UpdateLeagueInput = {
   allowDraw?: InputMaybe<Scalars["Boolean"]["input"]>;
+  allowedFormats?: InputMaybe<Array<Scalars["String"]["input"]>>;
   description?: InputMaybe<Scalars["String"]["input"]>;
   inactivityDecay?: InputMaybe<Scalars["Int"]["input"]>;
   inactivityDecayFloor?: InputMaybe<Scalars["Int"]["input"]>;
@@ -567,6 +570,7 @@ export type GetLeagueQuery = {
     gameId: string;
     isApproved: boolean;
     pointsPerLoss: number;
+    allowedFormats: Array<string>;
     createdAt: any;
     updatedAt: any;
     game: {
@@ -1683,6 +1687,10 @@ export const GetLeagueDocument = {
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "pointsPerLoss" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "allowedFormats" },
                 },
                 { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                 { kind: "Field", name: { kind: "Name", value: "updatedAt" } },

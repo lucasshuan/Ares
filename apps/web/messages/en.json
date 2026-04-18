@@ -330,7 +330,43 @@
       "steps": {
         "game": "Game",
         "general": "General",
-        "format": "Format"
+        "format": "Format",
+        "matchFormats": "Match"
+      },
+      "matchFormats": {
+        "title": "Allowed Match Types",
+        "help": "Choose all match types accepted for this league.",
+        "required": "Select at least one match type.",
+        "options": {
+          "ONE_V_ONE": {
+            "label": "1v1",
+            "description": "One player per side."
+          },
+          "TWO_V_TWO": {
+            "label": "2v2",
+            "description": "Two players per side."
+          },
+          "THREE_V_THREE": {
+            "label": "3v3",
+            "description": "Three players per side."
+          },
+          "FOUR_V_FOUR": {
+            "label": "4v4",
+            "description": "Four players per side."
+          },
+          "FIVE_V_FIVE": {
+            "label": "5v5",
+            "description": "Five players per side."
+          },
+          "SIX_V_SIX": {
+            "label": "6v6",
+            "description": "Six players per side."
+          },
+          "FREE_FOR_ALL": {
+            "label": "Free For All",
+            "description": "Everyone competes against everyone."
+          }
+        }
       },
       "gameSelect": {
         "label": "Choose the Game",

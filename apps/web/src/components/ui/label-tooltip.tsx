@@ -36,8 +36,8 @@ export function LabelTooltip({
     if (triggerRef.current && show) {
       const rect = triggerRef.current.getBoundingClientRect();
       setPosition({
-        top: rect.top - 10,
-        left: rect.left + rect.width / 2,
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX + rect.width / 2,
       });
     }
   }, [show]);
@@ -60,7 +60,10 @@ export function LabelTooltip({
   return (
     <div
       ref={triggerRef}
-      className={cn("relative flex items-center gap-1.5", className)}
+      className={cn(
+        "relative inline-flex w-fit items-center gap-1.5",
+        className,
+      )}
       onMouseEnter={() => tooltip && setShow(true)}
       onMouseLeave={() => setShow(false)}
     >
@@ -88,7 +91,7 @@ export function LabelTooltip({
           {show &&
             createPortal(
               <div
-                className="pointer-events-none fixed isolate z-9999 w-64 -translate-x-1/2 -translate-y-full transform-gpu rounded-xl border border-white/20 bg-[#0a0a0a]/80 p-3 text-[11px] leading-relaxed text-white/80 shadow-2xl"
+                className="pointer-events-none absolute isolate z-9999 w-64 -translate-x-1/2 transform-gpu rounded-xl border border-white/20 bg-[#0a0a0a]/60 p-3 text-[11px] leading-relaxed text-white/80 shadow-2xl"
                 style={{
                   top: position.top,
                   left: position.left,
@@ -96,6 +99,7 @@ export function LabelTooltip({
                   WebkitBackdropFilter: "blur(12px)",
                 }}
               >
+                <div className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border-t border-l border-white/20 bg-[#0a0a0a]/60" />
                 <div className="relative z-10">{tooltip}</div>
               </div>,
               document.body,

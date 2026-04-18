@@ -1,11 +1,15 @@
 import { InputType, Field, Int, Float } from '@nestjs/graphql';
+import { MATCH_FORMATS } from '@ares/core';
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsString,
   IsOptional,
   IsInt,
   IsNumber,
   IsBoolean,
   IsDate,
+  IsIn,
   Min,
 } from 'class-validator';
 
@@ -85,6 +89,12 @@ export class CreateLeagueInput {
   @IsInt()
   @Min(0)
   pointsPerLoss: number;
+
+  @Field(() => [String])
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(MATCH_FORMATS, { each: true })
+  allowedFormats: string[];
 
   @Field({ nullable: true })
   @IsDate()
@@ -172,4 +182,10 @@ export class UpdateLeagueInput {
   @IsInt()
   @IsOptional()
   pointsPerLoss?: number;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  @IsIn(MATCH_FORMATS, { each: true })
+  allowedFormats?: string[];
 }

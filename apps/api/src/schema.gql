@@ -20,6 +20,7 @@ type League {
   pointsPerWin: Int!
   pointsPerDraw: Int!
   pointsPerLoss: Int!
+  allowedFormats: [String!]!
   isApproved: Boolean!
   startDate: DateTime
   endDate: DateTime
@@ -197,6 +198,7 @@ input UpdateLeagueInput {
   pointsPerWin: Int
   pointsPerDraw: Int
   pointsPerLoss: Int
+  allowedFormats: [String!]
 }
 
 input CreateLeagueInput {
@@ -216,6 +218,7 @@ input CreateLeagueInput {
   pointsPerWin: Int!
   pointsPerDraw: Int!
   pointsPerLoss: Int!
+  allowedFormats: [String!]!
   startDate: DateTime
   endDate: DateTime
   authorId: String!
