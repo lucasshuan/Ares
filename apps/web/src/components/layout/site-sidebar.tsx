@@ -32,6 +32,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname, useRouter, routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
+import { EditProfileModal } from "@/components/modals/profile/edit-profile-modal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -341,6 +342,7 @@ function UserMenuDropdown({
   onClose?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null,
   );
@@ -452,17 +454,18 @@ function UserMenuDropdown({
           <User className="size-4 shrink-0 text-white/40" />
           <span>{tNavbar("viewProfile")}</span>
         </Link>
-        <Link
-          href={`/profile/${user.username}/edit`}
+        <button
+          type="button"
           onClick={() => {
             setOpen(false);
             onClose?.();
+            setEditProfileOpen(true);
           }}
           className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/6 hover:text-white"
         >
           <Pencil className="size-4 shrink-0 text-white/40" />
           <span>{tNavbar("editProfile")}</span>
-        </Link>
+        </button>
       </div>
 
       <div className="mx-3 h-px bg-white/6" />
@@ -587,6 +590,17 @@ function UserMenuDropdown({
       )}
 
       {typeof document !== "undefined" && createPortal(dropdown, document.body)}
+
+      <EditProfileModal
+        isOpen={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+        user={{
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          imageUrl: user.imageUrl ?? user.image,
+        }}
+      />
     </div>
   );
 }
