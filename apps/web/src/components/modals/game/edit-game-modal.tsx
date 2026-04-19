@@ -24,7 +24,7 @@ export function EditGameModal({ game, isOpen, onClose }: EditGameModalProps) {
       title={t("title")}
       description={t("description")}
       confirmText={isPending ? t("submitting") : t("submit")}
-      cancelText={t("cancel") || "Cancelar"}
+      cancelText={t("cancel")}
       formId="edit-game-form"
       isPending={isPending}
       disabled={!isValid}

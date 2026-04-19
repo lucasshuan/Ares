@@ -10,45 +10,9 @@ import { StandardLeagueRegistrationTrigger } from "@/components/triggers/league/
 import { formatDate } from "@/lib/date-utils";
 import { StandardLeagueTable } from "@/components/tables/standard-league-table";
 import { LeagueAdminSection } from "../league/admin-section";
+import { type GetStandardLeagueQuery } from "@/lib/apollo/generated/graphql";
 
-type StandardLeagueEntry = {
-  id: string;
-  points: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  position?: number | null;
-  player?: {
-    id: string;
-    userId?: string | null;
-    user?: {
-      name?: string | null;
-      username?: string | null;
-      country?: string | null;
-    } | null;
-  } | null;
-};
-
-type StandardLeagueData = {
-  id: string;
-  gameId: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  createdAt?: string | null;
-  allowDraw: boolean;
-  pointsPerWin: number;
-  pointsPerDraw: number;
-  pointsPerLoss: number;
-  allowedFormats: string[];
-  entries: StandardLeagueEntry[];
-  game: {
-    name: string;
-    slug: string;
-    status: string;
-    thumbnailImageUrl?: string | null;
-  };
-};
+type StandardLeagueData = NonNullable<GetStandardLeagueQuery["standardLeague"]>;
 
 interface StandardLeagueTemplateProps {
   league: StandardLeagueData;

@@ -134,7 +134,7 @@ function AuthModalInner({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 flex size-8 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/40 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
-          aria-label="Fechar"
+          aria-label={t("close")}
         >
           <X className="size-4" />
         </button>
@@ -187,7 +187,7 @@ function AuthModalInner({
               style={{ background: "rgba(255,255,255,0.06)" }}
             />
             <span className="text-[10px] font-medium tracking-widest text-white/25 uppercase">
-              Continuar com
+              {t("continueWith")}
             </span>
             <div
               className="h-px flex-1"
@@ -230,8 +230,7 @@ function AuthModalInner({
 
           {/* Footer note */}
           <p className="mt-6 text-center text-[10px] leading-5 text-white/20">
-            Ao entrar, você concorda com os nossos termos de uso e política de
-            privacidade da plataforma Ares.
+            {t("termsNotice")}
           </p>
         </div>
 

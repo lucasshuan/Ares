@@ -10,10 +10,7 @@ export const GET_GAMES = gql`
         description
         thumbnailImageUrl
         backgroundImageUrl
-        steamUrl
         status
-        createdAt
-        updatedAt
         _count {
           leagues
           players
@@ -108,6 +105,33 @@ export const GET_GAME = gql`
     }
   }
 `;
+export const GET_GAME_ACTIONS = gql`
+  query GetGameActions($slug: String!) {
+    game(slug: $slug) {
+      id
+      slug
+      authorId
+      eloLeagues {
+        id
+        slug
+      }
+      standardLeagues {
+        id
+        slug
+      }
+    }
+  }
+`;
+
+export const GET_GAME_LAYOUT = gql`
+  query GetGameLayout($slug: String!) {
+    game(slug: $slug) {
+      id
+      backgroundImageUrl
+    }
+  }
+`;
+
 export const GET_GAMES_SIMPLE = gql`
   query GetGamesSimple($pagination: PaginationInput, $search: String) {
     games(pagination: $pagination, search: $search) {

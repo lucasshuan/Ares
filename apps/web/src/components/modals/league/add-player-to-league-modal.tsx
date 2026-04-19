@@ -29,7 +29,7 @@ export function AddPlayerToLeagueModal({
       onClose={onClose}
       title={t("title")}
       description={t("description")}
-      cancelText={t("cancel") || "Cancelar"}
+      cancelText={t("cancel")}
       isPending={isPending}
     >
       <AddPlayerToLeagueForm

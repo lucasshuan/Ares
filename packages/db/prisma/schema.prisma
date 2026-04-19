@@ -53,6 +53,13 @@ enum MatchFormat {
   FREE_FOR_ALL
 }
 
+enum PermissionKey {
+  manage_games
+  manage_players
+  manage_events
+  manage_users
+}
+
 // --- AUTH MODELS ---
 
 model User {
@@ -397,30 +404,16 @@ model StandardResultAttachment {
   @@map("standard_result_attachments")
 }
 
-model Permission {
-  id   String @id @default(cuid())
-  key  String @unique
-  name String
-
-  userPermissions UserPermission[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("permissions")
-}
-
 model UserPermission {
-  id           String     @id @default(cuid())
-  userId       String     @map("user_id")
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  permissionId String     @map("permission_id")
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  id     String        @id @default(cuid())
+  userId String        @map("user_id")
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key    PermissionKey
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([userId, permissionId])
+  @@unique([userId, key])
   @@map("user_permissions")
 }
 

@@ -278,7 +278,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **1.4 Otimização de Performance e Blindagem de Contrato (API)**
   - [ ] Definir classes de DTO específicas no NestJS para garantir que o Schema GraphQL não mude acidentalmente se o Prisma mudar.
-  - [ ] Realizar auditoria N+1: Implementar `ResolveField` com DataLoaders para todas as relações (ex: `Game.leagues`, `League.entries`).
+  - [ ] Realizar auditoria N+1: Implementar `ResolveField` com DataLoaders para todas as relações (ex: `Game.leagues`, `League.entries`, etc.).
   - [ ] Adicionar validações de input rigorosas em todos os `Inputs` usando `class-validator`.
   - arquivos afetados: `apps/api/src/modules/**/*.model.ts`, `apps/api/src/modules/**/*.input.ts`
   - dificuldade: alta | impacto: alto
@@ -336,9 +336,9 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - arquivos afetados: `apps/api/package.json`, `pnpm-lock.yaml`
   - dificuldade: baixa | impacto: baixo
 
-- [ ] **3.4 As rotas GQL precisam puxar apenas os campos necessários**
-  - [ ] Analisar as rotas GraphQL atuais e identificar quais campos estão sendo puxados desnecessariamente.
-  - [ ] Criar queries novas para puxar apenas os campos necessários para cada necessidade específica, evitando overfetching.
+- [x] **3.4 As rotas GQL precisam puxar apenas os campos necessários**
+  - [x] Analisar as rotas GraphQL atuais e identificar quais campos estão sendo puxados desnecessariamente.
+  - [x] Criar queries novas para puxar apenas os campos necessários para cada necessidade específica, evitando overfetching.
   - arquivos afetados: `apps/web/src/lib/apollo/queries/*`
   - dificuldade: média | impacto: médio
 
@@ -358,11 +358,11 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - [x] Usar camadas diferentes de relevância de logs (debug, info, warn, error) e permitir filtrar por elas.
   - dificuldade: média | impacto: médio
 
-- [ ] **4.3 Corrigir inconsistências de UI**
-  - [ ] Unificar o design dos modais e formulários para criar uma experiência mais coesa.
-  - [ ] Garantir que as mensagens de erro sejam claras e consistentes em toda a aplicação.
-  - [ ] Revisar o uso de componentes reutilizáveis para evitar duplicação e inconsistências visuais.
-  - [ ] Corrija e faça uso da já criada estrutura de componentes no diretório `apps/web/src/components/templates` seguindo exemplo dos componentes existentes.
+- [x] **4.3 Corrigir inconsistências de UI**
+  - [x] Unificar o design dos modais e formulários para criar uma experiência mais coesa.
+  - [x] Garantir que as mensagens de erro sejam claras e consistentes em toda a aplicação.
+  - [x] Revisar o uso de componentes reutilizáveis para evitar duplicação e inconsistências visuais.
+  - [x] Corrija e faça uso da já criada estrutura de componentes no diretório `apps/web/src/components/templates` seguindo exemplo dos componentes existentes.
   - arquivos afetados: `apps/web/src/components/*`
   - dificuldade: média | impacto: baixo
 
@@ -372,9 +372,9 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - arquivos afetados: `apps/web/src/**/*.tsx`
   - dificuldade: média | impacto: baixo
 
-- [ ] **4.5 Apagar arquivos legados**
-  - [ ] Identificar e remover arquivos que não estão mais em uso ou que foram substituídos por novas implementações.
-  - [ ] Garantir que a remoção de arquivos legados não cause quebras na aplicação.
+- [x] **4.5 Apagar arquivos legados**
+  - [x] Identificar e remover arquivos que não estão mais em uso ou que foram substituídos por novas implementações.
+  - [x] Garantir que a remoção de arquivos legados não cause quebras na aplicação.
   - arquivos afetados: `apps/**/*`, `packages/**/*`
   - dificuldade: baixa | impacto: baixo
 

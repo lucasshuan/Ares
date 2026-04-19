@@ -1,11 +1,11 @@
-export const INITIAL_PERMISSION_DEFINITIONS = [
-  { key: "manage_games", name: "Manage Games" },
-  { key: "manage_players", name: "Manage Players" },
-  { key: "manage_events", name: "Manage Leagues" },
+export const PERMISSION_KEYS = [
+  "manage_games",
+  "manage_players",
+  "manage_events",
+  "manage_users",
 ] as const;
 
-export type PermissionKey =
-  (typeof INITIAL_PERMISSION_DEFINITIONS)[number]["key"];
+export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
 export const GAME_STATUSES = ["APPROVED", "PENDING"] as const;
 export type GameStatus = (typeof GAME_STATUSES)[number];

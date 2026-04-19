@@ -120,7 +120,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                     </p>
                   ) : isOwnProfile ? (
                     <p className="mt-6 text-xs text-white/30 italic">
-                      Você ainda não definiu uma biografia.
+                      {t("noBio")}
                     </p>
                   ) : null}
 
@@ -230,7 +230,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                                 </div>
                                 <div className="text-right">
                                   <p className="text-primary font-mono text-xs tracking-wider uppercase">
-                                    Elo {entry.currentElo}
+                                    {t("eloRating", { elo: entry.currentElo })}
                                   </p>
                                   <p className="text-lg font-semibold tracking-tight">
                                     #{entry.position}
@@ -240,7 +240,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                             ))
                           ) : (
                             <p className="text-sm text-white/40 italic">
-                              Sem posições em leagues ainda.
+                              {t("noLeagues")}
                             </p>
                           )}
                         </div>

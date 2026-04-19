@@ -88,7 +88,7 @@ export function EditLeagueModal({
       }
       nextText={t("next")}
       backText={t("back")}
-      cancelText={t("cancel") || "Cancel"}
+      cancelText={t("cancel")}
       formId="edit-league-form"
       isPending={isPending}
       disabledNext={!isStepValid || !isValid}

@@ -31,7 +31,7 @@ export function EditProfileModal({
       onClose={onClose}
       title={t("title")}
       description={t("description")}
-      cancelText={t("cancel") || "Cancelar"}
+      cancelText={t("cancel")}
       confirmText={isPending ? t("submitting") : t("submit")}
       formId="edit-profile-form"
       isPending={isPending}

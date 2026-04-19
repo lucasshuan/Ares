@@ -1,7 +1,7 @@
 "use server";
 
 import { getClient } from "@/lib/apollo/apollo-client";
-import { GET_GAME } from "@/lib/apollo/queries/games";
+import { GET_GAME_ACTIONS } from "@/lib/apollo/queries/games";
 import {
   APPROVE_GAME,
   CREATE_GAME,
@@ -14,17 +14,8 @@ import {
   AddPlayerToGameMutation,
   SearchPlayersQuery,
   RequestUploadUrlDocument,
+  GetGameActionsQuery,
 } from "@/lib/apollo/generated/graphql";
-
-type GetGameQueryResult = {
-  game?: {
-    id: string;
-    slug: string;
-    authorId?: string | null;
-    eloLeagues?: { id: string; slug: string }[];
-    standardLeagues?: { id: string; slug: string }[];
-  } | null;
-};
 import { getServerAuthSession } from "@/auth";
 import {
   canEditGame,
@@ -54,8 +45,8 @@ import {
 } from "@/lib/apollo/queries/player-mutations";
 
 async function getGameRecord(gameIdOrSlug: string) {
-  const { data } = await getClient().query<GetGameQueryResult>({
-    query: GET_GAME,
+  const { data } = await getClient().query<GetGameActionsQuery>({
+    query: GET_GAME_ACTIONS,
     variables: { slug: gameIdOrSlug },
   });
   return data?.game;
@@ -98,8 +89,8 @@ export const updateGame = createSafeAction(
     },
   ) => {
     const session = await getServerAuthSession();
-    const { data: gameData } = await getClient().query<GetGameQueryResult>({
-      query: GET_GAME,
+    const { data: gameData } = await getClient().query<GetGameActionsQuery>({
+      query: GET_GAME_ACTIONS,
       variables: { slug: gameId },
     });
     const game = gameData?.game;

@@ -4,13 +4,6 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required to run the Prisma seed.");
 }
 
-const INITIAL_PERMISSION_DEFINITIONS = [
-  { key: "manage_games", name: "Manage Games" },
-  { key: "manage_players", name: "Manage Players" },
-  { key: "manage_events", name: "Manage Events" },
-  { key: "manage_users", name: "Manage Users" },
-] as const;
-
 const GAMES_TO_SEED = [
   {
     name: "Superfighters Deluxe",
@@ -35,21 +28,6 @@ const GAMES_TO_SEED = [
     steamUrl: "https://store.steampowered.com/app/252950/Rocket_League/",
   },
 ];
-
-async function seedPermissions() {
-  console.log("Seeding permissions...");
-  for (const definition of INITIAL_PERMISSION_DEFINITIONS) {
-    await prisma.permission.upsert({
-      where: { key: definition.key },
-      update: { name: definition.name },
-      create: {
-        key: definition.key,
-        name: definition.name,
-      },
-    });
-  }
-  console.log("Permissions seeded.");
-}
 
 async function seedGames() {
   console.log("Seeding games...");
@@ -78,7 +56,6 @@ async function seedGames() {
 
 async function main() {
   try {
-    await seedPermissions();
     await seedGames();
     console.log("Seed completed successfully.");
   } catch (error) {

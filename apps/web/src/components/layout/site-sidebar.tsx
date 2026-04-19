@@ -12,8 +12,6 @@ import {
   LayoutDashboard,
   User,
   Users,
-  Medal,
-  Swords,
   History,
   ChevronRight,
   ChevronDown,
@@ -674,18 +672,6 @@ function SidebarBody({
                 },
               ],
             },
-            {
-              titleKey: "compete",
-              items: [
-                { href: "/leagues", labelKey: "activeLeagues", icon: Medal },
-                {
-                  href: "/tournaments",
-                  labelKey: "tournaments",
-                  icon: Swords,
-                  soon: true,
-                },
-              ],
-            },
             ...(user.isAdmin
               ? [
                   {
@@ -706,6 +692,14 @@ function SidebarBody({
     ],
     [user],
   );
+
+  const [collapsedSections, setCollapsedSections] = useState<
+    Record<string, boolean>
+  >({});
+
+  const toggleSection = (key: string) => {
+    setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const switchLocale = (newLocale: (typeof routing.locales)[number]) => {
     if (newLocale === locale) return;
@@ -834,36 +828,57 @@ function SidebarBody({
         </div>
 
         <div className="mx-3 my-2 h-px bg-white/4" />
-        {sections.map((section, i) => (
-          <div key={section.titleKey} className={cn(i > 0 && "mt-2")}>
-            {/* Category label */}
-            <div
-              className={cn(
-                "overflow-hidden transition-all duration-300",
-                effective
-                  ? "mb-0 h-0 py-0 opacity-0"
-                  : "h-6.5 px-4 pt-1 pb-1.5 opacity-100",
-              )}
-            >
-              <span className="text-[10px] font-normal tracking-[0.18em] text-white/25 uppercase">
-                {t(section.titleKey as Parameters<typeof t>[0])}
-              </span>
-            </div>
+        {sections.map((section, i) => {
+          const isSectionCollapsed =
+            !effective && !!collapsedSections[section.titleKey];
+          return (
+            <div key={section.titleKey} className={cn(i > 0 && "mt-2")}>
+              {/* Category label — clickable when sidebar is expanded */}
+              <div
+                className={cn(
+                  "overflow-hidden transition-all duration-300",
+                  effective
+                    ? "mb-0 h-0 py-0 opacity-0"
+                    : "h-6.5 opacity-100",
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.titleKey)}
+                  className="no-lift flex w-full items-center gap-1 px-4 pt-1 pb-1.5"
+                >
+                  <span className="flex-1 text-left text-[10px] font-normal tracking-[0.18em] text-white/25 uppercase">
+                    {t(section.titleKey as Parameters<typeof t>[0])}
+                  </span>
+                  <ChevronRight
+                    className={cn(
+                      "size-2.5 shrink-0 text-white/20 transition-transform duration-200",
+                      isSectionCollapsed ? "rotate-0" : "rotate-90",
+                    )}
+                  />
+                </button>
+              </div>
 
-            {/* Items */}
-            <div className="space-y-0.5">
-              {section.items.map((item) => (
-                <NavItem
-                  key={item.href}
-                  item={item}
-                  collapsed={effective}
-                  t={t}
-                  onClose={onClose}
-                />
-              ))}
+              {/* Items */}
+              <div
+                className={cn(
+                  "space-y-0.5 overflow-hidden transition-all duration-200",
+                  isSectionCollapsed ? "max-h-0" : "max-h-96",
+                )}
+              >
+                {section.items.map((item) => (
+                  <NavItem
+                    key={item.href}
+                    item={item}
+                    collapsed={effective}
+                    t={t}
+                    onClose={onClose}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}

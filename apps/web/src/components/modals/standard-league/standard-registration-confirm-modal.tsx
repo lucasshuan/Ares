@@ -39,7 +39,7 @@ export function StandardRegistrationConfirmModal({
       onClose={onClose}
       onConfirm={onConfirm}
       title={t("title")}
-      description={t("description", { elo: 0 })}
+      description={t("descriptionStandard")}
       confirmText={isPending ? t("submitting") : t("submit")}
       cancelText={t("cancel")}
       isPending={isPending}

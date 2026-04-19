@@ -8,6 +8,10 @@ import { GET_EVENT_META } from "@/lib/apollo/queries/events";
 import { GET_ELO_LEAGUE } from "@/lib/apollo/queries/elo-leagues";
 import { GET_STANDARD_LEAGUE } from "@/lib/apollo/queries/standard-leagues";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import {
+  type GetEloLeagueQuery,
+  type GetStandardLeagueQuery,
+} from "@/lib/apollo/generated/graphql";
 
 interface EventPageProps {
   params: Promise<{
@@ -51,7 +55,7 @@ async function EventPageContent({
   const { type } = metaData.eventMeta;
 
   if (type === "RANKED_LEAGUE") {
-    const data = await safeServerQuery<{ eloLeague: unknown }>({
+    const data = await safeServerQuery<GetEloLeagueQuery>({
       query: GET_ELO_LEAGUE,
       variables: { gameSlug, leagueSlug: eventSlug },
     });
@@ -60,9 +64,7 @@ async function EventPageContent({
 
     return (
       <EloLeagueTemplate
-        league={
-          data.eloLeague as Parameters<typeof EloLeagueTemplate>[0]["league"]
-        }
+        league={data.eloLeague}
         session={session}
         isEditor={isEditor}
       />
@@ -70,7 +72,7 @@ async function EventPageContent({
   }
 
   if (type === "STANDARD_LEAGUE") {
-    const data = await safeServerQuery<{ standardLeague: unknown }>({
+    const data = await safeServerQuery<GetStandardLeagueQuery>({
       query: GET_STANDARD_LEAGUE,
       variables: { gameSlug, leagueSlug: eventSlug },
     });
@@ -79,11 +81,7 @@ async function EventPageContent({
 
     return (
       <StandardLeagueTemplate
-        league={
-          data.standardLeague as Parameters<
-            typeof StandardLeagueTemplate
-          >[0]["league"]
-        }
+        league={data.standardLeague}
         session={session}
         isEditor={isEditor}
       />

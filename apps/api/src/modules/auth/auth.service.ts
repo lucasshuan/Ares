@@ -72,10 +72,9 @@ export class AuthService {
   async login(user: User) {
     const permissions = await this.databaseProvider.userPermission.findMany({
       where: { userId: user.id },
-      include: { permission: true },
     });
 
-    const permissionKeys = permissions.map((p) => p.permission.key);
+    const permissionKeys = permissions.map((p) => p.key);
 
     const payload = {
       sub: user.id,
@@ -144,7 +143,6 @@ export class AuthService {
 
     const permissions = await this.databaseProvider.userPermission.findMany({
       where: { userId: user.id },
-      include: { permission: true },
     });
 
     return {
@@ -153,7 +151,7 @@ export class AuthService {
       imageUrl: user.imageUrl,
       isAdmin: user.isAdmin,
       onboardingCompleted: user.onboardingCompleted,
-      permissions: permissions.map((p) => p.permission.key),
+      permissions: permissions.map((p) => p.key),
     };
   }
 }

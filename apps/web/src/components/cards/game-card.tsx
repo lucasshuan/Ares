@@ -26,9 +26,9 @@ export function GameCard({
       href={`/games/${game.slug}` as Route}
       className="glass-panel group flex w-full flex-col overflow-hidden rounded-4xl transition-all duration-300"
     >
-      <div className="relative aspect-368/178 w-full shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-500 ease-out group-hover:brightness-100">
+      <div className="relative aspect-368/178 w-full shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-300 ease-out group-hover:brightness-100">
         {game.thumbnailImageUrl ? (
-          <div className="absolute -inset-px transform-gpu transition-transform duration-500 ease-out group-hover:scale-[1.1]">
+          <div className="absolute -inset-px transform-gpu transition-transform duration-300 ease-out group-hover:scale-[1.04]">
             <Image
               src={game.thumbnailImageUrl}
               alt={game.name}
@@ -40,7 +40,7 @@ export function GameCard({
             />
           </div>
         ) : (
-          <div className="from-primary/48 absolute -inset-px h-auto w-auto bg-linear-to-br to-[#0b080f]/92 transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
+          <div className="from-primary/48 absolute -inset-px h-auto w-auto bg-linear-to-br to-[#0b080f]/92 transition-transform duration-300 ease-out group-hover:scale-[1.04]" />
         )}
       </div>
 

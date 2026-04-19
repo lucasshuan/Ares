@@ -7,10 +7,7 @@ export const GET_LEAGUES = gql`
         id
         name
         slug
-        description
         type
-        isApproved
-        createdAt
         game {
           id
           name

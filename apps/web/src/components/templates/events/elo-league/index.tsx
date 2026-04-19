@@ -10,45 +10,9 @@ import { EloLeagueRegistrationTrigger } from "@/components/triggers/league/elo-l
 import { formatDate } from "@/lib/date-utils";
 import { LeagueTable } from "@/components/tables/league-table";
 import { LeagueAdminSection } from "../league/admin-section";
+import { type GetEloLeagueQuery } from "@/lib/apollo/generated/graphql";
 
-type EloLeagueEntry = {
-  id: string;
-  currentElo: number;
-  position?: number | null;
-  player?: {
-    id: string;
-    userId?: string | null;
-    user?: {
-      name?: string | null;
-      username?: string | null;
-      country?: string | null;
-    } | null;
-  } | null;
-};
-
-type EloLeagueData = {
-  id: string;
-  gameId: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  createdAt?: string | null;
-  initialElo: number;
-  allowDraw: boolean;
-  kFactor: number;
-  scoreRelevance: number;
-  inactivityDecay: number;
-  inactivityThresholdHours: number;
-  inactivityDecayFloor: number;
-  allowedFormats: string[];
-  entries: EloLeagueEntry[];
-  game: {
-    name: string;
-    slug: string;
-    status: string;
-    thumbnailImageUrl?: string | null;
-  };
-};
+type EloLeagueData = NonNullable<GetEloLeagueQuery["eloLeague"]>;
 
 interface EloLeagueTemplateProps {
   league: EloLeagueData;

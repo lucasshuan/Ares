@@ -30,10 +30,7 @@
     "mySpace": "Meu Espaço",
     "dashboard": "Dashboard",
     "myProfile": "Meu Perfil",
-    "myTeams": "Meus Times",
-    "compete": "Competir",
-    "activeLeagues": "Ligas Ativas",
-    "tournaments": "Torneios",
+    "myTeams": "Clãs",
     "matchHistory": "Histórico",
     "soon": "Em breve",
     "collapse": "Recolher sidebar",
@@ -131,7 +128,10 @@
     "noGamesOther": "Este usuário ainda não participou de nenhuma competição",
     "noGamesDescription": "Entre em um jogo para aparecer em suas ligas.",
     "noGamesDescriptionOther": "Este usuário não está participando de nenhuma liga.",
-    "playedGamesTab": "Jogos Jogados"
+    "playedGamesTab": "Jogos Jogados",
+    "noBio": "Você ainda não definiu uma biografia.",
+    "noLeagues": "Sem posições em ligas ainda.",
+    "eloRating": "Elo {elo}"
   },
   "GamePage": {
     "metaTitleNotFound": "Jogo não encontrado",
@@ -202,7 +202,9 @@
       "title": "Entrar ou criar conta",
       "close": "Fechar",
       "signingIn": "Entrando...",
+      "continueWith": "Continuar com",
       "continueWithDiscord": "Continuar com Discord",
+      "termsNotice": "Ao entrar, você concorda com os nossos termos de uso e política de privacidade da plataforma Ares.",
       "title1": "Junte-se à",
       "title2": "guerra"
     },
@@ -245,10 +247,12 @@
     "RegisterConfirm": {
       "title": "Confirmar Inscrição",
       "description": "Você iniciará na liga com {elo} pontos Elo. Deseja continuar?",
+      "descriptionStandard": "Você será inscrito nesta liga. Deseja continuar?",
       "submit": "Confirmar Inscrição",
       "submitting": "Registrando...",
       "cancel": "Cancelar",
-      "success": "Inscrito com sucesso!"
+      "success": "Inscrito com sucesso!",
+      "error": "Erro ao registrar."
     },
     "EditGame": {
       "trigger": "Modificar jogo",

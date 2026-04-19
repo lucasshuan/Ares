@@ -22,7 +22,7 @@ import {
   Swords,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -430,6 +430,17 @@ export function OnboardingWizard({
         const result = await completeOnboarding(formData);
 
         if (!result.success) {
+          // Só faz signOut se o usuário não existe no banco (sessão órfã).
+          // Não deve fazer signOut para erros de rede, backend offline, etc.
+          const isOrphanSession = result.error
+            ?.toLowerCase()
+            .includes("user not found");
+
+          if (isOrphanSession) {
+            await signOut({ redirect: true, callbackUrl: "/" });
+            return;
+          }
+
           toast.error(result.error || "Something went wrong.");
           return;
         }

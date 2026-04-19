@@ -1,5 +1,5 @@
 import { Query, Resolver, Mutation, Args } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UnauthorizedException } from '@nestjs/common';
 
 import { User } from './user.model';
 import { GqlAuthGuard } from './gql-auth.guard';
@@ -63,6 +63,15 @@ export class AuthResolver {
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
   async completeOnboarding(@CurrentUser() user: { id: string }) {
+    const exists = await this.databaseProvider.user.findUnique({
+      where: { id: user.id },
+      select: { id: true },
+    });
+
+    if (!exists) {
+      throw new UnauthorizedException('User not found');
+    }
+
     return this.databaseProvider.user.update({
       where: { id: user.id },
       data: { onboardingCompleted: true },

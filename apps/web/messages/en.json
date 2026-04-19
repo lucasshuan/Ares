@@ -30,10 +30,7 @@
     "mySpace": "My Space",
     "dashboard": "Dashboard",
     "myProfile": "My Profile",
-    "myTeams": "My Teams",
-    "compete": "Compete",
-    "activeLeagues": "Active Leagues",
-    "tournaments": "Tournaments",
+    "myTeams": "Clãs",
     "matchHistory": "Match History",
     "soon": "Soon",
     "collapse": "Collapse sidebar",
@@ -131,7 +128,10 @@
     "noGamesOther": "This user hasn't been part of any competition yet",
     "noGamesDescription": "Join a game to appear in its leagues.",
     "noGamesDescriptionOther": "This user is not participating in any game leagues.",
-    "playedGamesTab": "Played Games"
+    "playedGamesTab": "Played Games",
+    "noBio": "You haven't set a bio yet.",
+    "noLeagues": "No league positions yet.",
+    "eloRating": "Elo {elo}"
   },
   "GamePage": {
     "metaTitleNotFound": "Game not found",
@@ -202,7 +202,9 @@
       "title": "Sign in or sign up",
       "close": "Close",
       "signingIn": "Signing in...",
+      "continueWith": "Continue with",
       "continueWithDiscord": "Continue with Discord",
+      "termsNotice": "By signing in, you agree to our terms of use and privacy policy.",
       "title1": "Join the",
       "title2": "fight"
     },
@@ -245,10 +247,12 @@
     "RegisterConfirm": {
       "title": "Confirm Registration",
       "description": "You will start with {elo} Elo points. Do you want to continue?",
+      "descriptionStandard": "You will be registered in this league. Do you want to continue?",
       "submit": "Confirm Registration",
       "submitting": "Registering...",
       "cancel": "Cancel",
-      "success": "Registered successfully!"
+      "success": "Registered successfully!",
+      "error": "Error registering."
     },
     "EditGame": {
       "trigger": "Edit game",
