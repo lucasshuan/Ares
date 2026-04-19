@@ -1,7 +1,7 @@
 # Ares — Contexto Geral do Projeto
 
 > Última atualização: Abril 2026  
-> Finalidade: referência rápida para IA e memória de desenvolvimento
+> Referência rápida para IA e memória de desenvolvimento
 
 ---
 

@@ -1,5 +1,6 @@
 # Ares — Architecture Reference
 
+> Última atualização: Abril 2026  
 > Fonte de verdade para agentes e desenvolvedores. Antes de criar qualquer arquivo ou fazer qualquer modificação significativa, leia este documento.
 
 ---

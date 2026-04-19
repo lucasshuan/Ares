@@ -1,62 +1,103 @@
-# Ares
+<div align="center">
+  <img src="apps/web/public/logo.png" alt="Ares" width="80" />
+  <h1>Ares</h1>
+</div>
 
-Monorepo para um produto de league e torneios com web em `Next.js`, API em `NestJS` e pacote compartilhado de banco com Prisma.
+**Plataforma open-source de ligas e torneios competitivos** para jogos digitais e físicos. Comunidades criam jogos, organizam ligas dentro deles, registram resultados e acompanham rankings via sistema Elo ou pontos fixos.
+
+> O repositório é público e serve como referência de arquitetura para um monorepo moderno com Next.js + NestJS + GraphQL + Prisma.
+
+## O que é
+
+- Usuários entram via Discord OAuth
+- Qualquer um pode criar um jogo e organizar uma liga dentro dele
+- Ligas suportam dois modos: **Elo** (rating dinâmico com K-factor, score relevance e inactivity decay) ou **Pontos** (win/draw/loss com pontuação configurável)
+- Resultados de partidas são registrados com formato, placar e provas opcionais (imagem, YouTube, Twitch)
+- Ranking em tempo real, perfil de jogador com histórico de nicks e ligas
 
 ## Stack
 
-- `Next.js 16` com `App Router`, TypeScript e `Turbopack` no ambiente local.
-- `NestJS` com GraphQL.
-- `Prisma` + `Postgres`.
-- `Tailwind CSS v4`.
-- `Zod` + `@t3-oss/env-nextjs` para envs tipadas.
+| Camada   | Tech                                              |
+| -------- | ------------------------------------------------- |
+| Frontend | Next.js (App Router), TypeScript, Tailwind CSS v4 |
+| Backend  | NestJS, GraphQL code-first, Passport-JWT          |
+| Banco    | PostgreSQL + Prisma                               |
+| Auth     | Discord OAuth → JWT                               |
+| Monorepo | pnpm workspaces + Turborepo                       |
+| i18n     | next-intl (`en` e `pt`)                           |
+| Upload   | Presigned URL (S3-compatible)                     |
 
 ## Estrutura
 
-```text
+```
 apps/
-  api/
-  web/
+  api/       NestJS + GraphQL — backend
+  web/       Next.js — frontend
 packages/
-  core/
-  db/
+  core/      Enums, permissões e tipos compartilhados
+  db/        Prisma schema, migrations e cliente singleton
 ```
 
-## Variáveis de ambiente
+Para entender as convenções e decisões arquiteturais, veja [ARCHITECTURE.md](ARCHITECTURE.md).
 
-Cada app é dono das suas variáveis de ambiente. Use os arquivos `.env.example` dentro de cada app como ponto de partida.
+## Rodando localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- pnpm 9+
+- PostgreSQL (ou Neon/Supabase)
+- App OAuth no Discord
+
+### Setup
 
 ```bash
+# 1. Instalar dependências
+pnpm install
+
+# 2. Configurar variáveis de ambiente
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
-Preencha no `apps/api/.env`:
+**`apps/api/.env`:**
 
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `DISCORD_CLIENT_ID`
-- `DISCORD_CLIENT_SECRET`
-- `CORS_ORIGIN`
+| Variável                | Descrição                                     |
+| ----------------------- | --------------------------------------------- |
+| `DATABASE_URL`          | Connection string do PostgreSQL               |
+| `JWT_SECRET`            | Secret para assinar tokens JWT                |
+| `DISCORD_CLIENT_ID`     | Client ID do app OAuth no Discord             |
+| `DISCORD_CLIENT_SECRET` | Client Secret do app OAuth no Discord         |
+| `CORS_ORIGIN`           | URL do frontend (ex: `http://localhost:3000`) |
 
-Preencha no `apps/web/.env`:
+**`apps/web/.env`:**
 
-- `NEXTAUTH_SECRET`
-- `NEXT_PUBLIC_API_URL`
-
-## Scripts úteis
+| Variável              | Descrição                                |
+| --------------------- | ---------------------------------------- |
+| `NEXTAUTH_SECRET`     | Secret para NextAuth                     |
+| `NEXT_PUBLIC_API_URL` | URL da API (ex: `http://localhost:4000`) |
 
 ```bash
+# 3. Rodar migrations e seed
+pnpm db:migrate
+pnpm db:seed
+
+# 4. Iniciar em desenvolvimento
 pnpm dev
-pnpm dev:api
-pnpm dev:web
-pnpm lint
-pnpm typecheck
-pnpm format
 ```
 
-## Fluxo sugerido
+## Scripts principais
 
-1. Subir um Postgres compatível com Vercel/Neon.
-2. Configurar um app OAuth no Discord.
-3. Configurar as envs do `apps/api` e `apps/web`.
-4. Rodar `pnpm install` e depois `pnpm dev`.
+```bash
+pnpm dev           # inicia API e web em paralelo
+pnpm dev:api       # apenas a API (porta 4000)
+pnpm dev:web       # apenas o frontend (porta 3000)
+pnpm lint          # lint em todos os pacotes
+pnpm typecheck     # tsc --noEmit em todos os pacotes
+pnpm codegen       # regenera tipos Apollo (rodar após mudar o schema GraphQL)
+pnpm db:migrate    # roda migrations Prisma
+```
+
+## Contribuindo
+
+Este repositório segue as convenções descritas em [ARCHITECTURE.md](ARCHITECTURE.md). Leia antes de abrir um PR.
