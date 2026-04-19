@@ -62,8 +62,8 @@ export function EditLeagueModal({
 
   const steps = [
     { label: addLeagueT("steps.game") },
-    { label: addLeagueT("steps.general") },
     { label: addLeagueT("steps.format") },
+    { label: addLeagueT("steps.general") },
     { label: addLeagueT("steps.matchFormats") },
   ];
 

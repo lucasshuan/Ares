@@ -2,6 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "extends": ["//"],
   "tasks": {
+    "migrate": {
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"],
+      "env": ["DATABASE_URL"]
+    },
     "build": {
       "cache": false,
       "inputs": ["index.ts", "package.json", "prisma/**", "prisma.config.ts"],

@@ -120,6 +120,7 @@ type Game {
   thumbnailImageUrl: String
   backgroundImageUrl: String
   steamUrl: String
+  websiteUrl: String
   status: String!
   authorId: String
   createdAt: DateTime!
@@ -214,6 +215,7 @@ input CreateGameInput {
   backgroundImageUrl: String
   thumbnailImageUrl: String
   steamUrl: String
+  websiteUrl: String
   authorId: String!
 }
 
@@ -224,6 +226,7 @@ input UpdateGameInput {
   backgroundImageUrl: String
   thumbnailImageUrl: String
   steamUrl: String
+  websiteUrl: String
 }
 
 input AddPlayerToGameInput {

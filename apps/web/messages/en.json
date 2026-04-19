@@ -113,6 +113,7 @@
     "sidebarDescription": "Track player leagues and performance for this game.",
     "sidebarPlayers": "Players",
     "playOnSteam": "Play on Steam",
+    "visitWebsite": "Visit official website",
     "clickToViewFullLeague": "Click to view full league",
     "viewGame": "View game",
     "leagueInfo": "League Info",
@@ -233,6 +234,9 @@
       },
       "steamUrl": {
         "label": "Steam URL"
+      },
+      "websiteUrl": {
+        "label": "Official Website"
       },
       "submit": "Save Changes",
       "submitting": "Saving...",

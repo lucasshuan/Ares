@@ -309,25 +309,25 @@ export function AddLeagueForm({
       if (currentStep === 0) {
         isStepValid = !!watchGameId || !!watchGameName;
       } else if (currentStep === 1) {
-        // Silent validation for Step 2 fields using the schema
+        isStepValid = allowedFormats.length > 0;
+      } else if (currentStep === 2) {
+        // Silent validation for Step 3 fields using the schema
         const values = getValues();
         const parseResult = schema.safeParse(values);
 
         if (parseResult.success) {
           isStepValid = true;
         } else {
-          const step2Fields = ["name", "slug"];
-          const hasStep2Errors = parseResult.error.issues.some((issue) =>
-            step2Fields.includes(issue.path[0] as string),
+          const step3Fields = ["name", "slug"];
+          const hasStep3Errors = parseResult.error.issues.some((issue) =>
+            step3Fields.includes(issue.path[0] as string),
           );
-          isStepValid = !hasStep2Errors;
+          isStepValid = !hasStep3Errors;
         }
 
         if (isStepValid) {
           isStepValid = !isSlugChecking && !hasSlugConflict;
         }
-      } else if (currentStep === 2) {
-        isStepValid = allowedFormats.length > 0;
       }
       onStepValidationChange?.(isStepValid);
     };
@@ -585,8 +585,8 @@ export function AddLeagueForm({
         </section>
       )}
 
-      {/* Step 2: General Data */}
-      {currentStep === 1 && (
+      {/* Step 3: General Data */}
+      {currentStep === 2 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
@@ -672,8 +672,8 @@ export function AddLeagueForm({
         </section>
       )}
 
-      {/* Step 3: Rating Logic */}
-      {currentStep === 2 && (
+      {/* Step 2: Rating Logic */}
+      {currentStep === 1 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
           <div className="flex flex-col gap-10">
             <div className="flex flex-col gap-4">

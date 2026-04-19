@@ -110,7 +110,7 @@ function AuthModalInner({
       {/* Panel */}
       <div
         ref={panelRef}
-        className="relative w-full max-w-[400px] overflow-hidden rounded-4xl"
+        className="relative w-full max-w-100 overflow-hidden rounded-4xl"
         style={{
           background:
             "linear-gradient(160deg, rgb(18 10 22 / 0.98), rgb(10 6 14 / 0.98))",

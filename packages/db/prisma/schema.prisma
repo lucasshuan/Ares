@@ -149,6 +149,7 @@ model Game {
   backgroundImageUrl String?    @map("background_image_url")
   thumbnailImageUrl  String?    @map("thumbnail_image_url") // Tip: Usually 460x215
   steamUrl           String?    @map("steam_url")
+  websiteUrl         String?    @map("website_url")
   status             GameStatus @default(APPROVED)
   authorId           String?    @map("author_id")
 

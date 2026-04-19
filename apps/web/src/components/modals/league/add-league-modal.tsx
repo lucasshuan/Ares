@@ -92,8 +92,8 @@ export function AddLeagueModal({
 
   const steps = [
     { label: t("steps.game") },
-    { label: t("steps.general") },
     { label: t("steps.format") },
+    { label: t("steps.general") },
   ];
 
   const handleClose = () => {

@@ -35,6 +35,7 @@ export const GET_GAME = gql`
       thumbnailImageUrl
       backgroundImageUrl
       steamUrl
+      websiteUrl
       status
       authorId
       createdAt

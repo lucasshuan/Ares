@@ -46,6 +46,7 @@ export function EditGameForm({
       backgroundImageUrl: game.backgroundImageUrl || "",
       thumbnailImageUrl: game.thumbnailImageUrl || "",
       steamUrl: game.steamUrl || "",
+      websiteUrl: game.websiteUrl || "",
     },
     mode: "onChange",
   });
@@ -74,12 +75,13 @@ export function EditGameForm({
         return;
       }
 
-      const result = await updateGame(game.id, {
+      const result = await updateGame(game.slug, {
         ...values,
         slug: values.slug,
         backgroundImageUrl,
         thumbnailImageUrl,
         steamUrl: values.steamUrl || null,
+        websiteUrl: values.websiteUrl || null,
         description: values.description ?? null,
       });
 
@@ -220,6 +222,27 @@ export function EditGameForm({
         />
         {errors.steamUrl && (
           <p className="field-error-text">{errors.steamUrl.message}</p>
+        )}
+      </div>
+
+      <div className="col-span-full flex flex-col gap-2">
+        <label
+          htmlFor="websiteUrl"
+          className="ml-1 text-sm font-medium text-white/70"
+        >
+          {t("websiteUrl.label")}
+        </label>
+        <input
+          id="websiteUrl"
+          type="text"
+          {...register("websiteUrl")}
+          className={cn(
+            "field-base",
+            errors.websiteUrl ? "field-border-error" : "field-border-default",
+          )}
+        />
+        {errors.websiteUrl && (
+          <p className="field-error-text">{errors.websiteUrl.message}</p>
         )}
       </div>
     </form>

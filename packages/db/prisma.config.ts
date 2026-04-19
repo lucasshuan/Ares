@@ -5,19 +5,26 @@ import { defineConfig } from "prisma/config";
 // Auto-load apps/api/.env when DATABASE_URL is not already set in the environment.
 // This makes `pnpm db:migrate <name>` work from the monorepo root without extra tooling.
 if (!process.env.DATABASE_URL) {
-  const envPath = path.resolve(__dirname, "../../apps/api/.env");
-  try {
-    const lines = readFileSync(envPath, "utf-8").split("\n");
-    for (const line of lines) {
-      const match = line.match(/^([^#=][^=]*)=(.*)$/);
-      if (match) {
-        const key = match[1].trim();
-        const val = match[2].trim().replace(/^"(.*)"$/, "$1");
-        if (!process.env[key]) process.env[key] = val;
+  const candidates = [
+    path.resolve(__dirname, ".env"),
+    path.resolve(__dirname, "../../apps/api/.env"),
+    path.resolve(__dirname, "../../.env"),
+  ];
+  for (const envPath of candidates) {
+    try {
+      const lines = readFileSync(envPath, "utf-8").split("\n");
+      for (const line of lines) {
+        const match = line.match(/^([^#=][^=]*)=(.*)$/);
+        if (match) {
+          const key = match[1].trim();
+          const val = match[2].trim().replace(/^"(.*)"$/, "$1");
+          if (!process.env[key]) process.env[key] = val;
+        }
       }
+      if (process.env.DATABASE_URL) break;
+    } catch {
+      // file not present, try next
     }
-  } catch {
-    // env file not present (e.g. CI), rely on environment variables directly
   }
 }
 

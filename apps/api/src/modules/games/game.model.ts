@@ -35,6 +35,9 @@ export class Game {
   @Field({ nullable: true })
   steamUrl?: string;
 
+  @Field({ nullable: true })
+  websiteUrl?: string;
+
   @Field()
   status: string;
 

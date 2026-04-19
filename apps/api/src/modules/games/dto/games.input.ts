@@ -31,6 +31,11 @@ export class CreateGameInput {
   @IsOptional()
   steamUrl?: string;
 
+  @Field({ nullable: true })
+  @IsUrl()
+  @IsOptional()
+  websiteUrl?: string;
+
   @Field()
   @IsString()
   authorId: string;
@@ -67,4 +72,9 @@ export class UpdateGameInput {
   @IsUrl()
   @IsOptional()
   steamUrl?: string;
+
+  @Field({ nullable: true })
+  @IsUrl()
+  @IsOptional()
+  websiteUrl?: string;
 }

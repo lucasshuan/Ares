@@ -94,6 +94,7 @@ export const updateGame = createSafeAction(
       backgroundImageUrl: string | null;
       thumbnailImageUrl: string | null;
       steamUrl: string | null;
+      websiteUrl: string | null;
     },
   ) => {
     const session = await getServerAuthSession();
@@ -122,6 +123,7 @@ export const updateGame = createSafeAction(
           backgroundImageUrl: normalizeOptionalText(data.backgroundImageUrl),
           thumbnailImageUrl: normalizeOptionalText(data.thumbnailImageUrl),
           steamUrl: normalizeOptionalText(data.steamUrl),
+          websiteUrl: normalizeOptionalText(data.websiteUrl),
         },
       },
     });
@@ -142,6 +144,7 @@ export const createGame = createSafeAction(
     backgroundImageUrl: string | null;
     thumbnailImageUrl: string | null;
     steamUrl: string | null;
+    websiteUrl: string | null;
   }) => {
     const session = await getServerAuthSession();
 
@@ -166,6 +169,7 @@ export const createGame = createSafeAction(
           backgroundImageUrl: normalizeOptionalText(data.backgroundImageUrl),
           thumbnailImageUrl: normalizeOptionalText(data.thumbnailImageUrl),
           steamUrl: normalizeOptionalText(data.steamUrl),
+          websiteUrl: normalizeOptionalText(data.websiteUrl),
           authorId: session.user.id,
         },
       },

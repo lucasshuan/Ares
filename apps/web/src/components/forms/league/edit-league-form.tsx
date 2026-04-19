@@ -240,6 +240,8 @@ export function EditLeagueForm({
     if (currentStep === 0) {
       valid = true;
     } else if (currentStep === 1) {
+      valid = true;
+    } else if (currentStep === 2) {
       const values = {
         name: name.trim(),
         slug: slug.trim(),
@@ -248,8 +250,6 @@ export function EditLeagueForm({
       if (valid) {
         valid = !isSlugChecking && !hasSlugConflict;
       }
-    } else if (currentStep === 2) {
-      valid = true;
     } else if (currentStep === 3) {
       valid = allowedFormats.length > 0;
     }
@@ -373,8 +373,8 @@ export function EditLeagueForm({
         </section>
       )}
 
-      {/* Step 2: General Data */}
-      {currentStep === 1 && (
+      {/* Step 3: General Data */}
+      {currentStep === 2 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
@@ -455,8 +455,8 @@ export function EditLeagueForm({
         </section>
       )}
 
-      {/* Step 3: Rating Logic */}
-      {currentStep === 2 && (
+      {/* Step 2: Rating Logic */}
+      {currentStep === 1 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
           <div className="flex flex-col gap-10">
             {/* System Selector - Full Width Row */}

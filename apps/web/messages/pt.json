@@ -112,6 +112,7 @@
     "sidebarDescription": "Acompanhe classificações e desempenho de jogadores para este jogo.",
     "sidebarPlayers": "Jogadores",
     "playOnSteam": "Jogar na Steam",
+    "visitWebsite": "Visitar site oficial",
     "clickToViewFullLeague": "Clique para ver a liga completa",
     "viewGame": "Ver jogo",
     "leagueInfo": "Informações da Liga",
@@ -233,6 +234,9 @@
       "steamUrl": {
         "label": "URL da Steam"
       },
+      "websiteUrl": {
+        "label": "Site Oficial"
+      },
       "submit": "Salvar Alterações",
       "submitting": "Salvando...",
       "cancel": "Cancelar",
@@ -351,7 +355,7 @@
             "match_close": "Partida Acirrada",
             "match_moderate": "Vitória Moderada",
             "match_dominant": "Vitória Dominante",
-            "match_shutout": "Shutout",
+            "match_shutout": "Vitória Avassaladora",
             "pts": "pts",
             "footer": "S = componente de score na fórmula Elo. Mais próximo de 0.5 = menos Elo trocado."
           }

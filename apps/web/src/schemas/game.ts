@@ -36,6 +36,7 @@ export const getEditGameSchema = (t: TFunction) => {
     backgroundImageUrl: imageFieldSchema,
     thumbnailImageUrl: imageFieldSchema,
     steamUrl: urlSchema,
+    websiteUrl: urlSchema,
   });
 };
 
