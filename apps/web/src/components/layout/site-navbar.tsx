@@ -19,8 +19,8 @@ export async function SiteNavbar() {
             <div
               className="bg-primary shrink-0"
               style={{
-                width: 18,
-                height: 18,
+                width: 16,
+                height: 16,
                 maskImage: `url(/icon.svg)`,
                 WebkitMaskImage: `url(/icon.svg)`,
                 maskSize: "contain",

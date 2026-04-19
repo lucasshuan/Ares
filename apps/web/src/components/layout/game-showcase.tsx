@@ -80,7 +80,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
       <div className="relative flex items-end justify-between gap-4">
         {/* Diagonal championship slash */}
         <div
-          className="from-primary-strong via-primary/40 animate-slash-pulse pointer-events-none absolute -top-4 -bottom-4 -left-16 w-3/5 -skew-x-12 overflow-hidden rounded-r-2xl bg-linear-to-r to-transparent motion-reduce:animate-none sm:-left-20 lg:-left-24"
+          className="from-primary-strong via-primary/40 animate-slash-pulse pointer-events-none absolute -top-4 -bottom-4 -left-16 w-3/5 -skew-x-12 overflow-hidden rounded-r-2xl bg-linear-to-r to-transparent motion-reduce:animate-none sm:-left-20"
           aria-hidden="true"
         >
           {/* Periodic sheen sweep */}

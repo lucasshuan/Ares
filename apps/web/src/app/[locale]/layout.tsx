@@ -3,7 +3,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteNavbar } from "@/components/layout/site-navbar";
+import { SiteSidebar } from "@/components/layout/site-sidebar";
 import { routing } from "@/i18n/routing";
 
 import { Providers } from "@/components/providers";
@@ -31,11 +31,13 @@ export default async function RootLayout({
     <NextIntlClientProvider messages={messages}>
       <ApolloWrapper>
         <Providers session={session}>
-          <div className="app-scroll-shell relative h-screen">
+          <div className="relative flex h-screen overflow-hidden">
             <div className="grid-surface pointer-events-none fixed inset-0 -z-50" />
-            <SiteNavbar />
-            <div className="min-h-[calc(100vh-137px)]">{children}</div>
-            <SiteFooter />
+            <SiteSidebar />
+            <div className="app-scroll-shell flex flex-1 flex-col">
+              <div className="flex-1 pt-12 lg:pt-0">{children}</div>
+              <SiteFooter />
+            </div>
           </div>
         </Providers>
       </ApolloWrapper>

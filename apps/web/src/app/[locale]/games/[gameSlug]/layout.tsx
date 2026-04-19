@@ -46,7 +46,7 @@ export default async function GameLayout({
               alt=""
               fill
               priority
-              className="object-cover opacity-40"
+              className="object-cover"
               sizes="100vw"
             />
             <div className="to-background absolute inset-0 bg-linear-to-b from-transparent" />

@@ -23,7 +23,7 @@ export default async function HomePage() {
     <main className="relative overflow-hidden">
       <div className="mx-auto flex w-full max-w-7xl flex-col px-6 sm:px-10 lg:px-12">
         {/* ── Hero ── */}
-        <section className="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center pb-24 text-center">
+        <section className="relative flex min-h-[calc(100svh)] flex-col items-center justify-center pb-24 text-center">
           {/* Ambient glow */}
           <div
             className="pointer-events-none absolute inset-0 overflow-hidden"

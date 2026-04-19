@@ -89,7 +89,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
           <div className="sticky top-28 flex flex-col gap-4">
             <div>
               <div
-                className={`glass-panel overflow-hidden rounded-4xl${isOwnProfile ? "rounded-br-none" : ""}`}
+                className={`glass-panel overflow-hidden rounded-4xl ${isOwnProfile ? "rounded-br-none" : ""}`}
               >
                 {/* Subtle decorations removed */}
 

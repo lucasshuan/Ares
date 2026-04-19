@@ -312,6 +312,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **3.1 Reestruturar Documentação**
   - [ ] Atualizar o README principal com instruções claras de setup do monorepo e variáveis de ambiente.
+  - [ ] Criar documento de arquitetura detalhando a estrutura dos apps, padrões de código, práticas recomendadas e diretórios.
   - arquivos afetados: `README.md`
   - dificuldade: baixa | impacto: baixo
 
