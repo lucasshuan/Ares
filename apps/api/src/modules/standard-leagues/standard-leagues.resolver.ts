@@ -56,7 +56,7 @@ export class StandardLeaguesResolver {
 
   @ResolveField(() => [StandardLeagueEntry], { name: 'entries' })
   async getEntries(@Parent() league: StandardLeague) {
-    return this.standardLeaguesService.getEntries(league.id);
+    return this.dataLoaderService.standardLeagueEntriesLoader.load(league.id);
   }
 
   @Mutation(() => StandardLeague)

@@ -55,7 +55,7 @@ export class EloLeaguesResolver {
 
   @ResolveField(() => [EloLeagueEntry], { name: 'entries' })
   async getEntries(@Parent() league: EloLeague) {
-    return this.eloLeaguesService.getEntries(league.id);
+    return this.dataLoaderService.eloLeagueEntriesLoader.load(league.id);
   }
 
   @Mutation(() => EloLeague)

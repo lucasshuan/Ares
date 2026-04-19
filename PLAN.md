@@ -256,7 +256,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 ### Etapa 1. Fechar segurança e contratos principais
 
-- [ ] **1.1 Unificar o fluxo de autenticação**
+- [x] **1.1 Unificar o fluxo de autenticação**
   - [x] Criar endpoint de `/auth/me` na API para validar IDs de sessão.
   - [x] Remover o `token` da query string no redirecionamento da API (migrar para cookie ou via callback interno).
   - [x] Ajustar o Apollo Link no `apps/web` para injetar o JWT no header `Authorization`.
@@ -306,9 +306,9 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - arquivos afetados: `apps/api/test/*`, `apps/web/src/**/*.test.tsx`
   - dificuldade: alta | impacto: alto
 
-- [ ] **2.3 Expandir o uso de `DataLoader` e revisar N+1**
-  - [ ] Criar loaders para relações `Game -> Leagues` e `League -> Entries`.
-  - [ ] Auditar performance das queries principais usando ferramenta de trace ou logs de query.
+- [x] **2.3 Expandir o uso de `DataLoader` e revisar N+1**
+  - [x] Criar loaders para relações `Game -> Leagues` e `League -> Entries`.
+  - [x] Auditar performance das queries principais usando ferramenta de trace ou logs de query.
   - arquivos afetados: `apps/api/src/common/dataloaders/dataloader.service.ts`
   - dificuldade: média | impacto: alto
 
@@ -320,7 +320,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 ### Etapa 3. Reduzir complexidade e alinhar operação
 
 - [ ] **3.1 Reestruturar Documentação**
-  - [ ] Atualizar o README principal com instruções claras de setup do monorepo e variáveis de ambiente.
+  - [ ] Atualizar o README principal com instruções claras de setup do monorepo e variáveis de ambiente e deve introduzir de forma sucinta do que se trata o projeto, tendo em vista que o repositório será público.
   - [x] Criar um documento de referência arquitetural (`ARCHITECTURE.md`) que sirva como fonte de verdade para qualquer agente ou desenvolvedor que precise fazer alterações no projeto. Deve cobrir: estrutura de diretórios e responsabilidade de cada camada (`apps/web`, `apps/api`, `packages/*`), convenções de naming e casing, padrões obrigatórios (ex: onde criar queries GraphQL, como estruturar resolvers, onde ficam validações), componentes de UI reutilizáveis e quando usar cada um, fluxo de dados entre camadas (Prisma → Service → Resolver → Codegen → Frontend), regras de estilo (Tailwind, tokens, variáveis), padrões de i18n, estratégia de permissões e guards, e qualquer _boa_ decisão arquitetural já tomada que deva ser preservada.
   - arquivos afetados: `README.md`, `ARCHITECTURE.md`
   - dificuldade: baixa | impacto: baixo

@@ -75,12 +75,12 @@ export class GamesResolver {
 
   @ResolveField(() => [EloLeague], { name: 'eloLeagues' })
   async getEloLeagues(@Parent() game: Game) {
-    return this.gamesService.getEloLeagues(game.id);
+    return this.dataLoaderService.eloLeaguesByGameIdLoader.load(game.id);
   }
 
   @ResolveField(() => [StandardLeague], { name: 'standardLeagues' })
   async getStandardLeagues(@Parent() game: Game) {
-    return this.gamesService.getStandardLeagues(game.id);
+    return this.dataLoaderService.standardLeaguesByGameIdLoader.load(game.id);
   }
 
   @Mutation(() => Game)
