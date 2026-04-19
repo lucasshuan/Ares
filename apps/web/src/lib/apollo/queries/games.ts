@@ -45,13 +45,12 @@ export const GET_GAME = gql`
         username
         imageUrl
       }
-      leagues {
+      eloLeagues {
         id
         name
         slug
         description
         initialElo
-        ratingSystem
         isApproved
         startDate
         endDate
@@ -59,6 +58,36 @@ export const GET_GAME = gql`
         entries {
           id
           currentElo
+          position
+          player {
+            id
+            user {
+              id
+              name
+              username
+              country
+            }
+          }
+        }
+      }
+      standardLeagues {
+        id
+        name
+        slug
+        description
+        pointsPerWin
+        pointsPerDraw
+        pointsPerLoss
+        isApproved
+        startDate
+        endDate
+        createdAt
+        entries {
+          id
+          points
+          wins
+          draws
+          losses
           position
           player {
             id

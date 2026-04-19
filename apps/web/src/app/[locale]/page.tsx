@@ -5,7 +5,10 @@ import { buttonVariants } from "@/components/ui/button";
 
 import { SignInButton } from "@/components/triggers/auth/sign-in-button";
 import { cn } from "@/lib/utils";
-import { GameShowcase, type ShowcaseGame } from "@/components/layout/game-showcase";
+import {
+  GameShowcase,
+  type ShowcaseGame,
+} from "@/components/layout/game-showcase";
 import { getTranslations } from "next-intl/server";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
@@ -26,32 +29,32 @@ export default async function HomePage() {
             className="pointer-events-none absolute inset-0 overflow-hidden"
             aria-hidden="true"
           >
-            <div className="absolute -top-24 left-1/2 h-120 w-170 -translate-x-1/2 animate-hero-glow rounded-full bg-primary/8 blur-[140px]" />
-            <div className="absolute -bottom-32 -left-10 h-80 w-120 animate-hero-glow rounded-full bg-primary-strong/10 blur-[120px] [animation-delay:-3s]" />
+            <div className="animate-hero-glow bg-primary/8 absolute -top-24 left-1/2 h-120 w-170 -translate-x-1/2 rounded-full blur-[140px]" />
+            <div className="animate-hero-glow bg-primary-strong/10 absolute -bottom-32 -left-10 h-80 w-120 rounded-full blur-[120px] [animation-delay:-3s]" />
           </div>
 
           <div className="relative flex flex-col items-center gap-6">
             {/* Title */}
-            <h1 className="flex animate-hero-fade-up flex-wrap items-baseline justify-center gap-x-5 text-5xl tracking-tight sm:text-6xl lg:text-7xl">
-              <span className="font-bold text-primary drop-shadow-[0_0_40px_rgba(192,11,59,0.3)]">
+            <h1 className="animate-hero-fade-up flex flex-wrap items-baseline justify-center gap-x-5 text-5xl tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="text-primary font-bold drop-shadow-[0_0_40px_rgba(192,11,59,0.3)]">
                 Ares
-                <span className="font-extralight text-primary/25">:</span>
+                <span className="text-primary/25 font-extralight">:</span>
               </span>
-              <span className="font-extralight text-foreground/80">
+              <span className="text-foreground/80 font-extralight">
                 {t("heroTagline")}
               </span>
             </h1>
 
             {/* Decorative divider */}
-            <div className="h-px w-20 animate-hero-line bg-linear-to-r from-transparent via-primary/50 to-transparent sm:w-32" />
+            <div className="animate-hero-line via-primary/50 h-px w-20 bg-linear-to-r from-transparent to-transparent sm:w-32" />
 
             {/* Subtitle */}
-            <p className="max-w-xl animate-hero-fade-up text-base leading-relaxed text-muted sm:text-lg [animation-delay:150ms]">
+            <p className="animate-hero-fade-up text-muted max-w-xl text-base leading-relaxed [animation-delay:150ms] sm:text-lg">
               {t("heroSubtitle")}
             </p>
 
             {/* CTAs */}
-            <div className="flex animate-hero-fade-up gap-3 pt-2 sm:gap-4 [animation-delay:300ms]">
+            <div className="animate-hero-fade-up flex gap-3 pt-2 [animation-delay:300ms] sm:gap-4">
               <Link
                 href="/games"
                 className={cn(
@@ -75,36 +78,134 @@ export default async function HomePage() {
         <div className="relative">
           {/* Ember / fire particles rising from the box */}
           <div
-            className="pointer-events-none absolute -top-80 left-0 right-0 z-10 h-96 overflow-hidden"
+            className="pointer-events-none absolute -top-80 right-0 left-0 z-10 h-96 overflow-hidden"
             aria-hidden="true"
           >
             {/* Glow base at the top of the box */}
-            <div className="absolute bottom-0 left-1/2 h-40 w-3/4 -translate-x-1/2 rounded-full bg-primary/12 blur-[100px]" />
+            <div className="bg-primary/12 absolute bottom-0 left-1/2 h-40 w-3/4 -translate-x-1/2 rounded-full blur-[100px]" />
             <div className="absolute bottom-0 left-1/2 h-24 w-1/2 -translate-x-1/2 rounded-full bg-orange-500/10 blur-[80px]" />
 
             {/* Particle field */}
             <div className="ember-field absolute inset-0">
-              <span className="ember" style={{ left: "10%", animationDelay: "0s", animationDuration: "3.2s" }} />
-              <span className="ember" style={{ left: "20%", animationDelay: "0.8s", animationDuration: "2.8s" }} />
-              <span className="ember" style={{ left: "30%", animationDelay: "1.6s", animationDuration: "3.6s" }} />
-              <span className="ember" style={{ left: "42%", animationDelay: "0.3s", animationDuration: "2.5s" }} />
-              <span className="ember" style={{ left: "50%", animationDelay: "1.1s", animationDuration: "3.0s" }} />
-              <span className="ember" style={{ left: "58%", animationDelay: "2.0s", animationDuration: "3.4s" }} />
-              <span className="ember" style={{ left: "68%", animationDelay: "0.5s", animationDuration: "2.6s" }} />
-              <span className="ember" style={{ left: "78%", animationDelay: "1.4s", animationDuration: "3.1s" }} />
-              <span className="ember" style={{ left: "88%", animationDelay: "0.9s", animationDuration: "2.9s" }} />
-              <span className="ember ember--bright" style={{ left: "25%", animationDelay: "0.6s", animationDuration: "3.5s" }} />
-              <span className="ember ember--bright" style={{ left: "55%", animationDelay: "1.8s", animationDuration: "2.7s" }} />
-              <span className="ember ember--bright" style={{ left: "75%", animationDelay: "0.2s", animationDuration: "3.3s" }} />
-              <span className="ember ember--large" style={{ left: "35%", animationDelay: "1.2s", animationDuration: "4.0s" }} />
-              <span className="ember ember--large" style={{ left: "65%", animationDelay: "2.2s", animationDuration: "3.8s" }} />
+              <span
+                className="ember"
+                style={{
+                  left: "10%",
+                  animationDelay: "0s",
+                  animationDuration: "3.2s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "20%",
+                  animationDelay: "0.8s",
+                  animationDuration: "2.8s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "30%",
+                  animationDelay: "1.6s",
+                  animationDuration: "3.6s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "42%",
+                  animationDelay: "0.3s",
+                  animationDuration: "2.5s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "50%",
+                  animationDelay: "1.1s",
+                  animationDuration: "3.0s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "58%",
+                  animationDelay: "2.0s",
+                  animationDuration: "3.4s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "68%",
+                  animationDelay: "0.5s",
+                  animationDuration: "2.6s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "78%",
+                  animationDelay: "1.4s",
+                  animationDuration: "3.1s",
+                }}
+              />
+              <span
+                className="ember"
+                style={{
+                  left: "88%",
+                  animationDelay: "0.9s",
+                  animationDuration: "2.9s",
+                }}
+              />
+              <span
+                className="ember ember--bright"
+                style={{
+                  left: "25%",
+                  animationDelay: "0.6s",
+                  animationDuration: "3.5s",
+                }}
+              />
+              <span
+                className="ember ember--bright"
+                style={{
+                  left: "55%",
+                  animationDelay: "1.8s",
+                  animationDuration: "2.7s",
+                }}
+              />
+              <span
+                className="ember ember--bright"
+                style={{
+                  left: "75%",
+                  animationDelay: "0.2s",
+                  animationDuration: "3.3s",
+                }}
+              />
+              <span
+                className="ember ember--large"
+                style={{
+                  left: "35%",
+                  animationDelay: "1.2s",
+                  animationDuration: "4.0s",
+                }}
+              />
+              <span
+                className="ember ember--large"
+                style={{
+                  left: "65%",
+                  animationDelay: "2.2s",
+                  animationDuration: "3.8s",
+                }}
+              />
             </div>
           </div>
 
           {/* Styled box */}
           <div className="communities-box relative z-20 rounded-t-[2.5rem] border border-b-0 border-white/6 bg-linear-to-b from-[rgb(18_12_22/0.95)] to-[rgb(11_8_15/0.98)] px-6 pt-10 pb-2 shadow-[0_-20px_80px_rgb(192_11_59/0.06),inset_0_1px_0_rgb(255_255_255/0.05)] sm:px-10 sm:pt-14 lg:px-12 lg:pt-16">
             {/* Top edge glow line */}
-            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
+            <div className="via-primary/30 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
 
             <Suspense
               fallback={

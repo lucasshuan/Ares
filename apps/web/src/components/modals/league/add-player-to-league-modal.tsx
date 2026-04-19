@@ -8,6 +8,7 @@ import { AddPlayerToLeagueForm } from "@/components/forms/league/add-player-to-l
 interface AddPlayerToLeagueModalProps {
   gameId: string;
   leagueId: string;
+  leagueType: "elo" | "standard";
   isOpen: boolean;
   onClose: () => void;
 }
@@ -15,6 +16,7 @@ interface AddPlayerToLeagueModalProps {
 export function AddPlayerToLeagueModal({
   gameId,
   leagueId,
+  leagueType,
   isOpen,
   onClose,
 }: AddPlayerToLeagueModalProps) {
@@ -33,6 +35,7 @@ export function AddPlayerToLeagueModal({
       <AddPlayerToLeagueForm
         gameId={gameId}
         leagueId={leagueId}
+        leagueType={leagueType}
         onSuccess={onClose}
         onLoadingChange={setIsPending}
       />

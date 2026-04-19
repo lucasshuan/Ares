@@ -106,24 +106,36 @@ export class GamesService {
     });
   }
 
-  async getLeagues(gameId: string) {
-    const leagues = await this.databaseProvider.league.findMany({
-      where: {
-        event: {
-          gameId: gameId,
-        },
-      },
-      include: {
-        event: true,
-      },
-      orderBy: {
-        event: {
-          createdAt: 'desc',
-        },
-      },
+  async getEloLeagues(gameId: string) {
+    const leagues = await this.databaseProvider.eloLeague.findMany({
+      where: { event: { gameId } },
+      include: { event: true },
+      orderBy: { event: { createdAt: 'desc' } },
+    });
+    return leagues.map(mapLeagueWithEvent);
+  }
+
+  async getStandardLeagues(gameId: string) {
+    const leagues = await this.databaseProvider.standardLeague.findMany({
+      where: { event: { gameId } },
+      include: { event: true },
+      orderBy: { event: { createdAt: 'desc' } },
+    });
+    return leagues.map(mapLeagueWithEvent);
+  }
+
+  async findEventMeta(gameSlug: string, eventSlug: string) {
+    const game = await this.databaseProvider.game.findFirst({
+      where: { slug: gameSlug },
+    });
+    if (!game) return null;
+
+    const event = await this.databaseProvider.event.findFirst({
+      where: { gameId: game.id, slug: eventSlug },
+      select: { id: true, type: true },
     });
 
-    return leagues.map(mapLeagueWithEvent);
+    return event ?? null;
   }
 
   async create(data: CreateGameInput, authorId?: string) {

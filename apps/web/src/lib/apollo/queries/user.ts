@@ -19,7 +19,7 @@ export const GET_USER = gql`
           slug
           backgroundImageUrl
         }
-        leagueEntries {
+        eloLeagueEntries {
           id
           currentElo
           position

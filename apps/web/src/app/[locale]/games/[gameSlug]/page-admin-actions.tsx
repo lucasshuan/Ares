@@ -36,7 +36,7 @@ export function PageAdminActions({
         trigger={
           <button
             type="button"
-            className="no-lift group relative z-10 -mt-px flex items-center gap-2 rounded-b-2xl border border-t-0 border-border bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))] px-4 py-2.5 text-xs font-bold tracking-wider text-white/50 uppercase transition-colors hover:text-white"
+            className="no-lift group border-border relative z-10 -mt-px flex items-center gap-2 rounded-b-2xl border border-t-0 bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))] px-4 py-2.5 text-xs font-bold tracking-wider text-white/50 uppercase transition-colors hover:text-white"
           >
             <Settings2 className="size-4" />
             <span>{t("Admin.panel")}</span>

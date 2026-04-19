@@ -137,7 +137,7 @@ export function MultiStepModal({
                       isActive
                         ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
                         : isPast || isUnlocked
-                          ? "cursor-pointer border-success/20 bg-success/5 text-success/70 hover:bg-success/10"
+                          ? "border-success/20 bg-success/5 text-success/70 hover:bg-success/10 cursor-pointer"
                           : "cursor-not-allowed border-white/5 bg-white/5 text-white/30",
                     )}
                   >
@@ -162,9 +162,7 @@ export function MultiStepModal({
                     <div
                       className={cn(
                         "h-px w-6",
-                        isPast || isUnlocked
-                          ? "bg-success/20"
-                          : "bg-white/5",
+                        isPast || isUnlocked ? "bg-success/20" : "bg-white/5",
                       )}
                     />
                   )}

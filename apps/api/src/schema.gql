@@ -2,21 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type League {
+type EloLeague {
   id: ID!
   gameId: String!
   name: String!
   slug: String!
   description: String
-  initialElo: Int!
-  ratingSystem: String!
   type: String!
+  initialElo: Int!
   allowDraw: Boolean!
   kFactor: Int!
   scoreRelevance: Float!
   inactivityDecay: Int!
   inactivityThresholdHours: Int!
   inactivityDecayFloor: Int!
+  allowedFormats: [String!]!
+  isApproved: Boolean!
+  startDate: DateTime
+  endDate: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  game: Game!
+  entries: [EloLeagueEntry!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type EloLeagueEntry {
+  id: ID!
+  leagueId: String!
+  playerId: String!
+  currentElo: Int!
+  position: Int
+  player: Player
+  league: EloLeague
+}
+
+type StandardLeague {
+  id: ID!
+  gameId: String!
+  name: String!
+  slug: String!
+  description: String
+  type: String!
+  allowDraw: Boolean!
   pointsPerWin: Int!
   pointsPerDraw: Int!
   pointsPerLoss: Int!
@@ -27,22 +59,20 @@ type League {
   createdAt: DateTime!
   updatedAt: DateTime!
   game: Game!
-  entries: [LeagueEntry!]!
+  entries: [StandardLeagueEntry!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type LeagueEntry {
+type StandardLeagueEntry {
   id: ID!
   leagueId: String!
   playerId: String!
-  currentElo: Int!
+  points: Int!
+  wins: Int!
+  draws: Int!
+  losses: Int!
   position: Int
   player: Player
-  league: League
+  league: StandardLeague
 }
 
 type Player {
@@ -52,7 +82,8 @@ type Player {
   currentElo: Int!
   user: User
   game: Game
-  leagueEntries: [LeagueEntry!]
+  eloLeagueEntries: [EloLeagueEntry!]
+  standardLeagueEntries: [StandardLeagueEntry!]
   usernames: [PlayerUsername!]!
 }
 
@@ -94,7 +125,8 @@ type Game {
   createdAt: DateTime!
   updatedAt: DateTime!
   author: User
-  leagues: [League!]!
+  eloLeagues: [EloLeague!]!
+  standardLeagues: [StandardLeague!]!
   _count: GameCounts
 }
 
@@ -102,6 +134,11 @@ type PaginatedGames {
   nodes: [Game!]!
   totalCount: Int!
   hasNextPage: Boolean!
+}
+
+type EventMeta {
+  id: ID!
+  type: String!
 }
 
 type PaginatedPlayers {
@@ -115,8 +152,14 @@ type UploadUrlResponse {
   finalUrl: String!
 }
 
-type PaginatedLeagues {
-  nodes: [League!]!
+type PaginatedEloLeagues {
+  nodes: [EloLeague!]!
+  totalCount: Int!
+  hasNextPage: Boolean!
+}
+
+type PaginatedStandardLeagues {
+  nodes: [StandardLeague!]!
   totalCount: Int!
   hasNextPage: Boolean!
 }
@@ -130,11 +173,14 @@ type PaginatedUsers {
 type Query {
   games(pagination: PaginationInput, search: String): PaginatedGames!
   game(slug: String!): Game
+  eventMeta(gameSlug: String!, slug: String!): EventMeta
   player(id: ID!): Player
   searchPlayers(gameId: ID!, query: String!, pagination: PaginationInput): PaginatedPlayers!
   me: User
-  leagues(pagination: PaginationInput): PaginatedLeagues!
-  league(gameSlug: String!, slug: String!): League
+  eloLeagues(pagination: PaginationInput): PaginatedEloLeagues!
+  eloLeague(gameSlug: String!, slug: String!): EloLeague
+  standardLeagues(pagination: PaginationInput): PaginatedStandardLeagues!
+  standardLeague(gameSlug: String!, slug: String!): StandardLeague
   user(username: String!): User
   searchUsers(pagination: PaginationInput, query: String): PaginatedUsers!
 }
@@ -151,10 +197,14 @@ type Mutation {
   addPlayerToGame(input: AddPlayerToGameInput!): Player!
   requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
   updateProfile(input: UpdateProfileInput!): User!
-  updateLeague(id: ID!, input: UpdateLeagueInput!): League!
-  createLeague(input: CreateLeagueInput!): League!
-  addPlayerToLeague(leagueId: ID!, playerId: ID!, initialElo: Int): LeagueEntry!
-  registerSelfToLeague(leagueId: ID!): LeagueEntry!
+  updateEloLeague(id: ID!, input: UpdateEloLeagueInput!): EloLeague!
+  createEloLeague(input: CreateEloLeagueInput!): EloLeague!
+  addPlayerToEloLeague(leagueId: ID!, playerId: ID!, initialElo: Int): EloLeagueEntry!
+  registerSelfToEloLeague(leagueId: ID!): EloLeagueEntry!
+  updateStandardLeague(id: ID!, input: UpdateStandardLeagueInput!): StandardLeague!
+  createStandardLeague(input: CreateStandardLeagueInput!): StandardLeague!
+  addPlayerToStandardLeague(leagueId: ID!, playerId: ID!): StandardLeagueEntry!
+  registerSelfToStandardLeague(leagueId: ID!): StandardLeagueEntry!
 }
 
 input CreateGameInput {
@@ -169,6 +219,7 @@ input CreateGameInput {
 
 input UpdateGameInput {
   name: String
+  slug: String
   description: String
   backgroundImageUrl: String
   thumbnailImageUrl: String
@@ -190,38 +241,57 @@ input UpdateProfileInput {
   imageUrl: String
 }
 
-input UpdateLeagueInput {
+input UpdateEloLeagueInput {
   name: String
   slug: String
   description: String
   initialElo: Int
-  ratingSystem: String
   allowDraw: Boolean
   kFactor: Int
   scoreRelevance: Float
   inactivityDecay: Int
   inactivityThresholdHours: Int
   inactivityDecayFloor: Int
-  pointsPerWin: Int
-  pointsPerDraw: Int
-  pointsPerLoss: Int
   allowedFormats: [String!]
 }
 
-input CreateLeagueInput {
+input CreateEloLeagueInput {
   gameId: String
   gameName: String
   name: String!
   slug: String!
   description: String
   initialElo: Int!
-  ratingSystem: String!
   allowDraw: Boolean!
   kFactor: Int!
   scoreRelevance: Float!
   inactivityDecay: Int!
   inactivityThresholdHours: Int!
   inactivityDecayFloor: Int!
+  allowedFormats: [String!]!
+  startDate: DateTime
+  endDate: DateTime
+  authorId: String!
+}
+
+input UpdateStandardLeagueInput {
+  name: String
+  slug: String
+  description: String
+  allowDraw: Boolean
+  pointsPerWin: Int
+  pointsPerDraw: Int
+  pointsPerLoss: Int
+  allowedFormats: [String!]
+}
+
+input CreateStandardLeagueInput {
+  gameId: String
+  gameName: String
+  name: String!
+  slug: String!
+  description: String
+  allowDraw: Boolean!
   pointsPerWin: Int!
   pointsPerDraw: Int!
   pointsPerLoss: Int!

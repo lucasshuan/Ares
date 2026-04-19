@@ -359,6 +359,12 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
   - arquivos afetados: `apps/web/src/**/*.tsx`
   - dificuldade: média | impacto: baixo
 
+- [ ] **4.5 Apagar arquivos legados**
+  - [ ] Identificar e remover arquivos que não estão mais em uso ou que foram substituídos por novas implementações.
+  - [ ] Garantir que a remoção de arquivos legados não cause quebras na aplicação.
+  - arquivos afetados: `apps/api/src/modules/auth/strategies/jwt.strategy.ts`, `apps/api/src/modules/auth/guards/jwt-auth.guard.ts`
+  - dificuldade: baixa | impacto: baixo
+
 ## Validation Basis
 
 - `tsc --noEmit` passou em `apps/web`, `apps/api`, `packages/core` e `packages/db`

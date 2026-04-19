@@ -20,20 +20,48 @@ import {
   Check,
   X,
 } from "lucide-react";
-import { updateLeague, checkLeagueSlugAvailability } from "@/actions/game";
+import {
+  updateEloLeague,
+  updateStandardLeague,
+  checkLeagueSlugAvailability,
+} from "@/actions/game";
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { Slider } from "@/components/ui/slider";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { NumberInput } from "@/components/ui/number-input";
-import { type League } from "@/lib/apollo/generated/graphql";
 import { formatHoursDuration } from "@/lib/date-utils";
 import { cn, slugify } from "@/lib/utils";
 import { MATCH_FORMATS } from "@ares/core";
 import { EloMatchSimulator } from "./elo-match-simulator";
 
+type LeagueForEdit = {
+  id: string;
+  gameId: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  type: "RANKED_LEAGUE" | "STANDARD_LEAGUE";
+  initialElo?: number | null;
+  allowDraw?: boolean | null;
+  kFactor?: number | null;
+  scoreRelevance?: number | null;
+  inactivityDecay?: number | null;
+  inactivityThresholdHours?: number | null;
+  inactivityDecayFloor?: number | null;
+  pointsPerWin?: number | null;
+  pointsPerDraw?: number | null;
+  pointsPerLoss?: number | null;
+  allowedFormats?: string[] | null;
+  game?: {
+    name: string;
+    slug: string;
+    thumbnailImageUrl?: string | null;
+  } | null;
+};
+
 interface EditLeagueFormProps {
-  league: League;
+  league: LeagueForEdit;
   onSuccess: () => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
@@ -69,20 +97,21 @@ export function EditLeagueForm({
       name: league.name,
       slug: league.slug,
       description: league.description || "",
-      ratingSystem: (league.ratingSystem as "elo" | "points") || "elo",
-      initialElo: league.initialElo,
-      allowDraw: league.allowDraw,
-      kFactor: league.kFactor,
-      scoreRelevance: league.scoreRelevance,
-      inactivityDecay: league.inactivityDecay,
-      inactivityThresholdHours: league.inactivityThresholdHours,
-      inactivityDecayFloor: league.inactivityDecayFloor,
-      pointsPerWin: league.pointsPerWin,
-      pointsPerDraw: league.pointsPerDraw,
-      pointsPerLoss: league.pointsPerLoss,
+      ratingSystem:
+        (league.type as "RANKED_LEAGUE" | "STANDARD_LEAGUE") || "RANKED_LEAGUE",
+      initialElo: league.initialElo ?? 1000,
+      allowDraw: league.allowDraw ?? true,
+      kFactor: league.kFactor ?? 20,
+      scoreRelevance: league.scoreRelevance ?? 0,
+      inactivityDecay: league.inactivityDecay ?? 0,
+      inactivityThresholdHours: league.inactivityThresholdHours ?? 120,
+      inactivityDecayFloor: league.inactivityDecayFloor ?? 1000,
+      pointsPerWin: league.pointsPerWin ?? 3,
+      pointsPerDraw: league.pointsPerDraw ?? 1,
+      pointsPerLoss: league.pointsPerLoss ?? 0,
       allowedFormats:
-        league.allowedFormats?.length > 0
-          ? [...league.allowedFormats]
+        (league.allowedFormats?.length ?? 0) > 0
+          ? [...(league.allowedFormats as string[])]
           : ["ONE_V_ONE"],
     },
     mode: "onChange",
@@ -253,49 +282,37 @@ export function EditLeagueForm({
 
   const onSubmit = async (values: EditLeagueValues) => {
     startTransition(async () => {
-      const isElo = values.ratingSystem === "elo";
+      const isElo = values.ratingSystem === "RANKED_LEAGUE";
       let result;
 
       if (isElo) {
-        result = await updateLeague(league.id, {
-          ...values,
+        result = await updateEloLeague(league.id, {
           name: values.name,
           slug: values.slug,
-          ratingSystem: values.ratingSystem,
           allowDraw: values.allowDraw,
           description: values.description ?? null,
-          initialElo: values.initialElo ?? league.initialElo,
-          kFactor: values.kFactor ?? league.kFactor,
-          scoreRelevance: values.scoreRelevance ?? league.scoreRelevance,
-          inactivityDecay: values.inactivityDecay ?? league.inactivityDecay,
+          initialElo: values.initialElo ?? league.initialElo ?? 1000,
+          kFactor: values.kFactor ?? league.kFactor ?? 20,
+          scoreRelevance: values.scoreRelevance ?? league.scoreRelevance ?? 0,
+          inactivityDecay:
+            values.inactivityDecay ?? league.inactivityDecay ?? 0,
           inactivityThresholdHours:
-            values.inactivityThresholdHours ?? league.inactivityThresholdHours,
+            values.inactivityThresholdHours ??
+            league.inactivityThresholdHours ??
+            120,
           inactivityDecayFloor:
-            values.inactivityDecayFloor ?? league.inactivityDecayFloor,
-          // Mantemos os valores atuais de pontos para evitar nulos se a action exigir
-          pointsPerWin: league.pointsPerWin,
-          pointsPerDraw: league.pointsPerDraw,
-          pointsPerLoss: league.pointsPerLoss,
+            values.inactivityDecayFloor ?? league.inactivityDecayFloor ?? 1000,
           allowedFormats: values.allowedFormats,
         });
       } else {
-        result = await updateLeague(league.id, {
-          ...values,
+        result = await updateStandardLeague(league.id, {
           name: values.name,
           slug: values.slug,
-          ratingSystem: values.ratingSystem,
           allowDraw: values.allowDraw,
           description: values.description ?? null,
-          pointsPerWin: values.pointsPerWin ?? league.pointsPerWin,
-          pointsPerDraw: values.pointsPerDraw ?? league.pointsPerDraw,
-          pointsPerLoss: values.pointsPerLoss ?? league.pointsPerLoss,
-          // Mantemos os valores atuais de elo para evitar nulos se a action exigir
-          initialElo: league.initialElo,
-          kFactor: league.kFactor,
-          scoreRelevance: league.scoreRelevance,
-          inactivityDecay: league.inactivityDecay,
-          inactivityThresholdHours: league.inactivityThresholdHours,
-          inactivityDecayFloor: league.inactivityDecayFloor,
+          pointsPerWin: values.pointsPerWin ?? league.pointsPerWin ?? 3,
+          pointsPerDraw: values.pointsPerDraw ?? league.pointsPerDraw ?? 1,
+          pointsPerLoss: values.pointsPerLoss ?? league.pointsPerLoss ?? 0,
           allowedFormats: values.allowedFormats,
         });
       }
@@ -313,302 +330,279 @@ export function EditLeagueForm({
     <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       {/* Step 1: Game */}
       {currentStep === 0 && (
-      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
-        <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white">
-            {t("AddLeague.gameSelect.label")}
-          </h3>
-          <p className="text-sm text-white/50">{league.game.name}</p>
-        </div>
-
-        <div className="relative flex h-45 flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/2 p-6 transition-all">
-          <div className="animate-in fade-in zoom-in-95 flex w-full flex-col gap-4 duration-300">
-            <div className="flex items-center gap-4">
-              <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-2xl">
-                {league.game.thumbnailImageUrl ? (
-                  <Image
-                    src={league.game.thumbnailImageUrl}
-                    alt={league.game.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex size-full items-center justify-center">
-                    <Trophy className="size-6 text-white/10" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <h4 className="text-lg leading-tight font-bold text-white">
-                  {league.game.name}
-                </h4>
-                <p className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase">
-                  {league.game.slug}
-                </p>
-              </div>
-            </div>
-            <p className="line-clamp-3 text-sm leading-relaxed text-white/50">
-              {league.game.description || "No description."}
-            </p>
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
+          <div className="space-y-2">
+            <h3 className="text-lg font-bold text-white">
+              {t("AddLeague.gameSelect.label")}
+            </h3>
+            <p className="text-sm text-white/50">{league.game?.name}</p>
           </div>
-        </div>
-      </section>
+
+          <div className="relative flex h-45 flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/2 p-6 transition-all">
+            <div className="animate-in fade-in zoom-in-95 flex w-full flex-col gap-4 duration-300">
+              <div className="flex items-center gap-4">
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-2xl">
+                  {league.game?.thumbnailImageUrl ? (
+                    <Image
+                      src={league.game.thumbnailImageUrl}
+                      alt={league.game?.name ?? ""}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-full items-center justify-center">
+                      <Trophy className="size-6 text-white/10" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-lg leading-tight font-bold text-white">
+                    {league.game?.name}
+                  </h4>
+                  <p className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase">
+                    {league.game?.slug}
+                  </p>
+                </div>
+              </div>
+              <p className="line-clamp-3 text-sm leading-relaxed text-white/50">
+                {(league.game as { description?: string | null } | undefined)
+                  ?.description || "No description."}
+              </p>
+            </div>
+          </div>
+        </section>
       )}
 
       {/* Step 2: General Data */}
       {currentStep === 1 && (
-      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <LabelTooltip label={t("AddLeague.name.label")} required />
-            <input
-              type="text"
-              {...register("name")}
-              placeholder={t("AddLeague.name.placeholder")}
-              className={cn(
-                "field-base",
-                errors.name ? "field-border-error" : "field-border-default",
-              )}
-            />
-            {errors.name && (
-              <p className="field-error-text">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <LabelTooltip
-              label={t("AddLeague.slug.label")}
-              tooltip={t("AddLeague.slug.tooltip")}
-              required
-            />
-            <div className="relative">
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <LabelTooltip label={t("AddLeague.name.label")} required />
               <input
                 type="text"
-                {...register("slug")}
-                onChange={(e) => {
-                  setValue("slug", slugify(e.target.value), {
-                    shouldValidate: true,
-                  });
-                  setIsSlugModified(true);
-                }}
-                placeholder={t("AddLeague.slug.placeholder")}
+                {...register("name")}
+                placeholder={t("AddLeague.name.placeholder")}
                 className={cn(
-                  "field-with-icon",
-                  errors.slug || hasSlugConflict
+                  "field-base",
+                  errors.name ? "field-border-error" : "field-border-default",
+                )}
+              />
+              {errors.name && (
+                <p className="field-error-text">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <LabelTooltip
+                label={t("AddLeague.slug.label")}
+                tooltip={t("AddLeague.slug.tooltip")}
+                required
+              />
+              <div className="relative">
+                <input
+                  type="text"
+                  {...register("slug")}
+                  onChange={(e) => {
+                    setValue("slug", slugify(e.target.value), {
+                      shouldValidate: true,
+                    });
+                    setIsSlugModified(true);
+                  }}
+                  placeholder={t("AddLeague.slug.placeholder")}
+                  className={cn(
+                    "field-with-icon",
+                    errors.slug || hasSlugConflict
+                      ? "field-border-error"
+                      : "field-border-default",
+                  )}
+                />
+                {isSlugChecking ? (
+                  <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+                ) : canCheckSlug && slug !== league.slug && !errors.slug ? (
+                  hasSlugConflict ? (
+                    <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
+                  ) : (
+                    <Check className="text-success absolute top-1/2 right-4 size-4 -translate-y-1/2" />
+                  )
+                ) : null}
+              </div>
+              {errors.slug && (
+                <p className="field-error-text">{errors.slug.message}</p>
+              )}
+              {!errors.slug && hasSlugConflict && (
+                <p className="field-error-text">{t("AddLeague.slug.taken")}</p>
+              )}
+            </div>
+
+            <div className="col-span-full flex flex-col gap-2">
+              <LabelTooltip label={t("AddLeague.descriptionField.label")} />
+              <textarea
+                {...register("description")}
+                placeholder={t("AddLeague.descriptionField.placeholder")}
+                className={cn(
+                  "field-textarea custom-scrollbar min-h-20",
+                  errors.description
                     ? "field-border-error"
                     : "field-border-default",
                 )}
               />
-              {isSlugChecking ? (
-                <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
-              ) : canCheckSlug && slug !== league.slug && !errors.slug ? (
-                hasSlugConflict ? (
-                  <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-danger" />
-                ) : (
-                  <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-success" />
-                )
-              ) : null}
-            </div>
-            {errors.slug && (
-              <p className="field-error-text">{errors.slug.message}</p>
-            )}
-            {!errors.slug && hasSlugConflict && (
-              <p className="field-error-text">
-                {t("AddLeague.slug.taken")}
-              </p>
-            )}
-          </div>
-
-          <div className="col-span-full flex flex-col gap-2">
-            <LabelTooltip label={t("AddLeague.descriptionField.label")} />
-            <textarea
-              {...register("description")}
-              placeholder={t("AddLeague.descriptionField.placeholder")}
-              className={cn(
-                "field-textarea custom-scrollbar min-h-20",
-                errors.description
-                  ? "field-border-error"
-                  : "field-border-default",
+              {errors.description && (
+                <p className="field-error-text">{errors.description.message}</p>
               )}
-            />
-            {errors.description && (
-              <p className="field-error-text">
-                {errors.description.message}
-              </p>
-            )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* Step 3: Rating Logic */}
       {currentStep === 2 && (
-      <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
-        <div className="flex flex-col gap-10">
-          {/* System Selector - Full Width Row */}
-          <div className="flex flex-col gap-4">
-            <LabelTooltip label={t("AddLeague.ratingSystem.label")} />
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setValue("ratingSystem", "elo");
-                }}
-                className={cn(
-                  "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
-                  ratingSystem === "elo"
-                    ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                    : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Trophy className="size-4" />
-                  <span className="text-sm font-bold">
-                    {t("AddLeague.ratingSystem.elo")}
-                  </span>
-                </div>
-                <span className="text-xs leading-relaxed text-white/50">
-                  {t("AddLeague.ratingSystem.elo_description")}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setValue("ratingSystem", "points");
-                }}
-                className={cn(
-                  "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
-                  ratingSystem === "points"
-                    ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                    : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Hash className="size-4" />
-                  <span className="text-sm font-bold">
-                    {t("AddLeague.ratingSystem.points")}
-                  </span>
-                </div>
-                <span className="text-xs leading-relaxed text-white/50">
-                  {t("AddLeague.ratingSystem.points_description")}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-5">
-            {/* Left Column: Config Inputs */}
-            <div className="space-y-8 md:col-span-2">
-              {/* Allow Draw Toggle */}
-              <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/2 p-4">
-                <LabelTooltip
-                  label={t("AddLeague.allowDraw.label")}
-                  tooltip={t("AddLeague.allowDraw.tooltip")}
-                />
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
+          <div className="flex flex-col gap-10">
+            {/* System Selector - Full Width Row */}
+            <div className="flex flex-col gap-4">
+              <LabelTooltip label={t("AddLeague.ratingSystem.label")} />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={() => setValue("allowDraw", !allowDraw)}
+                  onClick={() => {
+                    setValue("ratingSystem", "RANKED_LEAGUE");
+                  }}
                   className={cn(
-                    "ring-primary/20 relative h-6 w-11 rounded-full transition-colors outline-none focus:ring-4",
-                    allowDraw ? "bg-primary" : "bg-white/10",
+                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    ratingSystem === "RANKED_LEAGUE"
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                      : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
                   )}
                 >
-                  <div
-                    className={cn(
-                      "absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-all",
-                      allowDraw ? "translate-x-5" : "translate-x-0",
-                    )}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Trophy className="size-4" />
+                    <span className="text-sm font-bold">
+                      {t("AddLeague.ratingSystem.elo")}
+                    </span>
+                  </div>
+                  <span className="text-xs leading-relaxed text-white/50">
+                    {t("AddLeague.ratingSystem.elo_description")}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue("ratingSystem", "STANDARD_LEAGUE");
+                  }}
+                  className={cn(
+                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    ratingSystem === "STANDARD_LEAGUE"
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                      : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <Hash className="size-4" />
+                    <span className="text-sm font-bold">
+                      {t("AddLeague.ratingSystem.points")}
+                    </span>
+                  </div>
+                  <span className="text-xs leading-relaxed text-white/50">
+                    {t("AddLeague.ratingSystem.points_description")}
+                  </span>
                 </button>
               </div>
+            </div>
 
-              <div className="space-y-6">
-                {ratingSystem === "elo" ? (
-                  <div className="grid gap-6">
-                    <div className="flex flex-col gap-2">
-                      <LabelTooltip label={t("AddLeague.initialElo.label")} />
-                      <Controller
-                        name="initialElo"
-                        control={control}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            step={100}
-                          />
-                        )}
-                      />
+            <div className="grid gap-8 md:grid-cols-5">
+              {/* Left Column: Config Inputs */}
+              <div className="space-y-8 md:col-span-2">
+                {/* Allow Draw Toggle */}
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/2 p-4">
+                  <LabelTooltip
+                    label={t("AddLeague.allowDraw.label")}
+                    tooltip={t("AddLeague.allowDraw.tooltip")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setValue("allowDraw", !allowDraw)}
+                    className={cn(
+                      "ring-primary/20 relative h-6 w-11 rounded-full transition-colors outline-none focus:ring-4",
+                      allowDraw ? "bg-primary" : "bg-white/10",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-all",
+                        allowDraw ? "translate-x-5" : "translate-x-0",
+                      )}
+                    />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {ratingSystem === "RANKED_LEAGUE" ? (
+                    <div className="grid gap-6">
+                      <div className="flex flex-col gap-2">
+                        <LabelTooltip label={t("AddLeague.initialElo.label")} />
+                        <Controller
+                          name="initialElo"
+                          control={control}
+                          render={({ field }) => (
+                            <NumberInput
+                              value={field.value ?? 0}
+                              onChange={field.onChange}
+                              step={100}
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <LabelTooltip
+                          label={t("AddLeague.kFactor.label")}
+                          tooltip={t("AddLeague.kFactor.tooltip")}
+                        />
+                        <Controller
+                          name="kFactor"
+                          control={control}
+                          render={({ field }) => (
+                            <NumberInput
+                              value={field.value ?? 0}
+                              onChange={field.onChange}
+                              min={1}
+                              max={100}
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <LabelTooltip
+                          label={t("AddLeague.scoreRelevance.label")}
+                          tooltip={t("AddLeague.scoreRelevance.tooltip")}
+                        />
+                        <Controller
+                          name="scoreRelevance"
+                          control={control}
+                          render={({ field }) => (
+                            <Slider
+                              value={field.value ?? 0}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                              min={0}
+                              max={1}
+                              step={0.1}
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <LabelTooltip
-                        label={t("AddLeague.kFactor.label")}
-                        tooltip={t("AddLeague.kFactor.tooltip")}
-                      />
-                      <Controller
-                        name="kFactor"
-                        control={control}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            min={1}
-                            max={100}
-                          />
-                        )}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <LabelTooltip
-                        label={t("AddLeague.scoreRelevance.label")}
-                        tooltip={t("AddLeague.scoreRelevance.tooltip")}
-                      />
-                      <Controller
-                        name="scoreRelevance"
-                        control={control}
-                        render={({ field }) => (
-                          <Slider
-                            value={field.value ?? 0}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            min={0}
-                            max={1}
-                            step={0.1}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    <div className="flex items-center justify-between gap-4">
-                      <LabelTooltip
-                        label={t("AddLeague.pointsPerWin.label")}
-                        labelClassName="text-xs font-bold tracking-wider text-white/40"
-                        required
-                      />
-                      <Controller
-                        name="pointsPerWin"
-                        control={control}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            className="w-32"
-                            min={0}
-                          />
-                        )}
-                      />
-                    </div>
-                    {allowDraw && (
+                  ) : (
+                    <div className="grid gap-4">
                       <div className="flex items-center justify-between gap-4">
                         <LabelTooltip
-                          label={t("AddLeague.pointsPerDraw.label")}
+                          label={t("AddLeague.pointsPerWin.label")}
                           labelClassName="text-xs font-bold tracking-wider text-white/40"
                           required
                         />
                         <Controller
-                          name="pointsPerDraw"
+                          name="pointsPerWin"
                           control={control}
                           render={({ field }) => (
                             <NumberInput
@@ -620,257 +614,281 @@ export function EditLeagueForm({
                           )}
                         />
                       </div>
-                    )}
-                    <div className="flex items-center justify-between gap-4">
-                      <LabelTooltip
-                        label={t("AddLeague.pointsPerLoss.label")}
-                        labelClassName="text-xs font-bold tracking-wider text-white/40"
-                        required
-                      />
-                      <Controller
-                        name="pointsPerLoss"
-                        control={control}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            className="w-32"
-                            min={0}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column: Inactivity & Explanation Box */}
-            <div className="space-y-6 md:col-span-3">
-              {/* Inactivity Settings (Elo only) */}
-              {ratingSystem === "elo" && (
-                <div className="space-y-4 rounded-2xl border border-white/5 bg-white/2 p-5">
-                  <div className="flex items-center gap-2 text-white/40">
-                    <Clock className="size-3.5" />
-                    <span className="text-[10px] font-bold tracking-widest uppercase">
-                      {t("AddLeague.inactivityDecay.label")}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <LabelTooltip
-                        label={t("AddLeague.inactivityDecay.labelShort")}
-                        tooltip={t("AddLeague.inactivityDecay.tooltip")}
-                        className="gap-1! opacity-60"
-                      />
-                      <Controller
-                        name="inactivityDecay"
-                        control={control}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            min={0}
-                          />
-                        )}
-                      />
-                    </div>
-                    {inactivityDecay > 0 && (
-                      <>
-                        <div className="animate-in fade-in slide-in-from-left-2 space-y-1.5 duration-300">
+                      {allowDraw && (
+                        <div className="flex items-center justify-between gap-4">
                           <LabelTooltip
-                            label={t(
-                              "AddLeague.inactivityThreshold.labelShort",
-                            )}
-                            tooltip={t("AddLeague.inactivityThreshold.tooltip")}
-                            className="gap-1! opacity-60"
+                            label={t("AddLeague.pointsPerDraw.label")}
+                            labelClassName="text-xs font-bold tracking-wider text-white/40"
+                            required
                           />
                           <Controller
-                            name="inactivityThresholdHours"
+                            name="pointsPerDraw"
                             control={control}
                             render={({ field }) => (
                               <NumberInput
                                 value={field.value ?? 0}
                                 onChange={field.onChange}
-                                min={1}
-                                unit="h"
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="animate-in fade-in slide-in-from-top-2 col-span-full space-y-1.5 pt-2 duration-300">
-                          <LabelTooltip
-                            label={t("AddLeague.inactivityFloor.label")}
-                            tooltip={t("AddLeague.inactivityFloor.tooltip")}
-                            className="gap-1! opacity-60"
-                          />
-                          <Controller
-                            name="inactivityDecayFloor"
-                            control={control}
-                            render={({ field }) => (
-                              <NumberInput
-                                value={field.value ?? 0}
-                                onChange={field.onChange}
-                                step={100}
+                                className="w-32"
                                 min={0}
                               />
                             )}
                           />
                         </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Explanation Box */}
-              <div className="border-primary/20 bg-primary/3 shadow-primary/5 relative overflow-hidden rounded-3xl border p-6 shadow-2xl">
-                <h4 className="text-primary mb-4 flex items-center gap-2 text-sm font-bold">
-                  <Zap className="size-4" />
-                  {t("AddLeague.explanation.title")}
-                </h4>
-
-                <div className="space-y-5 text-xs leading-relaxed text-white/60">
-                  <p className="font-medium text-white/80 italic">
-                    {ratingSystem === "elo"
-                      ? t("AddLeague.explanation.elo.description")
-                      : t("AddLeague.explanation.points.description")}
-                  </p>
-
-                  <div className="grid gap-3 pt-2">
-                    {ratingSystem === "elo" ? (
-                      <>
-                        <div className="flex items-center gap-3">
-                          <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                            <Trophy className="size-3" />
-                          </div>
-                          <span>
-                            {getEloExplanationText("initial_score", {
-                              initialElo,
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                            <ArrowUpRight className="size-3" />
-                          </div>
-                          <span>
-                            {getEloExplanationText("match_impact", {
-                              kFactor,
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
-                              scoreRelevance > 0
-                                ? "text-primary"
-                                : "text-white/40",
-                            )}
-                          >
-                            <TrendingUp className="size-3" />
-                          </div>
-                          <span>
-                            {(() => {
-                              if (scoreRelevance === 0)
-                                return t(
-                                  "AddLeague.explanation.elo.relevance_1",
-                                );
-                              if (scoreRelevance <= 0.3)
-                                return t(
-                                  "AddLeague.explanation.elo.relevance_2",
-                                );
-                              if (scoreRelevance <= 0.6)
-                                return t(
-                                  "AddLeague.explanation.elo.relevance_3",
-                                );
-                              if (scoreRelevance < 1)
-                                return t(
-                                  "AddLeague.explanation.elo.relevance_4",
-                                );
-                              return t("AddLeague.explanation.elo.relevance_5");
-                            })()}
-                          </span>
-                        </div>
-
-                        <EloMatchSimulator
-                          scoreRelevance={scoreRelevance}
-                          kFactor={kFactor}
-                          initialElo={initialElo}
+                      )}
+                      <div className="flex items-center justify-between gap-4">
+                        <LabelTooltip
+                          label={t("AddLeague.pointsPerLoss.label")}
+                          labelClassName="text-xs font-bold tracking-wider text-white/40"
+                          required
                         />
+                        <Controller
+                          name="pointsPerLoss"
+                          control={control}
+                          render={({ field }) => (
+                            <NumberInput
+                              value={field.value ?? 0}
+                              onChange={field.onChange}
+                              className="w-32"
+                              min={0}
+                            />
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
-                              allowDraw ? "text-primary" : "text-white/40",
-                            )}
-                          >
-                            {allowDraw ? (
-                              <Equal className="size-3" />
-                            ) : (
-                              <Swords className="size-3" />
-                            )}
+              {/* Right Column: Inactivity & Explanation Box */}
+              <div className="space-y-6 md:col-span-3">
+                {/* Inactivity Settings (Elo only) */}
+                {ratingSystem === "RANKED_LEAGUE" && (
+                  <div className="space-y-4 rounded-2xl border border-white/5 bg-white/2 p-5">
+                    <div className="flex items-center gap-2 text-white/40">
+                      <Clock className="size-3.5" />
+                      <span className="text-[10px] font-bold tracking-widest uppercase">
+                        {t("AddLeague.inactivityDecay.label")}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <LabelTooltip
+                          label={t("AddLeague.inactivityDecay.labelShort")}
+                          tooltip={t("AddLeague.inactivityDecay.tooltip")}
+                          className="gap-1! opacity-60"
+                        />
+                        <Controller
+                          name="inactivityDecay"
+                          control={control}
+                          render={({ field }) => (
+                            <NumberInput
+                              value={field.value ?? 0}
+                              onChange={field.onChange}
+                              min={0}
+                            />
+                          )}
+                        />
+                      </div>
+                      {inactivityDecay > 0 && (
+                        <>
+                          <div className="animate-in fade-in slide-in-from-left-2 space-y-1.5 duration-300">
+                            <LabelTooltip
+                              label={t(
+                                "AddLeague.inactivityThreshold.labelShort",
+                              )}
+                              tooltip={t(
+                                "AddLeague.inactivityThreshold.tooltip",
+                              )}
+                              className="gap-1! opacity-60"
+                            />
+                            <Controller
+                              name="inactivityThresholdHours"
+                              control={control}
+                              render={({ field }) => (
+                                <NumberInput
+                                  value={field.value ?? 0}
+                                  onChange={field.onChange}
+                                  min={1}
+                                  unit="h"
+                                />
+                              )}
+                            />
                           </div>
-                          <span>
-                            {allowDraw
-                              ? t("AddLeague.explanation.elo.draws_enabled")
-                              : t("AddLeague.explanation.elo.draws_disabled")}
-                          </span>
-                        </div>
-                        {inactivityDecay > 0 && (
+                          <div className="animate-in fade-in slide-in-from-top-2 col-span-full space-y-1.5 pt-2 duration-300">
+                            <LabelTooltip
+                              label={t("AddLeague.inactivityFloor.label")}
+                              tooltip={t("AddLeague.inactivityFloor.tooltip")}
+                              className="gap-1! opacity-60"
+                            />
+                            <Controller
+                              name="inactivityDecayFloor"
+                              control={control}
+                              render={({ field }) => (
+                                <NumberInput
+                                  value={field.value ?? 0}
+                                  onChange={field.onChange}
+                                  step={100}
+                                  min={0}
+                                />
+                              )}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Explanation Box */}
+                <div className="border-primary/20 bg-primary/3 shadow-primary/5 relative overflow-hidden rounded-3xl border p-6 shadow-2xl">
+                  <h4 className="text-primary mb-4 flex items-center gap-2 text-sm font-bold">
+                    <Zap className="size-4" />
+                    {t("AddLeague.explanation.title")}
+                  </h4>
+
+                  <div className="space-y-5 text-xs leading-relaxed text-white/60">
+                    <p className="font-medium text-white/80 italic">
+                      {ratingSystem === "RANKED_LEAGUE"
+                        ? t("AddLeague.explanation.elo.description")
+                        : t("AddLeague.explanation.points.description")}
+                    </p>
+
+                    <div className="grid gap-3 pt-2">
+                      {ratingSystem === "RANKED_LEAGUE" ? (
+                        <>
                           <div className="flex items-center gap-3">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5 text-danger/50">
-                              <Activity className="size-3" />
+                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                              <Trophy className="size-3" />
                             </div>
                             <span>
-                              {t("AddLeague.explanation.elo.decay", {
-                                amount: inactivityDecay,
-                                window: formattedInactivityWindow,
-                                floor: inactivityDecayFloor,
+                              {getEloExplanationText("initial_score", {
+                                initialElo,
                               })}
                             </span>
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="grid gap-3">
-                        <div className="flex items-center gap-3">
-                          <ArrowUpRight className="size-4 text-success" />
-                          <span className="text-white/80">
-                            {t("AddLeague.explanation.points.win", {
-                              amount: pointsPerWin || 0,
-                            })}
-                          </span>
-                        </div>
-                        {allowDraw && (
                           <div className="flex items-center gap-3">
-                            <Equal className="size-4 text-warning" />
-                            <span className="text-white/80">
-                              {t("AddLeague.explanation.points.draw", {
-                                amount: pointsPerDraw || 0,
+                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                              <ArrowUpRight className="size-3" />
+                            </div>
+                            <span>
+                              {getEloExplanationText("match_impact", {
+                                kFactor,
                               })}
                             </span>
                           </div>
-                        )}
-                        <div className="flex items-center gap-3">
-                          <ArrowDownRight className="size-4 text-danger" />
-                          <span className="text-white/80">
-                            {t("AddLeague.explanation.points.loss", {
-                              amount: pointsPerLoss || 0,
-                            })}
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
+                                scoreRelevance > 0
+                                  ? "text-primary"
+                                  : "text-white/40",
+                              )}
+                            >
+                              <TrendingUp className="size-3" />
+                            </div>
+                            <span>
+                              {(() => {
+                                if (scoreRelevance === 0)
+                                  return t(
+                                    "AddLeague.explanation.elo.relevance_1",
+                                  );
+                                if (scoreRelevance <= 0.3)
+                                  return t(
+                                    "AddLeague.explanation.elo.relevance_2",
+                                  );
+                                if (scoreRelevance <= 0.6)
+                                  return t(
+                                    "AddLeague.explanation.elo.relevance_3",
+                                  );
+                                if (scoreRelevance < 1)
+                                  return t(
+                                    "AddLeague.explanation.elo.relevance_4",
+                                  );
+                                return t(
+                                  "AddLeague.explanation.elo.relevance_5",
+                                );
+                              })()}
+                            </span>
+                          </div>
+
+                          <EloMatchSimulator
+                            scoreRelevance={scoreRelevance}
+                            kFactor={kFactor}
+                            initialElo={initialElo}
+                          />
+
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
+                                allowDraw ? "text-primary" : "text-white/40",
+                              )}
+                            >
+                              {allowDraw ? (
+                                <Equal className="size-3" />
+                              ) : (
+                                <Swords className="size-3" />
+                              )}
+                            </div>
+                            <span>
+                              {allowDraw
+                                ? t("AddLeague.explanation.elo.draws_enabled")
+                                : t("AddLeague.explanation.elo.draws_disabled")}
+                            </span>
+                          </div>
+                          {inactivityDecay > 0 && (
+                            <div className="flex items-center gap-3">
+                              <div className="text-danger/50 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                                <Activity className="size-3" />
+                              </div>
+                              <span>
+                                {t("AddLeague.explanation.elo.decay", {
+                                  amount: inactivityDecay,
+                                  window: formattedInactivityWindow,
+                                  floor: inactivityDecayFloor,
+                                })}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="grid gap-3">
+                          <div className="flex items-center gap-3">
+                            <ArrowUpRight className="text-success size-4" />
+                            <span className="text-white/80">
+                              {t("AddLeague.explanation.points.win", {
+                                amount: pointsPerWin || 0,
+                              })}
+                            </span>
+                          </div>
+                          {allowDraw && (
+                            <div className="flex items-center gap-3">
+                              <Equal className="text-warning size-4" />
+                              <span className="text-white/80">
+                                {t("AddLeague.explanation.points.draw", {
+                                  amount: pointsPerDraw || 0,
+                                })}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <ArrowDownRight className="text-danger size-4" />
+                            <span className="text-white/80">
+                              {t("AddLeague.explanation.points.loss", {
+                                amount: pointsPerLoss || 0,
+                              })}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* Step 4: Match Formats */}
@@ -911,7 +929,7 @@ export function EditLeagueForm({
           </div>
 
           {allowedFormats.length === 0 && (
-            <p className="text-xs text-danger">
+            <p className="text-danger text-xs">
               {t("AddLeague.matchFormats.required")}
             </p>
           )}

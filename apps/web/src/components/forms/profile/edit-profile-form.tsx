@@ -342,9 +342,9 @@ export function EditProfileForm({
             <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
           ) : canCheckUsername && !errors.username ? (
             hasUsernameConflict ? (
-              <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-danger" />
+              <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
             ) : (
-              <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-success" />
+              <Check className="text-success absolute top-1/2 right-4 size-4 -translate-y-1/2" />
             )
           ) : null}
         </div>
@@ -509,9 +509,7 @@ export function EditProfileForm({
             errors.bio ? "field-border-error" : "field-border-default",
           )}
         />
-        {errors.bio && (
-          <p className="field-error-text">{errors.bio.message}</p>
-        )}
+        {errors.bio && <p className="field-error-text">{errors.bio.message}</p>}
       </div>
       <div className="col-span-full flex flex-col gap-3">
         <LabelTooltip
@@ -532,7 +530,7 @@ export function EditProfileForm({
                     className={cn(
                       "relative flex size-8 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-110 active:scale-95",
                       field.value === color &&
-                        "ring-primary ring-2 ring-offset-2 ring-offset-background",
+                        "ring-primary ring-offset-background ring-2 ring-offset-2",
                     )}
                     style={{ backgroundColor: color }}
                   >

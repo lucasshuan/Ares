@@ -50,7 +50,16 @@ export class UsersService {
       where: { userId },
       include: {
         game: true,
-        leagueEntries: {
+        eloLeagueEntries: {
+          include: {
+            league: {
+              include: {
+                event: true,
+              },
+            },
+          },
+        },
+        standardLeagueEntries: {
           include: {
             league: {
               include: {
@@ -62,37 +71,6 @@ export class UsersService {
       },
     });
 
-    const playerIds = players.map((p) => p.id);
-    if (playerIds.length === 0) return players;
-
-    // Rank calculation logic
-    const userRanks = await this.databaseProvider.$queryRaw<
-      { player_id: string; event_id: string; position: bigint }[]
-    >`
-      SELECT player_id, event_id, position FROM (
-        SELECT 
-          player_id, 
-          event_id, 
-          RANK() OVER (PARTITION BY event_id ORDER BY current_elo DESC) as position
-        FROM league_entries
-      ) ranked_entries
-      WHERE player_id IN (${playerIds.join(',')})
-    `;
-
-    return players.map((player) => {
-      const leaguesWithPos = player.leagueEntries.map((entry) => {
-        const rankInfo = userRanks.find(
-          (r) => r.player_id === player.id && r.event_id === entry.leagueId,
-        );
-        return {
-          ...entry,
-          position: rankInfo ? Number(rankInfo.position) : 0,
-        };
-      });
-      return {
-        ...player,
-        leagueEntries: leaguesWithPos,
-      };
-    });
+    return players;
   }
 }

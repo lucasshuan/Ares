@@ -14,89 +14,91 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequiredPermissions } from '../auth/decorators/required-permissions.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User as UserModel } from '../auth/user.model';
-import { League } from './league.model';
-import { LeaguesService } from './leagues.service';
+import { EloLeague } from './elo-league.model';
+import { EloLeaguesService } from './elo-leagues.service';
 import { DataLoaderService } from '@/common/dataloaders/dataloader.service';
-import { PaginatedLeagues } from './dto/leagues.output';
+import { PaginatedEloLeagues } from './dto/elo-leagues.output';
 import { PaginationInput } from '@/common/pagination/pagination.input';
-import { LeagueEntry } from './league-entry.model';
-import { CreateLeagueInput, UpdateLeagueInput } from './dto/leagues.input';
+import { EloLeagueEntry } from './elo-league-entry.model';
+import {
+  CreateEloLeagueInput,
+  UpdateEloLeagueInput,
+} from './dto/elo-leagues.input';
 import { Game } from '../games/game.model';
 
-@Resolver(() => League)
-export class LeaguesResolver {
+@Resolver(() => EloLeague)
+export class EloLeaguesResolver {
   constructor(
-    private leaguesService: LeaguesService,
+    private eloLeaguesService: EloLeaguesService,
     private dataLoaderService: DataLoaderService,
   ) {}
 
-  @Query(() => PaginatedLeagues, { name: 'leagues' })
-  async getLeagues(
+  @Query(() => PaginatedEloLeagues, { name: 'eloLeagues' })
+  async getEloLeagues(
     @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ) {
-    return this.leaguesService.findAll(pagination || new PaginationInput());
+    return this.eloLeaguesService.findAll(pagination || new PaginationInput());
   }
 
-  @Query(() => League, { name: 'league', nullable: true })
-  async getLeague(
+  @Query(() => EloLeague, { name: 'eloLeague', nullable: true })
+  async getEloLeague(
     @Args('gameSlug') gameSlug: string,
     @Args('slug') slug: string,
   ) {
-    return this.leaguesService.findByGameAndSlug(gameSlug, slug);
+    return this.eloLeaguesService.findByGameAndSlug(gameSlug, slug);
   }
 
   @ResolveField(() => Game, { name: 'game' })
-  async getGame(@Parent() league: League) {
+  async getGame(@Parent() league: EloLeague) {
     return this.dataLoaderService.gameLoader.load(league.gameId);
   }
 
-  @ResolveField(() => [LeagueEntry], { name: 'entries' })
-  async getEntries(@Parent() league: League) {
-    return this.leaguesService.getEntries(league.id);
+  @ResolveField(() => [EloLeagueEntry], { name: 'entries' })
+  async getEntries(@Parent() league: EloLeague) {
+    return this.eloLeaguesService.getEntries(league.id);
   }
 
-  @Mutation(() => League)
+  @Mutation(() => EloLeague)
   @UseGuards(GqlAuthGuard)
-  async updateLeague(
+  async updateEloLeague(
     @Args('id', { type: () => ID }) id: string,
-    @Args('input') input: UpdateLeagueInput,
+    @Args('input') input: UpdateEloLeagueInput,
     @CurrentUser() user: UserModel,
   ) {
-    return this.leaguesService.update(
+    return this.eloLeaguesService.update(
       id,
       input,
       user.isAdmin ? undefined : user.id,
     );
   }
 
-  @Mutation(() => League)
+  @Mutation(() => EloLeague)
   @UseGuards(GqlAuthGuard)
-  async createLeague(
-    @Args('input') input: CreateLeagueInput,
+  async createEloLeague(
+    @Args('input') input: CreateEloLeagueInput,
     @CurrentUser() user: UserModel,
   ) {
-    // Sobrescreve o authorId do input com o ID do usuário autenticado
-    return this.leaguesService.create({ ...input, authorId: user.id });
+    return this.eloLeaguesService.create({ ...input, authorId: user.id });
   }
 
-  @Mutation(() => LeagueEntry)
+  @Mutation(() => EloLeagueEntry)
   @UseGuards(GqlAuthGuard, PermissionsGuard)
   @RequiredPermissions('manage_events')
-  async addPlayerToLeague(
+  async addPlayerToEloLeague(
     @Args('leagueId', { type: () => ID }) leagueId: string,
     @Args('playerId', { type: () => ID }) playerId: string,
     @Args('initialElo', { type: () => Int, nullable: true })
     initialElo?: number,
   ) {
-    return this.leaguesService.addPlayer(leagueId, playerId, initialElo);
+    return this.eloLeaguesService.addPlayer(leagueId, playerId, initialElo);
   }
 
-  @Mutation(() => LeagueEntry)
+  @Mutation(() => EloLeagueEntry)
   @UseGuards(GqlAuthGuard)
-  async registerSelfToLeague(
+  async registerSelfToEloLeague(
     @Args('leagueId', { type: () => ID }) leagueId: string,
     @CurrentUser() user: UserModel,
   ) {
-    return this.leaguesService.registerSelf(leagueId, user.id);
+    return this.eloLeaguesService.registerSelf(leagueId, user.id);
   }
 }

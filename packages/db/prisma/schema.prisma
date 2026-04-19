@@ -14,8 +14,15 @@ enum GameStatus {
 }
 
 enum EventType {
-  LEAGUE
+  RANKED_LEAGUE
+  STANDARD_LEAGUE
   TOURNAMENT
+}
+
+enum MatchOutcome {
+  WIN
+  DRAW
+  LOSS
 }
 
 enum EventStatus {
@@ -175,7 +182,8 @@ model Event {
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   // Specific extensions
-  league League?
+  eloLeague      EloLeague?
+  standardLeague StandardLeague?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -184,12 +192,11 @@ model Event {
   @@map("events")
 }
 
-model League {
+model EloLeague {
   eventId String @id @map("event_id")
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   initialElo     Int     @default(1000) @map("initial_elo")
-  ratingSystem   String  @default("elo") @map("rating_system")
   allowDraw      Boolean @default(false) @map("allow_draw")
   kFactor        Int     @default(20) @map("k_factor")
   scoreRelevance Float   @default(0.4) @map("score_relevance")
@@ -198,16 +205,29 @@ model League {
   inactivityThresholdHours Int @default(120) @map("inactivity_threshold_hours")
   inactivityDecayFloor     Int @default(1000) @map("inactivity_decay_floor")
 
-  pointsPerWin  Int @default(3) @map("points_per_win")
-  pointsPerDraw Int @default(1) @map("points_per_draw")
-  pointsPerLoss Int @default(0) @map("points_per_loss")
+  allowedFormats MatchFormat[] @default([]) @map("allowed_formats")
+
+  entries EloLeagueEntry[]
+  results EloResult[]
+
+  @@map("elo_leagues")
+}
+
+model StandardLeague {
+  eventId String @id @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  allowDraw     Boolean @default(false) @map("allow_draw")
+  pointsPerWin  Int     @default(3) @map("points_per_win")
+  pointsPerDraw Int     @default(1) @map("points_per_draw")
+  pointsPerLoss Int     @default(0) @map("points_per_loss")
 
   allowedFormats MatchFormat[] @default([]) @map("allowed_formats")
 
-  entries LeagueEntry[]
-  results Result[]
+  entries StandardLeagueEntry[]
+  results StandardResult[]
 
-  @@map("leagues")
+  @@map("standard_leagues")
 }
 
 model Player {
@@ -218,9 +238,11 @@ model Player {
   user              User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   primaryUsernameId String? @map("primary_username_id")
 
-  usernames     PlayerUsername[]
-  leagueEntries LeagueEntry[]
-  resultEntries ResultEntry[]
+  usernames             PlayerUsername[]
+  eloLeagueEntries      EloLeagueEntry[]
+  standardLeagueEntries StandardLeagueEntry[]
+  eloResultEntries      EloResultEntry[]
+  standardResultEntries StandardResultEntry[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -242,12 +264,12 @@ model PlayerUsername {
   @@map("player_usernames")
 }
 
-model LeagueEntry {
-  id       String @id @default(cuid())
-  leagueId String @map("event_id") // References League.eventId
-  league   League @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
-  playerId String @map("player_id")
-  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+model EloLeagueEntry {
+  id       String     @id @default(cuid())
+  leagueId String     @map("event_id")
+  league   EloLeague  @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+  playerId String     @map("player_id")
+  player   Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   currentElo Int @default(1000) @map("current_elo")
 
@@ -255,32 +277,51 @@ model LeagueEntry {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([leagueId, playerId])
-  @@map("league_entries")
+  @@map("elo_league_entries")
 }
 
-model Result {
-  id       String @id @default(cuid())
-  leagueId String @map("event_id")
-  league   League @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+model StandardLeagueEntry {
+  id       String         @id @default(cuid())
+  leagueId String         @map("event_id")
+  league   StandardLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+  playerId String         @map("player_id")
+  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
-  description String?
-  format      MatchFormat
-
-  entries     ResultEntry[]
-  attachments ResultAttachment[]
+  points Int @default(0)
+  wins   Int @default(0)
+  draws  Int @default(0)
+  losses Int @default(0)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("results")
+  @@unique([leagueId, playerId])
+  @@map("standard_league_entries")
 }
 
-model ResultEntry {
-  id       String @id @default(cuid())
-  resultId String @map("result_id")
-  result   Result @relation(fields: [resultId], references: [id], onDelete: Cascade)
-  playerId String @map("player_id")
-  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+model EloResult {
+  id       String    @id @default(cuid())
+  leagueId String    @map("event_id")
+  league   EloLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+
+  description String?
+  format      MatchFormat
+
+  entries     EloResultEntry[]
+  attachments EloResultAttachment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("elo_results")
+}
+
+model EloResultEntry {
+  id       String    @id @default(cuid())
+  resultId String    @map("result_id")
+  result   EloResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  playerId String    @map("player_id")
+  player   Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
   eloDifference Int @map("elo_difference")
 
@@ -288,13 +329,13 @@ model ResultEntry {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([resultId, playerId])
-  @@map("result_entries")
+  @@map("elo_result_entries")
 }
 
-model ResultAttachment {
+model EloResultAttachment {
   id            String               @id @default(cuid())
   resultId      String               @map("result_id")
-  result        Result               @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  result        EloResult            @relation(fields: [resultId], references: [id], onDelete: Cascade)
   type          ResultAttachmentType
   videoPlatform VideoPlatform?       @map("video_platform")
   url           String
@@ -302,7 +343,56 @@ model ResultAttachment {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("result_attachments")
+  @@map("elo_result_attachments")
+}
+
+model StandardResult {
+  id       String         @id @default(cuid())
+  leagueId String         @map("event_id")
+  league   StandardLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+
+  description String?
+  format      MatchFormat
+
+  entries     StandardResultEntry[]
+  attachments StandardResultAttachment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("standard_results")
+}
+
+model StandardResultEntry {
+  id       String         @id @default(cuid())
+  resultId String         @map("result_id")
+  result   StandardResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  playerId String         @map("player_id")
+  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  outcome      MatchOutcome
+  score        Int
+  pointsGained Int          @map("points_gained")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([resultId, playerId])
+  @@map("standard_result_entries")
+}
+
+model StandardResultAttachment {
+  id            String               @id @default(cuid())
+  resultId      String               @map("result_id")
+  result        StandardResult       @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  type          ResultAttachmentType
+  videoPlatform VideoPlatform?       @map("video_platform")
+  url           String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("standard_result_attachments")
 }
 
 model Permission {

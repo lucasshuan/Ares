@@ -11,8 +11,10 @@ import { Search, Plus, LoaderCircle, AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  createAndAddPlayerToLeague,
-  addPlayerToLeague,
+  createAndAddPlayerToEloLeague,
+  createAndAddPlayerToStandardLeague,
+  addPlayerToEloLeague,
+  addPlayerToStandardLeague,
   searchPlayersByGame,
 } from "@/actions/game";
 import { cn } from "@/lib/utils";
@@ -20,6 +22,7 @@ import { cn } from "@/lib/utils";
 interface AddPlayerToLeagueFormProps {
   gameId: string;
   leagueId: string;
+  leagueType: "elo" | "standard";
   onSuccess: () => void;
   onLoadingChange?: (loading: boolean) => void;
 }
@@ -33,6 +36,7 @@ interface PlayerResult {
 export function AddPlayerToLeagueForm({
   gameId,
   leagueId,
+  leagueType,
   onSuccess,
   onLoadingChange,
 }: AddPlayerToLeagueFormProps) {
@@ -102,7 +106,9 @@ export function AddPlayerToLeagueForm({
 
   const handleAddExisting = (playerId: string) => {
     startTransition(async () => {
-      const result = await addPlayerToLeague(leagueId, playerId);
+      const action =
+        leagueType === "elo" ? addPlayerToEloLeague : addPlayerToStandardLeague;
+      const result = await action(leagueId, playerId);
       if (result.success) {
         toast.success(t("success"));
         onSuccess();
@@ -114,11 +120,11 @@ export function AddPlayerToLeagueForm({
 
   const handleCreateAndAdd = handleSubmit(async (values) => {
     startTransition(async () => {
-      const result = await createAndAddPlayerToLeague(
-        gameId,
-        leagueId,
-        values.username,
-      );
+      const action =
+        leagueType === "elo"
+          ? createAndAddPlayerToEloLeague
+          : createAndAddPlayerToStandardLeague;
+      const result = await action(gameId, leagueId, values.username);
       if (result.success) {
         toast.success(t("success"));
         onSuccess();
@@ -185,14 +191,14 @@ export function AddPlayerToLeagueForm({
         {hasSearched &&
           searchResults.length === 0 &&
           searchQuery.length >= 2 && (
-            <div className="rounded-2xl border border-warning/20 bg-warning/5 p-4">
+            <div className="border-warning/20 bg-warning/5 rounded-2xl border p-4">
               <div className="flex items-start gap-4">
-                <AlertCircle className="mt-0.5 size-5 text-warning" />
+                <AlertCircle className="text-warning mt-0.5 size-5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-warning">
+                  <p className="text-warning text-sm font-medium">
                     {t("search.notFound")}
                   </p>
-                  <p className="mt-1 text-xs text-warning/60">
+                  <p className="text-warning/60 mt-1 text-xs">
                     {t("createPlayer.warning")}
                   </p>
                   <button

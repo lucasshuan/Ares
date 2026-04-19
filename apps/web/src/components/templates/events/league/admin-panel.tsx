@@ -49,7 +49,10 @@ export function LeagueAdminPanel({ league }: LeagueAdminPanelProps) {
       )}
 
       <EditLeagueModal
-        league={league}
+        league={{
+          ...league,
+          type: league.type as "RANKED_LEAGUE" | "STANDARD_LEAGUE",
+        }}
         isOpen={isEditLeagueOpen}
         onClose={() => setIsEditLeagueOpen(false)}
       />
@@ -57,6 +60,7 @@ export function LeagueAdminPanel({ league }: LeagueAdminPanelProps) {
       <AddPlayerToLeagueModal
         gameId={league.gameId}
         leagueId={league.id}
+        leagueType="elo"
         isOpen={isAddPlayerOpen}
         onClose={() => setIsAddPlayerOpen(false)}
       />

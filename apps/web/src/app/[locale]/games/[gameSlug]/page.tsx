@@ -115,116 +115,116 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           <div>
             <Link
               href="/games"
-              className="no-lift group relative z-10 -mb-px inline-flex items-center gap-2 rounded-t-2xl border border-b-0 border-border bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))] px-4 py-2.5 text-xs font-bold tracking-wider text-white/50 uppercase transition-colors hover:text-white"
+              className="no-lift group border-border relative z-10 -mb-px inline-flex items-center gap-2 rounded-t-2xl border border-b-0 bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))] px-4 py-2.5 text-xs font-bold tracking-wider text-white/50 uppercase transition-colors hover:text-white"
             >
               <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
               {t("backToGames")}
             </Link>
 
-          <GlowBorder
-            className={cn(
-              canSeeAdminActions
-                ? "rounded-4xl rounded-tl-none rounded-br-none"
-                : "rounded-4xl rounded-tl-none",
-            )}
-          >
-            <div className="relative aspect-368/178 w-full overflow-hidden">
-              {game.thumbnailImageUrl ? (
-                <Image
-                  src={game.thumbnailImageUrl}
-                  alt={game.name}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 360px"
-                />
-              ) : (
-                <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
+            <GlowBorder
+              className={cn(
+                canSeeAdminActions
+                  ? "rounded-4xl rounded-tl-none rounded-br-none"
+                  : "rounded-4xl rounded-tl-none",
               )}
-            </div>
-
-            <div className="space-y-6 p-5">
-              <div>
-                {game.status === "PENDING" && (
-                  <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
-                    <AlertCircle className="size-5 shrink-0 animate-pulse" />
-                    <p className="text-xs font-semibold tracking-wider uppercase">
-                      {t("pendingNotice")}
-                    </p>
-                  </div>
+            >
+              <div className="relative aspect-368/178 w-full overflow-hidden">
+                {game.thumbnailImageUrl ? (
+                  <Image
+                    src={game.thumbnailImageUrl}
+                    alt={game.name}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 360px"
+                  />
+                ) : (
+                  <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
                 )}
-                <h1 className="text-foreground text-2xl font-bold tracking-tight">
-                  {game.name}
-                </h1>
-                <p className="text-muted mt-2 text-[13px] leading-snug">
-                  {game.description ?? t("sidebarDescription")}
-                </p>
               </div>
 
-              {game.status === "PENDING" && <></>}
-
-              {game.status !== "PENDING" && (
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] opacity-60">
-                      {t("events")}
-                    </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {formatCompactNumber(
-                        (gameWithCounts.leagueCount || 0) +
-                          (gameWithCounts.tourneyCount || 0),
-                      )}
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] opacity-60">
-                      {t("sidebarPlayers")}
-                    </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {formatCompactNumber(gameWithCounts.playerCount || 0)}
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
-                    <p className="text-muted font-mono text-[9px] opacity-60">
-                      {t("posts")}
-                    </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
-                      {formatCompactNumber(gameWithCounts.postCount || 0)}
-                    </p>
-                  </div>
+              <div className="space-y-6 p-5">
+                <div>
+                  {game.status === "PENDING" && (
+                    <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
+                      <AlertCircle className="size-5 shrink-0 animate-pulse" />
+                      <p className="text-xs font-semibold tracking-wider uppercase">
+                        {t("pendingNotice")}
+                      </p>
+                    </div>
+                  )}
+                  <h1 className="text-foreground text-2xl font-bold tracking-tight">
+                    {game.name}
+                  </h1>
+                  <p className="text-muted mt-2 text-[13px] leading-snug">
+                    {game.description ?? t("sidebarDescription")}
+                  </p>
                 </div>
-              )}
 
-              {game.steamUrl && (
-                <a
-                  href={game.steamUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 py-2 text-xs font-bold text-white/40 transition-colors hover:text-white"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="size-4"
+                {game.status === "PENDING" && <></>}
+
+                {game.status !== "PENDING" && (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                      <p className="text-muted font-mono text-[9px] opacity-60">
+                        {t("events")}
+                      </p>
+                      <p className="text-secondary mt-0.5 text-lg font-bold">
+                        {formatCompactNumber(
+                          (gameWithCounts.leagueCount || 0) +
+                            (gameWithCounts.tourneyCount || 0),
+                        )}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                      <p className="text-muted font-mono text-[9px] opacity-60">
+                        {t("sidebarPlayers")}
+                      </p>
+                      <p className="text-secondary mt-0.5 text-lg font-bold">
+                        {formatCompactNumber(gameWithCounts.playerCount || 0)}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                      <p className="text-muted font-mono text-[9px] opacity-60">
+                        {t("posts")}
+                      </p>
+                      <p className="text-secondary mt-0.5 text-lg font-bold">
+                        {formatCompactNumber(gameWithCounts.postCount || 0)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {game.steamUrl && (
+                  <a
+                    href={game.steamUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 py-2 text-xs font-bold text-white/40 transition-colors hover:text-white"
                   >
-                    <path d="M11.979 0C5.353 0 0 5.373 0 12c0 2.221.606 4.3 1.666 6.1L6.155 13.92c-.11-.421-.168-.86-.168-1.314 0-2.868 2.324-5.193 5.19-5.193 2.87 0 5.194 2.325 5.194 5.193 0 2.868-2.324 5.194-5.193 5.194-.852 0-1.656-.205-2.36-.566L4.793 23c2.164 1.344 4.7 2.128 7.397 2.128 6.577 0 11.905-5.328 11.905-11.905S18.556 0 11.979 0Zm-.791 10.158c-1.353 0-2.45 1.097-2.45 2.448s1.097 2.45 2.45 2.45c1.35 0 2.449-1.099 2.449-2.45s-1.099-2.448-2.449-2.448Zm0 1.258c.656 0 1.19.532 1.19 1.19 0 .656-.534 1.191-1.19 1.191-.659 0-1.192-.534-1.192-1.191 0-.66.533-1.19 1.192-1.19Z" />
-                  </svg>
-                  {t("playOnSteam")}
-                </a>
-              )}
-            </div>
-          </GlowBorder>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="size-4"
+                    >
+                      <path d="M11.979 0C5.353 0 0 5.373 0 12c0 2.221.606 4.3 1.666 6.1L6.155 13.92c-.11-.421-.168-.86-.168-1.314 0-2.868 2.324-5.193 5.19-5.193 2.87 0 5.194 2.325 5.194 5.193 0 2.868-2.324 5.194-5.193 5.194-.852 0-1.656-.205-2.36-.566L4.793 23c2.164 1.344 4.7 2.128 7.397 2.128 6.577 0 11.905-5.328 11.905-11.905S18.556 0 11.979 0Zm-.791 10.158c-1.353 0-2.45 1.097-2.45 2.448s1.097 2.45 2.45 2.45c1.35 0 2.449-1.099 2.449-2.45s-1.099-2.448-2.449-2.448Zm0 1.258c.656 0 1.19.532 1.19 1.19 0 .656-.534 1.191-1.19 1.191-.659 0-1.192-.534-1.192-1.191 0-.66.533-1.19 1.192-1.19Z" />
+                    </svg>
+                    {t("playOnSteam")}
+                  </a>
+                )}
+              </div>
+            </GlowBorder>
 
-          {canSeeAdminActions && (
-            <div className="flex w-full justify-end">
-              <PageAdminActions
-                game={game as Game}
-                canEditGame={canEditCurrentGame}
-                canApproveGame={canApproveGame}
-                canManagePlayers={viewerCanManagePlayers}
-              />
-            </div>
-          )}
+            {canSeeAdminActions && (
+              <div className="flex w-full justify-end">
+                <PageAdminActions
+                  game={game as Game}
+                  canEditGame={canEditCurrentGame}
+                  canApproveGame={canApproveGame}
+                  canManagePlayers={viewerCanManagePlayers}
+                />
+              </div>
+            )}
           </div>
 
           {author && (
@@ -329,10 +329,7 @@ function GamePageSkeleton() {
 
             <div className="grid gap-5 xl:grid-cols-2">
               {[1, 2, 3, 4].map((i) => (
-                <section
-                  key={i}
-                  className="glass-panel h-70 rounded-4xl p-6"
-                >
+                <section key={i} className="glass-panel h-70 rounded-4xl p-6">
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div className="w-full">
                       <div className="h-6 w-32 animate-pulse rounded bg-white/10" />

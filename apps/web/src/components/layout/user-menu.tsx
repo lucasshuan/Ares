@@ -23,7 +23,13 @@ export function UserMenu({ user: initialUser }: { user: UserProps }) {
   // Use session user if available, fallback to initialUser from SSR
   const sessionUser = session?.user as unknown as UserProps | undefined;
   const user: UserProps = sessionUser
-    ? { ...sessionUser, imageUrl: sessionUser.imageUrl ?? (session?.user?.image as string | null) ?? null }
+    ? {
+        ...sessionUser,
+        imageUrl:
+          sessionUser.imageUrl ??
+          (session?.user?.image as string | null) ??
+          null,
+      }
     : initialUser;
 
   return (

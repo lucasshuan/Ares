@@ -1,9 +1,9 @@
-﻿import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Player } from '../games/player.model';
-import { League } from './league.model';
+import { EloLeague } from './elo-league.model';
 
 @ObjectType()
-export class LeagueEntry {
+export class EloLeagueEntry {
   @Field(() => ID)
   id: string;
 
@@ -22,6 +22,6 @@ export class LeagueEntry {
   @Field(() => Player, { nullable: true })
   player?: Player;
 
-  @Field(() => League, { nullable: true })
-  league?: League;
+  @Field(() => EloLeague, { nullable: true })
+  league?: EloLeague;
 }

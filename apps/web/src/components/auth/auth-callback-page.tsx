@@ -4,10 +4,7 @@ import { Suspense, useCallback, useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import {
-  getLocalizedPathname,
-  getPreferredClientLocale,
-} from "@/i18n/locale";
+import { getLocalizedPathname, getPreferredClientLocale } from "@/i18n/locale";
 import { getApiUrl } from "@/lib/api";
 
 function AuthCallbackContent() {

@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { notFound } from "next/navigation";
-import {
-  User as UserIcon,
-  Medal,
-  Gamepad2,
-  Calendar,
-} from "lucide-react";
+import { User as UserIcon, Medal, Gamepad2, Calendar } from "lucide-react";
 import { GET_USER } from "@/lib/apollo/queries/user";
 import { GetUserQuery } from "@/lib/apollo/generated/graphql";
 import { getServerAuthSession } from "@/auth";
@@ -93,7 +88,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
           <div className="sticky top-28 flex flex-col gap-4">
             <div>
-              <div className={`glass-panel overflow-hidden rounded-4xl${isOwnProfile ? " rounded-br-none" : ""}`}>
+              <div
+                className={`glass-panel overflow-hidden rounded-4xl${isOwnProfile ? "rounded-br-none" : ""}`}
+              >
                 {/* Subtle decorations removed */}
 
                 <div className="relative z-10 flex flex-col items-center p-8 text-center">
@@ -112,7 +109,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                   )}
 
                   <h1 className="mt-6 text-2xl font-bold tracking-tight">
-                    {targetUser.name ?? targetUser.username ?? t("fallbackUser")}
+                    {targetUser.name ??
+                      targetUser.username ??
+                      t("fallbackUser")}
                   </h1>
 
                   {targetUser.bio ? (
@@ -214,9 +213,9 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                         </h3>
 
                         <div className="mt-4 flex flex-col gap-3">
-                          {player.leagueEntries?.length &&
-                          player.leagueEntries.length > 0 ? (
-                            player.leagueEntries.map((entry) => (
+                          {player.eloLeagueEntries?.length &&
+                          player.eloLeagueEntries.length > 0 ? (
+                            player.eloLeagueEntries.map((entry) => (
                               <div
                                 key={entry.id}
                                 className="flex items-center justify-between rounded-xl bg-white/5 p-4 transition-colors group-hover:bg-white/10"

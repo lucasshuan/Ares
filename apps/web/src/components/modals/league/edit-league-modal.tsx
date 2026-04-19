@@ -3,11 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import { MultiStepModal } from "@/components/ui/multi-step-modal";
 import { useTranslations } from "next-intl";
-import { type League } from "@/lib/apollo/generated/graphql";
 import { EditLeagueForm } from "@/components/forms/league/edit-league-form";
 
+type LeagueForEdit = {
+  id: string;
+  gameId: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  type: "RANKED_LEAGUE" | "STANDARD_LEAGUE";
+  allowDraw: boolean;
+  allowedFormats: string[];
+  game: { name: string; slug: string; thumbnailImageUrl?: string | null };
+  initialElo?: number;
+  kFactor?: number;
+  scoreRelevance?: number;
+  inactivityDecay?: number;
+  inactivityThresholdHours?: number;
+  inactivityDecayFloor?: number;
+  pointsPerWin?: number;
+  pointsPerDraw?: number;
+  pointsPerLoss?: number;
+};
+
 interface EditLeagueModalProps {
-  league: League;
+  league: LeagueForEdit;
   isOpen: boolean;
   onClose: () => void;
 }

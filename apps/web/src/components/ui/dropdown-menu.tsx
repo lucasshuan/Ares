@@ -191,7 +191,10 @@ export function DropdownMenu({
       onMouseEnter={openOnHover ? openDropdown : undefined}
       onMouseLeave={openOnHover ? closeDropdown : undefined}
     >
-      <div onClick={openOnHover ? undefined : toggleDropdown} className="w-fit cursor-pointer">
+      <div
+        onClick={openOnHover ? undefined : toggleDropdown}
+        className="w-fit cursor-pointer"
+      >
         {trigger}
       </div>
 

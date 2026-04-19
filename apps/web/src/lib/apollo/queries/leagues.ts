@@ -2,14 +2,13 @@ import { gql } from "@apollo/client";
 
 export const GET_LEAGUES = gql`
   query GetLeagues($pagination: PaginationInput) {
-    leagues(pagination: $pagination) {
+    leagues: eloLeagues(pagination: $pagination) {
       nodes {
         id
         name
         slug
         description
         type
-        ratingSystem
         isApproved
         createdAt
         game {
@@ -41,13 +40,12 @@ export const GET_LEAGUES = gql`
 
 export const GET_LEAGUE = gql`
   query GetLeague($gameSlug: String!, $leagueSlug: String!) {
-    league(gameSlug: $gameSlug, slug: $leagueSlug) {
+    league: eloLeague(gameSlug: $gameSlug, slug: $leagueSlug) {
       id
       name
       slug
       description
       initialElo
-      ratingSystem
       type
       allowDraw
       kFactor
@@ -55,11 +53,8 @@ export const GET_LEAGUE = gql`
       inactivityDecay
       inactivityThresholdHours
       inactivityDecayFloor
-      pointsPerWin
-      pointsPerDraw
       gameId
       isApproved
-      pointsPerLoss
       allowedFormats
       createdAt
       updatedAt

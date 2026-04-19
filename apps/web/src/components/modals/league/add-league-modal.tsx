@@ -56,8 +56,7 @@ export function AddLeagueModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  
-  
+
   // Track max reached step with ref (no re-render needed)
   const maxReachedStepRef = useRef(gameId ? 1 : 0);
 
@@ -179,6 +178,3 @@ export function AddLeagueModal({
     </>
   );
 }
-
-
-

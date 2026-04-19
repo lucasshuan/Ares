@@ -27,13 +27,16 @@ import {
   X,
 } from "lucide-react";
 // Removido Popover import se não for usado em outro lugar, mas vou manter se necessário.
-import { addLeague, checkLeagueSlugAvailability } from "@/actions/game";
+import {
+  addEloLeague,
+  addStandardLeague,
+  checkLeagueSlugAvailability,
+} from "@/actions/game";
 import { getGamesSimple, type SimpleGame } from "@/actions/get-games";
 import { toast } from "sonner";
 import { useLocale, useTranslations } from "next-intl";
 import { Slider } from "@/components/ui/slider";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
-import { DateInput } from "@/components/ui/date-input";
 import { NumberInput } from "@/components/ui/number-input";
 import { formatHoursDuration } from "@/lib/date-utils";
 import { cn, slugify } from "@/lib/utils";
@@ -83,9 +86,7 @@ export function AddLeagueForm({
       name: "",
       slug: "",
       description: "",
-      startDate: "",
-      endDate: "",
-      ratingSystem: "elo",
+      ratingSystem: "RANKED_LEAGUE",
       initialElo: LEAGUE_DEFAULT_SETTINGS.initialElo,
       allowDraw: false,
       kFactor: LEAGUE_DEFAULT_SETTINGS.kFactor,
@@ -106,7 +107,6 @@ export function AddLeagueForm({
   const watchGameName = useWatch({ control, name: "gameName" });
   const watchName = useWatch({ control, name: "name" }) || "";
   const watchSlug = useWatch({ control, name: "slug" }) || "";
-  const watchStartDate = useWatch({ control, name: "startDate" }) || "";
   const ratingSystem = useWatch({ control, name: "ratingSystem" });
   const allowDraw = useWatch({ control, name: "allowDraw" });
   const initialElo = useWatch({ control, name: "initialElo" }) || 0;
@@ -316,7 +316,7 @@ export function AddLeagueForm({
         if (parseResult.success) {
           isStepValid = true;
         } else {
-          const step2Fields = ["name", "slug", "startDate"];
+          const step2Fields = ["name", "slug"];
           const hasStep2Errors = parseResult.error.issues.some((issue) =>
             step2Fields.includes(issue.path[0] as string),
           );
@@ -338,7 +338,6 @@ export function AddLeagueForm({
     watchGameId,
     watchName,
     watchSlug,
-    watchStartDate,
     onStepValidationChange,
     watchGameName,
     getValues,
@@ -369,43 +368,45 @@ export function AddLeagueForm({
     }
 
     startTransition(async () => {
-      const isElo = values.ratingSystem === "elo";
+      const isElo = values.ratingSystem === "RANKED_LEAGUE";
 
-      const result = await addLeague({
-        ...values,
-        description: values.description ?? null,
-        initialElo: isElo
-          ? (values.initialElo ?? LEAGUE_DEFAULT_SETTINGS.initialElo)
-          : LEAGUE_DEFAULT_SETTINGS.initialElo,
-        kFactor: isElo
-          ? (values.kFactor ?? LEAGUE_DEFAULT_SETTINGS.kFactor)
-          : LEAGUE_DEFAULT_SETTINGS.kFactor,
-        scoreRelevance: isElo
-          ? (values.scoreRelevance ?? LEAGUE_DEFAULT_SETTINGS.scoreRelevance)
-          : LEAGUE_DEFAULT_SETTINGS.scoreRelevance,
-        inactivityDecay: isElo
-          ? (values.inactivityDecay ?? LEAGUE_DEFAULT_SETTINGS.inactivityDecay)
-          : LEAGUE_DEFAULT_SETTINGS.inactivityDecay,
-        inactivityThresholdHours: isElo
-          ? (values.inactivityThresholdHours ??
-            LEAGUE_DEFAULT_SETTINGS.inactivityThresholdHours)
-          : LEAGUE_DEFAULT_SETTINGS.inactivityThresholdHours,
-        inactivityDecayFloor: isElo
-          ? (values.inactivityDecayFloor ??
-            LEAGUE_DEFAULT_SETTINGS.inactivityDecayFloor)
-          : LEAGUE_DEFAULT_SETTINGS.inactivityDecayFloor,
-        pointsPerWin: !isElo
-          ? (values.pointsPerWin ?? LEAGUE_DEFAULT_SETTINGS.pointsPerWin)
-          : LEAGUE_DEFAULT_SETTINGS.pointsPerWin,
-        pointsPerDraw: !isElo
-          ? (values.pointsPerDraw ?? LEAGUE_DEFAULT_SETTINGS.pointsPerDraw)
-          : LEAGUE_DEFAULT_SETTINGS.pointsPerDraw,
-        pointsPerLoss: !isElo
-          ? (values.pointsPerLoss ?? LEAGUE_DEFAULT_SETTINGS.pointsPerLoss)
-          : LEAGUE_DEFAULT_SETTINGS.pointsPerLoss,
-        startDate: values.startDate ? new Date(values.startDate) : null,
-        endDate: values.endDate ? new Date(values.endDate) : null,
-      });
+      const result = isElo
+        ? await addEloLeague({
+            gameId: values.gameId,
+            gameName: values.gameName,
+            name: values.name,
+            slug: values.slug,
+            description: values.description ?? null,
+            allowDraw: values.allowDraw,
+            initialElo: values.initialElo ?? LEAGUE_DEFAULT_SETTINGS.initialElo,
+            kFactor: values.kFactor ?? LEAGUE_DEFAULT_SETTINGS.kFactor,
+            scoreRelevance:
+              values.scoreRelevance ?? LEAGUE_DEFAULT_SETTINGS.scoreRelevance,
+            inactivityDecay:
+              values.inactivityDecay ?? LEAGUE_DEFAULT_SETTINGS.inactivityDecay,
+            inactivityThresholdHours:
+              values.inactivityThresholdHours ??
+              LEAGUE_DEFAULT_SETTINGS.inactivityThresholdHours,
+            inactivityDecayFloor:
+              values.inactivityDecayFloor ??
+              LEAGUE_DEFAULT_SETTINGS.inactivityDecayFloor,
+            allowedFormats: values.allowedFormats,
+          })
+        : await addStandardLeague({
+            gameId: values.gameId,
+            gameName: values.gameName,
+            name: values.name,
+            slug: values.slug,
+            description: values.description ?? null,
+            allowDraw: values.allowDraw,
+            pointsPerWin:
+              values.pointsPerWin ?? LEAGUE_DEFAULT_SETTINGS.pointsPerWin,
+            pointsPerDraw:
+              values.pointsPerDraw ?? LEAGUE_DEFAULT_SETTINGS.pointsPerDraw,
+            pointsPerLoss:
+              values.pointsPerLoss ?? LEAGUE_DEFAULT_SETTINGS.pointsPerLoss,
+            allowedFormats: values.allowedFormats,
+          });
 
       if (result.success) {
         toast.success(t("success"));
@@ -415,8 +416,6 @@ export function AddLeagueForm({
       }
     });
   };
-
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-10">
@@ -561,7 +560,7 @@ export function AddLeagueForm({
                 !hasExactMatch &&
                 !isGamesLoading ? (
                 <div className="animate-in fade-in slide-in-from-bottom-4 flex w-full flex-col items-center justify-center gap-4 text-center duration-500">
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-warning/10 text-warning">
+                  <div className="bg-warning/10 text-warning flex size-12 items-center justify-center rounded-2xl">
                     <AlertTriangle className="size-6" />
                   </div>
                   <div className="w-full space-y-2">
@@ -597,14 +596,12 @@ export function AddLeagueForm({
                 {...register("name")}
                 placeholder={t("name.placeholder")}
                 className={cn(
-                    "field-base",
-                    errors.name ? "field-border-error" : "field-border-default",
+                  "field-base",
+                  errors.name ? "field-border-error" : "field-border-default",
                 )}
               />
               {errors.name && touchedFields.name && (
-                <p className="field-error-text">
-                  {errors.name.message}
-                </p>
+                <p className="field-error-text">{errors.name.message}</p>
               )}
             </div>
 
@@ -641,16 +638,14 @@ export function AddLeagueForm({
                   <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
                 ) : canCheckSlug && !errors.slug ? (
                   hasSlugConflict ? (
-                    <X className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-danger" />
+                    <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
                   ) : (
-                    <Check className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-success" />
+                    <Check className="text-success absolute top-1/2 right-4 size-4 -translate-y-1/2" />
                   )
                 ) : null}
               </div>
               {errors.slug && touchedFields.slug && (
-                <p className="field-error-text">
-                  {errors.slug.message}
-                </p>
+                <p className="field-error-text">{errors.slug.message}</p>
               )}
               {!errors.slug && hasSlugConflict && (
                 <p className="field-error-text">{t("slug.taken")}</p>
@@ -670,47 +665,8 @@ export function AddLeagueForm({
                 )}
               />
               {errors.description && touchedFields.description && (
-                <p className="field-error-text">
-                  {errors.description.message}
-                </p>
+                <p className="field-error-text">{errors.description.message}</p>
               )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <LabelTooltip label={t("dates.start.label")} required />
-              <Controller
-                name="startDate"
-                control={control}
-                render={({ field }) => (
-                  <DateInput
-                    value={field.value}
-                    onChange={field.onChange}
-                    min={today}
-                    placeholder={t("dates.start.placeholder")}
-                  />
-                )}
-              />
-              {errors.startDate && touchedFields.startDate && (
-                <p className="field-error-text">
-                  {errors.startDate.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <LabelTooltip label={t("dates.end.label")} />
-              <Controller
-                name="endDate"
-                control={control}
-                render={({ field }) => (
-                  <DateInput
-                    value={field.value || ""}
-                    onChange={field.onChange}
-                    min={watchStartDate || today}
-                    placeholder={t("dates.end.placeholder")}
-                  />
-                )}
-              />
             </div>
           </div>
         </section>
@@ -725,17 +681,19 @@ export function AddLeagueForm({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={() => setValue("ratingSystem", "elo")}
+                  onClick={() => setValue("ratingSystem", "RANKED_LEAGUE")}
                   className={cn(
                     "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
-                    ratingSystem === "elo"
+                    ratingSystem === "RANKED_LEAGUE"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
                       : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <Trophy className="size-4" />
-                    <span className="text-sm font-bold">{t("ratingSystem.elo")}</span>
+                    <span className="text-sm font-bold">
+                      {t("ratingSystem.elo")}
+                    </span>
                   </div>
                   <span className="text-xs leading-relaxed text-white/50">
                     {t("ratingSystem.elo_description")}
@@ -743,17 +701,19 @@ export function AddLeagueForm({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setValue("ratingSystem", "points")}
+                  onClick={() => setValue("ratingSystem", "STANDARD_LEAGUE")}
                   className={cn(
                     "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
-                    ratingSystem === "points"
+                    ratingSystem === "STANDARD_LEAGUE"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
                       : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <Hash className="size-4" />
-                    <span className="text-sm font-bold">{t("ratingSystem.points")}</span>
+                    <span className="text-sm font-bold">
+                      {t("ratingSystem.points")}
+                    </span>
                   </div>
                   <span className="text-xs leading-relaxed text-white/50">
                     {t("ratingSystem.points_description")}
@@ -787,7 +747,7 @@ export function AddLeagueForm({
                 </div>
 
                 <div className="space-y-6">
-                  {ratingSystem === "elo" ? (
+                  {ratingSystem === "RANKED_LEAGUE" ? (
                     <div className="grid gap-6">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-2">
@@ -991,12 +951,12 @@ export function AddLeagueForm({
                   </h4>
                   <div className="space-y-5 text-xs leading-relaxed text-white/60">
                     <p className="font-medium text-white/80 italic">
-                      {ratingSystem === "elo"
+                      {ratingSystem === "RANKED_LEAGUE"
                         ? t("explanation.elo.description")
                         : t("explanation.points.description")}
                     </p>
                     <div className="grid gap-3 pt-2">
-                      {ratingSystem === "elo" ? (
+                      {ratingSystem === "RANKED_LEAGUE" ? (
                         <>
                           <div className="flex items-center gap-3">
                             <div
@@ -1069,7 +1029,7 @@ export function AddLeagueForm({
                           />
                           {inactivityDecay > 0 && (
                             <div className="flex items-center gap-3">
-                              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5 text-danger/50">
+                              <div className="text-danger/50 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
                                 <Activity className="size-3" />
                               </div>
                               <span>
@@ -1085,7 +1045,7 @@ export function AddLeagueForm({
                       ) : (
                         <div className="grid gap-3">
                           <div className="flex items-center gap-3">
-                            <ArrowUpRight className="size-4 text-success" />
+                            <ArrowUpRight className="text-success size-4" />
                             <span className="text-white/80">
                               {t("explanation.points.win", {
                                 amount: pointsPerWin || 0,
@@ -1094,7 +1054,7 @@ export function AddLeagueForm({
                           </div>
                           {allowDraw && (
                             <div className="flex items-center gap-3">
-                              <Equal className="size-4 text-warning" />
+                              <Equal className="text-warning size-4" />
                               <span className="text-white/80">
                                 {t("explanation.points.draw", {
                                   amount: pointsPerDraw || 0,
@@ -1103,7 +1063,7 @@ export function AddLeagueForm({
                             </div>
                           )}
                           <div className="flex items-center gap-3">
-                            <ArrowDownRight className="size-4 text-danger" />
+                            <ArrowDownRight className="text-danger size-4" />
                             <span className="text-white/80">
                               {t("explanation.points.loss", {
                                 amount: pointsPerLoss || 0,
@@ -1142,7 +1102,9 @@ export function AddLeagueForm({
                       )}
                     >
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-bold">{option.label}</span>
+                        <span className="text-xs font-bold">
+                          {option.label}
+                        </span>
                         <span className="text-[10px] leading-tight text-white/40">
                           {option.description}
                         </span>
@@ -1154,13 +1116,14 @@ export function AddLeagueForm({
               </div>
 
               {allowedFormats.length === 0 && (
-                <p className="text-xs text-danger">{t("matchFormats.required")}</p>
+                <p className="text-danger text-xs">
+                  {t("matchFormats.required")}
+                </p>
               )}
             </div>
           </div>
         </section>
       )}
-
     </form>
   );
 }

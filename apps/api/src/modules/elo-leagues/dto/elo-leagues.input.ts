@@ -15,7 +15,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class CreateLeagueInput {
+export class CreateEloLeagueInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
@@ -45,10 +45,6 @@ export class CreateLeagueInput {
   initialElo: number;
 
   @Field()
-  @IsString()
-  ratingSystem: string;
-
-  @Field()
   @IsBoolean()
   allowDraw: boolean;
 
@@ -76,21 +72,6 @@ export class CreateLeagueInput {
   @Min(0)
   inactivityDecayFloor: number;
 
-  @Field(() => Int)
-  @IsInt()
-  @Min(0)
-  pointsPerWin: number;
-
-  @Field(() => Int)
-  @IsInt()
-  @Min(0)
-  pointsPerDraw: number;
-
-  @Field(() => Int)
-  @IsInt()
-  @Min(0)
-  pointsPerLoss: number;
-
   @Field(() => [String])
   @IsArray()
   @ArrayNotEmpty()
@@ -113,7 +94,7 @@ export class CreateLeagueInput {
 }
 
 @InputType()
-export class UpdateLeagueInput {
+export class UpdateEloLeagueInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
@@ -133,11 +114,6 @@ export class UpdateLeagueInput {
   @IsInt()
   @IsOptional()
   initialElo?: number;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  ratingSystem?: string;
 
   @Field({ nullable: true })
   @IsBoolean()
@@ -168,21 +144,6 @@ export class UpdateLeagueInput {
   @IsInt()
   @IsOptional()
   inactivityDecayFloor?: number;
-
-  @Field(() => Int, { nullable: true })
-  @IsInt()
-  @IsOptional()
-  pointsPerWin?: number;
-
-  @Field(() => Int, { nullable: true })
-  @IsInt()
-  @IsOptional()
-  pointsPerDraw?: number;
-
-  @Field(() => Int, { nullable: true })
-  @IsInt()
-  @IsOptional()
-  pointsPerLoss?: number;
 
   @Field(() => [String], { nullable: true })
   @IsArray()

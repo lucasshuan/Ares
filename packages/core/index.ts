@@ -18,8 +18,11 @@ export const EVENT_STATUSES = [
 ] as const;
 export type EventStatus = (typeof EVENT_STATUSES)[number];
 
-export const EVENT_TYPES = ["LEAGUE", "TOURNAMENT"] as const;
+export const EVENT_TYPES = ["RANKED_LEAGUE", "STANDARD_LEAGUE", "TOURNAMENT"] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
+
+export const MATCH_OUTCOMES = ["WIN", "DRAW", "LOSS"] as const;
+export type MatchOutcome = (typeof MATCH_OUTCOMES)[number];
 
 export const RESULT_ATTACHMENT_TYPES = ["IMAGE", "VIDEO"] as const;
 export type ResultAttachmentType = (typeof RESULT_ATTACHMENT_TYPES)[number];

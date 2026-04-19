@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, createContext, useContext, ReactNode, Suspense } from "react";
+import {
+  useEffect,
+  useRef,
+  createContext,
+  useContext,
+  ReactNode,
+  Suspense,
+} from "react";
 import { type Session } from "next-auth";
 import {
   SessionProvider as NextAuthSessionProvider,
@@ -74,7 +81,9 @@ function SessionGuard() {
     if (!error || handledRef.current === error) return;
 
     handledRef.current = error;
-    toast.error(SESSION_ERROR_MESSAGES[error] ?? "Session error. Please sign in again.");
+    toast.error(
+      SESSION_ERROR_MESSAGES[error] ?? "Session error. Please sign in again.",
+    );
     void signOut({ callbackUrl: "/" });
   }, [session?.error]);
 

@@ -11,5 +11,6 @@
     "i18next",
     "react-i18next"
   ],
-  "i18n-ally.keystyle": "nested"
+  "i18n-ally.keystyle": "nested",
+  "css.lint.unknownAtRules": "ignore"
 }

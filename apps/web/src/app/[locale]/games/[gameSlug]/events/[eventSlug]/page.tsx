@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
 import { canManageLeagues } from "@/lib/permissions";
-import { LeagueTemplate } from "@/components/templates/events/league";
+import { EloLeagueTemplate } from "@/components/templates/events/elo-league";
+import { StandardLeagueTemplate } from "@/components/templates/events/standard-league";
 
-import { GET_LEAGUE } from "@/lib/apollo/queries/leagues";
-import { GetLeagueQuery } from "@/lib/apollo/generated/graphql";
+import { GET_EVENT_META } from "@/lib/apollo/queries/events";
+import { GET_ELO_LEAGUE } from "@/lib/apollo/queries/elo-leagues";
+import { GET_STANDARD_LEAGUE } from "@/lib/apollo/queries/standard-leagues";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 
 interface EventPageProps {
@@ -32,33 +34,68 @@ async function EventPageContent({
   eventSlug: string;
 }) {
   const session = await getServerAuthSession();
+  const isEditor = canManageLeagues(session);
 
-  // For now, we use GET_LEAGUE as it handles the Event fetching behind the scenes
-  const data = await safeServerQuery<GetLeagueQuery>({
-    query: GET_LEAGUE,
-    variables: { gameSlug, leagueSlug: eventSlug },
+  // Resolve event type first
+  const metaData = await safeServerQuery<{
+    eventMeta: { id: string; type: string } | null;
+  }>({
+    query: GET_EVENT_META,
+    variables: { gameSlug, slug: eventSlug },
   });
 
-  if (!data?.league) {
+  if (!metaData?.eventMeta) {
     notFound();
   }
 
-  const { league } = data;
-  const isEditor = canManageLeagues(session);
+  const { type } = metaData.eventMeta;
 
-  // Dynamic Template Selection
-  if (league.type === "LEAGUE") {
+  if (type === "RANKED_LEAGUE") {
+    const data = await safeServerQuery<{ eloLeague: unknown }>({
+      query: GET_ELO_LEAGUE,
+      variables: { gameSlug, leagueSlug: eventSlug },
+    });
+
+    if (!data?.eloLeague) notFound();
+
     return (
-      <LeagueTemplate league={league} session={session} isEditor={isEditor} />
+      <EloLeagueTemplate
+        league={
+          data.eloLeague as Parameters<typeof EloLeagueTemplate>[0]["league"]
+        }
+        session={session}
+        isEditor={isEditor}
+      />
     );
   }
 
-  // Fallback for other event types (Tournaments, etc.)
+  if (type === "STANDARD_LEAGUE") {
+    const data = await safeServerQuery<{ standardLeague: unknown }>({
+      query: GET_STANDARD_LEAGUE,
+      variables: { gameSlug, leagueSlug: eventSlug },
+    });
+
+    if (!data?.standardLeague) notFound();
+
+    return (
+      <StandardLeagueTemplate
+        league={
+          data.standardLeague as Parameters<
+            typeof StandardLeagueTemplate
+          >[0]["league"]
+        }
+        session={session}
+        isEditor={isEditor}
+      />
+    );
+  }
+
+  // Fallback for future event types (Tournaments, etc.)
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center p-12 text-center">
-      <h1 className="text-3xl font-bold">{league.name}</h1>
+      <h1 className="text-3xl font-bold">{eventSlug}</h1>
       <p className="text-muted mt-4">
-        Template for {league.type} not implemented yet.
+        Template for {type} not implemented yet.
       </p>
     </div>
   );

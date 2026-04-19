@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { Trophy } from "lucide-react";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { registerSelfToLeague } from "@/actions/game";
+import { registerSelfToEloLeague } from "@/actions/game";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -25,7 +25,7 @@ export function RegisterConfirmModal({
 
   const onConfirm = () => {
     startTransition(async () => {
-      const result = await registerSelfToLeague(leagueId);
+      const result = await registerSelfToEloLeague(leagueId);
       if (result.success) {
         toast.success(t("success"));
         onClose();

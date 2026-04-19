@@ -7,7 +7,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { DatabaseModule } from './database/database.module';
 import { GamesModule } from './modules/games/games.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { LeaguesModule } from './modules/leagues/leagues.module';
+import { EloLeaguesModule } from './modules/elo-leagues/elo-leagues.module';
+import { StandardLeaguesModule } from './modules/standard-leagues/standard-leagues.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { StorageModule } from './modules/storage/storage.module';
@@ -42,7 +43,8 @@ import { AppController } from './app.controller';
     AuditModule,
     GamesModule,
     AuthModule,
-    LeaguesModule,
+    EloLeaguesModule,
+    StandardLeaguesModule,
     UsersModule,
     StorageModule,
   ],

@@ -118,10 +118,19 @@
     "leagueInfo": "League Info",
     "totalPlayers": "Total Players",
     "ratingSystem": "Rating System",
+    "pointsSystem": "Points (Corridos)",
+    "eloSystem": "Elo Rating",
+    "pointsPerWin": "Points / Win",
+    "pointsPerDraw": "Points / Draw",
+    "pointsPerLoss": "Points / Loss",
     "created": "Created on",
     "leagueInfoDescription": "This league is calculated based on points. The results are frequently updated by game administrators.",
     "details": "Details",
     "player": "Player",
+    "wins": "W",
+    "draws": "D",
+    "losses": "L",
+    "points": "Pts",
     "country": "Country",
     "lastResult": "Last result",
     "register": "Register",
@@ -272,7 +281,7 @@
       },
       "ratingSystem": {
         "label": "Classification System",
-        "elo": "Skill Rating",
+        "elo": "Rating",
         "elo_description": "Skill-based system for Elo, MMR, and similar rating models.",
         "points": "Points",
         "points_description": "Fixed-point system per result, ideal for standings and traditional leagues."
@@ -478,7 +487,7 @@
       },
       "ratingSystem": {
         "label": "Rating System",
-        "elo": "Skill Rating",
+        "elo": "Rating",
         "points": "Points"
       },
       "submit": "Save Changes",

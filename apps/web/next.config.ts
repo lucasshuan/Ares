@@ -20,9 +20,19 @@ const nextConfig: NextConfig = {
     qualities: [75],
     remotePatterns: [
       ...(cdnHostname
-        ? [{ protocol: "https" as const, hostname: cdnHostname, pathname: "/**" }]
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: cdnHostname,
+              pathname: "/**",
+            },
+          ]
         : []),
-      { protocol: "https" as const, hostname: "cdn.discordapp.com", pathname: "/avatars/**" },
+      {
+        protocol: "https" as const,
+        hostname: "cdn.discordapp.com",
+        pathname: "/avatars/**",
+      },
     ],
   },
   experimental: {

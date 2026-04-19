@@ -1,11 +1,13 @@
 import {
   Args,
+  Field,
+  ID,
+  ObjectType,
   Parent,
   Query,
   ResolveField,
   Resolver,
   Mutation,
-  ID,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
@@ -15,11 +17,21 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Game } from './game.model';
 import { GamesService } from './games.service';
 import { User } from '../auth/user.model';
-import { League } from '../leagues/league.model';
+import { EloLeague } from '../elo-leagues/elo-league.model';
+import { StandardLeague } from '../standard-leagues/standard-league.model';
 import { CreateGameInput, UpdateGameInput } from './dto/games.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { PaginatedGames } from './dto/games.output';
 import { DataLoaderService } from '../../common/dataloaders/dataloader.service';
+
+@ObjectType()
+export class EventMeta {
+  @Field(() => ID)
+  id: string;
+
+  @Field()
+  type: string;
+}
 
 @Resolver(() => Game)
 export class GamesResolver {
@@ -53,9 +65,22 @@ export class GamesResolver {
     return this.dataLoaderService.userLoader.load(game.authorId);
   }
 
-  @ResolveField(() => [League], { name: 'leagues' })
-  async getLeagues(@Parent() game: Game) {
-    return this.gamesService.getLeagues(game.id);
+  @Query(() => EventMeta, { name: 'eventMeta', nullable: true })
+  async getEventMeta(
+    @Args('gameSlug') gameSlug: string,
+    @Args('slug') slug: string,
+  ) {
+    return this.gamesService.findEventMeta(gameSlug, slug);
+  }
+
+  @ResolveField(() => [EloLeague], { name: 'eloLeagues' })
+  async getEloLeagues(@Parent() game: Game) {
+    return this.gamesService.getEloLeagues(game.id);
+  }
+
+  @ResolveField(() => [StandardLeague], { name: 'standardLeagues' })
+  async getStandardLeagues(@Parent() game: Game) {
+    return this.gamesService.getStandardLeagues(game.id);
   }
 
   @Mutation(() => Game)

@@ -40,8 +40,8 @@ export class StorageService {
         accessKeyId,
         secretAccessKey,
       },
-      requestChecksumCalculation: 'when_required',
-      responseChecksumValidation: 'when_required',
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     });
     this.bucket = bucket;
     this.cdnUrl = cdnUrl.replace(/\/$/, '');

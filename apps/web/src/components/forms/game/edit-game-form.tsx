@@ -1,7 +1,8 @@
 "use client";
 
 import { useTransition, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditGameSchema, type EditGameValues } from "@/schemas/game";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -167,9 +168,7 @@ export function EditGameForm({
           )}
         />
         {errors.description && (
-          <p className="field-error-text">
-            {errors.description.message}
-          </p>
+          <p className="field-error-text">{errors.description.message}</p>
         )}
       </div>
 

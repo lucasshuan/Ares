@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../../database/database.provider';
-import { CreateLeagueInput, UpdateLeagueInput } from './dto/leagues.input';
+import {
+  CreateStandardLeagueInput,
+  UpdateStandardLeagueInput,
+} from './dto/standard-leagues.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 
-function mapLeagueWithEvent<
+function mapStandardLeagueWithEvent<
   T extends {
     eventId: string;
     event: {
@@ -11,8 +14,8 @@ function mapLeagueWithEvent<
       id?: string;
       name: string;
       slug: string;
-      description: string | null;
       type: string;
+      description: string | null;
       startDate: Date | null;
       endDate: Date | null;
       approvedAt?: Date | null;
@@ -38,59 +41,33 @@ function mapLeagueWithEvent<
 }
 
 @Injectable()
-export class LeaguesService {
+export class StandardLeaguesService {
   constructor(private databaseProvider: DatabaseProvider) {}
 
   async findAll(pagination: PaginationInput) {
     const { skip, take } = pagination;
 
     const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.league.findMany({
+      this.databaseProvider.standardLeague.findMany({
         skip,
         take,
         include: {
           event: {
-            include: {
-              game: true,
-            },
+            include: { game: true },
           },
         },
         orderBy: {
-          event: {
-            createdAt: 'desc',
-          },
+          event: { createdAt: 'desc' },
         },
       }),
-      this.databaseProvider.league.count(),
+      this.databaseProvider.standardLeague.count(),
     ]);
 
     return {
-      nodes: nodes.map(mapLeagueWithEvent),
+      nodes: nodes.map(mapStandardLeagueWithEvent),
       totalCount,
       hasNextPage: skip + take < totalCount,
     };
-  }
-
-  async getGame(gameId: string) {
-    return this.databaseProvider.game.findUnique({
-      where: { id: gameId },
-    });
-  }
-
-  async getEntries(leagueId: string) {
-    return this.databaseProvider.leagueEntry.findMany({
-      where: { leagueId },
-      include: {
-        player: {
-          include: {
-            user: true,
-          },
-        },
-      },
-      orderBy: {
-        currentElo: 'desc',
-      },
-    });
   }
 
   async findByGameAndSlug(gameSlug: string, eventSlug: string) {
@@ -99,7 +76,7 @@ export class LeaguesService {
     });
     if (!game) return null;
 
-    const league = await this.databaseProvider.league.findFirst({
+    const league = await this.databaseProvider.standardLeague.findFirst({
       where: {
         event: {
           gameId: game.id,
@@ -108,22 +85,33 @@ export class LeaguesService {
       },
       include: {
         event: {
-          include: {
-            game: true,
-          },
+          include: { game: true },
         },
       },
     });
 
-    return league ? mapLeagueWithEvent(league) : null;
+    return league ? mapStandardLeagueWithEvent(league) : null;
   }
 
-  async update(id: string, data: UpdateLeagueInput, userId?: string) {
+  async getEntries(leagueId: string) {
+    return this.databaseProvider.standardLeagueEntry.findMany({
+      where: { leagueId },
+      include: {
+        player: {
+          include: { user: true },
+        },
+      },
+      orderBy: [{ points: 'desc' }, { wins: 'desc' }],
+    });
+  }
+
+  async update(id: string, data: UpdateStandardLeagueInput, userId?: string) {
     if (userId) {
-      const league = await this.databaseProvider.league.findUnique({
+      const league = await this.databaseProvider.standardLeague.findUnique({
         where: { eventId: id },
         include: { event: { select: { authorId: true } } },
       });
+
       if (league?.event?.authorId && league.event.authorId !== userId) {
         throw new Error('You do not have permission to edit this league');
       }
@@ -131,15 +119,11 @@ export class LeaguesService {
 
     const { name, slug, description, allowedFormats, ...leagueData } = data;
 
-    const league = await this.databaseProvider.league.update({
+    const league = await this.databaseProvider.standardLeague.update({
       where: { eventId: id },
       data: {
         event: {
-          update: {
-            name,
-            slug,
-            description,
-          },
+          update: { name, slug, description },
         },
         ...(allowedFormats ? { allowedFormats } : {}),
         ...leagueData,
@@ -147,10 +131,10 @@ export class LeaguesService {
       include: { event: true },
     });
 
-    return mapLeagueWithEvent(league);
+    return mapStandardLeagueWithEvent(league);
   }
 
-  async create(data: CreateLeagueInput) {
+  async create(data: CreateStandardLeagueInput) {
     const {
       gameId,
       gameName,
@@ -167,7 +151,6 @@ export class LeaguesService {
     let finalGameId = gameId;
 
     if (!finalGameId && gameName) {
-      // Create new game
       const gameSlug = gameName
         .toLowerCase()
         .trim()
@@ -178,11 +161,7 @@ export class LeaguesService {
         .replace(/-{2,}/g, '-');
 
       const game = await this.databaseProvider.game.create({
-        data: {
-          name: gameName,
-          slug: gameSlug,
-          authorId,
-        },
+        data: { name: gameName, slug: gameSlug, authorId },
       });
       finalGameId = game.id;
     }
@@ -191,12 +170,12 @@ export class LeaguesService {
       throw new Error('Game ID or Game Name is required');
     }
 
-    const league = await this.databaseProvider.league.create({
+    const league = await this.databaseProvider.standardLeague.create({
       data: {
         event: {
           create: {
             gameId: finalGameId,
-            type: 'LEAGUE',
+            type: 'STANDARD_LEAGUE',
             name,
             slug,
             description,
@@ -211,30 +190,17 @@ export class LeaguesService {
       include: { event: true },
     });
 
-    return mapLeagueWithEvent(league);
+    return mapStandardLeagueWithEvent(league);
   }
 
-  async addPlayer(leagueId: string, playerId: string, initialElo?: number) {
-    let elo = initialElo;
-    if (elo === undefined) {
-      const league = await this.databaseProvider.league.findUnique({
-        where: { eventId: leagueId },
-      });
-      elo = league?.initialElo ?? 1000;
-    }
-
-    return this.databaseProvider.leagueEntry.create({
-      data: {
-        leagueId,
-        playerId,
-        currentElo: elo,
-      },
+  async addPlayer(leagueId: string, playerId: string) {
+    return this.databaseProvider.standardLeagueEntry.create({
+      data: { leagueId, playerId },
     });
   }
 
   async registerSelf(leagueId: string, userId: string) {
-    // 1. Find or create player for this game
-    const league = await this.databaseProvider.league.findUnique({
+    const league = await this.databaseProvider.standardLeague.findUnique({
       where: { eventId: leagueId },
       include: { event: true },
     });
@@ -246,20 +212,12 @@ export class LeaguesService {
 
     if (!player) {
       player = await this.databaseProvider.player.create({
-        data: {
-          gameId: league.event.gameId,
-          userId,
-        },
+        data: { gameId: league.event.gameId, userId },
       });
     }
 
-    // 2. Add to league entries
-    return this.databaseProvider.leagueEntry.create({
-      data: {
-        leagueId,
-        playerId: player.id,
-        currentElo: league.initialElo,
-      },
+    return this.databaseProvider.standardLeagueEntry.create({
+      data: { leagueId, playerId: player.id },
     });
   }
 }
