@@ -7,7 +7,7 @@ import { GetUserQuery } from "@/lib/apollo/generated/graphql";
 import { getServerAuthSession } from "@/auth";
 import { getTranslations } from "next-intl/server";
 import { buttonVariants } from "@/components/ui/button";
-import { ProfileManageActions } from "./profile-manage-actions";
+import { ProfileManageActions } from "@/components/triggers/profile/profile-manage-actions";
 import { ProfileTabs } from "@/components/ui/tabs";
 import { Metadata } from "next";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";

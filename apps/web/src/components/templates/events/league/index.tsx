@@ -9,7 +9,7 @@ import { LeagueRegistrationTrigger } from "@/components/triggers/league/league-r
 import { getLocale } from "next-intl/server";
 import { formatDate } from "@/lib/date-utils";
 import { LeagueTable } from "@/components/tables/league-table";
-import { LeagueAdminPanel } from "./admin-panel";
+import { LeagueAdminSection } from "./admin-section";
 import { GetLeagueQuery } from "@/lib/apollo/generated/graphql";
 import { Session } from "next-auth";
 
@@ -83,7 +83,7 @@ async function LeagueContent({
   gameSlug,
 }: LeagueContentProps) {
   const { game, entries } = league;
-  const t = await getTranslations("GamePage");
+  const t = await getTranslations("League");
   const locale = await getLocale();
 
   return (
@@ -181,7 +181,7 @@ async function LeagueContent({
           )}
 
           {game.status === "APPROVED" && isEditor && (
-            <LeagueAdminPanel
+            <LeagueAdminSection
               league={{
                 id: league.id,
                 gameId: league.gameId,
@@ -190,15 +190,16 @@ async function LeagueContent({
                 description: league.description,
                 type: "RANKED_LEAGUE",
                 allowDraw: league.allowDraw,
+                allowedFormats: league.allowedFormats,
+                game: league.game,
                 initialElo: league.initialElo,
                 kFactor: league.kFactor,
                 scoreRelevance: league.scoreRelevance,
                 inactivityDecay: league.inactivityDecay,
                 inactivityThresholdHours: league.inactivityThresholdHours,
                 inactivityDecayFloor: league.inactivityDecayFloor,
-                allowedFormats: league.allowedFormats,
-                game: league.game,
               }}
+              leagueType="elo"
             />
           )}
         </div>

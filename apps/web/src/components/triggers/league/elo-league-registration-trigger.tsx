@@ -20,7 +20,7 @@ export function EloLeagueRegistrationTrigger({
   isRegistered,
   isLoggedIn,
 }: EloLeagueRegistrationTriggerProps) {
-  const t = useTranslations("GamePage");
+  const t = useTranslations("League");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   if (isRegistered) {

@@ -42,7 +42,19 @@
     "admin": "Admin",
     "online": "Online",
     "notifications": "Notifications",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "userMenu": {
+      "viewProfile": "View profile",
+      "editProfile": "Edit profile",
+      "editAccount": "Manage account",
+      "logout": "Logout",
+      "login": "Login"
+    },
+    "locale": {
+      "label": "Change language",
+      "en": "English",
+      "pt": "Português"
+    }
   },
   "Layout": {
     "searchPlaceholder": "Search...",
@@ -131,15 +143,21 @@
     "eventsTitle": "Events",
     "eventsDescription": "Track and participate in competitive leagues and tournaments for {gameName}.",
     "league": "League",
-    "playersCount": "players",
-    "elo": "Points",
-    "noPlayers": "This league doesn't have players yet.",
     "noEvents": "No events created for this game.",
     "noEventsDescription": "Once events are entered, this page will list leagues and tournaments.",
     "sidebarDescription": "Track player leagues and performance for this game.",
     "sidebarPlayers": "Players",
     "playOnSteam": "Play on Steam",
     "visitWebsite": "Visit official website",
+    "ideaBy": "Idea by",
+    "events": "Events",
+    "posts": "Posts",
+    "pendingNotice": "Game is pending and needs approval"
+  },
+  "League": {
+    "playersCount": "players",
+    "elo": "Points",
+    "noPlayers": "This league doesn't have players yet.",
     "clickToViewFullLeague": "Click to view full league",
     "viewGame": "View game",
     "leagueInfo": "League Info",
@@ -163,10 +181,6 @@
     "register": "Register",
     "loginToRegister": "Log in to join",
     "alreadyRegistered": "Already registered",
-    "ideaBy": "Idea by",
-    "events": "Events",
-    "posts": "Posts",
-    "pendingNotice": "Game is pending and needs approval",
     "noDescription": "No description."
   },
   "SiteFooter": {
@@ -499,6 +513,14 @@
       "trigger": "Edit league",
       "title": "Modify League",
       "description": "Update information for this league category.",
+      "steps": {
+        "game": "Game",
+        "general": "General",
+        "format": "Format",
+        "matchFormats": "Match"
+      },
+      "next": "Next Step",
+      "back": "Back",
       "name": {
         "label": "League Name",
         "placeholder": "e.g., Blitz, Rapid, Daily..."

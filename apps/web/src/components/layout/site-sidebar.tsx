@@ -87,7 +87,7 @@ function LocaleDropdown({
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const tLocale = useTranslations("LocaleSwitcher");
+  const tLocale = useTranslations("Sidebar.locale");
 
   // Calculate fixed position from button rect
   const updateCoords = () => {
@@ -349,7 +349,7 @@ function UserMenuDropdown({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("Sidebar");
-  const tNavbar = useTranslations("Navbar");
+  const tUser = useTranslations("Sidebar.userMenu");
   const pathname = usePathname();
 
   const updateCoords = () => {
@@ -452,7 +452,7 @@ function UserMenuDropdown({
           className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/6 hover:text-white"
         >
           <User className="size-4 shrink-0 text-white/40" />
-          <span>{tNavbar("viewProfile")}</span>
+          <span>{tUser("viewProfile")}</span>
         </Link>
         <button
           type="button"
@@ -464,7 +464,7 @@ function UserMenuDropdown({
           className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/6 hover:text-white"
         >
           <Pencil className="size-4 shrink-0 text-white/40" />
-          <span>{tNavbar("editProfile")}</span>
+          <span>{tUser("editProfile")}</span>
         </button>
       </div>
 
@@ -474,7 +474,7 @@ function UserMenuDropdown({
       <div className="p-1.5">
         <div className="flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/25 select-none">
           <Settings className="size-4 shrink-0" />
-          <span className="flex-1">{tNavbar("editAccount")}</span>
+          <span className="flex-1">{tUser("editAccount")}</span>
           <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
             {t("soon")}
           </span>
@@ -504,7 +504,7 @@ function UserMenuDropdown({
           className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-red-400/70 transition-colors hover:bg-red-500/10 hover:text-red-400"
         >
           <LogOut className="size-4 shrink-0" />
-          <span>{tNavbar("logout")}</span>
+          <span>{tUser("logout")}</span>
         </button>
       </div>
     </div>
@@ -625,7 +625,7 @@ function SidebarBody({
   const isLoading = status === "loading";
 
   const t = useTranslations("Sidebar");
-  const tNavbar = useTranslations("Navbar");
+  const tUser = useTranslations("Sidebar.userMenu");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -885,7 +885,7 @@ function SidebarBody({
             <>
               <button
                 onClick={() => setAuthModalOpen(true)}
-                title={tNavbar("login")}
+                title={tUser("login")}
                 className={cn(
                   "no-lift flex items-center justify-center text-sm font-medium",
                   "bg-primary/90 hover:bg-primary text-white transition-colors",
@@ -895,7 +895,7 @@ function SidebarBody({
                 )}
               >
                 <LogIn className="size-4 shrink-0" />
-                {!effective && <span>{tNavbar("login")}</span>}
+                {!effective && <span>{tUser("login")}</span>}
               </button>
               <AuthModal
                 isOpen={authModalOpen}

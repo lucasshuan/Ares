@@ -42,7 +42,19 @@
     "admin": "Admin",
     "online": "Online",
     "notifications": "Notificações",
-    "appearance": "Aparência"
+    "appearance": "Aparência",
+    "userMenu": {
+      "viewProfile": "Ver perfil",
+      "editProfile": "Editar perfil",
+      "editAccount": "Gerenciar conta",
+      "logout": "Sair",
+      "login": "Login"
+    },
+    "locale": {
+      "label": "Alterar idioma",
+      "en": "English",
+      "pt": "Português"
+    }
   },
   "Layout": {
     "searchPlaceholder": "Pesquisar...",
@@ -90,6 +102,7 @@
     "cardFallbackDescription": "Abra a página do jogo para inspecionar as ligas atuais.",
     "noGamesTitle": "Nenhum jogo disponível",
     "noGamesDescription": "Adicione jogos ao banco de dados ou reconecte o banco atual para carregar a lista aqui.",
+    "viewAll": "Ver todos os jogos",
     "searchPlaceholder": "Pesquisar por um jogo...",
     "sortPopular": "Mais Populares",
     "sortAlphabetical": "Alfabética (A-Z)",
@@ -130,15 +143,21 @@
     "eventsTitle": "Eventos",
     "eventsDescription": "Acompanhe e participe das ligas e torneios competitivos de {gameName}.",
     "league": "Liga",
-    "playersCount": "jogadores",
-    "elo": "Pontos",
-    "noPlayers": "Este evento ainda não tem jogadores.",
     "noEvents": "Nenhum evento criado para este jogo.",
     "noEventsDescription": "Assim que eventos forem inseridos, esta página listará ligas e torneios.",
     "sidebarDescription": "Acompanhe classificações e desempenho de jogadores para este jogo.",
     "sidebarPlayers": "Jogadores",
     "playOnSteam": "Jogar na Steam",
     "visitWebsite": "Visitar site oficial",
+    "ideaBy": "Ideia de",
+    "events": "Eventos",
+    "posts": "Postagens",
+    "pendingNotice": "O jogo está pendente e precisa de aprovação"
+  },
+  "League": {
+    "playersCount": "jogadores",
+    "elo": "Pontos",
+    "noPlayers": "Este evento ainda não tem jogadores.",
     "clickToViewFullLeague": "Clique para ver a liga completa",
     "viewGame": "Ver jogo",
     "leagueInfo": "Informações da Liga",
@@ -162,10 +181,6 @@
     "register": "Registrar-se",
     "loginToRegister": "Faça login para participar",
     "alreadyRegistered": "Já registrado",
-    "ideaBy": "Ideia de",
-    "events": "Eventos",
-    "posts": "Postagens",
-    "pendingNotice": "O jogo está pendente e precisa de aprovação",
     "noDescription": "Sem descrição."
   },
   "SiteFooter": {
@@ -498,6 +513,14 @@
       "trigger": "Modificar liga",
       "title": "Modificar Liga",
       "description": "Atualize as informações desta categoria de liga.",
+      "steps": {
+        "game": "Jogo",
+        "general": "Geral",
+        "format": "Formato",
+        "matchFormats": "Partida"
+      },
+      "next": "Próxima Etapa",
+      "back": "Voltar",
       "name": {
         "label": "Nome da Liga",
         "placeholder": "Ex: Blitz, Rapid, Diário..."

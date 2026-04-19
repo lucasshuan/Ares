@@ -18,7 +18,7 @@ export function StandardLeagueRegistrationTrigger({
   isRegistered,
   isLoggedIn,
 }: StandardLeagueRegistrationTriggerProps) {
-  const t = useTranslations("GamePage");
+  const t = useTranslations("League");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   if (isRegistered) {

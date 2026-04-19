@@ -16,7 +16,7 @@ interface LeagueCardProps {
 }
 
 export function LeagueCard({ league, game }: LeagueCardProps) {
-  const t = useTranslations("GamePage");
+  const t = useTranslations("League");
 
   return (
     <Link

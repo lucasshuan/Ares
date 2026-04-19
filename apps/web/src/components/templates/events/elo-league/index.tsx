@@ -9,7 +9,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { EloLeagueRegistrationTrigger } from "@/components/triggers/league/elo-league-registration-trigger";
 import { formatDate } from "@/lib/date-utils";
 import { LeagueTable } from "@/components/tables/league-table";
-import { EloLeagueAdminPanel } from "./admin-panel";
+import { LeagueAdminSection } from "../league/admin-section";
 
 type EloLeagueEntry = {
   id: string;
@@ -118,7 +118,7 @@ async function EloLeagueContent({
   gameSlug,
 }: EloLeagueContentProps) {
   const { game, entries } = league;
-  const t = await getTranslations("GamePage");
+  const t = await getTranslations("League");
   const locale = await getLocale();
 
   return (
@@ -212,23 +212,25 @@ async function EloLeagueContent({
           )}
 
           {game.status === "APPROVED" && isEditor && (
-            <EloLeagueAdminPanel
+            <LeagueAdminSection
               league={{
                 id: league.id,
                 gameId: league.gameId,
                 name: league.name,
                 slug: league.slug,
                 description: league.description,
+                type: "RANKED_LEAGUE",
                 allowDraw: league.allowDraw,
+                allowedFormats: league.allowedFormats,
+                game: league.game,
                 initialElo: league.initialElo,
                 kFactor: league.kFactor,
                 scoreRelevance: league.scoreRelevance,
                 inactivityDecay: league.inactivityDecay,
                 inactivityThresholdHours: league.inactivityThresholdHours,
                 inactivityDecayFloor: league.inactivityDecayFloor,
-                allowedFormats: league.allowedFormats,
-                game: league.game,
               }}
+              leagueType="elo"
             />
           )}
         </div>

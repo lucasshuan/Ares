@@ -9,7 +9,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { StandardLeagueRegistrationTrigger } from "@/components/triggers/league/standard-league-registration-trigger";
 import { formatDate } from "@/lib/date-utils";
 import { StandardLeagueTable } from "@/components/tables/standard-league-table";
-import { StandardLeagueAdminPanel } from "./admin-panel";
+import { LeagueAdminSection } from "../league/admin-section";
 
 type StandardLeagueEntry = {
   id: string;
@@ -124,7 +124,7 @@ async function StandardLeagueContent({
   gameSlug,
 }: StandardLeagueContentProps) {
   const { game, entries } = league;
-  const t = await getTranslations("GamePage");
+  const t = await getTranslations("League");
   const locale = await getLocale();
 
   return (
@@ -237,20 +237,22 @@ async function StandardLeagueContent({
           )}
 
           {game.status === "APPROVED" && isEditor && (
-            <StandardLeagueAdminPanel
+            <LeagueAdminSection
               league={{
                 id: league.id,
                 gameId: league.gameId,
                 name: league.name,
                 slug: league.slug,
                 description: league.description,
+                type: "STANDARD_LEAGUE",
                 allowDraw: league.allowDraw,
+                allowedFormats: league.allowedFormats,
+                game: league.game,
                 pointsPerWin: league.pointsPerWin,
                 pointsPerDraw: league.pointsPerDraw,
                 pointsPerLoss: league.pointsPerLoss,
-                allowedFormats: league.allowedFormats,
-                game: league.game,
               }}
+              leagueType="standard"
             />
           )}
         </div>

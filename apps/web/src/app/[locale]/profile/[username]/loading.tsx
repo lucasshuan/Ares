@@ -8,7 +8,7 @@ export default async function ProfileLoading() {
     <main>
       <div className="mx-auto mt-24 flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
         {/* Sidebar Skeleton */}
-        <aside className="w-full shrink-0 lg:w-[320px] xl:w-[360px]">
+        <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
           <div className="glass-panel sticky top-28 overflow-hidden rounded-4xl">
             <div className="relative z-10 flex flex-col items-center p-8 text-center">
               {/* Avatar Skeleton */}
@@ -18,7 +18,7 @@ export default async function ProfileLoading() {
               <div className="mt-6 h-8 w-40 animate-pulse rounded-lg bg-white/10" />
 
               {/* Bio Skeleton */}
-              <div className="mt-6 w-full max-w-[280px] space-y-2">
+              <div className="mt-6 w-full max-w-70 space-y-2">
                 <div className="h-3 w-full animate-pulse rounded bg-white/5" />
                 <div className="mx-auto h-3 w-5/6 animate-pulse rounded bg-white/5" />
                 <div className="mx-auto h-3 w-4/6 animate-pulse rounded bg-white/5" />
@@ -31,7 +31,7 @@ export default async function ProfileLoading() {
         <div className="min-w-0 flex-1 space-y-6">
           <div className="space-y-2">
             <div className="border-b-[3px] border-white/10">
-              <nav className="-mb-[3px] flex space-x-8" aria-label="Tabs">
+              <nav className="-mb-0.75 flex space-x-8" aria-label="Tabs">
                 <span className="border-primary text-primary flex items-center gap-2.5 border-b-[3px] pt-4 pb-2 text-base font-medium whitespace-nowrap transition-all">
                   <Gamepad2 className="size-5" />
                   {t("playedGamesTab")}

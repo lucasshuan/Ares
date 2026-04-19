@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import { Settings2, UserPlus } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useUser } from "@/components/providers";
 import { ActionButton } from "@/components/ui/action-button";
 import { EditLeagueModal } from "@/components/modals/league/edit-league-modal";
 import { AddPlayerToLeagueModal } from "@/components/modals/league/add-player-to-league-modal";
-import { useTranslations } from "next-intl";
-import { useUser } from "@/components/providers";
 
-type LeagueForPanel = {
+type LeagueAdminData = {
   id: string;
   gameId: string;
   name: string;
   slug: string;
   description?: string | null;
   type: "RANKED_LEAGUE" | "STANDARD_LEAGUE";
-  allowDraw?: boolean;
-  allowedFormats?: string[];
-  game?: { name: string; slug: string; thumbnailImageUrl?: string | null };
+  allowDraw: boolean;
+  allowedFormats: string[];
+  game: { name: string; slug: string; thumbnailImageUrl?: string | null };
   initialElo?: number;
   kFactor?: number;
   scoreRelevance?: number;
@@ -29,18 +29,21 @@ type LeagueForPanel = {
   pointsPerLoss?: number;
 };
 
-interface LeagueAdminPanelProps {
-  league: LeagueForPanel;
+interface LeagueAdminSectionProps {
+  league: LeagueAdminData;
+  leagueType: "elo" | "standard";
 }
 
-export function LeagueAdminPanel({ league }: LeagueAdminPanelProps) {
+export function LeagueAdminSection({
+  league,
+  leagueType,
+}: LeagueAdminSectionProps) {
   const { canManageLeagues, canManagePlayers } = useUser();
-  const hasAnyAction = canManageLeagues || canManagePlayers;
   const t = useTranslations();
-  const [isEditLeagueOpen, setIsEditLeagueOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
 
-  if (!hasAnyAction) return null;
+  if (!canManageLeagues && !canManagePlayers) return null;
 
   return (
     <div className="mt-8 space-y-3">
@@ -56,7 +59,7 @@ export function LeagueAdminPanel({ league }: LeagueAdminPanelProps) {
         <ActionButton
           icon={Settings2}
           label={t("Modals.EditLeague.trigger")}
-          onClick={() => setIsEditLeagueOpen(true)}
+          onClick={() => setIsEditOpen(true)}
         />
       )}
 
@@ -69,34 +72,15 @@ export function LeagueAdminPanel({ league }: LeagueAdminPanelProps) {
       )}
 
       <EditLeagueModal
-        league={{
-          id: league.id,
-          gameId: league.gameId,
-          name: league.name,
-          slug: league.slug,
-          description: league.description,
-          type: league.type,
-          allowDraw: league.allowDraw ?? false,
-          allowedFormats: league.allowedFormats ?? ["ONE_V_ONE"],
-          game: league.game ?? { name: "", slug: "" },
-          initialElo: league.initialElo,
-          kFactor: league.kFactor,
-          scoreRelevance: league.scoreRelevance,
-          inactivityDecay: league.inactivityDecay,
-          inactivityThresholdHours: league.inactivityThresholdHours,
-          inactivityDecayFloor: league.inactivityDecayFloor,
-          pointsPerWin: league.pointsPerWin,
-          pointsPerDraw: league.pointsPerDraw,
-          pointsPerLoss: league.pointsPerLoss,
-        }}
-        isOpen={isEditLeagueOpen}
-        onClose={() => setIsEditLeagueOpen(false)}
+        league={league}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
       />
 
       <AddPlayerToLeagueModal
         gameId={league.gameId}
         leagueId={league.id}
-        leagueType="elo"
+        leagueType={leagueType}
         isOpen={isAddPlayerOpen}
         onClose={() => setIsAddPlayerOpen(false)}
       />

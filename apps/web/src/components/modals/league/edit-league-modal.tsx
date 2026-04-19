@@ -37,8 +37,7 @@ export function EditLeagueModal({
   isOpen,
   onClose,
 }: EditLeagueModalProps) {
-  const t = useTranslations("Modals");
-  const addLeagueT = useTranslations("Modals.AddLeague");
+  const t = useTranslations("Modals.EditLeague");
   const [isPending, setIsPending] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
@@ -61,10 +60,10 @@ export function EditLeagueModal({
   }, [currentStep]);
 
   const steps = [
-    { label: addLeagueT("steps.game") },
-    { label: addLeagueT("steps.format") },
-    { label: addLeagueT("steps.general") },
-    { label: addLeagueT("steps.matchFormats") },
+    { label: t("steps.game") },
+    { label: t("steps.format") },
+    { label: t("steps.general") },
+    { label: t("steps.matchFormats") },
   ];
 
   const isStepUnlocked = (step: number) => {
@@ -76,8 +75,8 @@ export function EditLeagueModal({
     <MultiStepModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t("EditLeague.title")}
-      description={t("EditLeague.description")}
+      title={t("title")}
+      description={t("description")}
       steps={steps}
       currentStep={currentStep}
       onNext={() => setCurrentStep((s) => s + 1)}
@@ -85,11 +84,11 @@ export function EditLeagueModal({
       onStepClick={setCurrentStep}
       isStepUnlocked={isStepUnlocked}
       confirmText={
-        isPending ? t("EditLeague.submitting") : t("EditLeague.submit")
+        isPending ? t("submitting") : t("submit")
       }
-      nextText={addLeagueT("next")}
-      backText={addLeagueT("back")}
-      cancelText={t("EditLeague.cancel") || "Cancel"}
+      nextText={t("next")}
+      backText={t("back")}
+      cancelText={t("cancel") || "Cancel"}
       formId="edit-league-form"
       isPending={isPending}
       disabledNext={!isStepValid || !isValid}

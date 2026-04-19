@@ -24,7 +24,7 @@ interface StandardLeagueTableProps {
 }
 
 export function StandardLeagueTable({ entries }: StandardLeagueTableProps) {
-  const t = useTranslations("GamePage");
+  const t = useTranslations("League");
 
   const columns = React.useMemo(
     () => [

@@ -321,7 +321,7 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 - [ ] **3.1 Reestruturar Documentação**
   - [ ] Atualizar o README principal com instruções claras de setup do monorepo e variáveis de ambiente.
-  - [ ] Criar documento de arquitetura detalhando a estrutura dos apps, padrões de código, práticas recomendadas e diretórios.
+  - [ ] Criar um documento de referência arquitetural (`ARCHITECTURE.md`) que sirva como fonte de verdade para qualquer agente ou desenvolvedor que precise fazer alterações no projeto. Deve cobrir: estrutura de diretórios e responsabilidade de cada camada (`apps/web`, `apps/api`, `packages/*`), convenções de naming e casing, padrões obrigatórios (ex: onde criar queries GraphQL, como estruturar resolvers, onde ficam validações), componentes de UI reutilizáveis e quando usar cada um, fluxo de dados entre camadas (Prisma → Service → Resolver → Codegen → Frontend), regras de estilo (Tailwind, tokens, variáveis), padrões de i18n, estratégia de permissões e guards, e qualquer _boa_ decisão arquitetural já tomada que deva ser preservada.
   - arquivos afetados: `README.md`
   - dificuldade: baixa | impacto: baixo
 
@@ -344,9 +344,10 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 
 ### Etapa 4. Melhorias de UX e Qualidade de Vida
 
-- [ ] **4.1 Padronizar next-intl**
-  - [ ] Analise todos os arquivos que possuem mais de um useTranslation e faça os ajustes necessários para ter apenas um.
-  - [ ] Reformule e reestruture os arquivos de tradução en.json e pt.json para que fiquem mais organizados e fáceis de manter na atual arquitetura do projeto.
+- [x] **4.1 Padronizar next-intl**
+  - [x] Reformule e reestruture os arquivos de tradução en.json e pt.json para que fiquem mais organizados e fáceis de manter na atual arquitetura do projeto.
+  - [x] Certifique-se de que as traduções não tenham quebrado e que todas as chaves estejam sendo usadas corretamente no código.
+  - [x] Analise todos os arquivos que possuem mais de um useTranslation e faça os ajustes necessários para ter apenas um.
   - arquivos afetados: `apps/web/src/**/*.tsx`
   - dificuldade: média | impacto: baixo
 
@@ -360,6 +361,8 @@ O deploy básico já existe via GitHub -> Vercel/Render, então CD não é o gar
 - [ ] **4.3 Corrigir inconsistências de UI**
   - [ ] Unificar o design dos modais e formulários para criar uma experiência mais coesa.
   - [ ] Garantir que as mensagens de erro sejam claras e consistentes em toda a aplicação.
+  - [ ] Revisar o uso de componentes reutilizáveis para evitar duplicação e inconsistências visuais.
+  - [ ] Corrija e faça uso da já criada estrutura de componentes no diretório `apps/web/src/components/templates` seguindo exemplo dos componentes existentes.
   - arquivos afetados: `apps/web/src/components/*`
   - dificuldade: média | impacto: baixo
 
