@@ -883,8 +883,6 @@ function SidebarBody({
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
       <div className="shrink-0">
-        {/* ── Divider ─────────────────────────────────────────────────────── */}
-        <div className="mx-3 h-px shrink-0 bg-white/4" />
 
         <div
           className={cn(
@@ -917,9 +915,6 @@ function SidebarBody({
                 onClose={() => setAuthModalOpen(false)}
                 isPending={false}
               />
-
-              {/* ── Divider ─────────────────────────────────────────────────────── */}
-              <div className="mx-3 h-px shrink-0 bg-white/4" />
             </>
           ) : null}
 

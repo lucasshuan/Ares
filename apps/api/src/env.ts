@@ -11,6 +11,9 @@ export const envSchema = z.object({
   DISCORD_CLIENT_SECRET: z.string().min(1),
   DISCORD_CALLBACK_URL: z.string().optional(),
   PORT: z.coerce.number().default(4000),
+  LOG_LEVEL: z
+    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
+    .default('error'),
   AWS_ACCESS_KEY_ID: z.string().min(1),
   AWS_SECRET_ACCESS_KEY: z.string().min(1),
   AWS_S3_BUCKET: z.string().min(1),

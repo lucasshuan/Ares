@@ -4,6 +4,7 @@ import type { NextAuthOptions, User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "@/env";
+import { logger } from "@/lib/logger";
 
 const SESSION_REVALIDATION_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -55,26 +56,39 @@ type FetchSessionResult =
   | { ok: true; data: SessionData }
   | { ok: false; invalidated: boolean };
 
+// NEXT_PUBLIC_API_URL may point to the GraphQL endpoint (e.g. /graphql).
+// REST endpoints live on the base URL, so strip the path component.
+function getApiBaseUrl(): string {
+  const url = new URL(env.NEXT_PUBLIC_API_URL);
+  return url.origin;
+}
+
 async function fetchSessionData(
   accessToken: string,
 ): Promise<FetchSessionResult> {
   try {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/auth/me`, {
+    const response = await fetch(`${getApiBaseUrl()}/auth/me`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
     });
 
     if (response.status === 401 || response.status === 403) {
+      logger.warn({ status: response.status }, "Session invalidated by API");
       return { ok: false, invalidated: true };
     }
 
     if (!response.ok) {
+      logger.warn(
+        { status: response.status },
+        "Non-OK response from /auth/me — keeping session",
+      );
       return { ok: false, invalidated: false };
     }
 
     return { ok: true, data: (await response.json()) as SessionData };
-  } catch {
+  } catch (err) {
     // Network error / API down — don't invalidate session
+    logger.warn({ err }, "Network error during session revalidation — keeping session");
     return { ok: false, invalidated: false };
   }
 }
@@ -154,10 +168,13 @@ export const authOptions = {
         return token;
       }
 
-      // Periodic revalidation: refresh user data from the DB
+      // Periodic revalidation: refresh user data from the DB.
+      // Always revalidate when onboarding is incomplete — that state is
+      // transient and we must confirm the user still exists in the DB.
       const shouldRevalidate =
         !token.lastValidated ||
-        Date.now() - token.lastValidated > SESSION_REVALIDATION_INTERVAL_MS;
+        Date.now() - token.lastValidated > SESSION_REVALIDATION_INTERVAL_MS ||
+        !token.onboardingCompleted;
 
       if (shouldRevalidate && token.accessToken) {
         const result = await fetchSessionData(token.accessToken);

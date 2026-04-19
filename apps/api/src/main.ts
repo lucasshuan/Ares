@@ -28,6 +28,7 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT') ?? 4000;
   await app.listen(port);
-  logger.log(`Application is running on: http://localhost:${port}`);
+  // Always visible regardless of LOG_LEVEL
+  console.log(`🚀 API running on http://localhost:${port}`);
 }
 void bootstrap();

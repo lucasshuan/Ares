@@ -7,6 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getLocalizedPathname, getPreferredClientLocale } from "@/i18n/locale";
 import { getApiUrl } from "@/lib/api";
 
+// Module-level set survives React StrictMode's double-mount in development,
+// ensuring each auth code is exchanged exactly once.
+const processedCodes = new Set<string>();
+
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,7 +37,9 @@ function AuthCallbackContent() {
     }
 
     if (processing.current) return;
+    if (processedCodes.has(code)) return;
     processing.current = true;
+    processedCodes.add(code);
 
     console.log("[AuthCallback] Starting code exchange...", { code });
 

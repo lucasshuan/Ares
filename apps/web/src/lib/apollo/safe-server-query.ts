@@ -5,6 +5,7 @@ import type {
 } from "@apollo/client";
 
 import { getClient } from "@/lib/apollo/apollo-client";
+import { logger } from "@/lib/logger";
 
 type SafeServerQueryOptions<
   TData,
@@ -25,7 +26,8 @@ export async function safeServerQuery<
     })) as { data: TData | undefined };
 
     return data ?? null;
-  } catch {
+  } catch (err) {
+    logger.error({ err }, "[safeServerQuery] Query failed");
     return null;
   }
 }

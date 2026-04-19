@@ -29,22 +29,29 @@ function makeClient() {
     };
   });
 
-  const errorLink = onError(({ error }) => {
-    const statusCode =
-      typeof error === "object" &&
-      error !== null &&
-      "statusCode" in error &&
-      typeof error.statusCode === "number"
-        ? error.statusCode
-        : undefined;
+  const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+    graphQLErrors?.forEach(({ message, locations, path }) => {
+      console.error(
+        `[GraphQL error] op=${operation.operationName} path=${String(path)} message=${message}`,
+        { locations },
+      );
+    });
 
-    const graphQLErrors =
-      typeof error === "object" &&
-      error !== null &&
-      "errors" in error &&
-      Array.isArray(error.errors)
-        ? (error.errors as Array<{ extensions?: Record<string, unknown> }>)
-        : [];
+    if (networkError) {
+      console.error(
+        `[Network error] op=${operation.operationName}: ${networkError.message}`,
+      );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const networkErr: any = networkError;
+    const statusCode =
+      typeof networkErr === "object" &&
+      networkErr !== null &&
+      "statusCode" in networkErr &&
+      typeof networkErr.statusCode === "number"
+        ? networkErr.statusCode
+        : undefined;
 
     // Network-level auth failure (REST or HTTP transport)
     if (statusCode === 401 || statusCode === 403) {
@@ -56,7 +63,7 @@ function makeClient() {
     // NOTE: verify that NestJS maps UnauthorizedException to extensions.code === "UNAUTHENTICATED"
     // before relying on this branch. If the code is different, update the check below.
     if (
-      graphQLErrors.some(
+      graphQLErrors?.some(
         (graphQLError) =>
           graphQLError.extensions?.["code"] === "UNAUTHENTICATED",
       )
