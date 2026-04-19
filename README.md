@@ -58,6 +58,7 @@ pnpm install
 # 2. Configurar variáveis de ambiente
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
+cp packages/db/.env.example packages/db/.env
 ```
 
 **`apps/api/.env`:**
