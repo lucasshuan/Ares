@@ -63,6 +63,25 @@ src/modules/<domain>/
 - **N+1**: relações entre entidades usam `DataLoaderService` via `@ResolveField`. Não carregue relações em includes do Prisma quando um loader já existe.
 - **Logger**: `nestjs-pino`. Use `@Logger()` ou injete via construtor. Não use `console.log`.
 
+#### Padrão de Entidade Base: `Event`
+
+O modelo `Event` no schema Prisma é a entidade raiz de todos os tipos de competição (ligas, futuros torneios). `EloLeague` e `StandardLeague` estendem `Event` via relação 1:1 (`eventId` FK).
+
+**No GraphQL (code-first)**:
+
+- `Event` tem seu próprio `@ObjectType()` em `src/modules/events/event.model.ts`.
+- `EloLeague` e `StandardLeague` expõem `event: Event` como campo direto — **não** repetem campos como `name`, `slug`, `type`, `participationMode` etc.
+- O campo `game` não está declarado em `event.model.ts` com `@Field()`. Ele é adicionado ao schema pelo `@ResolveField` em `EventsResolver`, evitando imports circulares.
+- A propriedade `gameId: string` existe no modelo TypeScript de `Event` (sem `@Field()`), permitindo que o resolver carregue `game` via `DataLoaderService.gameLoader`.
+
+**Regras derivadas**:
+
+- Campos de evento (nome, slug, descrição, datas, status, participationMode) vivem em `event.*` — nunca duplicados no `EloLeague`/`StandardLeague`.
+- Mutations `createEloLeague` / `createStandardLeague` recebem **dois argumentos separados**: `event: CreateEventInput` e `league: CreateEloLeagueInput` (ou Standard).
+- No frontend, acesse `league.event.name`, `league.event.slug`, `league.event.game`, etc.
+- Para obter o `gameId` no cliente, use `league.event.game.id` (query o campo `game { id }` dentro de `event`).
+- Ao adicionar um novo tipo de evento (ex: torneio), crie um novo modelo que referencia `Event` 1:1 e siga o mesmo padrão.
+
 ### `apps/web`
 
 - **Framework**: Next.js 15, App Router, TypeScript strict.

@@ -53,6 +53,11 @@ enum MatchFormat {
   FREE_FOR_ALL
 }
 
+enum ParticipationMode {
+  SOLO
+  TEAM
+}
+
 enum PermissionKey {
   manage_games
   manage_players
@@ -176,8 +181,9 @@ model Event {
   gameId String @map("game_id")
   game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
-  type   EventType
-  status EventStatus @default(PENDING)
+  type              EventType
+  participationMode ParticipationMode @default(SOLO) @map("participation_mode")
+  status            EventStatus       @default(PENDING)
 
   name        String
   slug        String

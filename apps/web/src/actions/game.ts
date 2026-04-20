@@ -218,6 +218,7 @@ export const addEloLeague = createSafeAction(
     inactivityThresholdHours: number;
     inactivityDecayFloor: number;
     allowedFormats: string[];
+    participationMode: string;
   }) => {
     const session = await getServerAuthSession();
     if (!session?.user?.id) throw new Error("Unauthorized");
@@ -229,7 +230,26 @@ export const addEloLeague = createSafeAction(
 
     await getClient().mutate({
       mutation: CREATE_ELO_LEAGUE,
-      variables: { input: { ...data, authorId: session.user.id } },
+      variables: {
+        event: {
+          gameId: data.gameId,
+          gameName: data.gameName,
+          name: data.name,
+          slug: data.slug,
+          description: data.description,
+          participationMode: data.participationMode,
+        },
+        league: {
+          initialElo: data.initialElo,
+          allowDraw: data.allowDraw,
+          kFactor: data.kFactor,
+          scoreRelevance: data.scoreRelevance,
+          inactivityDecay: data.inactivityDecay,
+          inactivityThresholdHours: data.inactivityThresholdHours,
+          inactivityDecayFloor: data.inactivityDecayFloor,
+          allowedFormats: data.allowedFormats,
+        },
+      },
     });
 
     if (game) {
@@ -256,6 +276,7 @@ export const addStandardLeague = createSafeAction(
     pointsPerDraw: number;
     pointsPerLoss: number;
     allowedFormats: string[];
+    participationMode: string;
   }) => {
     const session = await getServerAuthSession();
     if (!session?.user?.id) throw new Error("Unauthorized");
@@ -267,7 +288,23 @@ export const addStandardLeague = createSafeAction(
 
     await getClient().mutate({
       mutation: CREATE_STANDARD_LEAGUE,
-      variables: { input: { ...data, authorId: session.user.id } },
+      variables: {
+        event: {
+          gameId: data.gameId,
+          gameName: data.gameName,
+          name: data.name,
+          slug: data.slug,
+          description: data.description,
+          participationMode: data.participationMode,
+        },
+        league: {
+          allowDraw: data.allowDraw,
+          pointsPerWin: data.pointsPerWin,
+          pointsPerDraw: data.pointsPerDraw,
+          pointsPerLoss: data.pointsPerLoss,
+          allowedFormats: data.allowedFormats,
+        },
+      },
     });
 
     if (game) {
@@ -301,7 +338,7 @@ export const checkLeagueSlugAvailability = createSafeAction(
       ...(game.standardLeagues ?? []),
     ].some(
       (league) =>
-        league.slug === normalizedSlug && league.id !== currentLeagueId,
+        league.event.slug === normalizedSlug && league.id !== currentLeagueId,
     );
 
     return { available: !conflict };
@@ -397,7 +434,24 @@ export const updateEloLeague = createSafeAction(
 
     await getClient().mutate({
       mutation: UPDATE_ELO_LEAGUE,
-      variables: { id: leagueId, input: data },
+      variables: {
+        id: leagueId,
+        event: {
+          name: data.name,
+          slug: data.slug,
+          description: data.description,
+        },
+        league: {
+          initialElo: data.initialElo,
+          allowDraw: data.allowDraw,
+          kFactor: data.kFactor,
+          scoreRelevance: data.scoreRelevance,
+          inactivityDecay: data.inactivityDecay,
+          inactivityThresholdHours: data.inactivityThresholdHours,
+          inactivityDecayFloor: data.inactivityDecayFloor,
+          allowedFormats: data.allowedFormats,
+        },
+      },
     });
 
     revalidatePath("/");
@@ -425,7 +479,21 @@ export const updateStandardLeague = createSafeAction(
 
     await getClient().mutate({
       mutation: UPDATE_STANDARD_LEAGUE,
-      variables: { id: leagueId, input: data },
+      variables: {
+        id: leagueId,
+        event: {
+          name: data.name,
+          slug: data.slug,
+          description: data.description,
+        },
+        league: {
+          allowDraw: data.allowDraw,
+          pointsPerWin: data.pointsPerWin,
+          pointsPerDraw: data.pointsPerDraw,
+          pointsPerLoss: data.pointsPerLoss,
+          allowedFormats: data.allowedFormats,
+        },
+      },
     });
 
     revalidatePath("/");

@@ -1,11 +1,17 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_STANDARD_LEAGUE = gql`
-  mutation CreateStandardLeague($input: CreateStandardLeagueInput!) {
-    createStandardLeague(input: $input) {
+  mutation CreateStandardLeague(
+    $event: CreateEventInput!
+    $league: CreateStandardLeagueInput!
+  ) {
+    createStandardLeague(event: $event, league: $league) {
       id
-      name
-      slug
+      event {
+        name
+        slug
+        participationMode
+      }
     }
   }
 `;
@@ -28,11 +34,17 @@ export const REGISTER_SELF_TO_STANDARD_LEAGUE = gql`
 `;
 
 export const UPDATE_STANDARD_LEAGUE = gql`
-  mutation UpdateStandardLeague($id: ID!, $input: UpdateStandardLeagueInput!) {
-    updateStandardLeague(id: $id, input: $input) {
+  mutation UpdateStandardLeague(
+    $id: ID!
+    $event: UpdateEventInput
+    $league: UpdateStandardLeagueInput
+  ) {
+    updateStandardLeague(id: $id, event: $event, league: $league) {
       id
-      name
-      slug
+      event {
+        name
+        slug
+      }
     }
   }
 `;

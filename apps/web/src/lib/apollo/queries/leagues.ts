@@ -5,14 +5,16 @@ export const GET_LEAGUES = gql`
     leagues: eloLeagues(pagination: $pagination) {
       nodes {
         id
-        name
-        slug
-        type
-        game {
-          id
+        event {
           name
           slug
-          thumbnailImageUrl
+          type
+          game {
+            id
+            name
+            slug
+            thumbnailImageUrl
+          }
         }
         entries {
           id
@@ -39,28 +41,29 @@ export const GET_LEAGUE = gql`
   query GetLeague($gameSlug: String!, $leagueSlug: String!) {
     league: eloLeague(gameSlug: $gameSlug, slug: $leagueSlug) {
       id
-      name
-      slug
-      description
       initialElo
-      type
       allowDraw
       kFactor
       scoreRelevance
       inactivityDecay
       inactivityThresholdHours
       inactivityDecayFloor
-      gameId
-      isApproved
       allowedFormats
-      createdAt
-      updatedAt
-      game {
-        id
+      event {
         name
         slug
-        thumbnailImageUrl
-        status
+        description
+        type
+        isApproved
+        createdAt
+        updatedAt
+        game {
+          id
+          name
+          slug
+          thumbnailImageUrl
+          status
+        }
       }
       entries {
         id

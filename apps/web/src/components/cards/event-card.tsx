@@ -15,33 +15,33 @@ interface EventCardProps {
 export function EventCard({ event }: EventCardProps) {
   const t = useTranslations("EventsPage");
 
-  const isLeague = event.type === "LEAGUE";
+  const isLeague = event.event.type === "LEAGUE";
 
   return (
     <Link
-      href={`/games/${event.game.slug}/events/${event.slug}` as Route}
+      href={`/games/${event.event.game.slug}/events/${event.event.slug}` as Route}
       className="glass-panel group hover:border-primary/30 relative flex h-full min-h-80 flex-col overflow-hidden rounded-4xl border-white/5 p-6 transition-all select-none hover:bg-white/5 active:scale-[0.99]"
     >
       {/* Header */}
       <div className="relative mb-4 flex shrink-0 items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1.5">
           <h3 className="group-hover:text-primary line-clamp-2 text-xl font-bold transition-colors">
-            {event.name}
+            {event.event.name}
           </h3>
 
           {/* Game chip */}
           <div className="flex items-center gap-1.5">
-            {event.game.thumbnailImageUrl ? (
+            {event.event.game.thumbnailImageUrl ? (
               <Image
-                src={event.game.thumbnailImageUrl}
-                alt={event.game.name}
+                src={event.event.game.thumbnailImageUrl}
+                alt={event.event.game.name}
                 width={16}
                 height={16}
                 className="size-4 rounded-sm object-cover opacity-70"
               />
             ) : null}
             <span className="text-muted truncate text-xs font-medium">
-              {event.game.name}
+              {event.event.game.name}
             </span>
           </div>
         </div>

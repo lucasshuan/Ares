@@ -25,7 +25,8 @@ export function EloLeagueTemplate({
   session,
   isEditor,
 }: EloLeagueTemplateProps) {
-  const { game, entries } = league;
+  const { event, entries } = league;
+  const game = event.game;
   const gameSlug = game.slug;
 
   const isUserRegistered = session?.user?.id
@@ -81,7 +82,8 @@ async function EloLeagueContent({
   mappedEntries,
   gameSlug,
 }: EloLeagueContentProps) {
-  const { game, entries } = league;
+  const { event, entries } = league;
+  const game = event.game;
   const t = await getTranslations("League");
   const locale = await getLocale();
 
@@ -153,8 +155,8 @@ async function EloLeagueContent({
               <div className="flex items-center justify-between py-1">
                 <span className="text-[11px] opacity-60">{t("created")}</span>
                 <span className="text-xs font-semibold">
-                  {league.createdAt
-                    ? formatDate(league.createdAt, locale)
+                  {league.event.createdAt
+                    ? formatDate(league.event.createdAt, locale)
                     : "—"}
                 </span>
               </div>
@@ -179,14 +181,14 @@ async function EloLeagueContent({
             <LeagueAdminSection
               league={{
                 id: league.id,
-                gameId: league.gameId,
-                name: league.name,
-                slug: league.slug,
-                description: league.description,
+                gameId: league.event.game.id,
+                name: league.event.name,
+                slug: league.event.slug,
+                description: league.event.description,
                 type: "RANKED_LEAGUE",
                 allowDraw: league.allowDraw,
                 allowedFormats: league.allowedFormats,
-                game: league.game,
+                game: league.event.game,
                 initialElo: league.initialElo,
                 kFactor: league.kFactor,
                 scoreRelevance: league.scoreRelevance,
@@ -203,9 +205,9 @@ async function EloLeagueContent({
       {/* Main Content (Right) */}
       <div className="min-w-0 flex-1 space-y-8">
         <SectionHeader
-          title={league.name}
+          title={league.event.name}
           description={
-            league.description || (
+            league.event.description || (
               <span className="italic opacity-50">{t("noDescription")}</span>
             )
           }

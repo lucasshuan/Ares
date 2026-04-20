@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ParticipationMode } from '@prisma/client';
 import { DatabaseProvider } from '../../database/database.provider';
 import {
   CreateStandardLeagueInput,
   UpdateStandardLeagueInput,
 } from './dto/standard-leagues.input';
+import { CreateEventInput, UpdateEventInput } from '../events/dto/event.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 
 function mapStandardLeagueWithEvent<
@@ -15,6 +17,7 @@ function mapStandardLeagueWithEvent<
       name: string;
       slug: string;
       type: string;
+      participationMode: string;
       description: string | null;
       startDate: Date | null;
       endDate: Date | null;
@@ -27,16 +30,20 @@ function mapStandardLeagueWithEvent<
   return {
     ...league,
     id: league.event.id ?? league.eventId,
-    gameId: league.event.gameId,
-    name: league.event.name,
-    slug: league.event.slug,
-    type: league.event.type,
-    description: league.event.description,
-    startDate: league.event.startDate,
-    endDate: league.event.endDate,
-    isApproved: !!league.event.approvedAt,
-    createdAt: league.event.createdAt,
-    updatedAt: league.event.updatedAt,
+    event: {
+      id: league.event.id ?? league.eventId,
+      gameId: league.event.gameId,
+      type: league.event.type,
+      participationMode: league.event.participationMode,
+      name: league.event.name,
+      slug: league.event.slug,
+      description: league.event.description,
+      isApproved: !!league.event.approvedAt,
+      startDate: league.event.startDate,
+      endDate: league.event.endDate,
+      createdAt: league.event.createdAt,
+      updatedAt: league.event.updatedAt,
+    },
   };
 }
 
@@ -105,7 +112,12 @@ export class StandardLeaguesService {
     });
   }
 
-  async update(id: string, data: UpdateStandardLeagueInput, userId?: string) {
+  async update(
+    id: string,
+    eventData?: UpdateEventInput,
+    leagueData?: UpdateStandardLeagueInput,
+    userId?: string,
+  ) {
     if (userId) {
       const league = await this.databaseProvider.standardLeague.findUnique({
         where: { eventId: id },
@@ -117,16 +129,24 @@ export class StandardLeaguesService {
       }
     }
 
-    const { name, slug, description, allowedFormats, ...leagueData } = data;
+    const { allowedFormats, ...restLeagueData } = leagueData ?? {};
 
     const league = await this.databaseProvider.standardLeague.update({
       where: { eventId: id },
       data: {
-        event: {
-          update: { name, slug, description },
-        },
+        ...(eventData
+          ? {
+              event: {
+                update: {
+                  name: eventData.name,
+                  slug: eventData.slug,
+                  description: eventData.description,
+                },
+              },
+            }
+          : {}),
         ...(allowedFormats ? { allowedFormats } : {}),
-        ...leagueData,
+        ...restLeagueData,
       },
       include: { event: true },
     });
@@ -134,7 +154,11 @@ export class StandardLeaguesService {
     return mapStandardLeagueWithEvent(league);
   }
 
-  async create(data: CreateStandardLeagueInput) {
+  async create(
+    eventData: CreateEventInput,
+    leagueData: CreateStandardLeagueInput,
+    authorId: string,
+  ) {
     const {
       gameId,
       gameName,
@@ -143,10 +167,8 @@ export class StandardLeaguesService {
       description,
       startDate,
       endDate,
-      authorId,
-      allowedFormats,
-      ...leagueData
-    } = data;
+      participationMode,
+    } = eventData;
 
     let finalGameId = gameId;
 
@@ -176,6 +198,8 @@ export class StandardLeaguesService {
           create: {
             gameId: finalGameId,
             type: 'STANDARD_LEAGUE',
+            participationMode: (participationMode ??
+              'SOLO') as ParticipationMode,
             name,
             slug,
             description,
@@ -184,7 +208,6 @@ export class StandardLeaguesService {
             authorId,
           },
         },
-        allowedFormats,
         ...leagueData,
       },
       include: { event: true },

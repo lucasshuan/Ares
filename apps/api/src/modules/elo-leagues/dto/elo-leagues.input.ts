@@ -4,41 +4,16 @@ import { MatchFormat } from '@prisma/client';
 import {
   ArrayNotEmpty,
   IsArray,
-  IsString,
-  IsOptional,
+  IsBoolean,
+  IsIn,
   IsInt,
   IsNumber,
-  IsBoolean,
-  IsDate,
-  IsIn,
+  IsOptional,
   Min,
 } from 'class-validator';
 
 @InputType()
 export class CreateEloLeagueInput {
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  gameId?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  gameName?: string;
-
-  @Field()
-  @IsString()
-  name: string;
-
-  @Field()
-  @IsString()
-  slug: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  description?: string;
-
   @Field(() => Int)
   @IsInt()
   @Min(0)
@@ -77,39 +52,10 @@ export class CreateEloLeagueInput {
   @ArrayNotEmpty()
   @IsIn(MATCH_FORMATS, { each: true })
   allowedFormats: MatchFormat[];
-
-  @Field({ nullable: true })
-  @IsDate()
-  @IsOptional()
-  startDate?: Date;
-
-  @Field({ nullable: true })
-  @IsDate()
-  @IsOptional()
-  endDate?: Date;
-
-  @Field()
-  @IsString()
-  authorId: string;
 }
 
 @InputType()
 export class UpdateEloLeagueInput {
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  slug?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  description?: string;
-
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()

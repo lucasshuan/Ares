@@ -25,7 +25,9 @@ export const GET_USER = gql`
           position
           league {
             id
-            name
+            event {
+              name
+            }
           }
         }
       }

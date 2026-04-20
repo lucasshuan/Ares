@@ -225,7 +225,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                                     {t("league")}
                                   </p>
                                   <p className="font-medium">
-                                    {entry.league?.name}
+                                    {entry.league?.event?.name}
                                   </p>
                                 </div>
                                 <div className="text-right">

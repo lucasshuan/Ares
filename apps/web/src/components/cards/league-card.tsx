@@ -20,7 +20,7 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
 
   return (
     <Link
-      href={`/games/${game}/events/${league.slug}`}
+      href={`/games/${game}/events/${league.event.slug}`}
       className="glass-panel group hover:border-primary/30 relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-4xl border-white/5 p-6 transition-all select-none hover:bg-white/5 active:scale-[0.99]"
     >
       {/* Background Glow */}
@@ -28,7 +28,7 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
       <div className="relative mb-6 flex shrink-0 items-center justify-between gap-4">
         <div>
           <h3 className="group-hover:text-primary text-xl font-bold transition-colors">
-            {league.name}
+            {league.event.name}
           </h3>
         </div>
         <div className="text-muted rounded-full border border-white/5 bg-white/5 px-3 py-1 text-[10px] font-semibold">

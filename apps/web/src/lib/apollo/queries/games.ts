@@ -45,14 +45,16 @@ export const GET_GAME = gql`
       }
       eloLeagues {
         id
-        name
-        slug
-        description
+        event {
+          name
+          slug
+          description
+          isApproved
+          startDate
+          endDate
+          createdAt
+        }
         initialElo
-        isApproved
-        startDate
-        endDate
-        createdAt
         entries {
           id
           currentElo
@@ -70,16 +72,18 @@ export const GET_GAME = gql`
       }
       standardLeagues {
         id
-        name
-        slug
-        description
+        event {
+          name
+          slug
+          description
+          isApproved
+          startDate
+          endDate
+          createdAt
+        }
         pointsPerWin
         pointsPerDraw
         pointsPerLoss
-        isApproved
-        startDate
-        endDate
-        createdAt
         entries {
           id
           points
@@ -113,11 +117,15 @@ export const GET_GAME_ACTIONS = gql`
       authorId
       eloLeagues {
         id
-        slug
+        event {
+          slug
+        }
       }
       standardLeagues {
         id
-        slug
+        event {
+          slug
+        }
       }
     }
   }

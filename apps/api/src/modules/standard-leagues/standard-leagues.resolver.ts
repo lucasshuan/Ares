@@ -23,7 +23,7 @@ import {
   CreateStandardLeagueInput,
   UpdateStandardLeagueInput,
 } from './dto/standard-leagues.input';
-import { Game } from '../games/game.model';
+import { CreateEventInput, UpdateEventInput } from '../events/dto/event.input';
 
 @Resolver(() => StandardLeague)
 export class StandardLeaguesResolver {
@@ -49,11 +49,6 @@ export class StandardLeaguesResolver {
     return this.standardLeaguesService.findByGameAndSlug(gameSlug, slug);
   }
 
-  @ResolveField(() => Game, { name: 'game' })
-  async getGame(@Parent() league: StandardLeague) {
-    return this.dataLoaderService.gameLoader.load(league.gameId);
-  }
-
   @ResolveField(() => [StandardLeagueEntry], { name: 'entries' })
   async getEntries(@Parent() league: StandardLeague) {
     return this.dataLoaderService.standardLeagueEntriesLoader.load(league.id);
@@ -63,23 +58,28 @@ export class StandardLeaguesResolver {
   @UseGuards(GqlAuthGuard)
   async updateStandardLeague(
     @Args('id', { type: () => ID }) id: string,
-    @Args('input') input: UpdateStandardLeagueInput,
-    @CurrentUser() user: UserModel,
+    @Args('event', { nullable: true, type: () => UpdateEventInput })
+    event?: UpdateEventInput,
+    @Args('league', { nullable: true, type: () => UpdateStandardLeagueInput })
+    league?: UpdateStandardLeagueInput,
+    @CurrentUser() user?: UserModel,
   ) {
     return this.standardLeaguesService.update(
       id,
-      input,
-      user.isAdmin ? undefined : user.id,
+      event,
+      league,
+      user?.isAdmin ? undefined : user?.id,
     );
   }
 
   @Mutation(() => StandardLeague)
   @UseGuards(GqlAuthGuard)
   async createStandardLeague(
-    @Args('input') input: CreateStandardLeagueInput,
+    @Args('event') event: CreateEventInput,
+    @Args('league') league: CreateStandardLeagueInput,
     @CurrentUser() user: UserModel,
   ) {
-    return this.standardLeaguesService.create({ ...input, authorId: user.id });
+    return this.standardLeaguesService.create(event, league, user.id);
   }
 
   @Mutation(() => StandardLeagueEntry)

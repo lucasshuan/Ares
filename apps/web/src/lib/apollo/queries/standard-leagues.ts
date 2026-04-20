@@ -5,17 +5,19 @@ export const GET_STANDARD_LEAGUES = gql`
     standardLeagues(pagination: $pagination) {
       nodes {
         id
-        name
-        slug
-        description
-        type
-        isApproved
-        createdAt
-        game {
-          id
+        event {
           name
           slug
-          thumbnailImageUrl
+          description
+          type
+          isApproved
+          createdAt
+          game {
+            id
+            name
+            slug
+            thumbnailImageUrl
+          }
         }
         entries {
           id
@@ -45,25 +47,27 @@ export const GET_STANDARD_LEAGUE = gql`
   query GetStandardLeague($gameSlug: String!, $leagueSlug: String!) {
     standardLeague(gameSlug: $gameSlug, slug: $leagueSlug) {
       id
-      name
-      slug
-      description
-      type
       allowDraw
       pointsPerWin
       pointsPerDraw
       pointsPerLoss
       allowedFormats
-      gameId
-      isApproved
-      createdAt
-      updatedAt
-      game {
-        id
+      event {
         name
         slug
-        thumbnailImageUrl
-        status
+        description
+        type
+        participationMode
+        isApproved
+        createdAt
+        updatedAt
+        game {
+          id
+          name
+          slug
+          thumbnailImageUrl
+          status
+        }
       }
       entries {
         id

@@ -24,7 +24,7 @@ import {
   CreateEloLeagueInput,
   UpdateEloLeagueInput,
 } from './dto/elo-leagues.input';
-import { Game } from '../games/game.model';
+import { CreateEventInput, UpdateEventInput } from '../events/dto/event.input';
 
 @Resolver(() => EloLeague)
 export class EloLeaguesResolver {
@@ -48,11 +48,6 @@ export class EloLeaguesResolver {
     return this.eloLeaguesService.findByGameAndSlug(gameSlug, slug);
   }
 
-  @ResolveField(() => Game, { name: 'game' })
-  async getGame(@Parent() league: EloLeague) {
-    return this.dataLoaderService.gameLoader.load(league.gameId);
-  }
-
   @ResolveField(() => [EloLeagueEntry], { name: 'entries' })
   async getEntries(@Parent() league: EloLeague) {
     return this.dataLoaderService.eloLeagueEntriesLoader.load(league.id);
@@ -62,23 +57,28 @@ export class EloLeaguesResolver {
   @UseGuards(GqlAuthGuard)
   async updateEloLeague(
     @Args('id', { type: () => ID }) id: string,
-    @Args('input') input: UpdateEloLeagueInput,
-    @CurrentUser() user: UserModel,
+    @Args('event', { nullable: true, type: () => UpdateEventInput })
+    event?: UpdateEventInput,
+    @Args('league', { nullable: true, type: () => UpdateEloLeagueInput })
+    league?: UpdateEloLeagueInput,
+    @CurrentUser() user?: UserModel,
   ) {
     return this.eloLeaguesService.update(
       id,
-      input,
-      user.isAdmin ? undefined : user.id,
+      event,
+      league,
+      user?.isAdmin ? undefined : user?.id,
     );
   }
 
   @Mutation(() => EloLeague)
   @UseGuards(GqlAuthGuard)
   async createEloLeague(
-    @Args('input') input: CreateEloLeagueInput,
+    @Args('event') event: CreateEventInput,
+    @Args('league') league: CreateEloLeagueInput,
     @CurrentUser() user: UserModel,
   ) {
-    return this.eloLeaguesService.create({ ...input, authorId: user.id });
+    return this.eloLeaguesService.create(event, league, user.id);
   }
 
   @Mutation(() => EloLeagueEntry)

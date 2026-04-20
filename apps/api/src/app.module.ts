@@ -9,6 +9,7 @@ import { GamesModule } from './modules/games/games.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EloLeaguesModule } from './modules/elo-leagues/elo-leagues.module';
 import { StandardLeaguesModule } from './modules/standard-leagues/standard-leagues.module';
+import { EventsModule } from './modules/events/events.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { StorageModule } from './modules/storage/storage.module';
@@ -45,6 +46,7 @@ import { AppController } from './app.controller';
     AuthModule,
     EloLeaguesModule,
     StandardLeaguesModule,
+    EventsModule,
     UsersModule,
     StorageModule,
   ],

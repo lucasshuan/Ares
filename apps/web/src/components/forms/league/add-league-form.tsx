@@ -396,6 +396,7 @@ export function AddLeagueForm({
               values.inactivityDecayFloor ??
               LEAGUE_DEFAULT_SETTINGS.inactivityDecayFloor,
             allowedFormats: values.allowedFormats,
+            participationMode,
           })
         : await addStandardLeague({
             gameId: values.gameId,
@@ -411,6 +412,7 @@ export function AddLeagueForm({
             pointsPerLoss:
               values.pointsPerLoss ?? LEAGUE_DEFAULT_SETTINGS.pointsPerLoss,
             allowedFormats: values.allowedFormats,
+            participationMode,
           });
 
       if (result.success) {

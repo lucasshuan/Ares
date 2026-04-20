@@ -16,6 +16,7 @@ type PrismaLeagueWithEvent = {
     name: string;
     slug: string;
     type: string;
+    participationMode: string;
     description: string | null;
     startDate: Date | null;
     endDate: Date | null;
@@ -29,16 +30,20 @@ function mapLeagueEvent<T extends PrismaLeagueWithEvent>(league: T) {
   return {
     ...league,
     id: league.event.id,
-    gameId: league.event.gameId,
-    name: league.event.name,
-    slug: league.event.slug,
-    type: league.event.type,
-    description: league.event.description,
-    startDate: league.event.startDate,
-    endDate: league.event.endDate,
-    isApproved: !!league.event.approvedAt,
-    createdAt: league.event.createdAt,
-    updatedAt: league.event.updatedAt,
+    event: {
+      id: league.event.id,
+      gameId: league.event.gameId,
+      type: league.event.type,
+      participationMode: league.event.participationMode,
+      name: league.event.name,
+      slug: league.event.slug,
+      description: league.event.description,
+      isApproved: !!league.event.approvedAt,
+      startDate: league.event.startDate,
+      endDate: league.event.endDate,
+      createdAt: league.event.createdAt,
+      updatedAt: league.event.updatedAt,
+    },
   };
 }
 
@@ -85,7 +90,7 @@ export class DataLoaderService {
     );
     for (const league of leagues) {
       const mapped = mapLeagueEvent(league) as unknown as EloLeague;
-      byGameId.get(mapped.gameId)?.push(mapped);
+      byGameId.get(mapped.event.gameId)?.push(mapped);
     }
     return gameIds.map((id) => byGameId.get(id) ?? []);
   });
@@ -105,7 +110,7 @@ export class DataLoaderService {
     );
     for (const league of leagues) {
       const mapped = mapLeagueEvent(league) as unknown as StandardLeague;
-      byGameId.get(mapped.gameId)?.push(mapped);
+      byGameId.get(mapped.event.gameId)?.push(mapped);
     }
     return gameIds.map((id) => byGameId.get(id) ?? []);
   });

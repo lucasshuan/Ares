@@ -25,7 +25,8 @@ export function StandardLeagueTemplate({
   session,
   isEditor,
 }: StandardLeagueTemplateProps) {
-  const { game, entries } = league;
+  const { event, entries } = league;
+  const game = event.game;
   const gameSlug = game.slug;
 
   const isUserRegistered = session?.user?.id
@@ -87,7 +88,8 @@ async function StandardLeagueContent({
   mappedEntries,
   gameSlug,
 }: StandardLeagueContentProps) {
-  const { game, entries } = league;
+  const { event, entries } = league;
+  const game = event.game;
   const t = await getTranslations("League");
   const locale = await getLocale();
 
@@ -179,8 +181,8 @@ async function StandardLeagueContent({
               <div className="flex items-center justify-between py-1">
                 <span className="text-[11px] opacity-60">{t("created")}</span>
                 <span className="text-xs font-semibold">
-                  {league.createdAt
-                    ? formatDate(league.createdAt, locale)
+                  {league.event.createdAt
+                    ? formatDate(league.event.createdAt, locale)
                     : "—"}
                 </span>
               </div>
@@ -204,14 +206,14 @@ async function StandardLeagueContent({
             <LeagueAdminSection
               league={{
                 id: league.id,
-                gameId: league.gameId,
-                name: league.name,
-                slug: league.slug,
-                description: league.description,
+                gameId: league.event.game.id,
+                name: league.event.name,
+                slug: league.event.slug,
+                description: league.event.description,
                 type: "STANDARD_LEAGUE",
                 allowDraw: league.allowDraw,
                 allowedFormats: league.allowedFormats,
-                game: league.game,
+                game: league.event.game,
                 pointsPerWin: league.pointsPerWin,
                 pointsPerDraw: league.pointsPerDraw,
                 pointsPerLoss: league.pointsPerLoss,
@@ -225,9 +227,9 @@ async function StandardLeagueContent({
       {/* Main Content (Right) */}
       <div className="min-w-0 flex-1 space-y-8">
         <SectionHeader
-          title={league.name}
+          title={league.event.name}
           description={
-            league.description || (
+            league.event.description || (
               <span className="italic opacity-50">{t("noDescription")}</span>
             )
           }

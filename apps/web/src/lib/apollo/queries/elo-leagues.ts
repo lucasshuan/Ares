@@ -5,17 +5,19 @@ export const GET_ELO_LEAGUES = gql`
     eloLeagues(pagination: $pagination) {
       nodes {
         id
-        name
-        slug
-        description
-        type
-        isApproved
-        createdAt
-        game {
-          id
+        event {
           name
           slug
-          thumbnailImageUrl
+          description
+          type
+          isApproved
+          createdAt
+          game {
+            id
+            name
+            slug
+            thumbnailImageUrl
+          }
         }
         entries {
           id
@@ -42,10 +44,6 @@ export const GET_ELO_LEAGUE = gql`
   query GetEloLeague($gameSlug: String!, $leagueSlug: String!) {
     eloLeague(gameSlug: $gameSlug, slug: $leagueSlug) {
       id
-      name
-      slug
-      description
-      type
       initialElo
       allowDraw
       kFactor
@@ -54,16 +52,22 @@ export const GET_ELO_LEAGUE = gql`
       inactivityThresholdHours
       inactivityDecayFloor
       allowedFormats
-      gameId
-      isApproved
-      createdAt
-      updatedAt
-      game {
-        id
+      event {
         name
         slug
-        thumbnailImageUrl
-        status
+        description
+        type
+        participationMode
+        isApproved
+        createdAt
+        updatedAt
+        game {
+          id
+          name
+          slug
+          thumbnailImageUrl
+          status
+        }
       }
       entries {
         id

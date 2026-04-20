@@ -18,7 +18,11 @@ export const EVENT_STATUSES = [
 ] as const;
 export type EventStatus = (typeof EVENT_STATUSES)[number];
 
-export const EVENT_TYPES = ["RANKED_LEAGUE", "STANDARD_LEAGUE", "TOURNAMENT"] as const;
+export const EVENT_TYPES = [
+  "RANKED_LEAGUE",
+  "STANDARD_LEAGUE",
+  "TOURNAMENT",
+] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 
 export const MATCH_OUTCOMES = ["WIN", "DRAW", "LOSS"] as const;
@@ -40,3 +44,6 @@ export const MATCH_FORMATS = [
   "FREE_FOR_ALL",
 ] as const;
 export type MatchFormat = (typeof MATCH_FORMATS)[number];
+
+export const PARTICIPATION_MODES = ["SOLO", "TEAM"] as const;
+export type ParticipationMode = (typeof PARTICIPATION_MODES)[number];

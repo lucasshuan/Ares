@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_LEAGUE = gql`
-  mutation CreateLeague($input: CreateEloLeagueInput!) {
-    createLeague: createEloLeague(input: $input) {
+  mutation CreateLeague($event: CreateEventInput!, $league: CreateEloLeagueInput!) {
+    createLeague: createEloLeague(event: $event, league: $league) {
       id
-      name
-      slug
+      event {
+        name
+        slug
+      }
     }
   }
 `;
@@ -32,11 +34,13 @@ export const REGISTER_SELF_TO_LEAGUE = gql`
 `;
 
 export const UPDATE_LEAGUE = gql`
-  mutation UpdateLeague($id: ID!, $input: UpdateEloLeagueInput!) {
-    updateLeague: updateEloLeague(id: $id, input: $input) {
+  mutation UpdateLeague($id: ID!, $event: UpdateEventInput, $league: UpdateEloLeagueInput) {
+    updateLeague: updateEloLeague(id: $id, event: $event, league: $league) {
       id
-      name
-      slug
+      event {
+        name
+        slug
+      }
     }
   }
 `;
