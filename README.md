@@ -3,7 +3,7 @@
   <h1>Ares</h1>
 </div>
 
-**Plataforma open-source e 100% gratuita de competições e comunidade** para jogos digitais e físicos. Comunidades criam jogos, organizam ligas e torneios em diversos formatos (Elo, pontos corridos, eliminatória, suíço, fase de grupos e mais), formam times e clãs, e interagem através de fóruns e perfis customizáveis — tudo sem nenhum paywall.
+**Plataforma open-source e 100% gratuita de competições e comunidade** com foco em jogos. Comunidades criam jogos, organizam ligas e torneios em diversos formatos (Elo, pontos corridos, eliminatória, suíço, fase de grupos e mais), formam times e clãs, e interagem através de fóruns e perfis customizáveis — tudo sem nenhum paywall.
 
 > Repositório público que serve como referência de arquitetura para um monorepo moderno com Next.js + NestJS + GraphQL + Prisma. Aberto a colaboradores e sustentado por comunidade.
 

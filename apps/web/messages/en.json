@@ -329,10 +329,24 @@
       },
       "ratingSystem": {
         "label": "Classification System",
-        "elo": "Rating",
-        "elo_description": "Skill-based system for Elo, MMR, and similar rating models.",
-        "points": "Points",
+        "elo": "Elo",
+        "elo_description": "Skill-based system where ratings shift based on the opponent's level.",
+        "points": "Round-robin",
         "points_description": "Fixed-point system per result, ideal for standings and traditional leagues."
+      },
+      "eventType": {
+        "label": "Event Type",
+        "league": "League",
+        "league_description": "Continuous competition with standings and a rating system.",
+        "tournament": "Tournament",
+        "tournament_description": "Competition with brackets and elimination stages."
+      },
+      "participationMode": {
+        "label": "Participation Mode",
+        "solo": "Individual",
+        "solo_description": "Each competitor participates individually, without teams.",
+        "team": "Teams",
+        "team_description": "Competitors form teams to compete in matches."
       },
       "allowDraw": {
         "label": "Allow Draw",
@@ -428,6 +442,7 @@
       },
       "steps": {
         "game": "Game",
+        "type": "Type",
         "general": "General",
         "format": "Format",
         "matchFormats": "Match"

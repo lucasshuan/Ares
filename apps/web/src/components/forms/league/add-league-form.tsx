@@ -12,9 +12,10 @@ import {
 import {
   Trophy,
   Swords,
+  User,
+  Users,
   Zap,
   Clock,
-  Hash,
   ArrowUpRight,
   ArrowDownRight,
   Equal,
@@ -144,6 +145,8 @@ export function AddLeagueForm({
     }
   };
 
+  const [participationMode, setParticipationMode] = useState<"SOLO" | "TEAM">("SOLO");
+  const [eventType, setEventType] = useState<"LEAGUE" | "TOURNAMENT">("LEAGUE");
   const [isSlugModified, setIsSlugModified] = useState(false);
   const [games, setGames] = useState<SimpleGame[]>([]);
   const [isGamesLoading, setIsGamesLoading] = useState(false);
@@ -309,20 +312,22 @@ export function AddLeagueForm({
       if (currentStep === 0) {
         isStepValid = !!watchGameId || !!watchGameName;
       } else if (currentStep === 1) {
-        isStepValid = allowedFormats.length > 0;
+        isStepValid = true;
       } else if (currentStep === 2) {
-        // Silent validation for Step 3 fields using the schema
+        isStepValid = allowedFormats.length > 0;
+      } else if (currentStep === 3) {
+        // Silent validation for Step 4 fields using the schema
         const values = getValues();
         const parseResult = schema.safeParse(values);
 
         if (parseResult.success) {
           isStepValid = true;
         } else {
-          const step3Fields = ["name", "slug"];
-          const hasStep3Errors = parseResult.error.issues.some((issue) =>
-            step3Fields.includes(issue.path[0] as string),
+          const step4Fields = ["name", "slug"];
+          const hasStep4Errors = parseResult.error.issues.some((issue) =>
+            step4Fields.includes(issue.path[0] as string),
           );
-          isStepValid = !hasStep3Errors;
+          isStepValid = !hasStep4Errors;
         }
 
         if (isStepValid) {
@@ -585,8 +590,8 @@ export function AddLeagueForm({
         </section>
       )}
 
-      {/* Step 3: General Data */}
-      {currentStep === 2 && (
+      {/* Step 4: General Data */}
+      {currentStep === 3 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
@@ -672,8 +677,109 @@ export function AddLeagueForm({
         </section>
       )}
 
-      {/* Step 2: Rating Logic */}
+      {/* Step 2: Type */}
       {currentStep === 1 && (
+        <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
+          <div className="flex flex-col gap-8">
+            {/* Participation Mode */}
+            <div className="flex flex-col gap-4">
+              <LabelTooltip label={t("participationMode.label")} />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setParticipationMode("SOLO")}
+                  className={cn(
+                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    participationMode === "SOLO"
+                      ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                      : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <User className="size-4" />
+                    <span className="text-sm font-bold">
+                      {t("participationMode.solo")}
+                    </span>
+                  </div>
+                  <span className="text-xs leading-relaxed text-white/50">
+                    {t("participationMode.solo_description")}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border border-white/5 bg-white/5 p-4 text-left opacity-50"
+                >
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Users className="size-4 text-white/40" />
+                      <span className="text-sm font-bold text-white/40">
+                        {t("participationMode.team")}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-bold tracking-[0.2em] text-white/20 uppercase">
+                      {t("soon")}
+                    </span>
+                  </div>
+                  <span className="text-xs leading-relaxed text-white/30">
+                    {t("participationMode.team_description")}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Event Type */}
+            <div className="flex flex-col gap-4">
+            <LabelTooltip label={t("eventType.label")} />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setEventType("LEAGUE")}
+                className={cn(
+                  "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                  eventType === "LEAGUE"
+                    ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                    : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Trophy className="size-4" />
+                  <span className="text-sm font-bold">
+                    {t("eventType.league")}
+                  </span>
+                </div>
+                <span className="text-xs leading-relaxed text-white/50">
+                  {t("eventType.league_description")}
+                </span>
+              </button>
+              <button
+                type="button"
+                disabled
+                className="flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border border-white/5 bg-white/5 p-4 text-left opacity-50"
+              >
+                <div className="flex w-full items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Swords className="size-4 text-white/40" />
+                    <span className="text-sm font-bold text-white/40">
+                      {t("eventType.tournament")}
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold tracking-[0.2em] text-white/20 uppercase">
+                    {t("soon")}
+                  </span>
+                </div>
+                <span className="text-xs leading-relaxed text-white/30">
+                  {t("eventType.tournament_description")}
+                </span>
+              </button>
+            </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Step 3: Format */}
+      {currentStep === 2 && (
         <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
           <div className="flex flex-col gap-10">
             <div className="flex flex-col gap-4">
@@ -689,19 +795,18 @@ export function AddLeagueForm({
                       : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
                   )}
                 >
-                  <div className="flex items-center gap-2">
-                    <Trophy className="size-4" />
-                    <span className="text-sm font-bold">
-                      {t("ratingSystem.elo")}
-                    </span>
-                  </div>
+                  <span className="text-sm font-bold">
+                    {t("ratingSystem.elo")}
+                  </span>
                   <span className="text-xs leading-relaxed text-white/50">
                     {t("ratingSystem.elo_description")}
                   </span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setValue("ratingSystem", "STANDARD_LEAGUE")}
+                  onClick={() =>
+                    setValue("ratingSystem", "STANDARD_LEAGUE")
+                  }
                   className={cn(
                     "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     ratingSystem === "STANDARD_LEAGUE"
@@ -709,17 +814,58 @@ export function AddLeagueForm({
                       : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
                   )}
                 >
-                  <div className="flex items-center gap-2">
-                    <Hash className="size-4" />
-                    <span className="text-sm font-bold">
-                      {t("ratingSystem.points")}
-                    </span>
-                  </div>
+                  <span className="text-sm font-bold">
+                    {t("ratingSystem.points")}
+                  </span>
                   <span className="text-xs leading-relaxed text-white/50">
                     {t("ratingSystem.points_description")}
                   </span>
                 </button>
               </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <LabelTooltip
+                label={t("matchFormats.title")}
+                tooltip={t("matchFormats.help")}
+                required
+              />
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {matchFormatOptions.map((option) => {
+                  const isSelected = allowedFormats.includes(option.value);
+
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => toggleMatchFormat(option.value)}
+                      className={cn(
+                        "flex items-center justify-between gap-1.5 rounded-xl border px-3 py-2 text-left transition-all",
+                        isSelected
+                          ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
+                          : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10",
+                      )}
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-xs font-bold">
+                          {option.label}
+                        </span>
+                        <span className="text-[10px] leading-tight text-white/40">
+                          {option.description}
+                        </span>
+                      </div>
+                      {isSelected && <Check className="size-3 shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {allowedFormats.length === 0 && (
+                <p className="text-danger text-xs">
+                  {t("matchFormats.required")}
+                </p>
+              )}
             </div>
 
             <div className="grid gap-8 md:grid-cols-5">
@@ -1078,49 +1224,6 @@ export function AddLeagueForm({
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <LabelTooltip
-                label={t("matchFormats.title")}
-                tooltip={t("matchFormats.help")}
-                required
-              />
-
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {matchFormatOptions.map((option) => {
-                  const isSelected = allowedFormats.includes(option.value);
-
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => toggleMatchFormat(option.value)}
-                      className={cn(
-                        "flex items-center justify-between gap-1.5 rounded-xl border px-3 py-2 text-left transition-all",
-                        isSelected
-                          ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                          : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10",
-                      )}
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-bold">
-                          {option.label}
-                        </span>
-                        <span className="text-[10px] leading-tight text-white/40">
-                          {option.description}
-                        </span>
-                      </div>
-                      {isSelected && <Check className="size-3 shrink-0" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {allowedFormats.length === 0 && (
-                <p className="text-danger text-xs">
-                  {t("matchFormats.required")}
-                </p>
-              )}
-            </div>
           </div>
         </section>
       )}

@@ -92,6 +92,7 @@ export function AddLeagueModal({
 
   const steps = [
     { label: t("steps.game") },
+    { label: t("steps.type") },
     { label: t("steps.format") },
     { label: t("steps.general") },
   ];

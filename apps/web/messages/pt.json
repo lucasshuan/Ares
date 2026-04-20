@@ -329,10 +329,24 @@
       },
       "ratingSystem": {
         "label": "Sistema de Classificação",
-        "elo": "Rating",
-        "elo_description": "Sistema baseado em classificação por habilidade, como Elo, MMR e variações.",
-        "points": "Points",
+        "elo": "Elo",
+        "elo_description": "Sistema baseado em classificação por habilidade, onde a pontuação varia conforme o nível do adversário.",
+        "points": "Pontos corridos",
         "points_description": "Sistema baseado em pontos fixos por resultado, ideal para tabelas e ligas tradicionais."
+      },
+      "eventType": {
+        "label": "Tipo de Evento",
+        "league": "Liga",
+        "league_description": "Competição contínua com classificação e sistema de pontuação.",
+        "tournament": "Torneio",
+        "tournament_description": "Competição com chaves e fases eliminatórias."
+      },
+      "participationMode": {
+        "label": "Modo de Participação",
+        "solo": "Individual",
+        "solo_description": "Cada competidor participa de forma individual, sem times.",
+        "team": "Equipes",
+        "team_description": "Competidores formam times para disputar partidas."
       },
       "allowDraw": {
         "label": "Permitir Empate",
@@ -428,6 +442,7 @@
       },
       "steps": {
         "game": "Jogo",
+        "type": "Tipo",
         "general": "Geral",
         "format": "Formato",
         "matchFormats": "Partida"

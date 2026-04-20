@@ -465,14 +465,12 @@ export function EditLeagueForm({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    setValue("ratingSystem", "RANKED_LEAGUE");
-                  }}
+                  disabled
                   className={cn(
-                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    "flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     ratingSystem === "RANKED_LEAGUE"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                      : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
+                      : "border-white/5 bg-white/5 text-white/40 opacity-40",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -487,14 +485,12 @@ export function EditLeagueForm({
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setValue("ratingSystem", "STANDARD_LEAGUE");
-                  }}
+                  disabled
                   className={cn(
-                    "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
+                    "flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     ratingSystem === "STANDARD_LEAGUE"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                      : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10",
+                      : "border-white/5 bg-white/5 text-white/40 opacity-40",
                   )}
                 >
                   <div className="flex items-center gap-2">

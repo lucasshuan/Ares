@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Trophy, Swords, ChevronRight, Plus } from "lucide-react";
+import { Trophy, ChevronRight, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/components/providers";
 import { AddLeagueModal } from "@/components/modals/league/add-league-modal";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
-import { DropdownMenu, DropdownItem } from "@/components/ui/dropdown-menu";
 import type { SimpleGame } from "@/actions/get-games";
 
 interface AddEventButtonProps {
@@ -31,6 +30,8 @@ export function AddEventButton({
 
     if (!user) {
       setIsAuthModalOpen(true);
+    } else {
+      setIsAddLeagueOpen(true);
     }
   };
 
@@ -65,34 +66,7 @@ export function AddEventButton({
 
   return (
     <>
-      {user ? (
-        <DropdownMenu
-          trigger={menuButton}
-          side={variant === "sidebar" ? "right" : "bottom"}
-          align={variant === "header" ? "end" : "center"}
-          width={300}
-        >
-          <DropdownItem icon={Trophy} onClick={() => setIsAddLeagueOpen(true)}>
-            {t("types.league")}
-          </DropdownItem>
-          <DropdownItem
-            icon={Swords}
-            className="cursor-not-allowed opacity-50"
-            onClick={() => {
-              // Tournament system not implemented yet
-            }}
-          >
-            <div className="flex flex-1 items-center justify-between gap-6 whitespace-nowrap">
-              <span className="font-semibold">{t("types.tournament")}</span>
-              <span className="text-[9px] font-bold tracking-[0.2em] text-white/20 uppercase">
-                {t("soon")}
-              </span>
-            </div>
-          </DropdownItem>
-        </DropdownMenu>
-      ) : (
-        menuButton
-      )}
+      {menuButton}
 
       <AddLeagueModal
         gameId={gameId}
