@@ -94,54 +94,7 @@ packages/core   → Enums, permissões e tipos compartilhados
 
 ---
 
-## Funcionalidades Planejadas (Visão de Produto)
-
-Além do que já existe, o Ares pretende evoluir para uma plataforma de comunidade completa:
-
-### Formatos de Competição
-
-- **Ligas**: pontos corridos (round robin), Elo rating (já parcialmente implementado)
-- **Torneios com chaveamento**: eliminatória simples, eliminatória dupla (chave dos perdedores), sistema suíço, fase de grupos, montagem de fases personalizadas
-- Cada evento pode combinar formatos (ex: fase de grupos → eliminatória)
-
-### Times e Clãs
-
-- **Times/Equipes**: sistema de criação de times com múltiplos usuários, nomeação, e resultados vinculados a times (com dados individuais dentro do resultado do time)
-- **Clãs**: agrupamento de usuários com ranking próprio baseado na performance coletiva dos membros
-- Complexidade alta — exige modelagem cuidadosa de vínculos entre usuários, times, clãs e resultados
-
-### Dados Dinâmicos por Evento
-
-- Criadores de eventos podem definir **campos customizados** para resultados (formulários dinâmicos)
-- Podem ser dados gerais do evento ou individuais por jogador (ex: kills, assistências, cura realizada, dano causado, nota na partida)
-- Permite que cada comunidade adapte as estatísticas ao seu jogo
-
-### Comunidade e Social
-
-- **Fóruns e posts**: criação de tópicos e publicações em páginas — página do usuário (estilo Steam), página da comunidade (jogo), página de um evento
-- **Perfis customizáveis**: páginas de usuário altamente personalizáveis, inspiradas em Discord e Steam — o "templo" de cada jogador
-- **Sistema de notificações e convites**: convidar usuários para eventos, notificar sobre partidas, atualizações de ranking, posts, etc.
-- **Staff de moderação por evento**: organizadores podem definir moderadores com permissões específicas
-
-### Administração e Moderação
-
-- **Painel administrativo**: para usuários com `isAdmin` ou permissões granulares
-- **Sistema de banimento/bloqueio**: banir usuários de eventos, jogos ou da plataforma
-
-### Integrações
-
-- **Steam API**: busca e sugestão de jogos novos caso não existam no projeto, com cacheamento para evitar uso excessivo da API gratuita
-
-### Performance e Caching
-
-- Cacheamento agressivo de páginas e rankings no Next.js (ISR/revalidação) para reduzir carga na API
-- Estratégia essencial para manter performance com infraestrutura enxuta
-
-### Modelo de Negócio
-
-- **100% gratuito, para sempre** — nenhuma funcionalidade atrás de paywall
-- Open-source e aberto a colaboradores
-- Sustentabilidade via patrocinadores e doações
+> Funcionalidades planejadas e visão de produto estão em [ROADMAP.md](ROADMAP.md).
 
 ---
 
@@ -201,6 +154,15 @@ Ao criar uma liga, o usuário pode informar um `gameName` em vez de `gameId`. Se
 
 - Admins/editores: podem adicionar qualquer player via `addPlayerToLeague`
 - Usuários comuns: se auto-registram via `registerSelfToLeague` (cria o Player no jogo se não existir)
+
+### Torneios vinculados a ligas (bônus cross-evento)
+
+Torneios podem ser vinculados a uma liga do mesmo jogo, afetando a classificação da liga de duas formas dependendo do sistema:
+
+- **Liga Elo (Modelo A — integrado)**: as partidas do torneio alimentam diretamente o mesmo pool de Elo da liga. Os resultados do torneio são tratados como partidas da liga para fins de cálculo de rating. Equivalente ao modelo FIDE no xadrez
+- **Liga por pontos (Modelo B — bônus configurável)**: o torneio é independente, mas ao configurar a liga o organizador define torneios vinculados e quantos pontos de bônus o 1º, 2º, 3º lugar (e demais posições) recebem na tabela da liga
+
+Os dois modelos podem coexistir: a liga escolhe qual se aplica dependendo do seu `classificationSystem`.
 
 ### Ownership
 
@@ -276,42 +238,3 @@ A sessão no web é revalidada a cada **5 minutos** via `/auth/me`.
 - Registro de players em ligas
 - i18n com next-intl (en + pt)
 - Onboarding wizard para novos usuários (multi-step: identidade, país, interesses de jogos)
-
-### Pendente / Em progresso ⏳
-
-- **Seleção de jogos de interesse no onboarding**: a UI de seleção de jogos no onboarding está implementada com dados mock; persistir a seleção no backend (criar relação `UserGameInterest` ou similar) ainda não foi feito
-- **Cálculo de Elo no backend**: a fórmula está definida (ver seção acima), mas a mutation de Result com cálculo automático de Elo ainda não foi implementada; `eloDifference` em `ResultEntry` provavelmente ainda é manual ou placeholder
-- **Refactor de Match/Result**: separar conceitos de agendamento de partida e registro de resultado; nada foi efetivamente implementado, facilitando o redesign
-- **Refactor de Player**: repensar se a entidade Player como vínculo User↔Game faz sentido; a lógica de usernames armazenados precisa de novo approach
-- **Formatos de torneio**: modelar chaveamentos (eliminatória, suíço, grupos, fases, etc.) — apenas ligas existem hoje
-- **Times e Clãs**: modelagem completa de equipes, vínculos e ranking coletivo
-- **Dados dinâmicos por evento**: formulários customizáveis para estatísticas de partida
-- **Fóruns e posts**: sistema de tópicos e publicações por contexto (usuário, jogo, evento)
-- **Perfis customizáveis**: personalização rica da página de perfil
-- **Notificações e convites**: sistema para convidar jogadores e notificar sobre eventos
-- **Painel administrativo**: UI dedicada para admins e moderadores
-- **Banimento/bloqueio**: sistema de moderação de usuários
-- **Integração Steam API**: busca de jogos com cache
-- **Caching de páginas e rankings**: ISR e estratégias de revalidação no Next.js
-- **N+1 / DataLoaders**: existem, mas cobrem pouco
-- **Testes**: cobertura quase zero (só boilerplate)
-- **Padronização i18n**: múltiplos `useTranslation` por arquivo; estrutura dos arquivos json pode ser reorganizada
-- **Posição no ranking**: lógica de `position` não está consolidada
-- **UI inconsistências**: alguns modais/formulários ainda divergem de padrão visual
-- **CI de validação**: sem pipeline automatizado antes do deploy
-
----
-
-## Direção do Projeto
-
-O Ares está evoluindo de uma ferramenta de ligas para uma **plataforma de comunidade competitiva completa**:
-
-1. Qualquer pessoa cadastra um jogo e organiza competições em múltiplos formatos (liga, torneio com chave, sistema suíço, grupos, etc.)
-2. Partidas podem ser **agendadas** ou ter **resultados registrados** com evidência (screenshot/vídeo) e dados customizados
-3. Rankings são atualizados automaticamente — Elo sensível à margem de placar, pontos, ou métricas do formato
-4. Jogadores formam **times** e **clãs** com rankings coletivos
-5. Cada página (usuário, jogo, evento) tem **fóruns próprios** e os perfis são altamente customizáveis
-6. **Notificações, convites e moderação** criam um ecossistema social completo
-7. Tudo 100% gratuito, open-source, sustentado por comunidade
-
-O próximo passo mais crítico continua sendo **fechar o ciclo da partida** — submissão de resultado → cálculo de Elo → atualização do ranking — porque é o núcleo do produto. Em paralelo, o refactor dos modelos de Player e Match/Result vai preparar a base para os formatos de torneio e o sistema de times.
