@@ -2,17 +2,20 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join, resolve } from 'path';
 import { LoggerModule } from 'nestjs-pino';
 import { DatabaseModule } from './database/database.module';
 import { GamesModule } from './modules/games/games.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { EloLeaguesModule } from './modules/elo-leagues/elo-leagues.module';
-import { StandardLeaguesModule } from './modules/standard-leagues/standard-leagues.module';
 import { EventsModule } from './modules/events/events.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { LeaguesModule } from './modules/leagues/leagues.module';
+import { EventEntriesModule } from './modules/event-entries/event-entries.module';
+import { MatchesModule } from './modules/matches/matches.module';
+import { EventStaffModule } from './modules/event-staff/event-staff.module';
 import { parseEnv } from './env';
 import { CommonModule } from './common/common.module';
 import { pinoLoggerConfig } from './common/configs/pino-logger.config';
@@ -44,11 +47,14 @@ import { AppController } from './app.controller';
     AuditModule,
     GamesModule,
     AuthModule,
-    EloLeaguesModule,
-    StandardLeaguesModule,
     EventsModule,
     UsersModule,
     StorageModule,
+    LeaguesModule,
+    EventEntriesModule,
+    MatchesModule,
+    EventStaffModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

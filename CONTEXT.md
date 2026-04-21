@@ -80,7 +80,7 @@ packages/core   → Enums, permissões e tipos compartilhados
 ### Player _(em revisão)_
 
 - Atualmente é um vínculo entre `User` e `Game` com histórico de nicks (`PlayerUsername[]`)
-- **Refactor planejado**: a entidade Player como vínculo direto com Game não faz sentido conceitual; a lógica de armazenamento de usernames também precisa ser repensada (não há forma fácil de garantir que o nick é exibido corretamente). A entidade pode ser eliminada ou reestruturada — ainda em análise
+- **Refactor planejado**: a entidade Player como vínculo direto com Game não faz sentido conceitual; a lógica de armazenamento de usernames também precisa ser repensada (não há forma fácil de garantir que um nick realmente pertence ao usuário naquele jogo). A entidade pode ser eliminada ou reestruturada — ainda em análise
 
 ### LeagueEntry
 

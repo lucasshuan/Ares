@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { League } from '../leagues/league.model';
+import { EventStaff } from '../event-staff/event-staff.model';
 
 @ObjectType()
 export class Event {
@@ -32,11 +34,23 @@ export class Event {
   @Field({ nullable: true })
   endDate?: Date;
 
+  @Field({ nullable: true })
+  registrationStartDate?: Date;
+
+  @Field({ nullable: true })
+  registrationEndDate?: Date;
+
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => League, { nullable: true })
+  league?: League;
+
+  @Field(() => [EventStaff], { nullable: true })
+  staff?: EventStaff[];
 
   // Not exposed as a GraphQL field — used by EventsResolver.getGame(@Parent())
   gameId: string;

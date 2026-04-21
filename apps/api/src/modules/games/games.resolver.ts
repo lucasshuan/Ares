@@ -1,8 +1,8 @@
 import {
   Args,
-  Field,
   ID,
   ObjectType,
+  Field,
   Parent,
   Query,
   ResolveField,
@@ -17,8 +17,6 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Game } from './game.model';
 import { GamesService } from './games.service';
 import { User } from '../auth/user.model';
-import { EloLeague } from '../elo-leagues/elo-league.model';
-import { StandardLeague } from '../standard-leagues/standard-league.model';
 import { CreateGameInput, UpdateGameInput } from './dto/games.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { PaginatedGames } from './dto/games.output';
@@ -71,16 +69,6 @@ export class GamesResolver {
     @Args('slug') slug: string,
   ) {
     return this.gamesService.findEventMeta(gameSlug, slug);
-  }
-
-  @ResolveField(() => [EloLeague], { name: 'eloLeagues' })
-  async getEloLeagues(@Parent() game: Game) {
-    return this.dataLoaderService.eloLeaguesByGameIdLoader.load(game.id);
-  }
-
-  @ResolveField(() => [StandardLeague], { name: 'standardLeagues' })
-  async getStandardLeagues(@Parent() game: Game) {
-    return this.dataLoaderService.standardLeaguesByGameIdLoader.load(game.id);
   }
 
   @Mutation(() => Game)

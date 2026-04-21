@@ -44,33 +44,4 @@ export class UsersService {
       hasNextPage: skip + take < totalCount,
     };
   }
-
-  async getPlayersWithRanks(userId: string) {
-    const players = await this.databaseProvider.player.findMany({
-      where: { userId },
-      include: {
-        game: true,
-        eloLeagueEntries: {
-          include: {
-            league: {
-              include: {
-                event: true,
-              },
-            },
-          },
-        },
-        standardLeagueEntries: {
-          include: {
-            league: {
-              include: {
-                event: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return players;
-  }
 }

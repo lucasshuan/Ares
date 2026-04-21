@@ -8,11 +8,13 @@ import {
   UPDATE_GAME,
 } from "@/lib/apollo/queries/game-mutations";
 import {
+  CREATE_LEAGUE,
+  UPDATE_LEAGUE,
+} from "@/lib/apollo/queries/league-mutations";
+import {
   UpdateGameMutation,
   CreateGameMutation,
   ApproveGameMutation,
-  AddPlayerToGameMutation,
-  SearchPlayersQuery,
   RequestUploadUrlDocument,
   GetGameActionsQuery,
 } from "@/lib/apollo/generated/graphql";
@@ -20,29 +22,11 @@ import { getServerAuthSession } from "@/auth";
 import {
   canEditGame,
   canManageGames,
-  canManagePlayers,
   canManageLeagues,
 } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { normalizeOptionalText, slugify } from "@/lib/utils";
 import { createSafeAction } from "@/lib/action-utils";
-
-import {
-  ADD_PLAYER_TO_ELO_LEAGUE,
-  CREATE_ELO_LEAGUE,
-  REGISTER_SELF_TO_ELO_LEAGUE,
-  UPDATE_ELO_LEAGUE,
-} from "@/lib/apollo/queries/elo-league-mutations";
-import {
-  ADD_PLAYER_TO_STANDARD_LEAGUE,
-  CREATE_STANDARD_LEAGUE,
-  REGISTER_SELF_TO_STANDARD_LEAGUE,
-  UPDATE_STANDARD_LEAGUE,
-} from "@/lib/apollo/queries/standard-league-mutations";
-import {
-  ADD_PLAYER_TO_GAME,
-  SEARCH_PLAYERS,
-} from "@/lib/apollo/queries/player-mutations";
 
 async function getGameRecord(gameIdOrSlug: string) {
   const { data } = await getClient().query<GetGameActionsQuery>({
@@ -202,8 +186,8 @@ export const approveGame = createSafeAction(
   },
 );
 
-export const addEloLeague = createSafeAction(
-  "addEloLeague",
+export const createLeague = createSafeAction(
+  "createLeague",
   async (data: {
     gameId?: string;
     gameName?: string;
@@ -211,15 +195,16 @@ export const addEloLeague = createSafeAction(
     slug: string;
     description: string | null;
     about?: string | null;
-    initialElo: number;
-    allowDraw: boolean;
-    kFactor: number;
-    scoreRelevance: number;
-    inactivityDecay: number;
-    inactivityThresholdHours: number;
-    inactivityDecayFloor: number;
-    allowedFormats: string[];
-    participationMode: string;
+    participationMode?: string;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    registrationStartDate?: Date | null;
+    registrationEndDate?: Date | null;
+    classificationSystem: string;
+    config: unknown;
+    allowDraw?: boolean;
+    allowedFormats?: string[];
+    customFieldSchema?: unknown;
   }) => {
     const session = await getServerAuthSession();
     if (!session?.user?.id) throw new Error("Unauthorized");
@@ -230,7 +215,7 @@ export const addEloLeague = createSafeAction(
     }
 
     await getClient().mutate({
-      mutation: CREATE_ELO_LEAGUE,
+      mutation: CREATE_LEAGUE,
       variables: {
         event: {
           gameId: data.gameId,
@@ -240,73 +225,17 @@ export const addEloLeague = createSafeAction(
           description: data.description,
           about: data.about,
           participationMode: data.participationMode,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          registrationStartDate: data.registrationStartDate,
+          registrationEndDate: data.registrationEndDate,
         },
         league: {
-          initialElo: data.initialElo,
+          classificationSystem: data.classificationSystem,
+          config: data.config,
           allowDraw: data.allowDraw,
-          kFactor: data.kFactor,
-          scoreRelevance: data.scoreRelevance,
-          inactivityDecay: data.inactivityDecay,
-          inactivityThresholdHours: data.inactivityThresholdHours,
-          inactivityDecayFloor: data.inactivityDecayFloor,
           allowedFormats: data.allowedFormats,
-        },
-      },
-    });
-
-    if (game) {
-      revalidateGamePaths(game);
-    } else {
-      revalidatePath("/");
-      revalidatePath("/games");
-    }
-
-    return true;
-  },
-);
-
-export const addStandardLeague = createSafeAction(
-  "addStandardLeague",
-  async (data: {
-    gameId?: string;
-    gameName?: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    about?: string | null;
-    allowDraw: boolean;
-    pointsPerWin: number;
-    pointsPerDraw: number;
-    pointsPerLoss: number;
-    allowedFormats: string[];
-    participationMode: string;
-  }) => {
-    const session = await getServerAuthSession();
-    if (!session?.user?.id) throw new Error("Unauthorized");
-
-    let game = null;
-    if (data.gameId) {
-      game = await getGameRecord(data.gameId);
-    }
-
-    await getClient().mutate({
-      mutation: CREATE_STANDARD_LEAGUE,
-      variables: {
-        event: {
-          gameId: data.gameId,
-          gameName: data.gameName,
-          name: data.name,
-          slug: data.slug,
-          description: data.description,
-          about: data.about,
-          participationMode: data.participationMode,
-        },
-        league: {
-          allowDraw: data.allowDraw,
-          pointsPerWin: data.pointsPerWin,
-          pointsPerDraw: data.pointsPerDraw,
-          pointsPerLoss: data.pointsPerLoss,
-          allowedFormats: data.allowedFormats,
+          customFieldSchema: data.customFieldSchema,
         },
       },
     });
@@ -324,269 +253,57 @@ export const addStandardLeague = createSafeAction(
 
 export const checkLeagueSlugAvailability = createSafeAction(
   "checkLeagueSlugAvailability",
-  async (gameIdOrSlug: string, slug: string, currentLeagueId?: string) => {
-    const normalizedSlug = slugify(slug);
-
-    if (!gameIdOrSlug || !normalizedSlug) {
-      return { available: true };
-    }
-
-    const game = await getGameRecord(gameIdOrSlug);
-
-    if (!game) {
-      return { available: true };
-    }
-
-    const conflict = [
-      ...(game.eloLeagues ?? []),
-      ...(game.standardLeagues ?? []),
-    ].some(
-      (league) =>
-        league.event.slug === normalizedSlug && league.id !== currentLeagueId,
-    );
-
-    return { available: !conflict };
+  async (_gameIdOrSlug: string, _slug: string, _currentLeagueId?: string) => {
+    // TODO: implement via API query once leagues query supports slug lookup
+    return { available: true };
   },
 );
 
-export const addPlayerToGame = createSafeAction(
-  "addPlayerToGame",
+export const updateLeague = createSafeAction(
+  "updateLeague",
   async (
-    gameId: string,
+    eventId: string,
     data: {
-      username: string;
-      userId: string | null;
-    },
-  ) => {
-    const session = await getServerAuthSession();
-    if (!canManagePlayers(session)) throw new Error("Unauthorized");
-
-    const game = await getGameRecord(gameId);
-    if (!game) throw new Error("Game not found");
-
-    const { data: resultData } =
-      await getClient().mutate<AddPlayerToGameMutation>({
-        mutation: ADD_PLAYER_TO_GAME,
-        variables: {
-          input: {
-            gameId,
-            username: data.username,
-            userId: data.userId,
-          },
-        },
-      });
-
-    revalidateGamePaths(game);
-    return { playerId: resultData?.addPlayerToGame.id };
-  },
-);
-
-export const createAndAddPlayerToEloLeague = createSafeAction(
-  "createAndAddPlayerToEloLeague",
-  async (gameId: string, leagueId: string, username: string) => {
-    const result = await addPlayerToGame(gameId, { username, userId: null });
-
-    if (result.success && result.data?.playerId) {
-      const addResult = await addPlayerToEloLeague(
-        leagueId,
-        result.data.playerId,
-      );
-      return addResult.data;
-    }
-
-    throw new Error(result.error || "Failed to add player to league");
-  },
-);
-
-export const createAndAddPlayerToStandardLeague = createSafeAction(
-  "createAndAddPlayerToStandardLeague",
-  async (gameId: string, leagueId: string, username: string) => {
-    const result = await addPlayerToGame(gameId, { username, userId: null });
-
-    if (result.success && result.data?.playerId) {
-      const addResult = await addPlayerToStandardLeague(
-        leagueId,
-        result.data.playerId,
-      );
-      return addResult.data;
-    }
-
-    throw new Error(result.error || "Failed to add player to league");
-  },
-);
-
-export const updateEloLeague = createSafeAction(
-  "updateEloLeague",
-  async (
-    leagueId: string,
-    data: {
-      name: string;
-      slug: string;
-      description: string | null;
+      name?: string;
+      slug?: string;
+      description?: string | null;
       about?: string | null;
-      initialElo: number;
-      allowDraw: boolean;
-      kFactor: number;
-      scoreRelevance: number;
-      inactivityDecay: number;
-      inactivityThresholdHours: number;
-      inactivityDecayFloor: number;
-      allowedFormats: string[];
+      startDate?: Date | null;
+      endDate?: Date | null;
+      registrationStartDate?: Date | null;
+      registrationEndDate?: Date | null;
+      classificationSystem?: string;
+      config?: unknown;
+      allowDraw?: boolean;
+      allowedFormats?: string[];
+      customFieldSchema?: unknown;
     },
   ) => {
     const session = await getServerAuthSession();
     if (!canManageLeagues(session)) throw new Error("Unauthorized");
 
     await getClient().mutate({
-      mutation: UPDATE_ELO_LEAGUE,
+      mutation: UPDATE_LEAGUE,
       variables: {
-        id: leagueId,
+        eventId,
         event: {
           name: data.name,
           slug: data.slug,
           description: data.description,
           about: data.about,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          registrationStartDate: data.registrationStartDate,
+          registrationEndDate: data.registrationEndDate,
         },
         league: {
-          initialElo: data.initialElo,
+          classificationSystem: data.classificationSystem,
+          config: data.config,
           allowDraw: data.allowDraw,
-          kFactor: data.kFactor,
-          scoreRelevance: data.scoreRelevance,
-          inactivityDecay: data.inactivityDecay,
-          inactivityThresholdHours: data.inactivityThresholdHours,
-          inactivityDecayFloor: data.inactivityDecayFloor,
           allowedFormats: data.allowedFormats,
+          customFieldSchema: data.customFieldSchema,
         },
       },
-    });
-
-    revalidatePath("/");
-    return true;
-  },
-);
-
-export const updateStandardLeague = createSafeAction(
-  "updateStandardLeague",
-  async (
-    leagueId: string,
-    data: {
-      name: string;
-      slug: string;
-      description: string | null;
-      about?: string | null;
-      allowDraw: boolean;
-      pointsPerWin: number;
-      pointsPerDraw: number;
-      pointsPerLoss: number;
-      allowedFormats: string[];
-    },
-  ) => {
-    const session = await getServerAuthSession();
-    if (!canManageLeagues(session)) throw new Error("Unauthorized");
-
-    await getClient().mutate({
-      mutation: UPDATE_STANDARD_LEAGUE,
-      variables: {
-        id: leagueId,
-        event: {
-          name: data.name,
-          slug: data.slug,
-          description: data.description,
-          about: data.about,
-        },
-        league: {
-          allowDraw: data.allowDraw,
-          pointsPerWin: data.pointsPerWin,
-          pointsPerDraw: data.pointsPerDraw,
-          pointsPerLoss: data.pointsPerLoss,
-          allowedFormats: data.allowedFormats,
-        },
-      },
-    });
-
-    revalidatePath("/");
-    return true;
-  },
-);
-
-export const searchPlayersByGame = createSafeAction(
-  "searchPlayersByGame",
-  async (gameId: string, query: string) => {
-    const session = await getServerAuthSession();
-    if (!canManagePlayers(session)) throw new Error("Unauthorized");
-
-    const { data } = await getClient().query<SearchPlayersQuery>({
-      query: SEARCH_PLAYERS,
-      variables: { gameId, query },
-    });
-
-    return (data?.searchPlayers.nodes || [])
-      .filter((r) => !!r.player?.id)
-      .map((r) => ({
-        id: r.player!.id,
-        username: r.username,
-        country: r.player?.user?.country ?? null,
-      }));
-  },
-);
-
-export const addPlayerToEloLeague = createSafeAction(
-  "addPlayerToEloLeague",
-  async (leagueId: string, playerId: string, initialElo?: number) => {
-    const session = await getServerAuthSession();
-    if (!canManagePlayers(session)) throw new Error("Unauthorized");
-
-    await getClient().mutate({
-      mutation: ADD_PLAYER_TO_ELO_LEAGUE,
-      variables: { leagueId, playerId, initialElo },
-    });
-
-    revalidatePath("/");
-    return true;
-  },
-);
-
-export const addPlayerToStandardLeague = createSafeAction(
-  "addPlayerToStandardLeague",
-  async (leagueId: string, playerId: string) => {
-    const session = await getServerAuthSession();
-    if (!canManagePlayers(session)) throw new Error("Unauthorized");
-
-    await getClient().mutate({
-      mutation: ADD_PLAYER_TO_STANDARD_LEAGUE,
-      variables: { leagueId, playerId },
-    });
-
-    revalidatePath("/");
-    return true;
-  },
-);
-
-export const registerSelfToEloLeague = createSafeAction(
-  "registerSelfToEloLeague",
-  async (leagueId: string) => {
-    const session = await getServerAuthSession();
-    if (!session?.user?.id) throw new Error("Unauthorized");
-
-    await getClient().mutate({
-      mutation: REGISTER_SELF_TO_ELO_LEAGUE,
-      variables: { leagueId },
-    });
-
-    revalidatePath("/");
-    return true;
-  },
-);
-
-export const registerSelfToStandardLeague = createSafeAction(
-  "registerSelfToStandardLeague",
-  async (leagueId: string) => {
-    const session = await getServerAuthSession();
-    if (!session?.user?.id) throw new Error("Unauthorized");
-
-    await getClient().mutate({
-      mutation: REGISTER_SELF_TO_STANDARD_LEAGUE,
-      variables: { leagueId },
     });
 
     revalidatePath("/");

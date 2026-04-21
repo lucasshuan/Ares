@@ -16,35 +16,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
+  /** JSON custom scalar type */
+  JSON: { input: any; output: any; }
 };
 
-export type AddPlayerToGameInput = {
-  gameId: Scalars['String']['input'];
+export type AddEventStaffInput = {
+  eventId: Scalars['String']['input'];
+  role?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['String']['input'];
+};
+
+export type ClaimEntryInput = {
+  entryId: Scalars['ID']['input'];
+  message?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateEventEntryInput = {
+  displayName: Scalars['String']['input'];
+  eventId: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
-  username: Scalars['String']['input'];
-};
-
-export type CreateEloLeagueInput = {
-  allowDraw: Scalars['Boolean']['input'];
-  allowedFormats: Array<Scalars['String']['input']>;
-  inactivityDecay: Scalars['Int']['input'];
-  inactivityDecayFloor: Scalars['Int']['input'];
-  inactivityThresholdHours: Scalars['Int']['input'];
-  initialElo: Scalars['Int']['input'];
-  kFactor: Scalars['Int']['input'];
-  scoreRelevance: Scalars['Float']['input'];
-};
-
-export type CreateEventInput = {
-  about?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  endDate?: InputMaybe<Scalars['DateTime']['input']>;
-  gameId?: InputMaybe<Scalars['String']['input']>;
-  gameName?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  participationMode?: InputMaybe<Scalars['String']['input']>;
-  slug: Scalars['String']['input'];
-  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type CreateGameInput = {
@@ -58,38 +49,54 @@ export type CreateGameInput = {
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type CreateStandardLeagueInput = {
-  allowDraw: Scalars['Boolean']['input'];
-  allowedFormats: Array<Scalars['String']['input']>;
-  pointsPerDraw: Scalars['Int']['input'];
-  pointsPerLoss: Scalars['Int']['input'];
-  pointsPerWin: Scalars['Int']['input'];
+export type CreateLeagueConfigInput = {
+  allowDraw?: InputMaybe<Scalars['Boolean']['input']>;
+  allowedFormats?: InputMaybe<Array<Scalars['String']['input']>>;
+  classificationSystem: Scalars['String']['input'];
+  config: Scalars['JSON']['input'];
+  customFieldSchema?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type EloLeague = {
-  __typename?: 'EloLeague';
-  allowDraw: Scalars['Boolean']['output'];
-  allowedFormats: Array<Scalars['String']['output']>;
-  entries: Array<EloLeagueEntry>;
-  event: Event;
-  id: Scalars['ID']['output'];
-  inactivityDecay: Scalars['Int']['output'];
-  inactivityDecayFloor: Scalars['Int']['output'];
-  inactivityThresholdHours: Scalars['Int']['output'];
-  initialElo: Scalars['Int']['output'];
-  kFactor: Scalars['Int']['output'];
-  scoreRelevance: Scalars['Float']['output'];
+export type CreateLeagueEventInput = {
+  about?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  gameId?: InputMaybe<Scalars['String']['input']>;
+  gameName?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  participationMode?: InputMaybe<Scalars['String']['input']>;
+  registrationEndDate?: InputMaybe<Scalars['DateTime']['input']>;
+  registrationStartDate?: InputMaybe<Scalars['DateTime']['input']>;
+  slug: Scalars['String']['input'];
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
-export type EloLeagueEntry = {
-  __typename?: 'EloLeagueEntry';
-  currentElo: Scalars['Int']['output'];
+export type CreateMatchInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  eventId: Scalars['ID']['input'];
+  format: Scalars['String']['input'];
+  participants?: InputMaybe<Array<CreateMatchParticipantInput>>;
+  phaseId?: InputMaybe<Scalars['String']['input']>;
+  playedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CreateMatchParticipantInput = {
+  entryId: Scalars['String']['input'];
+  outcome: Scalars['String']['input'];
+  score?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type EntryClaim = {
+  __typename?: 'EntryClaim';
+  createdAt: Scalars['DateTime']['output'];
+  entryId: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  league?: Maybe<EloLeague>;
-  leagueId: Scalars['String']['output'];
-  player?: Maybe<Player>;
-  playerId: Scalars['String']['output'];
-  position?: Maybe<Scalars['Int']['output']>;
+  initiatedBy: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  user?: Maybe<User>;
+  userId: Scalars['String']['output'];
 };
 
 export type Event = {
@@ -101,18 +108,47 @@ export type Event = {
   game: Game;
   id: Scalars['ID']['output'];
   isApproved: Scalars['Boolean']['output'];
+  league?: Maybe<League>;
   name: Scalars['String']['output'];
   participationMode: Scalars['String']['output'];
+  registrationEndDate?: Maybe<Scalars['DateTime']['output']>;
+  registrationStartDate?: Maybe<Scalars['DateTime']['output']>;
   slug: Scalars['String']['output'];
+  staff?: Maybe<Array<EventStaff>>;
   startDate?: Maybe<Scalars['DateTime']['output']>;
   type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type EventEntry = {
+  __typename?: 'EventEntry';
+  claims?: Maybe<Array<EntryClaim>>;
+  createdAt: Scalars['DateTime']['output'];
+  displayName: Scalars['String']['output'];
+  eventId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  members?: Maybe<Array<TeamMember>>;
+  stats: Scalars['JSON']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']['output']>;
 };
 
 export type EventMeta = {
   __typename?: 'EventMeta';
   id: Scalars['ID']['output'];
   type: Scalars['String']['output'];
+};
+
+export type EventStaff = {
+  __typename?: 'EventStaff';
+  createdAt: Scalars['DateTime']['output'];
+  eventId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  role: Scalars['String']['output'];
+  user?: Maybe<User>;
+  userId: Scalars['String']['output'];
 };
 
 export type Game = {
@@ -123,11 +159,9 @@ export type Game = {
   backgroundImageUrl?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
-  eloLeagues: Array<EloLeague>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   slug: Scalars['String']['output'];
-  standardLeagues: Array<StandardLeague>;
   status: Scalars['String']['output'];
   steamUrl?: Maybe<Scalars['String']['output']>;
   thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
@@ -137,45 +171,88 @@ export type Game = {
 
 export type GameCounts = {
   __typename?: 'GameCounts';
-  leagues: Scalars['Int']['output'];
-  players: Scalars['Int']['output'];
+  events: Scalars['Int']['output'];
+};
+
+export type League = {
+  __typename?: 'League';
+  allowDraw: Scalars['Boolean']['output'];
+  allowedFormats: Array<Scalars['String']['output']>;
+  classificationSystem: Scalars['String']['output'];
+  config: Scalars['JSON']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  customFieldSchema?: Maybe<Scalars['JSON']['output']>;
+  event?: Maybe<Event>;
+  eventId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type Match = {
+  __typename?: 'Match';
+  attachments?: Maybe<Array<MatchAttachment>>;
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  eventId: Scalars['String']['output'];
+  format: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  participants?: Maybe<Array<MatchParticipant>>;
+  phaseId?: Maybe<Scalars['String']['output']>;
+  playedAt?: Maybe<Scalars['DateTime']['output']>;
+  scheduledAt?: Maybe<Scalars['DateTime']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type MatchAttachment = {
+  __typename?: 'MatchAttachment';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  matchId: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type MatchParticipant = {
+  __typename?: 'MatchParticipant';
+  attachments?: Maybe<Array<MatchAttachment>>;
+  customStats?: Maybe<Scalars['JSON']['output']>;
+  entryId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  matchId: Scalars['String']['output'];
+  outcome: Scalars['String']['output'];
+  ratingChange?: Maybe<Scalars['Float']['output']>;
+  score?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addPlayerToEloLeague: EloLeagueEntry;
-  addPlayerToGame: Player;
-  addPlayerToStandardLeague: StandardLeagueEntry;
+  addEventEntry: EventEntry;
+  addEventStaff: EventStaff;
   approveGame: Game;
+  claimEventEntry: EventEntry;
   completeOnboarding: User;
-  createEloLeague: EloLeague;
   createGame: Game;
-  createStandardLeague: StandardLeague;
-  registerSelfToEloLeague: EloLeagueEntry;
-  registerSelfToStandardLeague: StandardLeagueEntry;
+  createLeague: League;
+  createMatch: Match;
+  recordMatchOutcome: Match;
+  removeEventStaff: EventStaff;
   requestUploadUrl: UploadUrlResponse;
-  updateEloLeague: EloLeague;
+  reviewEntryClaim: EventEntry;
+  updateEventEntry: EventEntry;
   updateGame: Game;
+  updateLeague: League;
+  updateMatch: Match;
   updateProfile: User;
-  updateStandardLeague: StandardLeague;
 };
 
 
-export type MutationAddPlayerToEloLeagueArgs = {
-  initialElo?: InputMaybe<Scalars['Int']['input']>;
-  leagueId: Scalars['ID']['input'];
-  playerId: Scalars['ID']['input'];
+export type MutationAddEventEntryArgs = {
+  input: CreateEventEntryInput;
 };
 
 
-export type MutationAddPlayerToGameArgs = {
-  input: AddPlayerToGameInput;
-};
-
-
-export type MutationAddPlayerToStandardLeagueArgs = {
-  leagueId: Scalars['ID']['input'];
-  playerId: Scalars['ID']['input'];
+export type MutationAddEventStaffArgs = {
+  input: AddEventStaffInput;
 };
 
 
@@ -184,9 +261,8 @@ export type MutationApproveGameArgs = {
 };
 
 
-export type MutationCreateEloLeagueArgs = {
-  event: CreateEventInput;
-  league: CreateEloLeagueInput;
+export type MutationClaimEventEntryArgs = {
+  input: ClaimEntryInput;
 };
 
 
@@ -195,19 +271,25 @@ export type MutationCreateGameArgs = {
 };
 
 
-export type MutationCreateStandardLeagueArgs = {
-  event: CreateEventInput;
-  league: CreateStandardLeagueInput;
+export type MutationCreateLeagueArgs = {
+  event: CreateLeagueEventInput;
+  league: CreateLeagueConfigInput;
 };
 
 
-export type MutationRegisterSelfToEloLeagueArgs = {
-  leagueId: Scalars['ID']['input'];
+export type MutationCreateMatchArgs = {
+  input: CreateMatchInput;
 };
 
 
-export type MutationRegisterSelfToStandardLeagueArgs = {
-  leagueId: Scalars['ID']['input'];
+export type MutationRecordMatchOutcomeArgs = {
+  input: RecordOutcomeInput;
+};
+
+
+export type MutationRemoveEventStaffArgs = {
+  eventId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -217,10 +299,14 @@ export type MutationRequestUploadUrlArgs = {
 };
 
 
-export type MutationUpdateEloLeagueArgs = {
-  event?: InputMaybe<UpdateEventInput>;
+export type MutationReviewEntryClaimArgs = {
+  input: ReviewClaimInput;
+};
+
+
+export type MutationUpdateEventEntryArgs = {
   id: Scalars['ID']['input'];
-  league?: InputMaybe<UpdateEloLeagueInput>;
+  input: UpdateEventEntryInput;
 };
 
 
@@ -230,21 +316,27 @@ export type MutationUpdateGameArgs = {
 };
 
 
+export type MutationUpdateLeagueArgs = {
+  event?: InputMaybe<UpdateLeagueEventInput>;
+  eventId: Scalars['ID']['input'];
+  league?: InputMaybe<UpdateLeagueConfigInput>;
+};
+
+
+export type MutationUpdateMatchArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateMatchInput;
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
 
-
-export type MutationUpdateStandardLeagueArgs = {
-  event?: InputMaybe<UpdateEventInput>;
-  id: Scalars['ID']['input'];
-  league?: InputMaybe<UpdateStandardLeagueInput>;
-};
-
-export type PaginatedEloLeagues = {
-  __typename?: 'PaginatedEloLeagues';
+export type PaginatedEventEntries = {
+  __typename?: 'PaginatedEventEntries';
   hasNextPage: Scalars['Boolean']['output'];
-  nodes: Array<EloLeague>;
+  nodes: Array<EventEntry>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -255,17 +347,10 @@ export type PaginatedGames = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type PaginatedPlayers = {
-  __typename?: 'PaginatedPlayers';
+export type PaginatedLeagues = {
+  __typename?: 'PaginatedLeagues';
   hasNextPage: Scalars['Boolean']['output'];
-  nodes: Array<PlayerUsername>;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type PaginatedStandardLeagues = {
-  __typename?: 'PaginatedStandardLeagues';
-  hasNextPage: Scalars['Boolean']['output'];
-  nodes: Array<StandardLeague>;
+  nodes: Array<League>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -281,57 +366,48 @@ export type PaginationInput = {
   take?: Scalars['Int']['input'];
 };
 
-export type Player = {
-  __typename?: 'Player';
-  currentElo: Scalars['Int']['output'];
-  eloLeagueEntries?: Maybe<Array<EloLeagueEntry>>;
-  game?: Maybe<Game>;
-  gameId: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  standardLeagueEntries?: Maybe<Array<StandardLeagueEntry>>;
-  user?: Maybe<User>;
-  userId: Scalars['String']['output'];
-  usernames: Array<PlayerUsername>;
-};
-
-export type PlayerUsername = {
-  __typename?: 'PlayerUsername';
-  id: Scalars['ID']['output'];
-  player?: Maybe<Player>;
-  username: Scalars['String']['output'];
-};
-
 export type Query = {
   __typename?: 'Query';
-  eloLeague?: Maybe<EloLeague>;
-  eloLeagues: PaginatedEloLeagues;
+  eventEntries: PaginatedEventEntries;
+  eventEntry?: Maybe<EventEntry>;
+  eventMatches: Array<Match>;
   eventMeta?: Maybe<EventMeta>;
+  eventStaff: Array<EventStaff>;
   game?: Maybe<Game>;
   games: PaginatedGames;
+  league?: Maybe<League>;
+  leagues: PaginatedLeagues;
+  match?: Maybe<Match>;
   me?: Maybe<User>;
-  player?: Maybe<Player>;
-  searchPlayers: PaginatedPlayers;
   searchUsers: PaginatedUsers;
-  standardLeague?: Maybe<StandardLeague>;
-  standardLeagues: PaginatedStandardLeagues;
   user?: Maybe<User>;
 };
 
 
-export type QueryEloLeagueArgs = {
-  gameSlug: Scalars['String']['input'];
-  slug: Scalars['String']['input'];
+export type QueryEventEntriesArgs = {
+  eventId: Scalars['ID']['input'];
+  pagination?: InputMaybe<PaginationInput>;
 };
 
 
-export type QueryEloLeaguesArgs = {
-  pagination?: InputMaybe<PaginationInput>;
+export type QueryEventEntryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryEventMatchesArgs = {
+  eventId: Scalars['ID']['input'];
 };
 
 
 export type QueryEventMetaArgs = {
   gameSlug: Scalars['String']['input'];
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryEventStaffArgs = {
+  eventId: Scalars['ID']['input'];
 };
 
 
@@ -346,15 +422,20 @@ export type QueryGamesArgs = {
 };
 
 
-export type QueryPlayerArgs = {
-  id: Scalars['ID']['input'];
+export type QueryLeagueArgs = {
+  gameSlug: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
 };
 
 
-export type QuerySearchPlayersArgs = {
-  gameId: Scalars['ID']['input'];
+export type QueryLeaguesArgs = {
+  gameId: Scalars['String']['input'];
   pagination?: InputMaybe<PaginationInput>;
-  query: Scalars['String']['input'];
+};
+
+
+export type QueryMatchArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -364,63 +445,37 @@ export type QuerySearchUsersArgs = {
 };
 
 
-export type QueryStandardLeagueArgs = {
-  gameSlug: Scalars['String']['input'];
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryStandardLeaguesArgs = {
-  pagination?: InputMaybe<PaginationInput>;
-};
-
-
 export type QueryUserArgs = {
   username: Scalars['String']['input'];
 };
 
-export type StandardLeague = {
-  __typename?: 'StandardLeague';
-  allowDraw: Scalars['Boolean']['output'];
-  allowedFormats: Array<Scalars['String']['output']>;
-  entries: Array<StandardLeagueEntry>;
-  event: Event;
+export type RecordOutcomeInput = {
+  matchId: Scalars['ID']['input'];
+  participants: Array<CreateMatchParticipantInput>;
+  playedAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type ReviewClaimInput = {
+  claimId: Scalars['ID']['input'];
+  status: Scalars['String']['input'];
+};
+
+export type TeamMember = {
+  __typename?: 'TeamMember';
+  createdAt: Scalars['DateTime']['output'];
+  displayName: Scalars['String']['output'];
+  entryId: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  pointsPerDraw: Scalars['Int']['output'];
-  pointsPerLoss: Scalars['Int']['output'];
-  pointsPerWin: Scalars['Int']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']['output']>;
 };
 
-export type StandardLeagueEntry = {
-  __typename?: 'StandardLeagueEntry';
-  draws: Scalars['Int']['output'];
-  id: Scalars['ID']['output'];
-  league?: Maybe<StandardLeague>;
-  leagueId: Scalars['String']['output'];
-  losses: Scalars['Int']['output'];
-  player?: Maybe<Player>;
-  playerId: Scalars['String']['output'];
-  points: Scalars['Int']['output'];
-  position?: Maybe<Scalars['Int']['output']>;
-  wins: Scalars['Int']['output'];
-};
-
-export type UpdateEloLeagueInput = {
-  allowDraw?: InputMaybe<Scalars['Boolean']['input']>;
-  allowedFormats?: InputMaybe<Array<Scalars['String']['input']>>;
-  inactivityDecay?: InputMaybe<Scalars['Int']['input']>;
-  inactivityDecayFloor?: InputMaybe<Scalars['Int']['input']>;
-  inactivityThresholdHours?: InputMaybe<Scalars['Int']['input']>;
-  initialElo?: InputMaybe<Scalars['Int']['input']>;
-  kFactor?: InputMaybe<Scalars['Int']['input']>;
-  scoreRelevance?: InputMaybe<Scalars['Float']['input']>;
-};
-
-export type UpdateEventInput = {
-  about?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  slug?: InputMaybe<Scalars['String']['input']>;
+export type UpdateEventEntryInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  eventId?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateGameInput = {
@@ -433,6 +488,35 @@ export type UpdateGameInput = {
   websiteUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateLeagueConfigInput = {
+  allowDraw?: InputMaybe<Scalars['Boolean']['input']>;
+  allowedFormats?: InputMaybe<Array<Scalars['String']['input']>>;
+  classificationSystem?: InputMaybe<Scalars['String']['input']>;
+  config?: InputMaybe<Scalars['JSON']['input']>;
+  customFieldSchema?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateLeagueEventInput = {
+  about?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  registrationEndDate?: InputMaybe<Scalars['DateTime']['input']>;
+  registrationStartDate?: InputMaybe<Scalars['DateTime']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type UpdateMatchInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  eventId?: InputMaybe<Scalars['ID']['input']>;
+  format?: InputMaybe<Scalars['String']['input']>;
+  participants?: InputMaybe<Array<CreateMatchParticipantInput>>;
+  phaseId?: InputMaybe<Scalars['String']['input']>;
+  playedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
 export type UpdateProfileInput = {
   bio?: InputMaybe<Scalars['String']['input']>;
   country?: InputMaybe<Scalars['String']['input']>;
@@ -441,14 +525,6 @@ export type UpdateProfileInput = {
   onboardingCompleted?: InputMaybe<Scalars['Boolean']['input']>;
   profileColor?: InputMaybe<Scalars['String']['input']>;
   username?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateStandardLeagueInput = {
-  allowDraw?: InputMaybe<Scalars['Boolean']['input']>;
-  allowedFormats?: InputMaybe<Array<Scalars['String']['input']>>;
-  pointsPerDraw?: InputMaybe<Scalars['Int']['input']>;
-  pointsPerLoss?: InputMaybe<Scalars['Int']['input']>;
-  pointsPerWin?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UploadUrlResponse = {
@@ -468,58 +544,9 @@ export type User = {
   isAdmin: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   onboardingCompleted: Scalars['Boolean']['output'];
-  players: Array<Player>;
   profileColor?: Maybe<Scalars['String']['output']>;
   username: Scalars['String']['output'];
 };
-
-export type CreateEloLeagueMutationVariables = Exact<{
-  event: CreateEventInput;
-  league: CreateEloLeagueInput;
-}>;
-
-
-export type CreateEloLeagueMutation = { __typename?: 'Mutation', createEloLeague: { __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string, participationMode: string } } };
-
-export type AddPlayerToEloLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-  playerId: Scalars['ID']['input'];
-  initialElo?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type AddPlayerToEloLeagueMutation = { __typename?: 'Mutation', addPlayerToEloLeague: { __typename?: 'EloLeagueEntry', id: string, currentElo: number } };
-
-export type RegisterSelfToEloLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-}>;
-
-
-export type RegisterSelfToEloLeagueMutation = { __typename?: 'Mutation', registerSelfToEloLeague: { __typename?: 'EloLeagueEntry', id: string } };
-
-export type UpdateEloLeagueMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
-  event?: InputMaybe<UpdateEventInput>;
-  league?: InputMaybe<UpdateEloLeagueInput>;
-}>;
-
-
-export type UpdateEloLeagueMutation = { __typename?: 'Mutation', updateEloLeague: { __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string } } };
-
-export type GetEloLeaguesQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
-}>;
-
-
-export type GetEloLeaguesQuery = { __typename?: 'Query', eloLeagues: { __typename?: 'PaginatedEloLeagues', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, type: string, isApproved: boolean, createdAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null } }, entries: Array<{ __typename?: 'EloLeagueEntry', id: string, currentElo: number, position?: number | null, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, name: string, username: string, country?: string | null } | null } | null }> }> } };
-
-export type GetEloLeagueQueryVariables = Exact<{
-  gameSlug: Scalars['String']['input'];
-  leagueSlug: Scalars['String']['input'];
-}>;
-
-
-export type GetEloLeagueQuery = { __typename?: 'Query', eloLeague?: { __typename?: 'EloLeague', id: string, initialElo: number, allowDraw: boolean, kFactor: number, scoreRelevance: number, inactivityDecay: number, inactivityThresholdHours: number, inactivityDecayFloor: number, allowedFormats: Array<string>, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, type: string, participationMode: string, isApproved: boolean, createdAt: any, updatedAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null, status: string } }, entries: Array<{ __typename?: 'EloLeagueEntry', id: string, leagueId: string, playerId: string, currentElo: number, position?: number | null, player?: { __typename?: 'Player', id: string, userId: string, user?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null, country?: string | null } | null } | null }> } | null };
 
 export type GetEventMetaQueryVariables = Exact<{
   gameSlug: Scalars['String']['input'];
@@ -565,21 +592,21 @@ export type GetGamesQueryVariables = Exact<{
 }>;
 
 
-export type GetGamesQuery = { __typename?: 'Query', games: { __typename?: 'PaginatedGames', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'Game', id: string, name: string, slug: string, description?: string | null, thumbnailImageUrl?: string | null, backgroundImageUrl?: string | null, status: string, _count?: { __typename?: 'GameCounts', leagues: number, players: number } | null }> } };
+export type GetGamesQuery = { __typename?: 'Query', games: { __typename?: 'PaginatedGames', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'Game', id: string, name: string, slug: string, description?: string | null, thumbnailImageUrl?: string | null, backgroundImageUrl?: string | null, status: string, _count?: { __typename?: 'GameCounts', events: number } | null }> } };
 
 export type GetGameQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetGameQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, name: string, slug: string, description?: string | null, thumbnailImageUrl?: string | null, backgroundImageUrl?: string | null, steamUrl?: string | null, websiteUrl?: string | null, status: string, authorId?: string | null, createdAt: any, updatedAt: any, author?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null } | null, eloLeagues: Array<{ __typename?: 'EloLeague', id: string, initialElo: number, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, isApproved: boolean, startDate?: any | null, endDate?: any | null, createdAt: any }, entries: Array<{ __typename?: 'EloLeagueEntry', id: string, currentElo: number, position?: number | null, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, name: string, username: string, country?: string | null } | null } | null }> }>, standardLeagues: Array<{ __typename?: 'StandardLeague', id: string, pointsPerWin: number, pointsPerDraw: number, pointsPerLoss: number, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, isApproved: boolean, startDate?: any | null, endDate?: any | null, createdAt: any }, entries: Array<{ __typename?: 'StandardLeagueEntry', id: string, points: number, wins: number, draws: number, losses: number, position?: number | null, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, name: string, username: string, country?: string | null } | null } | null }> }>, _count?: { __typename?: 'GameCounts', leagues: number, players: number } | null } | null };
+export type GetGameQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, name: string, slug: string, description?: string | null, thumbnailImageUrl?: string | null, backgroundImageUrl?: string | null, steamUrl?: string | null, websiteUrl?: string | null, status: string, authorId?: string | null, createdAt: any, updatedAt: any, author?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null } | null, _count?: { __typename?: 'GameCounts', events: number } | null } | null };
 
 export type GetGameActionsQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetGameActionsQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, slug: string, authorId?: string | null, eloLeagues: Array<{ __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', slug: string } }>, standardLeagues: Array<{ __typename?: 'StandardLeague', id: string, event: { __typename?: 'Event', slug: string } }> } | null };
+export type GetGameActionsQuery = { __typename?: 'Query', game?: { __typename?: 'Game', id: string, slug: string, authorId?: string | null } | null };
 
 export type GetGameLayoutQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -597,44 +624,29 @@ export type GetGamesSimpleQueryVariables = Exact<{
 export type GetGamesSimpleQuery = { __typename?: 'Query', games: { __typename?: 'PaginatedGames', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'Game', id: string, name: string, slug: string, description?: string | null, thumbnailImageUrl?: string | null }> } };
 
 export type CreateLeagueMutationVariables = Exact<{
-  event: CreateEventInput;
-  league: CreateEloLeagueInput;
+  event: CreateLeagueEventInput;
+  league: CreateLeagueConfigInput;
 }>;
 
 
-export type CreateLeagueMutation = { __typename?: 'Mutation', createLeague: { __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string } } };
-
-export type AddPlayerToLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-  playerId: Scalars['ID']['input'];
-  initialElo?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type AddPlayerToLeagueMutation = { __typename?: 'Mutation', addPlayerToLeague: { __typename?: 'EloLeagueEntry', id: string, currentElo: number } };
-
-export type RegisterSelfToLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-}>;
-
-
-export type RegisterSelfToLeagueMutation = { __typename?: 'Mutation', registerSelfToLeague: { __typename?: 'EloLeagueEntry', id: string } };
+export type CreateLeagueMutation = { __typename?: 'Mutation', createLeague: { __typename?: 'League', eventId: string, classificationSystem: string, config: any, event?: { __typename?: 'Event', id: string, name: string, slug: string } | null } };
 
 export type UpdateLeagueMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
-  event?: InputMaybe<UpdateEventInput>;
-  league?: InputMaybe<UpdateEloLeagueInput>;
+  eventId: Scalars['ID']['input'];
+  event?: InputMaybe<UpdateLeagueEventInput>;
+  league?: InputMaybe<UpdateLeagueConfigInput>;
 }>;
 
 
-export type UpdateLeagueMutation = { __typename?: 'Mutation', updateLeague: { __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string } } };
+export type UpdateLeagueMutation = { __typename?: 'Mutation', updateLeague: { __typename?: 'League', eventId: string, classificationSystem: string, config: any, event?: { __typename?: 'Event', id: string, name: string, slug: string } | null } };
 
 export type GetLeaguesQueryVariables = Exact<{
+  gameId: Scalars['String']['input'];
   pagination?: InputMaybe<PaginationInput>;
 }>;
 
 
-export type GetLeaguesQuery = { __typename?: 'Query', leagues: { __typename?: 'PaginatedEloLeagues', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string, slug: string, type: string, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null } }, entries: Array<{ __typename?: 'EloLeagueEntry', id: string, currentElo: number, position?: number | null, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, name: string, username: string, country?: string | null } | null } | null }> }> } };
+export type GetLeaguesQuery = { __typename?: 'Query', leagues: { __typename?: 'PaginatedLeagues', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'League', eventId: string, classificationSystem: string, config: any, allowDraw: boolean, allowedFormats: Array<string>, event?: { __typename?: 'Event', id: string, name: string, slug: string, type: string, isApproved: boolean, startDate?: any | null, endDate?: any | null, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null } } | null }> } };
 
 export type GetLeagueQueryVariables = Exact<{
   gameSlug: Scalars['String']['input'];
@@ -642,81 +654,12 @@ export type GetLeagueQueryVariables = Exact<{
 }>;
 
 
-export type GetLeagueQuery = { __typename?: 'Query', league?: { __typename?: 'EloLeague', id: string, initialElo: number, allowDraw: boolean, kFactor: number, scoreRelevance: number, inactivityDecay: number, inactivityThresholdHours: number, inactivityDecayFloor: number, allowedFormats: Array<string>, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, type: string, isApproved: boolean, createdAt: any, updatedAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null, status: string } }, entries: Array<{ __typename?: 'EloLeagueEntry', id: string, leagueId: string, playerId: string, currentElo: number, position?: number | null, player?: { __typename?: 'Player', id: string, userId: string, user?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null, country?: string | null } | null } | null }> } | null };
+export type GetLeagueQuery = { __typename?: 'Query', league?: { __typename?: 'League', eventId: string, classificationSystem: string, config: any, allowDraw: boolean, allowedFormats: Array<string>, customFieldSchema?: any | null, createdAt: any, updatedAt: any, event?: { __typename?: 'Event', id: string, name: string, slug: string, description?: string | null, about?: string | null, type: string, isApproved: boolean, startDate?: any | null, endDate?: any | null, registrationStartDate?: any | null, registrationEndDate?: any | null, createdAt: any, updatedAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null, status: string } } | null } | null };
 
 export type CompleteOnboardingMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CompleteOnboardingMutation = { __typename?: 'Mutation', completeOnboarding: { __typename?: 'User', id: string, onboardingCompleted: boolean } };
-
-export type AddPlayerToGameMutationVariables = Exact<{
-  input: AddPlayerToGameInput;
-}>;
-
-
-export type AddPlayerToGameMutation = { __typename?: 'Mutation', addPlayerToGame: { __typename?: 'Player', id: string } };
-
-export type SearchPlayersQueryVariables = Exact<{
-  gameId: Scalars['ID']['input'];
-  query: Scalars['String']['input'];
-}>;
-
-
-export type SearchPlayersQuery = { __typename?: 'Query', searchPlayers: { __typename?: 'PaginatedPlayers', nodes: Array<{ __typename?: 'PlayerUsername', id: string, username: string, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, country?: string | null } | null } | null }> } };
-
-export type GetPlayerQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
-}>;
-
-
-export type GetPlayerQuery = { __typename?: 'Query', player?: { __typename?: 'Player', id: string, currentElo: number, user?: { __typename?: 'User', name: string, username: string, imageUrl?: string | null, country?: string | null, createdAt: any } | null, usernames: Array<{ __typename?: 'PlayerUsername', id: string, username: string }> } | null };
-
-export type CreateStandardLeagueMutationVariables = Exact<{
-  event: CreateEventInput;
-  league: CreateStandardLeagueInput;
-}>;
-
-
-export type CreateStandardLeagueMutation = { __typename?: 'Mutation', createStandardLeague: { __typename?: 'StandardLeague', id: string, event: { __typename?: 'Event', name: string, slug: string, participationMode: string } } };
-
-export type AddPlayerToStandardLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-  playerId: Scalars['ID']['input'];
-}>;
-
-
-export type AddPlayerToStandardLeagueMutation = { __typename?: 'Mutation', addPlayerToStandardLeague: { __typename?: 'StandardLeagueEntry', id: string, points: number } };
-
-export type RegisterSelfToStandardLeagueMutationVariables = Exact<{
-  leagueId: Scalars['ID']['input'];
-}>;
-
-
-export type RegisterSelfToStandardLeagueMutation = { __typename?: 'Mutation', registerSelfToStandardLeague: { __typename?: 'StandardLeagueEntry', id: string } };
-
-export type UpdateStandardLeagueMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
-  event?: InputMaybe<UpdateEventInput>;
-  league?: InputMaybe<UpdateStandardLeagueInput>;
-}>;
-
-
-export type UpdateStandardLeagueMutation = { __typename?: 'Mutation', updateStandardLeague: { __typename?: 'StandardLeague', id: string, event: { __typename?: 'Event', name: string, slug: string } } };
-
-export type GetStandardLeaguesQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
-}>;
-
-
-export type GetStandardLeaguesQuery = { __typename?: 'Query', standardLeagues: { __typename?: 'PaginatedStandardLeagues', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'StandardLeague', id: string, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, type: string, isApproved: boolean, createdAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null } }, entries: Array<{ __typename?: 'StandardLeagueEntry', id: string, points: number, wins: number, draws: number, losses: number, position?: number | null, player?: { __typename?: 'Player', id: string, user?: { __typename?: 'User', id: string, name: string, username: string, country?: string | null } | null } | null }> }> } };
-
-export type GetStandardLeagueQueryVariables = Exact<{
-  gameSlug: Scalars['String']['input'];
-  leagueSlug: Scalars['String']['input'];
-}>;
-
-
-export type GetStandardLeagueQuery = { __typename?: 'Query', standardLeague?: { __typename?: 'StandardLeague', id: string, allowDraw: boolean, pointsPerWin: number, pointsPerDraw: number, pointsPerLoss: number, allowedFormats: Array<string>, event: { __typename?: 'Event', name: string, slug: string, description?: string | null, type: string, participationMode: string, isApproved: boolean, createdAt: any, updatedAt: any, game: { __typename?: 'Game', id: string, name: string, slug: string, thumbnailImageUrl?: string | null, status: string } }, entries: Array<{ __typename?: 'StandardLeagueEntry', id: string, leagueId: string, playerId: string, points: number, wins: number, draws: number, losses: number, position?: number | null, player?: { __typename?: 'Player', id: string, userId: string, user?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null, country?: string | null } | null } | null }> } | null };
 
 export type UpdateProfileMutationVariables = Exact<{
   input: UpdateProfileInput;
@@ -730,7 +673,7 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null, bio?: string | null, profileColor?: string | null, isAdmin: boolean, createdAt: any, players: Array<{ __typename?: 'Player', id: string, game?: { __typename?: 'Game', id: string, name: string, slug: string, backgroundImageUrl?: string | null } | null, eloLeagueEntries?: Array<{ __typename?: 'EloLeagueEntry', id: string, currentElo: number, position?: number | null, league?: { __typename?: 'EloLeague', id: string, event: { __typename?: 'Event', name: string } } | null }> | null }> } | null };
+export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null, bio?: string | null, profileColor?: string | null, isAdmin: boolean, createdAt: any } | null };
 
 export type SearchUsersQueryVariables = Exact<{
   pagination?: InputMaybe<PaginationInput>;
@@ -741,38 +684,21 @@ export type SearchUsersQueryVariables = Exact<{
 export type SearchUsersQuery = { __typename?: 'Query', searchUsers: { __typename?: 'PaginatedUsers', totalCount: number, hasNextPage: boolean, nodes: Array<{ __typename?: 'User', id: string, name: string, username: string, imageUrl?: string | null }> } };
 
 
-export const CreateEloLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEloLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEventInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEloLeagueInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"participationMode"}}]}}]}}]}}]} as unknown as DocumentNode<CreateEloLeagueMutation, CreateEloLeagueMutationVariables>;
-export const AddPlayerToEloLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddPlayerToEloLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"initialElo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addPlayerToEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}},{"kind":"Argument","name":{"kind":"Name","value":"playerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"initialElo"},"value":{"kind":"Variable","name":{"kind":"Name","value":"initialElo"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}}]}}]}}]} as unknown as DocumentNode<AddPlayerToEloLeagueMutation, AddPlayerToEloLeagueMutationVariables>;
-export const RegisterSelfToEloLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterSelfToEloLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerSelfToEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RegisterSelfToEloLeagueMutation, RegisterSelfToEloLeagueMutationVariables>;
-export const UpdateEloLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEloLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEventInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEloLeagueInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateEloLeagueMutation, UpdateEloLeagueMutationVariables>;
-export const GetEloLeaguesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEloLeagues"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eloLeagues"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetEloLeaguesQuery, GetEloLeaguesQueryVariables>;
-export const GetEloLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEloLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameSlug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"initialElo"}},{"kind":"Field","name":{"kind":"Name","value":"allowDraw"}},{"kind":"Field","name":{"kind":"Name","value":"kFactor"}},{"kind":"Field","name":{"kind":"Name","value":"scoreRelevance"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityDecay"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityThresholdHours"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityDecayFloor"}},{"kind":"Field","name":{"kind":"Name","value":"allowedFormats"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"participationMode"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"leagueId"}},{"kind":"Field","name":{"kind":"Name","value":"playerId"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetEloLeagueQuery, GetEloLeagueQueryVariables>;
 export const GetEventMetaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventMeta"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventMeta"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameSlug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<GetEventMetaQuery, GetEventMetaQueryVariables>;
 export const RequestUploadUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RequestUploadUrl"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestUploadUrl"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"contentType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"contentType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadUrl"}},{"kind":"Field","name":{"kind":"Name","value":"finalUrl"}}]}}]}}]} as unknown as DocumentNode<RequestUploadUrlMutation, RequestUploadUrlMutationVariables>;
 export const CreateGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateGameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createGame"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<CreateGameMutation, CreateGameMutationVariables>;
 export const UpdateGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateGameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateGame"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]} as unknown as DocumentNode<UpdateGameMutation, UpdateGameMutationVariables>;
 export const ApproveGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ApproveGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"approveGame"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ApproveGameMutation, ApproveGameMutationVariables>;
-export const GetGamesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGames"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"games"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"_count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leagues"}},{"kind":"Field","name":{"kind":"Name","value":"players"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetGamesQuery, GetGamesQueryVariables>;
-export const GetGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"steamUrl"}},{"kind":"Field","name":{"kind":"Name","value":"websiteUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"authorId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"author"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eloLeagues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"initialElo"}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"standardLeagues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerWin"}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerDraw"}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerLoss"}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"points"}},{"kind":"Field","name":{"kind":"Name","value":"wins"}},{"kind":"Field","name":{"kind":"Name","value":"draws"}},{"kind":"Field","name":{"kind":"Name","value":"losses"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"_count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leagues"}},{"kind":"Field","name":{"kind":"Name","value":"players"}}]}}]}}]}}]} as unknown as DocumentNode<GetGameQuery, GetGameQueryVariables>;
-export const GetGameActionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGameActions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"authorId"}},{"kind":"Field","name":{"kind":"Name","value":"eloLeagues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"standardLeagues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetGameActionsQuery, GetGameActionsQueryVariables>;
+export const GetGamesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGames"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"games"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"_count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"events"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetGamesQuery, GetGamesQueryVariables>;
+export const GetGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"steamUrl"}},{"kind":"Field","name":{"kind":"Name","value":"websiteUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"authorId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"author"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"_count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"events"}}]}}]}}]}}]} as unknown as DocumentNode<GetGameQuery, GetGameQueryVariables>;
+export const GetGameActionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGameActions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"authorId"}}]}}]}}]} as unknown as DocumentNode<GetGameActionsQuery, GetGameActionsQueryVariables>;
 export const GetGameLayoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGameLayout"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}}]}}]}}]} as unknown as DocumentNode<GetGameLayoutQuery, GetGameLayoutQueryVariables>;
 export const GetGamesSimpleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGamesSimple"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"games"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetGamesSimpleQuery, GetGamesSimpleQueryVariables>;
-export const CreateLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEventInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEloLeagueInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"createLeague"},"name":{"kind":"Name","value":"createEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<CreateLeagueMutation, CreateLeagueMutationVariables>;
-export const AddPlayerToLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddPlayerToLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"initialElo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"addPlayerToLeague"},"name":{"kind":"Name","value":"addPlayerToEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}},{"kind":"Argument","name":{"kind":"Name","value":"playerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"initialElo"},"value":{"kind":"Variable","name":{"kind":"Name","value":"initialElo"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}}]}}]}}]} as unknown as DocumentNode<AddPlayerToLeagueMutation, AddPlayerToLeagueMutationVariables>;
-export const RegisterSelfToLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterSelfToLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"registerSelfToLeague"},"name":{"kind":"Name","value":"registerSelfToEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RegisterSelfToLeagueMutation, RegisterSelfToLeagueMutationVariables>;
-export const UpdateLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEventInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEloLeagueInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"updateLeague"},"name":{"kind":"Name","value":"updateEloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateLeagueMutation, UpdateLeagueMutationVariables>;
-export const GetLeaguesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeagues"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"leagues"},"name":{"kind":"Name","value":"eloLeagues"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetLeaguesQuery, GetLeaguesQueryVariables>;
-export const GetLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"league"},"name":{"kind":"Name","value":"eloLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameSlug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"initialElo"}},{"kind":"Field","name":{"kind":"Name","value":"allowDraw"}},{"kind":"Field","name":{"kind":"Name","value":"kFactor"}},{"kind":"Field","name":{"kind":"Name","value":"scoreRelevance"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityDecay"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityThresholdHours"}},{"kind":"Field","name":{"kind":"Name","value":"inactivityDecayFloor"}},{"kind":"Field","name":{"kind":"Name","value":"allowedFormats"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"leagueId"}},{"kind":"Field","name":{"kind":"Name","value":"playerId"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLeagueQuery, GetLeagueQueryVariables>;
+export const CreateLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateLeagueEventInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateLeagueConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventId"}},{"kind":"Field","name":{"kind":"Name","value":"classificationSystem"}},{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<CreateLeagueMutation, CreateLeagueMutationVariables>;
+export const UpdateLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateLeagueEventInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateLeagueConfigInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"eventId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventId"}}},{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventId"}},{"kind":"Field","name":{"kind":"Name","value":"classificationSystem"}},{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateLeagueMutation, UpdateLeagueMutationVariables>;
+export const GetLeaguesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeagues"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leagues"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventId"}},{"kind":"Field","name":{"kind":"Name","value":"classificationSystem"}},{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"allowDraw"}},{"kind":"Field","name":{"kind":"Name","value":"allowedFormats"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetLeaguesQuery, GetLeaguesQueryVariables>;
+export const GetLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"league"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameSlug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventId"}},{"kind":"Field","name":{"kind":"Name","value":"classificationSystem"}},{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"allowDraw"}},{"kind":"Field","name":{"kind":"Name","value":"allowedFormats"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldSchema"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"about"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"registrationStartDate"}},{"kind":"Field","name":{"kind":"Name","value":"registrationEndDate"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLeagueQuery, GetLeagueQueryVariables>;
 export const CompleteOnboardingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteOnboarding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"completeOnboarding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingCompleted"}}]}}]}}]} as unknown as DocumentNode<CompleteOnboardingMutation, CompleteOnboardingMutationVariables>;
-export const AddPlayerToGameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddPlayerToGame"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddPlayerToGameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addPlayerToGame"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<AddPlayerToGameMutation, AddPlayerToGameMutationVariables>;
-export const SearchPlayersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchPlayers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchPlayers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}},{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SearchPlayersQuery, SearchPlayersQueryVariables>;
-export const GetPlayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPlayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"usernames"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<GetPlayerQuery, GetPlayerQueryVariables>;
-export const CreateStandardLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStandardLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEventInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateStandardLeagueInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStandardLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"participationMode"}}]}}]}}]}}]} as unknown as DocumentNode<CreateStandardLeagueMutation, CreateStandardLeagueMutationVariables>;
-export const AddPlayerToStandardLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddPlayerToStandardLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addPlayerToStandardLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}},{"kind":"Argument","name":{"kind":"Name","value":"playerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"points"}}]}}]}}]} as unknown as DocumentNode<AddPlayerToStandardLeagueMutation, AddPlayerToStandardLeagueMutationVariables>;
-export const RegisterSelfToStandardLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterSelfToStandardLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerSelfToStandardLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"leagueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RegisterSelfToStandardLeagueMutation, RegisterSelfToStandardLeagueMutationVariables>;
-export const UpdateStandardLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStandardLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEventInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"league"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateStandardLeagueInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStandardLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"league"},"value":{"kind":"Variable","name":{"kind":"Name","value":"league"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateStandardLeagueMutation, UpdateStandardLeagueMutationVariables>;
-export const GetStandardLeaguesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStandardLeagues"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"standardLeagues"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"points"}},{"kind":"Field","name":{"kind":"Name","value":"wins"}},{"kind":"Field","name":{"kind":"Name","value":"draws"}},{"kind":"Field","name":{"kind":"Name","value":"losses"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<GetStandardLeaguesQuery, GetStandardLeaguesQueryVariables>;
-export const GetStandardLeagueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStandardLeague"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"standardLeague"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameSlug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leagueSlug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"allowDraw"}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerWin"}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerDraw"}},{"kind":"Field","name":{"kind":"Name","value":"pointsPerLoss"}},{"kind":"Field","name":{"kind":"Name","value":"allowedFormats"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"participationMode"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnailImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"leagueId"}},{"kind":"Field","name":{"kind":"Name","value":"playerId"}},{"kind":"Field","name":{"kind":"Name","value":"points"}},{"kind":"Field","name":{"kind":"Name","value":"wins"}},{"kind":"Field","name":{"kind":"Name","value":"draws"}},{"kind":"Field","name":{"kind":"Name","value":"losses"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"country"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetStandardLeagueQuery, GetStandardLeagueQueryVariables>;
 export const UpdateProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}}]}}]}}]} as unknown as DocumentNode<UpdateProfileMutation, UpdateProfileMutationVariables>;
-export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"profileColor"}},{"kind":"Field","name":{"kind":"Name","value":"isAdmin"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"players"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"backgroundImageUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"eloLeagueEntries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"currentElo"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"league"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;
+export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"profileColor"}},{"kind":"Field","name":{"kind":"Name","value":"isAdmin"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;
 export const SearchUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]} as unknown as DocumentNode<SearchUsersQuery, SearchUsersQueryVariables>;

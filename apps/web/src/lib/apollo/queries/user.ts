@@ -11,26 +11,6 @@ export const GET_USER = gql`
       profileColor
       isAdmin
       createdAt
-      players {
-        id
-        game {
-          id
-          name
-          slug
-          backgroundImageUrl
-        }
-        eloLeagueEntries {
-          id
-          currentElo
-          position
-          league {
-            id
-            event {
-              name
-            }
-          }
-        }
-      }
     }
   }
 `;

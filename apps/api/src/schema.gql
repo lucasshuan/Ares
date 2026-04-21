@@ -2,93 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Event {
-  id: ID!
-  type: String!
-  participationMode: String!
-  name: String!
-  slug: String!
-  description: String
-  about: String
-  isApproved: Boolean!
-  startDate: DateTime
-  endDate: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  game: Game!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type EloLeague {
-  id: ID!
-  initialElo: Int!
-  allowDraw: Boolean!
-  kFactor: Int!
-  scoreRelevance: Float!
-  inactivityDecay: Int!
-  inactivityThresholdHours: Int!
-  inactivityDecayFloor: Int!
-  allowedFormats: [String!]!
-  event: Event!
-  entries: [EloLeagueEntry!]!
-}
-
-type EloLeagueEntry {
-  id: ID!
-  leagueId: String!
-  playerId: String!
-  currentElo: Int!
-  position: Int
-  player: Player
-  league: EloLeague
-}
-
-type StandardLeague {
-  id: ID!
-  allowDraw: Boolean!
-  pointsPerWin: Int!
-  pointsPerDraw: Int!
-  pointsPerLoss: Int!
-  allowedFormats: [String!]!
-  event: Event!
-  entries: [StandardLeagueEntry!]!
-}
-
-type StandardLeagueEntry {
-  id: ID!
-  leagueId: String!
-  playerId: String!
-  points: Int!
-  wins: Int!
-  draws: Int!
-  losses: Int!
-  position: Int
-  player: Player
-  league: StandardLeague
-}
-
-type Player {
-  id: ID!
-  gameId: String!
-  userId: String!
-  currentElo: Int!
-  user: User
-  game: Game
-  eloLeagueEntries: [EloLeagueEntry!]
-  standardLeagueEntries: [StandardLeagueEntry!]
-  usernames: [PlayerUsername!]!
-}
-
-type PlayerUsername {
-  id: ID!
-  username: String!
-  player: Player
-}
-
 type User {
   id: ID!
   name: String!
@@ -101,12 +14,15 @@ type User {
   isAdmin: Boolean!
   onboardingCompleted: Boolean!
   createdAt: DateTime!
-  players: [Player!]!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type GameCounts {
-  leagues: Int!
-  players: Int!
+  events: Int!
 }
 
 type Game {
@@ -123,8 +39,6 @@ type Game {
   createdAt: DateTime!
   updatedAt: DateTime!
   author: User
-  eloLeagues: [EloLeague!]!
-  standardLeagues: [StandardLeague!]!
   _count: GameCounts
 }
 
@@ -139,27 +53,50 @@ type EventMeta {
   type: String!
 }
 
-type PaginatedPlayers {
-  nodes: [PlayerUsername!]!
-  totalCount: Int!
-  hasNextPage: Boolean!
-}
-
 type UploadUrlResponse {
   uploadUrl: String!
   finalUrl: String!
 }
 
-type PaginatedEloLeagues {
-  nodes: [EloLeague!]!
-  totalCount: Int!
-  hasNextPage: Boolean!
+type League {
+  eventId: ID!
+  classificationSystem: String!
+  config: JSON!
+  allowDraw: Boolean!
+  allowedFormats: [String!]!
+  customFieldSchema: JSON
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  event: Event
 }
 
-type PaginatedStandardLeagues {
-  nodes: [StandardLeague!]!
-  totalCount: Int!
-  hasNextPage: Boolean!
+type EventStaff {
+  id: ID!
+  eventId: String!
+  userId: String!
+  role: String!
+  createdAt: DateTime!
+  user: User
+}
+
+type Event {
+  id: ID!
+  type: String!
+  participationMode: String!
+  name: String!
+  slug: String!
+  description: String
+  about: String
+  isApproved: Boolean!
+  startDate: DateTime
+  endDate: DateTime
+  registrationStartDate: DateTime
+  registrationEndDate: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  league: League
+  staff: [EventStaff!]
+  game: Game!
 }
 
 type PaginatedUsers {
@@ -168,19 +105,104 @@ type PaginatedUsers {
   hasNextPage: Boolean!
 }
 
+type PaginatedLeagues {
+  nodes: [League!]!
+  totalCount: Int!
+  hasNextPage: Boolean!
+}
+
+type TeamMember {
+  id: ID!
+  entryId: String!
+  displayName: String!
+  imageUrl: String
+  userId: String
+  createdAt: DateTime!
+  user: User
+}
+
+type EntryClaim {
+  id: ID!
+  entryId: String!
+  userId: String!
+  initiatedBy: String!
+  status: String!
+  message: String
+  createdAt: DateTime!
+  user: User
+}
+
+type EventEntry {
+  id: ID!
+  eventId: String!
+  displayName: String!
+  imageUrl: String
+  userId: String
+  stats: JSON!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User
+  members: [TeamMember!]
+  claims: [EntryClaim!]
+}
+
+type PaginatedEventEntries {
+  nodes: [EventEntry!]!
+  totalCount: Int!
+  hasNextPage: Boolean!
+}
+
+type MatchAttachment {
+  id: ID!
+  matchId: String!
+  url: String!
+  type: String!
+  label: String
+  createdAt: DateTime!
+}
+
+type MatchParticipant {
+  id: ID!
+  matchId: String!
+  entryId: String!
+  outcome: String!
+  score: Float
+  ratingChange: Float
+  customStats: JSON
+  attachments: [MatchAttachment!]
+}
+
+type Match {
+  id: ID!
+  eventId: String!
+  phaseId: String
+  format: String!
+  description: String
+  scheduledAt: DateTime
+  playedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  participants: [MatchParticipant!]
+  attachments: [MatchAttachment!]
+}
+
+"""JSON custom scalar type"""
+scalar JSON
+
 type Query {
   games(pagination: PaginationInput, search: String): PaginatedGames!
   game(slug: String!): Game
   eventMeta(gameSlug: String!, slug: String!): EventMeta
-  player(id: ID!): Player
-  searchPlayers(gameId: ID!, query: String!, pagination: PaginationInput): PaginatedPlayers!
   me: User
-  eloLeagues(pagination: PaginationInput): PaginatedEloLeagues!
-  eloLeague(gameSlug: String!, slug: String!): EloLeague
-  standardLeagues(pagination: PaginationInput): PaginatedStandardLeagues!
-  standardLeague(gameSlug: String!, slug: String!): StandardLeague
   user(username: String!): User
   searchUsers(pagination: PaginationInput, query: String): PaginatedUsers!
+  league(gameSlug: String!, slug: String!): League
+  leagues(gameId: String!, pagination: PaginationInput): PaginatedLeagues!
+  eventEntries(eventId: ID!, pagination: PaginationInput): PaginatedEventEntries!
+  eventEntry(id: ID!): EventEntry
+  eventMatches(eventId: ID!): [Match!]!
+  match(id: ID!): Match
+  eventStaff(eventId: ID!): [EventStaff!]!
 }
 
 input PaginationInput {
@@ -192,18 +214,20 @@ type Mutation {
   createGame(input: CreateGameInput!): Game!
   updateGame(id: ID!, input: UpdateGameInput!): Game!
   approveGame(id: ID!): Game!
-  addPlayerToGame(input: AddPlayerToGameInput!): Player!
   requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
   updateProfile(input: UpdateProfileInput!): User!
   completeOnboarding: User!
-  updateEloLeague(id: ID!, event: UpdateEventInput, league: UpdateEloLeagueInput): EloLeague!
-  createEloLeague(event: CreateEventInput!, league: CreateEloLeagueInput!): EloLeague!
-  addPlayerToEloLeague(leagueId: ID!, playerId: ID!, initialElo: Int): EloLeagueEntry!
-  registerSelfToEloLeague(leagueId: ID!): EloLeagueEntry!
-  updateStandardLeague(id: ID!, event: UpdateEventInput, league: UpdateStandardLeagueInput): StandardLeague!
-  createStandardLeague(event: CreateEventInput!, league: CreateStandardLeagueInput!): StandardLeague!
-  addPlayerToStandardLeague(leagueId: ID!, playerId: ID!): StandardLeagueEntry!
-  registerSelfToStandardLeague(leagueId: ID!): StandardLeagueEntry!
+  createLeague(event: CreateLeagueEventInput!, league: CreateLeagueConfigInput!): League!
+  updateLeague(eventId: ID!, event: UpdateLeagueEventInput, league: UpdateLeagueConfigInput): League!
+  addEventEntry(input: CreateEventEntryInput!): EventEntry!
+  updateEventEntry(id: ID!, input: UpdateEventEntryInput!): EventEntry!
+  claimEventEntry(input: ClaimEntryInput!): EventEntry!
+  reviewEntryClaim(input: ReviewClaimInput!): EventEntry!
+  createMatch(input: CreateMatchInput!): Match!
+  updateMatch(id: ID!, input: UpdateMatchInput!): Match!
+  recordMatchOutcome(input: RecordOutcomeInput!): Match!
+  addEventStaff(input: AddEventStaffInput!): EventStaff!
+  removeEventStaff(eventId: ID!, userId: ID!): EventStaff!
 }
 
 input CreateGameInput {
@@ -227,12 +251,6 @@ input UpdateGameInput {
   websiteUrl: String
 }
 
-input AddPlayerToGameInput {
-  gameId: String!
-  username: String!
-  userId: String
-}
-
 input UpdateProfileInput {
   name: String
   username: String
@@ -243,25 +261,7 @@ input UpdateProfileInput {
   onboardingCompleted: Boolean
 }
 
-input UpdateEventInput {
-  name: String
-  slug: String
-  description: String
-  about: String
-}
-
-input UpdateEloLeagueInput {
-  initialElo: Int
-  allowDraw: Boolean
-  kFactor: Int
-  scoreRelevance: Float
-  inactivityDecay: Int
-  inactivityThresholdHours: Int
-  inactivityDecayFloor: Int
-  allowedFormats: [String!]
-}
-
-input CreateEventInput {
+input CreateLeagueEventInput {
   gameId: String
   gameName: String
   name: String!
@@ -271,31 +271,95 @@ input CreateEventInput {
   participationMode: String
   startDate: DateTime
   endDate: DateTime
+  registrationStartDate: DateTime
+  registrationEndDate: DateTime
 }
 
-input CreateEloLeagueInput {
-  initialElo: Int!
-  allowDraw: Boolean!
-  kFactor: Int!
-  scoreRelevance: Float!
-  inactivityDecay: Int!
-  inactivityThresholdHours: Int!
-  inactivityDecayFloor: Int!
-  allowedFormats: [String!]!
-}
-
-input UpdateStandardLeagueInput {
+input CreateLeagueConfigInput {
+  classificationSystem: String!
+  config: JSON!
   allowDraw: Boolean
-  pointsPerWin: Int
-  pointsPerDraw: Int
-  pointsPerLoss: Int
   allowedFormats: [String!]
+  customFieldSchema: JSON
 }
 
-input CreateStandardLeagueInput {
-  allowDraw: Boolean!
-  pointsPerWin: Int!
-  pointsPerDraw: Int!
-  pointsPerLoss: Int!
-  allowedFormats: [String!]!
+input UpdateLeagueEventInput {
+  name: String
+  slug: String
+  description: String
+  about: String
+  startDate: DateTime
+  endDate: DateTime
+  registrationStartDate: DateTime
+  registrationEndDate: DateTime
+}
+
+input UpdateLeagueConfigInput {
+  classificationSystem: String
+  config: JSON
+  allowDraw: Boolean
+  allowedFormats: [String!]
+  customFieldSchema: JSON
+}
+
+input CreateEventEntryInput {
+  eventId: String!
+  displayName: String!
+  imageUrl: String
+  userId: String
+}
+
+input UpdateEventEntryInput {
+  eventId: String
+  displayName: String
+  imageUrl: String
+  userId: String
+}
+
+input ClaimEntryInput {
+  entryId: ID!
+  message: String
+}
+
+input ReviewClaimInput {
+  claimId: ID!
+  status: String!
+}
+
+input CreateMatchInput {
+  eventId: ID!
+  phaseId: String
+  format: String!
+  description: String
+  scheduledAt: DateTime
+  playedAt: DateTime
+  participants: [CreateMatchParticipantInput!]
+}
+
+input CreateMatchParticipantInput {
+  entryId: String!
+  outcome: String!
+  score: Float
+}
+
+input UpdateMatchInput {
+  eventId: ID
+  phaseId: String
+  format: String
+  description: String
+  scheduledAt: DateTime
+  playedAt: DateTime
+  participants: [CreateMatchParticipantInput!]
+}
+
+input RecordOutcomeInput {
+  matchId: ID!
+  participants: [CreateMatchParticipantInput!]!
+  playedAt: DateTime
+}
+
+input AddEventStaffInput {
+  eventId: String!
+  userId: String!
+  role: String
 }

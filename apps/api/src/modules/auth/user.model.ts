@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Player } from '../games/player.model';
 
 @ObjectType()
 export class User {
@@ -35,9 +34,6 @@ export class User {
 
   @Field()
   createdAt: Date;
-
-  @Field(() => [Player], { nullable: true })
-  players?: Player[];
 }
 
 @ObjectType()

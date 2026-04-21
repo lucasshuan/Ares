@@ -1,33 +1,27 @@
 import { gql } from "@apollo/client";
 
 export const GET_LEAGUES = gql`
-  query GetLeagues($pagination: PaginationInput) {
-    leagues: eloLeagues(pagination: $pagination) {
+  query GetLeagues($gameId: String!, $pagination: PaginationInput) {
+    leagues(gameId: $gameId, pagination: $pagination) {
       nodes {
-        id
+        eventId
+        classificationSystem
+        config
+        allowDraw
+        allowedFormats
         event {
+          id
           name
           slug
           type
+          isApproved
+          startDate
+          endDate
           game {
             id
             name
             slug
             thumbnailImageUrl
-          }
-        }
-        entries {
-          id
-          currentElo
-          position
-          player {
-            id
-            user {
-              id
-              name
-              username
-              country
-            }
           }
         }
       }
@@ -39,22 +33,27 @@ export const GET_LEAGUES = gql`
 
 export const GET_LEAGUE = gql`
   query GetLeague($gameSlug: String!, $leagueSlug: String!) {
-    league: eloLeague(gameSlug: $gameSlug, slug: $leagueSlug) {
-      id
-      initialElo
+    league(gameSlug: $gameSlug, slug: $leagueSlug) {
+      eventId
+      classificationSystem
+      config
       allowDraw
-      kFactor
-      scoreRelevance
-      inactivityDecay
-      inactivityThresholdHours
-      inactivityDecayFloor
       allowedFormats
+      customFieldSchema
+      createdAt
+      updatedAt
       event {
+        id
         name
         slug
         description
+        about
         type
         isApproved
+        startDate
+        endDate
+        registrationStartDate
+        registrationEndDate
         createdAt
         updatedAt
         game {
@@ -65,24 +64,7 @@ export const GET_LEAGUE = gql`
           status
         }
       }
-      entries {
-        id
-        leagueId
-        playerId
-        currentElo
-        position
-        player {
-          id
-          userId
-          user {
-            id
-            name
-            username
-            imageUrl
-            country
-          }
-        }
-      }
     }
   }
 `;
+

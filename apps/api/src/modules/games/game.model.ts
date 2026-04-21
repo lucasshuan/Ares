@@ -1,15 +1,10 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { User } from '../auth/user.model';
-import { EloLeague } from '../elo-leagues/elo-league.model';
-import { StandardLeague } from '../standard-leagues/standard-league.model';
 
 @ObjectType()
 export class GameCounts {
   @Field(() => Int)
-  leagues: number;
-
-  @Field(() => Int)
-  players: number;
+  events: number;
 }
 
 @ObjectType()
@@ -52,12 +47,6 @@ export class Game {
 
   @Field(() => User, { nullable: true })
   author?: User;
-
-  @Field(() => [EloLeague], { nullable: true })
-  eloLeagues?: EloLeague[];
-
-  @Field(() => [StandardLeague], { nullable: true })
-  standardLeagues?: StandardLeague[];
 
   @Field(() => GameCounts, { name: '_count', nullable: true })
   count?: GameCounts;

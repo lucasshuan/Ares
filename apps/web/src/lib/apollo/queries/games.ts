@@ -12,8 +12,7 @@ export const GET_GAMES = gql`
         backgroundImageUrl
         status
         _count {
-          leagues
-          players
+          events
         }
       }
       totalCount
@@ -43,68 +42,8 @@ export const GET_GAME = gql`
         username
         imageUrl
       }
-      eloLeagues {
-        id
-        event {
-          name
-          slug
-          description
-          isApproved
-          startDate
-          endDate
-          createdAt
-        }
-        initialElo
-        entries {
-          id
-          currentElo
-          position
-          player {
-            id
-            user {
-              id
-              name
-              username
-              country
-            }
-          }
-        }
-      }
-      standardLeagues {
-        id
-        event {
-          name
-          slug
-          description
-          isApproved
-          startDate
-          endDate
-          createdAt
-        }
-        pointsPerWin
-        pointsPerDraw
-        pointsPerLoss
-        entries {
-          id
-          points
-          wins
-          draws
-          losses
-          position
-          player {
-            id
-            user {
-              id
-              name
-              username
-              country
-            }
-          }
-        }
-      }
       _count {
-        leagues
-        players
+        events
       }
     }
   }
@@ -115,18 +54,6 @@ export const GET_GAME_ACTIONS = gql`
       id
       slug
       authorId
-      eloLeagues {
-        id
-        event {
-          slug
-        }
-      }
-      standardLeagues {
-        id
-        event {
-          slug
-        }
-      }
     }
   }
 `;

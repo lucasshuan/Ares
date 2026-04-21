@@ -17,7 +17,7 @@ export function canManageGames(session: Session | null) {
 }
 
 export function canManagePlayers(session: Session | null) {
-  return hasPermission(session, "manage_players");
+  return hasPermission(session, "manage_events");
 }
 
 export function canManageLeagues(session: Session | null) {

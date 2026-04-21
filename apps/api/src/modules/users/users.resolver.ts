@@ -1,7 +1,6 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { User } from '../auth/user.model';
 import { UsersService } from './users.service';
-import { Player } from '../games/player.model';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { PaginatedUsers } from './dto/users.output';
 
@@ -20,10 +19,5 @@ export class UsersResolver {
     @Args('query', { nullable: true }) query?: string,
   ) {
     return this.usersService.search(pagination || new PaginationInput(), query);
-  }
-
-  @ResolveField(() => [Player], { name: 'players' })
-  async getPlayers(@Parent() user: User) {
-    return this.usersService.getPlayersWithRanks(user.id);
   }
 }

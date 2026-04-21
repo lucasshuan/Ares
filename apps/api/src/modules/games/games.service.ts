@@ -1,42 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../../database/database.provider';
 import { CreateGameInput, UpdateGameInput } from './dto/games.input';
-import { AddPlayerToGameInput } from './dto/players.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
 import { Prisma } from '@ares/db';
 import { StorageService } from '../storage/storage.service';
-
-function mapLeagueWithEvent<
-  T extends {
-    eventId: string;
-    event: {
-      gameId: string;
-      id?: string;
-      name: string;
-      slug: string;
-      description: string | null;
-      startDate: Date | null;
-      endDate: Date | null;
-      approvedAt?: Date | null;
-      createdAt: Date;
-      updatedAt: Date;
-    };
-  },
->(league: T) {
-  return {
-    ...league,
-    id: league.event.id ?? league.eventId,
-    gameId: league.event.gameId,
-    name: league.event.name,
-    slug: league.event.slug,
-    description: league.event.description,
-    startDate: league.event.startDate,
-    endDate: league.event.endDate,
-    isApproved: !!league.event.approvedAt,
-    createdAt: league.event.createdAt,
-    updatedAt: league.event.updatedAt,
-  };
-}
 
 @Injectable()
 export class GamesService {
@@ -66,7 +33,6 @@ export class GamesService {
           _count: {
             select: {
               events: true,
-              players: true,
             },
           },
         },
@@ -93,7 +59,6 @@ export class GamesService {
         _count: {
           select: {
             events: true,
-            players: true,
           },
         },
       },
@@ -104,26 +69,6 @@ export class GamesService {
     return this.databaseProvider.user.findUnique({
       where: { id: authorId },
     });
-  }
-
-  async getEloLeagues(gameId: string) {
-    const leagues = await this.databaseProvider.eloLeague.findMany({
-      where: { event: { gameId } },
-      include: { event: true },
-      orderBy: { event: { createdAt: 'desc' } },
-    });
-
-    return leagues.map(mapLeagueWithEvent);
-  }
-
-  async getStandardLeagues(gameId: string) {
-    const leagues = await this.databaseProvider.standardLeague.findMany({
-      where: { event: { gameId } },
-      include: { event: true },
-      orderBy: { event: { createdAt: 'desc' } },
-    });
-
-    return leagues.map(mapLeagueWithEvent);
   }
 
   async findEventMeta(gameSlug: string, eventSlug: string) {
@@ -201,89 +146,5 @@ export class GamesService {
         status: 'APPROVED',
       },
     });
-  }
-
-  async getPlayer(id: string) {
-    return this.databaseProvider.player.findUnique({
-      where: { id },
-    });
-  }
-
-  async getPlayerUsernames(playerId: string) {
-    return this.databaseProvider.playerUsername.findMany({
-      where: { playerId },
-    });
-  }
-
-  async addPlayerToGame(data: AddPlayerToGameInput) {
-    const { gameId, username, userId } = data;
-    return this.databaseProvider.$transaction(async (tx) => {
-      let playerId: string | null = null;
-      let wasAddedToExisting = false;
-
-      if (userId) {
-        const existingPlayer = await tx.player.findFirst({
-          where: { gameId, userId },
-        });
-        if (existingPlayer) {
-          playerId = existingPlayer.id;
-          wasAddedToExisting = true;
-        }
-      }
-
-      if (!playerId) {
-        const newPlayer = await tx.player.create({
-          data: { gameId, userId },
-        });
-        playerId = newPlayer.id;
-      }
-
-      const newUsername = await tx.playerUsername.create({
-        data: { playerId, username },
-      });
-
-      if (!wasAddedToExisting) {
-        return tx.player.update({
-          where: { id: playerId },
-          data: { primaryUsernameId: newUsername.id },
-        });
-      }
-
-      return tx.player.findUnique({ where: { id: playerId } });
-    });
-  }
-
-  async searchPlayers(
-    gameId: string,
-    query: string,
-    pagination: PaginationInput,
-  ) {
-    const { skip, take } = pagination;
-    const where = {
-      username: { contains: query, mode: Prisma.QueryMode.insensitive },
-      player: { gameId },
-    };
-
-    const [nodes, totalCount] = await Promise.all([
-      this.databaseProvider.playerUsername.findMany({
-        where,
-        skip,
-        take,
-        include: {
-          player: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      }),
-      this.databaseProvider.playerUsername.count({ where }),
-    ]);
-
-    return {
-      nodes,
-      totalCount,
-      hasNextPage: skip + take < totalCount,
-    };
   }
 }

@@ -14,9 +14,22 @@ enum GameStatus {
 }
 
 enum EventType {
-  RANKED_LEAGUE
-  STANDARD_LEAGUE
+  LEAGUE
   TOURNAMENT
+}
+
+enum ClassificationSystem {
+  ELO
+  POINTS
+}
+
+enum PhaseType {
+  ROUND_ROBIN
+  ELO_RATING
+  SWISS
+  SINGLE_ELIMINATION
+  DOUBLE_ELIMINATION
+  GROUP_STAGE
 }
 
 enum MatchOutcome {
@@ -32,7 +45,7 @@ enum EventStatus {
   CANCELLED
 }
 
-enum ResultAttachmentType {
+enum AttachmentType {
   IMAGE
   VIDEO
 }
@@ -60,33 +73,57 @@ enum ParticipationMode {
 
 enum PermissionKey {
   manage_games
-  manage_players
   manage_events
   manage_users
+}
+
+enum EventStaffRole {
+  ORGANIZER
+  MODERATOR
+  SCOREKEEPER
+}
+
+enum ClaimInitiator {
+  STAFF
+  USER
+}
+
+enum EntryClaimStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 // --- AUTH MODELS ---
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  username      String    @unique
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  imageUrl         String?   @map("image_url")
-  bio           String?
-  profileColor  String?   @map("profile_color")
-  country       String?
-  isAdmin       Boolean   @default(false) @map("is_admin")
-  onboardingCompleted Boolean @default(false) @map("onboarding_completed")
+  id                  String    @id @default(cuid())
+  name                String
+  username            String    @unique
+  email               String?   @unique
+  emailVerified       DateTime? @map("email_verified")
+  imageUrl            String?   @map("image_url")
+  bio                 String?
+  profileColor        String?   @map("profile_color")
+  country             String?
+  isAdmin             Boolean   @default(false) @map("is_admin")
+  onboardingCompleted Boolean   @default(false) @map("onboarding_completed")
 
   accounts        Account[]
   sessions        Session[]
   authoredGames   Game[]
-  players         Player[]
+  authoredEvents  Event[]
   userPermissions UserPermission[]
   auditLogs       AuditLog[]
-  authoredEvents  Event[]
+
+  // Competition links
+  eventEntries         EventEntry[]         @relation("ConfirmedEntry")
+  teamMemberships      TeamMember[]         @relation("ConfirmedMember")
+  staffRoles           EventStaff[]
+  entryClaims          EntryClaim[]         @relation("ClaimRequester")
+  claimsReviewed       EntryClaim[]         @relation("ClaimReviewer")
+  memberClaims         TeamMemberClaim[]    @relation("MemberClaimRequester")
+  memberClaimsReviewed TeamMemberClaim[]    @relation("MemberClaimReviewer")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -166,9 +203,8 @@ model Game {
   status             GameStatus @default(APPROVED)
   authorId           String?    @map("author_id")
 
-  author  User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  events  Event[]
-  players Player[]
+  author User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  events Event[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -190,16 +226,24 @@ model Event {
   description String?
   about       String?
 
-  startDate  DateTime? @map("start_date")
-  endDate    DateTime? @map("end_date")
-  approvedAt DateTime? @map("approved_at")
+  startDate             DateTime? @map("start_date")
+  endDate               DateTime? @map("end_date")
+  registrationStartDate DateTime? @map("registration_start_date")
+  registrationEndDate   DateTime? @map("registration_end_date")
+  approvedAt            DateTime? @map("approved_at")
 
   authorId String? @map("author_id")
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  // Specific extensions
-  eloLeague      EloLeague?
-  standardLeague StandardLeague?
+  // Extensions by type
+  league           League?
+  tournamentPhases TournamentPhase[]
+
+  // Participants, staff, matches, media
+  entries     EventEntry[]
+  staff       EventStaff[]
+  matches     Match[]
+  attachments EventAttachment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -208,207 +252,290 @@ model Event {
   @@map("events")
 }
 
-model EloLeague {
+// 1:1 extension of Event when type = LEAGUE
+model League {
   eventId String @id @map("event_id")
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  initialElo     Int     @default(1000) @map("initial_elo")
-  allowDraw      Boolean @default(false) @map("allow_draw")
-  kFactor        Int     @default(20) @map("k_factor")
-  scoreRelevance Float   @default(0.4) @map("score_relevance")
+  classificationSystem ClassificationSystem @default(ELO) @map("classification_system")
 
-  inactivityDecay          Int @default(5) @map("inactivity_decay")
-  inactivityThresholdHours Int @default(120) @map("inactivity_threshold_hours")
-  inactivityDecayFloor     Int @default(1000) @map("inactivity_decay_floor")
+  // Classification config as JSON
+  // ELO:    { initialElo, kFactor, scoreRelevance, inactivityDecay,
+  //           inactivityThresholdHours, inactivityDecayFloor }
+  // POINTS: { pointsPerWin, pointsPerDraw, pointsPerLoss }
+  config Json
 
+  allowDraw      Boolean       @default(false) @map("allow_draw")
   allowedFormats MatchFormat[] @default([]) @map("allowed_formats")
 
-  entries EloLeagueEntry[]
-  results EloResult[]
+  // Schema for organizer-defined dynamic stats fields per match
+  // Ex.: [{ name: "kills", type: "number", label: "Kills" }]
+  customFieldSchema Json? @map("custom_field_schema")
 
-  @@map("elo_leagues")
+  @@map("leagues")
 }
 
-model StandardLeague {
-  eventId String @id @map("event_id")
+// Ordered phase in a Tournament event
+model TournamentPhase {
+  id      String @id @default(cuid())
+  eventId String @map("event_id")
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  allowDraw     Boolean @default(false) @map("allow_draw")
-  pointsPerWin  Int     @default(3) @map("points_per_win")
-  pointsPerDraw Int     @default(1) @map("points_per_draw")
-  pointsPerLoss Int     @default(0) @map("points_per_loss")
+  order  Int         // position in sequence (1, 2, 3…)
+  name   String
+  type   PhaseType
+  status EventStatus @default(PENDING)
 
-  allowedFormats MatchFormat[] @default([]) @map("allowed_formats")
+  // Phase config as JSON — shape depends on type
+  // ROUND_ROBIN / ELO_RATING: same keys as League.config
+  // SWISS:           { rounds, tiebreak }
+  // SINGLE_ELIM:     { seedingStrategy, thirdPlaceMatch }
+  // DOUBLE_ELIM:     { seedingStrategy }
+  // GROUP_STAGE:     { groupCount, advancePerGroup, tiebreak }
+  config Json
 
-  entries StandardLeagueEntry[]
-  results StandardResult[]
+  allowDraw         Boolean       @default(false) @map("allow_draw")
+  allowedFormats    MatchFormat[] @default([]) @map("allowed_formats")
+  customFieldSchema Json?         @map("custom_field_schema")
 
-  @@map("standard_leagues")
-}
+  startDate DateTime? @map("start_date")
+  endDate   DateTime? @map("end_date")
 
-model Player {
-  id                String  @id @default(cuid())
-  gameId            String  @map("game_id")
-  game              Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  userId            String? @map("user_id")
-  user              User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  primaryUsernameId String? @map("primary_username_id")
-
-  usernames             PlayerUsername[]
-  eloLeagueEntries      EloLeagueEntry[]
-  standardLeagueEntries StandardLeagueEntry[]
-  eloResultEntries      EloResultEntry[]
-  standardResultEntries StandardResultEntry[]
+  matches      Match[]
+  phaseEntries PhaseEntry[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([gameId, userId])
-  @@map("players")
+  @@map("tournament_phases")
 }
 
-model PlayerUsername {
-  id       String @id @default(cuid())
-  playerId String @map("player_id")
-  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  username String
+// A participant slot in an event — solo (userId) or team (members)
+model EventEntry {
+  id      String @id @default(cuid())
+  eventId String @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  displayName String  @map("display_name")
+  imageUrl    String? @map("image_url")
+
+  // Confirmed solo user link — null if unlinked or team entry
+  userId String? @map("user_id")
+  user   User?   @relation("ConfirmedEntry", fields: [userId], references: [id], onDelete: SetNull)
+
+  // Team members (populated when event.participationMode = TEAM)
+  members TeamMember[]
+
+  // Computed stats — updated after each processed match
+  // ELO:    { currentElo: 1250 }
+  // POINTS: { points: 9, wins: 3, draws: 0, losses: 1 }
+  stats Json @default("{}")
+
+  claims            EntryClaim[]
+  matchParticipants MatchParticipant[]
+  phaseEntries      PhaseEntry[]
+  snapshots         EntrySnapshot[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([playerId, username])
-  @@map("player_usernames")
+  @@unique([eventId, userId])
+  @@map("event_entries")
 }
 
-model EloLeagueEntry {
+// Daily snapshot of an entry's position and stats — populated by cron at midnight UTC
+model EntrySnapshot {
+  id      String     @id @default(cuid())
+  entryId String     @map("entry_id")
+  entry   EventEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  snapshotDate DateTime @map("snapshot_date") @db.Date
+  position     Int
+  stats        Json // copy of EventEntry.stats at snapshot time
+
+  @@unique([entryId, snapshotDate])
+  @@map("entry_snapshots")
+}
+
+// Entry's standing within a specific tournament phase
+model PhaseEntry {
+  id      String          @id @default(cuid())
+  phaseId String          @map("phase_id")
+  phase   TournamentPhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  entryId String          @map("entry_id")
+  entry   EventEntry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  stats    Json @default("{}")
+  position Int? // static after phase ends
+  seed     Int?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([phaseId, entryId])
+  @@map("phase_entries")
+}
+
+// Individual member of a team entry
+model TeamMember {
+  id      String     @id @default(cuid())
+  entryId String     @map("entry_id")
+  entry   EventEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  displayName String  @map("display_name")
+  imageUrl    String? @map("image_url")
+
+  userId String? @map("user_id")
+  user   User?   @relation("ConfirmedMember", fields: [userId], references: [id], onDelete: SetNull)
+
+  claims TeamMemberClaim[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("team_members")
+}
+
+// Claim on a solo entry
+// initiatedBy = STAFF  → staff invited user   → user must accept
+// initiatedBy = USER   → user requested entry → staff must accept
+model EntryClaim {
+  id      String     @id @default(cuid())
+  entryId String     @map("entry_id")
+  entry   EventEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  userId  String     @map("user_id")
+  user    User       @relation("ClaimRequester", fields: [userId], references: [id], onDelete: Cascade)
+
+  initiatedBy ClaimInitiator   @map("initiated_by")
+  status      EntryClaimStatus @default(PENDING)
+  message     String?
+
+  reviewedById String?   @map("reviewed_by_id")
+  reviewedBy   User?     @relation("ClaimReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt   DateTime? @map("reviewed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([entryId, userId])
+  @@map("entry_claims")
+}
+
+// Claim on a team member slot — same bidirectional logic as EntryClaim
+model TeamMemberClaim {
   id       String     @id @default(cuid())
-  leagueId String     @map("event_id")
-  league   EloLeague  @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
-  playerId String     @map("player_id")
-  player   Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  memberId String     @map("member_id")
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  userId   String     @map("user_id")
+  user     User       @relation("MemberClaimRequester", fields: [userId], references: [id], onDelete: Cascade)
 
-  currentElo Int @default(1000) @map("current_elo")
+  initiatedBy ClaimInitiator   @map("initiated_by")
+  status      EntryClaimStatus @default(PENDING)
+  message     String?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([leagueId, playerId])
-  @@map("elo_league_entries")
-}
-
-model StandardLeagueEntry {
-  id       String         @id @default(cuid())
-  leagueId String         @map("event_id")
-  league   StandardLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
-  playerId String         @map("player_id")
-  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
-
-  points Int @default(0)
-  wins   Int @default(0)
-  draws  Int @default(0)
-  losses Int @default(0)
+  reviewedById String?   @map("reviewed_by_id")
+  reviewedBy   User?     @relation("MemberClaimReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt   DateTime? @map("reviewed_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([leagueId, playerId])
-  @@map("standard_league_entries")
+  @@unique([memberId, userId])
+  @@map("team_member_claims")
 }
 
-model EloResult {
-  id       String    @id @default(cuid())
-  leagueId String    @map("event_id")
-  league   EloLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
+// Staff and moderators of an event
+// The event author is automatically inserted as ORGANIZER on creation
+model EventStaff {
+  id      String @id @default(cuid())
+  eventId String @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  description String?
+  role EventStaffRole @default(MODERATOR)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([eventId, userId])
+  @@map("event_staff")
+}
+
+// Match — can be scheduled (scheduledAt, no playedAt) or registered (playedAt set)
+model Match {
+  id      String @id @default(cuid())
+  eventId String @map("event_id")
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Present in tournaments — identifies which phase this match belongs to
+  phaseId String?          @map("phase_id")
+  phase   TournamentPhase? @relation(fields: [phaseId], references: [id], onDelete: SetNull)
+
   format      MatchFormat
-
-  entries     EloResultEntry[]
-  attachments EloResultAttachment[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("elo_results")
-}
-
-model EloResultEntry {
-  id       String    @id @default(cuid())
-  resultId String    @map("result_id")
-  result   EloResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
-  playerId String    @map("player_id")
-  player   Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
-
-  eloDifference Int @map("elo_difference")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([resultId, playerId])
-  @@map("elo_result_entries")
-}
-
-model EloResultAttachment {
-  id            String               @id @default(cuid())
-  resultId      String               @map("result_id")
-  result        EloResult            @relation(fields: [resultId], references: [id], onDelete: Cascade)
-  type          ResultAttachmentType
-  videoPlatform VideoPlatform?       @map("video_platform")
-  url           String
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("elo_result_attachments")
-}
-
-model StandardResult {
-  id       String         @id @default(cuid())
-  leagueId String         @map("event_id")
-  league   StandardLeague @relation(fields: [leagueId], references: [eventId], onDelete: Cascade)
-
   description String?
-  format      MatchFormat
 
-  entries     StandardResultEntry[]
-  attachments StandardResultAttachment[]
+  scheduledAt DateTime? @map("scheduled_at")
+  playedAt    DateTime? @map("played_at")
+
+  participants MatchParticipant[]
+  attachments  MatchAttachment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("standard_results")
+  @@map("matches")
 }
 
-model StandardResultEntry {
-  id       String         @id @default(cuid())
-  resultId String         @map("result_id")
-  result   StandardResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
-  playerId String         @map("player_id")
-  player   Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+// One entry's (solo or team) participation in a match
+model MatchParticipant {
+  id      String     @id @default(cuid())
+  matchId String     @map("match_id")
+  match   Match      @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  entryId String     @map("entry_id")
+  entry   EventEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
   outcome      MatchOutcome
-  score        Int
-  pointsGained Int          @map("points_gained")
+  score        Int?  // raw score (optional)
+  ratingChange Int?  @map("rating_change") // eloDifference or pointsGained
+
+  // Organizer-defined dynamic fields
+  // Ex.: { "kills": 12, "deaths": 3, "assists": 7 }
+  customStats Json? @map("custom_stats")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([resultId, playerId])
-  @@map("standard_result_entries")
+  @@unique([matchId, entryId])
+  @@map("match_participants")
 }
 
-model StandardResultAttachment {
-  id            String               @id @default(cuid())
-  resultId      String               @map("result_id")
-  result        StandardResult       @relation(fields: [resultId], references: [id], onDelete: Cascade)
-  type          ResultAttachmentType
-  videoPlatform VideoPlatform?       @map("video_platform")
+model MatchAttachment {
+  id            String         @id @default(cuid())
+  matchId       String         @map("match_id")
+  match         Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  type          AttachmentType
+  videoPlatform VideoPlatform? @map("video_platform")
   url           String
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("standard_result_attachments")
+  @@map("match_attachments")
+}
+
+model EventAttachment {
+  id            String         @id @default(cuid())
+  eventId       String         @map("event_id")
+  event         Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type          AttachmentType
+  videoPlatform VideoPlatform? @map("video_platform")
+  url           String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("event_attachments")
 }
 
 model UserPermission {
