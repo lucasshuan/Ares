@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { useUser } from "@/components/providers";
 import { AddEventModal } from "@/components/modals/events/add-event-modal";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { SimpleGame } from "@/actions/get-games";
 
 interface AddEventButtonProps {
@@ -39,7 +41,7 @@ export function AddEventButton({
     variant === "sidebar" ? (
       <button
         onClick={handleTriggerClick}
-        className="group hover:border-primary/50 relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border border-white/5 bg-white/8 p-4 transition-all hover:bg-primary/12 active:scale-[0.98]"
+        className="group hover:border-primary/50 hover:bg-primary/12 relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border border-white/5 bg-white/8 p-4 transition-all active:scale-[0.98]"
       >
         <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex size-12 items-center justify-center rounded-2xl transition-colors">
           <Trophy className="size-6" />
@@ -57,7 +59,10 @@ export function AddEventButton({
     ) : (
       <button
         onClick={handleTriggerClick}
-        className="bg-primary/60 text-white/90 hover:bg-primary/80 hover:ring-primary/20 flex h-11 items-center gap-2 rounded-2xl px-5 text-xs font-bold tracking-wider uppercase transition-all hover:ring-4 active:scale-95"
+        className={cn(
+          buttonVariants({ intent: "primary" }),
+          "gap-2 rounded-2xl px-5 text-xs font-bold tracking-wider uppercase",
+        )}
       >
         <Plus className="size-4" />
         {variant === "header" ? t("headerTrigger") : t("trigger")}
