@@ -1,142 +1,142 @@
-# Bellona — Architecture Reference
+# Bellona - Architecture Reference
 
-> Última atualização: Abril 2026  
-> Fonte de verdade para agentes e desenvolvedores. Antes de criar qualquer arquivo ou fazer qualquer modificação significativa, leia este documento.
+> Last updated: April 2026  
+> Source of truth for agents and developers. Before creating any file or making any significant modification, read this document.
 
 ---
 
-## 1. Visão Geral do Monorepo
+## 1. Monorepo Overview
 
 ```
 Ares/
 ├── apps/
-│   ├── api/          NestJS + GraphQL (code-first) — backend
-│   └── web/          Next.js 15 App Router — frontend
+│   ├── api/          NestJS + GraphQL (code-first) - backend
+│   └── web/          Next.js 15 App Router - frontend
 ├── packages/
-│   ├── core/         Enums, permissões e tipos compartilhados
-│   └── db/           Prisma schema, migrations e cliente singleton
-├── turbo.json        Pipeline de tasks (build, dev, lint, typecheck)
+│   ├── core/         Shared enums, permissions, and types
+│   └── db/           Prisma schema, migrations, and singleton client
+├── turbo.json        Task pipeline (build, dev, lint, typecheck)
 └── pnpm-workspace.yaml
 ```
 
-Gerenciador de pacotes: **pnpm workspaces**. Build system: **Turborepo**.  
-Nunca use `npm` ou `yarn` neste projeto.
+Package manager: **pnpm workspaces**. Build system: **Turborepo**.  
+Never use `npm` or `yarn` in this project.
 
 ---
 
-## 2. Camadas e Responsabilidades
+## 2. Layers and Responsibilities
 
 ### `packages/db`
 
-- **O quê**: Prisma schema (`prisma/schema.prisma`), migrations (`prisma/migrations/`), seed (`prisma/seed.ts`) e cliente singleton exportado como `@bellona/db`.
-- **Regra**: é a única camada que fala com o banco. Nenhuma outra camada instancia `PrismaClient` diretamente. A API consome via `DatabaseProvider` (`apps/api/src/database/database.provider.ts`).
-- **Enums no schema**: sempre `UPPER_SNAKE_CASE` (ex: `RANKED_LEAGUE`, `APPROVED`). Devem espelhar exatamente os valores em `@bellona/core`.
-- **Migrations**: usar `pnpm db:migrate` (nunca `prisma db push` em produção). Cada migration tem nome descritivo.
+- **What it is**: Prisma schema (`prisma/schema.prisma`), migrations (`prisma/migrations/`), seed (`prisma/seed.ts`), and the singleton client exported as `@bellona/db`.
+- **Rule**: this is the only layer that talks to the database. No other layer instantiates `PrismaClient` directly. The API consumes it through `DatabaseProvider` (`apps/api/src/database/database.provider.ts`).
+- **Schema enums**: always `UPPER_SNAKE_CASE` (for example, `RANKED_LEAGUE`, `APPROVED`). They must mirror the values in `@bellona/core` exactly.
+- **Migrations**: use `pnpm db:migrate` (never `prisma db push` in production). Every migration must have a descriptive name.
 
 ### `packages/core`
 
-- **O quê**: Única fonte de verdade para enums de domínio, chaves de permissão e tipos compartilhados entre `api` e `web`.
-- **Exporta**: `INITIAL_PERMISSION_DEFINITIONS`, `PermissionKey`, `GameStatus`, `EventStatus`, `EventType`, `MatchOutcome`, `MatchFormat`, `MATCH_FORMATS`, etc.
-- **Regra**: qualquer novo enum ou chave de permissão nasce aqui. Nunca defina o mesmo enum em dois lugares.
-- **Casing**: constantes são `UPPER_SNAKE_CASE` como arrays `as const`, tipos são derivados via `typeof`.
+- **What it is**: the single source of truth for domain enums, permission keys, and shared types between `api` and `web`.
+- **Exports**: `INITIAL_PERMISSION_DEFINITIONS`, `PermissionKey`, `GameStatus`, `EventStatus`, `EventType`, `MatchOutcome`, `MatchFormat`, `MATCH_FORMATS`, and others.
+- **Rule**: every new enum or permission key starts here. Never define the same enum in two places.
+- **Casing**: constants are `UPPER_SNAKE_CASE` as `as const` arrays, and types are derived with `typeof`.
 
 ### `apps/api`
 
-- **Framework**: NestJS com GraphQL code-first (`@nestjs/graphql`, `ApolloDriver`).
-- **Estrutura interna** — cada módulo de domínio segue este padrão rígido:
+- **Framework**: NestJS with code-first GraphQL (`@nestjs/graphql`, `ApolloDriver`).
+- **Internal structure**: every domain module follows this strict pattern:
 
 ```
 src/modules/<domain>/
-  <domain>.module.ts      Registra providers, importa dependências
-  <domain>.model.ts       @ObjectType() — define o tipo GraphQL
-  <domain>.resolver.ts    @Resolver() — queries, mutations, ResolveField
-  <domain>.service.ts     Lógica de negócio, acessa DatabaseProvider
+  <domain>.module.ts      Registers providers and imports dependencies
+  <domain>.model.ts       @ObjectType() - defines the GraphQL type
+  <domain>.resolver.ts    @Resolver() - queries, mutations, ResolveField
+  <domain>.service.ts     Business logic, accesses DatabaseProvider
   dto/
-    <domain>.input.ts     @InputType() com class-validator
-    <domain>.output.ts    Tipos paginados ou compostos de resposta
+    <domain>.input.ts     @InputType() with class-validator
+    <domain>.output.ts    Paginated or composite response types
 ```
 
-- **Schema GraphQL**: gerado automaticamente em `src/schema.gql` a partir dos decorators. Não edite o arquivo manualmente.
-- **Segurança**: toda mutation sensível usa `@UseGuards(GqlAuthGuard, PermissionsGuard)` + `@RequiredPermissions(...)`. Queries públicas não precisam de guard.
-- **Validação de input**: sempre via `class-validator` nos `@InputType()`. O `ValidationPipe` global (`main.ts`) rejeita campos não declarados (`forbidNonWhitelisted: true`).
-- **Acesso a dados**: sempre via `this.databaseProvider.db` (Prisma client injetado). Nunca SQL raw exceto quando absolutamente necessário e documentado.
-- **N+1**: relações entre entidades usam `DataLoaderService` via `@ResolveField`. Não carregue relações em includes do Prisma quando um loader já existe.
-- **Logger**: `nestjs-pino`. Use `@Logger()` ou injete via construtor. Não use `console.log`.
+- **GraphQL schema**: generated automatically in `src/schema.gql` from decorators. Do not edit this file manually.
+- **Security**: every sensitive mutation uses `@UseGuards(GqlAuthGuard, PermissionsGuard)` + `@RequiredPermissions(...)`. Public queries do not need a guard.
+- **Input validation**: always through `class-validator` in `@InputType()` classes. The global `ValidationPipe` (`main.ts`) rejects undeclared fields (`forbidNonWhitelisted: true`).
+- **Data access**: always through `this.databaseProvider.db` (injected Prisma client). Never use raw SQL unless it is absolutely necessary and documented.
+- **N+1**: entity relations use `DataLoaderService` through `@ResolveField`. Do not load relations through Prisma includes when a loader already exists.
+- **Logger**: `nestjs-pino`. Use `@Logger()` or inject it through the constructor. Do not use `console.log`.
 
-#### Padrão de Entidade Base: `Event`
+#### Base Entity Pattern: `Event`
 
-O modelo `Event` no schema Prisma é a entidade raiz de todos os tipos de competição. `League` é a única especialização atual: uma relação 1:1 com `Event` via `eventId` FK, com `classificationSystem: ClassificationSystem` (ELO | POINTS) e `config: Json` (parâmetros específicos do sistema de pontuação).
+The `Event` model in the Prisma schema is the root entity for all competition types. `League` is the only current specialization: a 1:1 relation with `Event` through the `eventId` foreign key, with `classificationSystem: ClassificationSystem` (ELO | POINTS) and `config: Json` (system-specific scoring parameters).
 
-**No GraphQL (code-first)**:
+**In GraphQL (code-first)**:
 
-- `Event` tem seu próprio `@ObjectType()` em `src/modules/events/event.model.ts`.
-- `League` expõe `event: Event` como campo direto — **não** repete campos como `name`, `slug`, `type`, `participationMode` etc.
-- O campo `game` não está declarado em `event.model.ts` com `@Field()`. Ele é adicionado ao schema pelo `@ResolveField` em `EventsResolver`, evitando imports circulares.
-- A propriedade `gameId: string` existe no modelo TypeScript de `Event` (sem `@Field()`), permitindo que o resolver carregue `game` via `DataLoaderService.gameLoader`.
+- `Event` has its own `@ObjectType()` in `src/modules/events/event.model.ts`.
+- `League` exposes `event: Event` directly and **does not** repeat fields such as `name`, `slug`, `type`, `participationMode`, and so on.
+- The `game` field is not declared in `event.model.ts` with `@Field()`. It is added to the schema through `@ResolveField` in `EventsResolver`, avoiding circular imports.
+- The `gameId: string` property exists in the TypeScript `Event` model (without `@Field()`), allowing the resolver to load `game` through `DataLoaderService.gameLoader`.
 
-**Regras derivadas**:
+**Derived rules**:
 
-- Campos de evento (nome, slug, descrição, datas, status, participationMode) vivem em `event.*` — nunca duplicados em `League`.
-- `createLeague` recebe dois argumentos separados: `event: CreateLeagueEventInput` e `league: CreateLeagueConfigInput`.
-- No frontend, acesse `league.event.name`, `league.event.slug`, `league.event.game`, etc.
-- Para obter o `gameId` no cliente, use `league.event.game.id` (query o campo `game { id }` dentro de `event`).
-- `League` usa `eventId` como chave primária (não um `id` separado). No GQL, o campo é `eventId: ID`.
-- Ao adicionar um novo tipo de evento (ex: torneio), crie um novo modelo que referencia `Event` 1:1 e siga o mesmo padrão.
+- Event fields (`name`, `slug`, `description`, dates, status, `participationMode`) live in `event.*`, never duplicated in `League`.
+- `createLeague` receives two separate arguments: `event: CreateLeagueEventInput` and `league: CreateLeagueConfigInput`.
+- In the frontend, access `league.event.name`, `league.event.slug`, `league.event.game`, and so on.
+- To get `gameId` on the client, use `league.event.game.id` and query `game { id }` inside `event`.
+- `League` uses `eventId` as its primary key, not a separate `id`. In GraphQL, the field is `eventId: ID`.
+- When adding a new event type (for example, a tournament), create a new model that references `Event` 1:1 and follow the same pattern.
 
 ### `apps/web`
 
-- **Framework**: Next.js 15, App Router, TypeScript strict.
-- **Estrutura interna detalhada**: ver Seção 5.
+- **Framework**: Next.js 15, App Router, strict TypeScript.
+- **Detailed internal structure**: see Section 5.
 
 ---
 
-## 3. Fluxo de Dados Completo
+## 3. End-to-End Data Flow
 
 ```
-Banco (Postgres)
+Database (Postgres)
   ↓  Prisma Client (@bellona/db)
   ↓  DatabaseProvider (api)
-  ↓  Service (lógica de negócio)
+  ↓  Service (business logic)
   ↓  Resolver (@ObjectType / @ResolveField)
-  ↓  schema.gql (gerado automaticamente)
-  ↓  codegen (apps/web/codegen.js lê schema.gql)
-  ↓  src/lib/apollo/generated/ (tipos TypeScript gerados)
-  ↓  src/lib/apollo/queries/*.ts (documentos GQL tipados)
-  ↓  safeServerQuery() (Server Components) ou useQuery() (Client)
-  ↓  Componentes React
+  ↓  schema.gql (generated automatically)
+  ↓  codegen (apps/web/codegen.js reads schema.gql)
+  ↓  src/lib/apollo/generated/ (generated TypeScript types)
+  ↓  src/lib/apollo/queries/*.ts (typed GQL documents)
+  ↓  safeServerQuery() (Server Components) or useQuery() (Client)
+  ↓  React components
 ```
 
-**Regra de ouro**: tipos do frontend vêm do codegen, nunca escritos à mão. Se precisar de um tipo novo no frontend, primeiro adicione o campo no resolver/model da API, gere o schema, então rode `pnpm codegen`.
+**Golden rule**: frontend types come from codegen, never handwritten. If you need a new type on the frontend, first add the field in the API resolver/model, generate the schema, then run `pnpm codegen`.
 
 ---
 
-## 4. Autenticação e Autorização
+## 4. Authentication and Authorization
 
-### Fluxo de Auth
+### Auth Flow
 
-1. **Login**: usuário clica "Login with Discord" → NextAuth dispara `signIn("credentials")` com redirect para a API (`/auth/discord`).
-2. **API**: processa OAuth do Discord via `DiscordStrategy`, emite JWT assinado contendo `{ sub, username, isAdmin, permissions[], onboardingCompleted }`.
-3. **NextAuth callback**: recebe o JWT da API, decodifica o payload, armazena na sessão NextAuth (cookie seguro HttpOnly).
-4. **Apollo Client**: `authLink` no `apollo-client.ts` lê a sessão server-side e injeta `Authorization: Bearer <token>` em toda requisição GraphQL.
-5. **API guard**: `JwtStrategy` valida o token, popula `req.user`. `GqlAuthGuard` extrai o request do contexto GraphQL.
+1. **Login**: the user clicks "Login with Discord" -> NextAuth triggers `signIn("credentials")` with a redirect to the API (`/auth/discord`).
+2. **API**: processes Discord OAuth through `DiscordStrategy`, issuing a signed JWT containing `{ sub, username, isAdmin, permissions[], onboardingCompleted }`.
+3. **NextAuth callback**: receives the API JWT, decodes the payload, and stores it in the NextAuth session (secure HttpOnly cookie).
+4. **Apollo Client**: `authLink` in `apollo-client.ts` reads the server-side session and injects `Authorization: Bearer <token>` into every GraphQL request.
+5. **API guard**: `JwtStrategy` validates the token and populates `req.user`. `GqlAuthGuard` extracts the request from the GraphQL context.
 
-### Permissões no Backend (API)
+### Backend Permissions (API)
 
 ```typescript
-// Em qualquer resolver:
+// In any resolver:
 @UseGuards(GqlAuthGuard, PermissionsGuard)
 @RequiredPermissions('manage_games')
 @Mutation(() => Game)
 async updateGame(...) {}
 ```
 
-- `GqlAuthGuard`: exige token válido (usuário autenticado).
-- `PermissionsGuard`: exige permissões específicas. `isAdmin` bypassa tudo.
-- Permissões disponíveis: `manage_games`, `manage_players`, `manage_events` — definidas em `@bellona/core`.
+- `GqlAuthGuard`: requires a valid token (authenticated user).
+- `PermissionsGuard`: requires specific permissions. `isAdmin` bypasses everything.
+- Available permissions: `manage_games`, `manage_players`, `manage_events` - defined in `@bellona/core`.
 
-### Permissões no Frontend (Web)
+### Frontend Permissions (Web)
 
-**Server Components** — usar funções de `src/lib/permissions.ts`:
+**Server Components** - use functions from `src/lib/permissions.ts`:
 
 ```typescript
 const session = await getServerAuthSession();
@@ -144,28 +144,28 @@ const canEdit = canEditGame(session, game.authorId);
 const canManage = canManageLeagues(session);
 ```
 
-**Client Components** — usar hook `useUser()` de `@/components/providers`:
+**Client Components** - use the `useUser()` hook from `@/components/providers`:
 
 ```typescript
 const { user, canManageGames, canManageLeagues, canEditGame } = useUser();
 ```
 
-`useUser()` não pode ser chamado fora de um Client Component. Para Server Components, sempre use `getServerAuthSession()`.
+`useUser()` cannot be called outside a Client Component. For Server Components, always use `getServerAuthSession()`.
 
 ---
 
-## 5. Estrutura do `apps/web`
+## 5. `apps/web` Structure
 
-### Regra Fundamental de Diretórios
+### Fundamental Directory Rule
 
-> Pastas de rota (`app/[locale]/**`) contêm **exclusivamente** arquivos reservados do Next.js: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`. Qualquer outro arquivo vai para `src/components/`.
+> Route folders (`app/[locale]/**`) contain **only** reserved Next.js files: `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`. Any other file belongs in `src/components/`.
 
-### Estrutura de `src/`
+### `src/` Structure
 
 ```
 src/
 ├── app/
-│   ├── [locale]/           Rota localizada — SOMENTE arquivos Next.js
+│   ├── [locale]/           Localized route - ONLY Next.js files
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── games/
@@ -177,140 +177,140 @@ src/
 │   │   │   ├── page.tsx
 │   │   │   └── loading.tsx
 │   │   └── events/[...]
-│   └── api/                Rotas de API do Next.js (NextAuth, etc.)
+│   └── api/                Next.js API routes (NextAuth, etc.)
 │
 ├── components/
-│   ├── ui/                 Primitivos de UI reutilizáveis (sem lógica de domínio)
-│   ├── cards/              Card components por domínio
-│   ├── tables/             Tabelas por domínio
-│   ├── modals/             Modais organizados por domínio
+│   ├── ui/                 Reusable UI primitives (no domain logic)
+│   ├── cards/              Domain card components
+│   ├── tables/             Domain tables
+│   ├── modals/             Modals organized by domain
 │   │   ├── game/
 │   │   ├── league/
 │   │   ├── profile/
 │   │   └── auth/
-│   ├── triggers/           Botões/ações que disparam modais ou navegação
-│   │   ├── game/           Ex: add-event-button, game-manage-actions
-│   │   ├── profile/        Ex: profile-manage-actions
-│   │   └── league/         Ex: registration triggers
-│   ├── templates/          Composições pesadas de página (sidebar + main)
+│   ├── triggers/           Buttons/actions that trigger modals or navigation
+│   │   ├── game/           Example: add-event-button, game-manage-actions
+│   │   ├── profile/        Example: profile-manage-actions
+│   │   └── league/         Example: registration triggers
+│   ├── templates/          Heavy page compositions (sidebar + main)
 │   │   └── events/
 │   │       ├── league/
 │   │       │   ├── index.tsx
 │   │       │   └── admin-section.tsx
 │   │       ├── elo-league/index.tsx
 │   │       └── standard-league/index.tsx
-│   ├── layout/             Componentes estruturais (sidebar, footer, header)
-│   ├── forms/              Formulários reutilizáveis
+│   ├── layout/             Structural components (sidebar, footer, header)
+│   ├── forms/              Reusable forms
 │   ├── providers/          Context providers (UserProvider, ApolloWrapper)
-│   └── auth/               Componentes de autenticação
+│   └── auth/               Authentication components
 │
 ├── lib/
 │   ├── apollo/
-│   │   ├── apollo-client.ts        Client Apollo com authLink (server-side)
-│   │   ├── apollo-provider.tsx     Provider Apollo para Client Components
-│   │   ├── safe-server-query.ts    Wrapper seguro para queries em Server Components
-│   │   ├── queries/                Documentos GQL por domínio
-│   │   └── generated/              GERADO — nunca editar manualmente
-│   ├── permissions.ts              Helpers de permissão para Server Components
-│   ├── action-utils.ts             Helpers para Server Actions
-│   ├── utils.ts                    Utilitários gerais (cn, formatters)
-│   └── logger.ts                   Logger do frontend (pino)
+│   │   ├── apollo-client.ts        Apollo client with authLink (server-side)
+│   │   ├── apollo-provider.tsx     Apollo provider for Client Components
+│   │   ├── safe-server-query.ts    Safe wrapper for queries in Server Components
+│   │   ├── queries/                GQL documents by domain
+│   │   └── generated/              GENERATED - never edit manually
+│   ├── permissions.ts              Permission helpers for Server Components
+│   ├── action-utils.ts             Helpers for Server Actions
+│   ├── utils.ts                    General utilities (cn, formatters)
+│   └── logger.ts                   Frontend logger (pino)
 │
-├── schemas/                Schemas Zod de validação de formulários
+├── schemas/                Zod schemas for form validation
 │   ├── game.ts
 │   ├── league.ts
 │   └── profile.ts
 │
-├── actions/                Server Actions do Next.js
-├── auth/                   Configuração do NextAuth
-├── i18n/                   Configuração do next-intl
-└── env.ts                  Validação de variáveis de ambiente (t3-oss/env)
+├── actions/                Next.js Server Actions
+├── auth/                   NextAuth configuration
+├── i18n/                   next-intl configuration
+└── env.ts                  Environment variable validation (t3-oss/env)
 ```
 
-### Onde criar cada tipo de arquivo
+### Where to Create Each File Type
 
-| Tipo                                           | Onde                                                |
-| ---------------------------------------------- | --------------------------------------------------- |
-| Novo componente de UI genérico                 | `components/ui/`                                    |
-| Card de domínio                                | `components/cards/<domain>-card.tsx`                |
-| Tabela de domínio                              | `components/tables/<domain>-table.tsx`              |
-| Modal                                          | `components/modals/<domain>/<modal-name>-modal.tsx` |
-| Botão que dispara modal ou ação                | `components/triggers/<domain>/<name>.tsx`           |
-| Composição de página inteira (sidebar+content) | `components/templates/<area>/`                      |
-| Query GQL nova                                 | `lib/apollo/queries/<domain>.ts`                    |
-| Schema de validação de form                    | `schemas/<domain>.ts`                               |
-| Server Action                                  | `actions/<domain>.ts`                               |
-
----
-
-## 6. Componentes de UI — Quando Usar Cada Um
-
-Todos em `src/components/ui/`. São Server Components por padrão, exceto onde indicado.
-
-| Componente       | Quando usar                                                                                                                |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `Button`         | Botão genérico com `intent` (primary/secondary/ghost/danger/outline) e `size`. Usa `buttonVariants` (CVA).                 |
-| `PrimaryAction`  | CTA grande, ocupa largura total, uppercase tracking. Variantes `primary` e `red`. Ideal para ações principais em sidebars. |
-| `ActionButton`   | Botão de ação secundária com ícone + label. Usado em painéis admin (editar liga, adicionar jogador).                       |
-| `Modal`          | Modal base. Props: `isOpen`, `onClose`, `title`, `confirmText`, `onConfirm`. Renderiza via portal.                         |
-| `MultiStepModal` | Modal com steps navegáveis. Recebe `steps[]`, `currentStep`, `onNext`, `onBack`.                                           |
-| `DropdownMenu`   | Dropdown posicionado via portal. Suporta `side` (bottom/right), `align`, `openOnHover`.                                    |
-| `ManageButton`   | `DropdownMenu` pré-estilizado com o visual de "Manage" (borda inferior, Settings2 icon). Aceita `children` como items.     |
-| `GlowBorder`     | Container com borda gradiente e sombra profunda. Usado em cards principais de sidebar.                                     |
-| `SectionHeader`  | Header de seção com `eyebrow`, `title` mono uppercase, `description` e slot `actions`.                                     |
-| `GlowBorder`     | Card container com borda glow e fundo escuro.                                                                              |
-| `SearchInput`    | Input de busca controlado.                                                                                                 |
-| `CustomSelect`   | Select estilizado substituindo o nativo.                                                                                   |
-| `DataTable`      | Tabela genérica com colunas configuráveis.                                                                                 |
-| `UserChip`       | Avatar + nome de usuário compacto.                                                                                         |
-| `Tabs`           | Navegação em abas (UI).                                                                                                    |
+| Type                                      | Where                                               |
+| ----------------------------------------- | --------------------------------------------------- |
+| New generic UI component                  | `components/ui/`                                    |
+| Domain card                               | `components/cards/<domain>-card.tsx`                |
+| Domain table                              | `components/tables/<domain>-table.tsx`              |
+| Modal                                     | `components/modals/<domain>/<modal-name>-modal.tsx` |
+| Button that triggers a modal or action    | `components/triggers/<domain>/<name>.tsx`           |
+| Full-page composition (sidebar + content) | `components/templates/<area>/`                      |
+| New GQL query                             | `lib/apollo/queries/<domain>.ts`                    |
+| Form validation schema                    | `schemas/<domain>.ts`                               |
+| Server Action                             | `actions/<domain>.ts`                               |
 
 ---
 
-## 7. Queries GraphQL
+## 6. UI Components - When to Use Each One
 
-**Onde ficam**: `src/lib/apollo/queries/<domain>.ts`  
-**Como são escritas**: `gql` template literal, nomeadas (ex: `GetGame`, `UpdateGame`).  
-**Tipos**: gerados automaticamente em `src/lib/apollo/generated/` via `pnpm codegen`.
+All of them live in `src/components/ui/`. They are Server Components by default, unless otherwise noted.
+
+| Component        | When to use                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `Button`         | Generic button with `intent` (primary/secondary/ghost/danger/outline) and `size`. Uses `buttonVariants` (CVA).           |
+| `PrimaryAction`  | Large CTA, full width, uppercase tracking. Variants: `primary` and `red`. Ideal for primary actions in sidebars.         |
+| `ActionButton`   | Secondary action button with icon + label. Used in admin panels (edit league, add player).                               |
+| `Modal`          | Base modal. Props: `isOpen`, `onClose`, `title`, `confirmText`, `onConfirm`. Rendered through a portal.                  |
+| `MultiStepModal` | Modal with navigable steps. Receives `steps[]`, `currentStep`, `onNext`, `onBack`.                                       |
+| `DropdownMenu`   | Portal-positioned dropdown. Supports `side` (bottom/right), `align`, `openOnHover`.                                      |
+| `ManageButton`   | Pre-styled `DropdownMenu` with the standardized "Manage" look (bottom border, Settings2 icon). Accepts `children` items. |
+| `GlowBorder`     | Container with gradient border and deep shadow. Used in primary sidebar cards.                                           |
+| `SectionHeader`  | Section header with `eyebrow`, uppercase mono `title`, `description`, and an `actions` slot.                             |
+| `GlowBorder`     | Card container with a glow border and dark background.                                                                   |
+| `SearchInput`    | Controlled search input.                                                                                                 |
+| `CustomSelect`   | Styled replacement for the native select.                                                                                |
+| `DataTable`      | Generic table with configurable columns.                                                                                 |
+| `UserChip`       | Compact avatar + username.                                                                                               |
+| `Tabs`           | Tab navigation (UI).                                                                                                     |
+
+---
+
+## 7. GraphQL Queries
+
+**Where they live**: `src/lib/apollo/queries/<domain>.ts`  
+**How they are written**: named `gql` template literals (for example, `GetGame`, `UpdateGame`).  
+**Types**: generated automatically in `src/lib/apollo/generated/` through `pnpm codegen`.
 
 ```typescript
-// Padrão de query
+// Query pattern
 export const GET_GAME = gql`
   query GetGame($slug: String!) {
     game(slug: $slug) {
       id
       name
       slug
-      # Solicite apenas campos que o componente usa
+      # Request only the fields the component actually uses
     }
   }
 `;
 ```
 
-**Regras**:
+**Rules**:
 
-- Nunca solicite campos que o componente não usa (overfetching).
-- Mutations ficam em arquivos separados: `<domain>-mutations.ts`.
-- Nunca importe tipos de `../generated/` e escreva à mão — use os tipos exportados por `generated/`.
-- Para Server Components: `safeServerQuery({ query: GET_GAME, variables })` — retorna `null` em erro ao invés de lançar exceção.
-- Para Client Components: `useQuery(GET_GAME)` do Apollo.
+- Never request fields the component does not use (overfetching).
+- Mutations live in separate files: `<domain>-mutations.ts`.
+- Never import types from `../generated/` and rewrite them by hand - use the generated exported types.
+- For Server Components: `safeServerQuery({ query: GET_GAME, variables })` - returns `null` on error instead of throwing.
+- For Client Components: Apollo `useQuery(GET_GAME)`.
 
 **Codegen**:
 
 ```bash
-pnpm codegen          # apps/web — gera tipos a partir de schema.gql
-pnpm codegen:watch    # modo watch durante desenvolvimento
+pnpm codegen          # apps/web - generates types from schema.gql
+pnpm codegen:watch    # watch mode during development
 ```
 
 ---
 
-## 8. Internacionalização (i18n)
+## 8. Internationalization (i18n)
 
-**Biblioteca**: `next-intl` com `localePrefix: "as-needed"` (sem prefixo para `en`, prefixo `/pt` para português).  
-**Locales**: `["en", "pt"]`, default `"en"`.  
-**Cookie**: `BELLONA_LOCALE` (definido em `src/i18n/routing.ts`).
+**Library**: `next-intl` with `localePrefix: "as-needed"` (no prefix for `en`, `/pt` prefix for Portuguese).  
+**Locales**: `["en", "pt"]`, default is `"en"`.  
+**Cookie**: `BELLONA_LOCALE` (defined in `src/i18n/routing.ts`).
 
-### Arquivos de tradução
+### Translation Files
 
 ```
 apps/web/messages/
@@ -318,56 +318,54 @@ apps/web/messages/
   pt.json
 ```
 
-### Namespaces atuais (convenção)
+### Current Namespaces (Convention)
 
-| Namespace                    | Conteúdo                                                  |
-| ---------------------------- | --------------------------------------------------------- |
-| `Admin`                      | Labels de admin (`panel`, etc.)                           |
-| `GamePage`                   | Textos específicos da página `/games/[slug]`              |
-| `GamesPage`                  | Textos específicos da página `/games`                     |
-| `ProfilePage`                | Textos da página `/profile/[username]`                    |
-| `League`                     | Textos de componentes de liga (cards, tabelas, templates) |
-| `Modals.<ModalName>`         | Textos de cada modal específico                           |
-| `Modals.<ModalName>.trigger` | Label do botão que abre o modal                           |
-| `Sidebar`                    | Sidebar principal                                         |
-| `Sidebar.userMenu`           | Items do menu de usuário                                  |
-| `Sidebar.locale`             | Seletor de idioma                                         |
-| `Validations`                | Mensagens de erro de validação de formulários             |
+| Namespace                    | Content                                          |
+| ---------------------------- | ------------------------------------------------ |
+| `Admin`                      | Admin labels (`panel`, etc.)                     |
+| `GamePage`                   | Text specific to `/games/[slug]`                 |
+| `GamesPage`                  | Text specific to `/games`                        |
+| `ProfilePage`                | Text for `/profile/[username]`                   |
+| `League`                     | League component text (cards, tables, templates) |
+| `Modals.<ModalName>`         | Text for each specific modal                     |
+| `Modals.<ModalName>.trigger` | Label for the button that opens the modal        |
+| `Sidebar`                    | Main sidebar                                     |
+| `Sidebar.userMenu`           | User menu items                                  |
+| `Sidebar.locale`             | Language selector                                |
+| `Validations`                | Form validation error messages                   |
 
-### Regras
+### Rules
 
-1. **Um `useTranslations` por arquivo**. Se precisar de dois namespaces, use sub-namespaces ou reestruture as chaves.
-2. Componentes que não são de página usam seu próprio namespace (`League`, `Modals.*`), nunca o namespace da página que os contém.
-3. Textos novos: adicionar em **ambos** `en.json` e `pt.json` simultaneamente.
+1. **One `useTranslations` per file**. If you need two namespaces, use sub-namespaces or restructure the keys.
+2. Non-page components use their own namespace (`League`, `Modals.*`), never the namespace of the page that contains them.
+3. New text must be added to **both** `en.json` and `pt.json` at the same time.
 4. Server Components: `getTranslations("Namespace")` (async).  
    Client Components: `useTranslations("Namespace")` (hook).
 
 ---
 
-## 9. Estilo e Tailwind
+## 9. Styling and Tailwind
 
-**Configuração**: `apps/web/tailwind.config.ts`. Design tokens via variáveis CSS (`--primary`, `--border`, `--foreground`, `--muted`, etc.).
+**Configuration**: `apps/web/tailwind.config.ts`. Design tokens are exposed through CSS variables (`--primary`, `--border`, `--foreground`, `--muted`, and so on).
 
-### Regras
+### Rules
 
-#### ⛔ Proibido: cores mágicas ou hardcoded
+#### Forbidden: magic or hardcoded colors
 
-**Toda cor usada no projeto DEVE ser um token do tema.** Cores hardcoded (`#hex`, `rgb(...)`, `hsl(...)` literais, nomes de cor Tailwind fora do tema como `red-500`, `gray-700`) são **proibidas** — sem exceções.
+**Every color used in the project MUST be a theme token.** Hardcoded colors (`#hex`, literal `rgb(...)`, literal `hsl(...)`, or Tailwind color names outside the theme such as `red-500`, `gray-700`) are **forbidden** - no exceptions.
 
-- Tokens disponíveis (definidos em `apps/web/src/app/globals.css`): `--background`, `--background-soft`, `--foreground`, `--muted`, `--border`, `--card`, `--card-strong`, `--primary`, `--primary-strong`, `--secondary`, `--gold`, `--gold-deep`, `--danger`, `--success`, `--warning`.
-- No Tailwind use os nomes mapeados: `text-primary`, `bg-background`, `border-border`, `text-muted`, `text-gold`, `text-danger`, etc.
-- Para variações de opacidade use o modificador `/`: `bg-primary/10`, `text-foreground/60`.
-- Para `color-mix` ou gradientes, referencie sempre a variável CSS: `color-mix(in srgb, var(--gold) 45%, white)`.
-- **Variável `--primary`** é dinâmica por contexto (perfil de usuário muda a cor primária via `style` inline). Por isso nunca use `#hex` inline.
-- Se uma nova cor for necessária, adicione-a como variável CSS no `globals.css` e mapeie no bloco `@theme inline` antes de usar.
+- Available tokens (defined in `apps/web/src/app/globals.css`): `--background`, `--background-soft`, `--foreground`, `--muted`, `--border`, `--card`, `--card-strong`, `--primary`, `--primary-strong`, `--secondary`, `--gold`, `--gold-deep`, `--danger`, `--success`, `--warning`.
+- In Tailwind, use the mapped names: `text-primary`, `bg-background`, `border-border`, `text-muted`, `text-gold`, `text-danger`, and so on.
+- For opacity variants, use `/`: `bg-primary/10`, `text-foreground/60`.
+- For `color-mix` or gradients, always reference the CSS variable: `color-mix(in srgb, var(--gold) 45%, white)`.
+- The `--primary` variable is dynamic by context (user profiles change the primary color through inline `style`). Because of that, never use inline `#hex` values.
+- If a new color is needed, add it as a CSS variable in `globals.css` and map it in the `@theme inline` block before using it.
 
----
+- Use `cn()` (from `src/lib/utils.ts`) for conditional class merging - never string concatenation.
+- `no-lift`: disables the default hover lift effect on buttons. Use it when the button style already has its own hover treatment.
+- `glass-panel`: card with a semi-transparent background and backdrop blur.
 
-- `cn()` (de `src/lib/utils.ts`) para merge condicional de classes — nunca concatenação de strings.
-- Classe `no-lift`: desabilita o efeito de hover padrão em botões. Use quando o estilo visual do botão já tem seu próprio hover.
-- `glass-panel`: card com fundo semi-transparente e backdrop blur.
-
-### Padrão de background escuro (usado em GlowBorder e ManageButton)
+### Dark Background Pattern (used in `GlowBorder` and `ManageButton`)
 
 ```
 bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))]
@@ -375,74 +373,65 @@ bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))]
 
 ---
 
-## 10. Convenções de Naming
+## 10. Naming Conventions
 
-| Contexto                  | Convenção              | Exemplo                         |
-| ------------------------- | ---------------------- | ------------------------------- |
-| Arquivos de componente    | `kebab-case.tsx`       | `game-manage-actions.tsx`       |
-| Componentes React         | `PascalCase`           | `GameManageActions`             |
-| Funções utilitárias       | `camelCase`            | `formatCompactNumber`           |
-| Variáveis de ambiente     | `SCREAMING_SNAKE_CASE` | `NEXT_PUBLIC_API_URL`           |
-| Enums (values)            | `UPPER_SNAKE_CASE`     | `RANKED_LEAGUE`                 |
-| Chaves de tradução        | `camelCase`            | `playOnSteam`                   |
-| Namespaces de tradução    | `PascalCase`           | `GamePage`, `Modals.EditLeague` |
-| Queries GQL               | `PascalCase`           | `GetGame`, `UpdateLeague`       |
-| Constantes GQL exportadas | `UPPER_SNAKE_CASE`     | `GET_GAME`                      |
-| Rotas de URL              | `kebab-case`           | `/games/my-game-slug`           |
-| Slugs no banco            | `kebab-case`           | `counter-strike-2`              |
-| Classes CSS custom        | `kebab-case`           | `glass-panel`, `no-lift`        |
+| Context                | Convention             | Example                         |
+| ---------------------- | ---------------------- | ------------------------------- |
+| Component files        | `kebab-case.tsx`       | `game-manage-actions.tsx`       |
+| React components       | `PascalCase`           | `GameManageActions`             |
+| Utility functions      | `camelCase`            | `formatCompactNumber`           |
+| Environment variables  | `SCREAMING_SNAKE_CASE` | `NEXT_PUBLIC_API_URL`           |
+| Enum values            | `UPPER_SNAKE_CASE`     | `RANKED_LEAGUE`                 |
+| Translation keys       | `camelCase`            | `playOnSteam`                   |
+| Translation namespaces | `PascalCase`           | `GamePage`, `Modals.EditLeague` |
+| GQL queries            | `PascalCase`           | `GetGame`, `UpdateLeague`       |
+| Exported GQL constants | `UPPER_SNAKE_CASE`     | `GET_GAME`                      |
+| URL routes             | `kebab-case`           | `/games/my-game-slug`           |
+| Database slugs         | `kebab-case`           | `counter-strike-2`              |
+| Custom CSS classes     | `kebab-case`           | `glass-panel`, `no-lift`        |
 
 ---
 
-## 11. Variáveis de Ambiente
+## 11. Environment Variables
 
 ### `apps/web`
 
-Validadas via `@t3-oss/env-nextjs` em `src/env.ts`. Toda variável deve ser declarada lá antes de usar.
+Validated through `@t3-oss/env-nextjs` in `src/env.ts`. Every variable must be declared there before it is used.
 
-| Variável              | Tipo           | Descrição                       |
-| --------------------- | -------------- | ------------------------------- |
-| `NEXTAUTH_SECRET`     | string (≥32)   | Segredo de assinatura de sessão |
-| `NEXTAUTH_URL`        | url (opcional) | URL base do NextAuth            |
-| `NEXT_PUBLIC_API_URL` | url            | URL do backend GraphQL          |
-| `NEXT_PUBLIC_CDN_URL` | url            | URL do CDN para imagens         |
-| `NEXT_PUBLIC_APP_URL` | url (opcional) | URL do app                      |
+| Variable              | Type           | Description            |
+| --------------------- | -------------- | ---------------------- |
+| `NEXTAUTH_SECRET`     | string (>=32)  | Session signing secret |
+| `NEXTAUTH_URL`        | url (optional) | Base NextAuth URL      |
+| `NEXT_PUBLIC_API_URL` | url            | GraphQL backend URL    |
+| `NEXT_PUBLIC_CDN_URL` | url            | CDN URL for images     |
+| `NEXT_PUBLIC_APP_URL` | url (optional) | Application URL        |
 
 ### `apps/api`
 
-Validadas via `@nestjs/config` + Joi (ou similar) em `src/env.ts`.
+Validated through `@nestjs/config` + Joi (or similar) in `src/env.ts`.
 
-| Variável                | Descrição                         |
-| ----------------------- | --------------------------------- |
-| `DATABASE_URL`          | Connection string Postgres        |
-| `JWT_SECRET`            | Segredo de assinatura JWT         |
-| `DISCORD_CLIENT_ID`     | OAuth Discord                     |
-| `DISCORD_CLIENT_SECRET` | OAuth Discord                     |
-| `CORS_ORIGIN`           | URL permitida no CORS             |
-| `PORT`                  | Porta do servidor (default: 4000) |
+| Variable                | Description                 |
+| ----------------------- | --------------------------- |
+| `DATABASE_URL`          | Postgres connection string  |
+| `JWT_SECRET`            | JWT signing secret          |
+| `DISCORD_CLIENT_ID`     | Discord OAuth               |
+| `DISCORD_CLIENT_SECRET` | Discord OAuth               |
+| `CORS_ORIGIN`           | Allowed CORS URL            |
+| `PORT`                  | Server port (default: 4000) |
 
 ---
 
-## 12. Decisões Arquiteturais Tomadas (Não Reverter)
+## 12. Architectural Decisions Already Made (Do Not Revert)
 
-Estas decisões foram deliberadas. Antes de mudar qualquer uma, leia o PLAN.md e entenda o contexto.
+These decisions were deliberate. Before changing any of them, read `PLAN.md` and understand the context.
 
-1. **Pastas de rota limpas**: `app/[locale]/**` contém apenas arquivos reservados do Next.js. Sub-componentes de página vivem em `components/`.
-
-2. **`@bellona/core` como fonte única de enums**: enums nunca são duplicados entre API, web e banco. O banco espelha o `core`, não o contrário.
-
-3. **GraphQL code-first**: o schema é gerado a partir dos decorators do NestJS. Nunca escreva SDL (`.graphql`) manualmente.
-
-4. **Codegen obrigatório**: tipos TypeScript do Apollo são sempre gerados. Interfaces manuais para dados da API são proibidas.
-
-5. **`safeServerQuery` para Server Components**: queries em Server Components usam este wrapper que absorve erros de rede/indisponibilidade ao invés de lançar exceção e quebrar a página.
-
-6. **`useUser()` apenas em Client Components**: permissões em Server Components vêm de `getServerAuthSession()` + funções de `lib/permissions.ts`.
-
-7. **Um `useTranslations` por arquivo**: reduz acoplamento e mantém rastreabilidade de chaves.
-
-8. **`ManageButton` como componente genérico de gestão**: o dropdown "Manage" tem visual padronizado e aceita `children` como items. Nunca duplique o trigger button.
-
-9. **Migrations versionadas**: `pnpm db:migrate` no desenvolvimento, nunca `prisma db push` como fluxo principal. Migrations ficam em `packages/db/prisma/migrations/`.
-
-10. **Autorização no backend, não no frontend**: o frontend condiciona UI, mas a API sempre valida permissões independentemente. Um cliente que bypasse o frontend não deve conseguir executar operações protegidas.
+1. **Clean route folders**: `app/[locale]/**` contains only reserved Next.js files. Page subcomponents live in `components/`.
+2. **`@bellona/core` as the single enum source**: enums are never duplicated between API, web, and database. The database mirrors `core`, not the other way around.
+3. **Code-first GraphQL**: the schema is generated from NestJS decorators. Never write SDL (`.graphql`) manually.
+4. **Mandatory codegen**: Apollo TypeScript types are always generated. Handwritten interfaces for API data are forbidden.
+5. **`safeServerQuery` for Server Components**: queries in Server Components use this wrapper, which absorbs network and availability errors instead of throwing and breaking the page.
+6. **`useUser()` only in Client Components**: permissions in Server Components come from `getServerAuthSession()` + functions from `lib/permissions.ts`.
+7. **One `useTranslations` per file**: reduces coupling and keeps keys traceable.
+8. **`ManageButton` as the generic management component**: the "Manage" dropdown has a standardized look and accepts `children` as items. Never duplicate the trigger button.
+9. **Versioned migrations**: use `pnpm db:migrate` in development, never `prisma db push` as the primary workflow. Migrations live in `packages/db/prisma/migrations/`.
+10. **Authorization lives in the backend, not the frontend**: the frontend conditions the UI, but the API always validates permissions independently. A client that bypasses the frontend must still be unable to execute protected operations.

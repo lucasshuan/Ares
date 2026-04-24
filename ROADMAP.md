@@ -1,147 +1,147 @@
-# Bellona — Roadmap de Produto
+# Bellona - Product Roadmap
 
-> Última atualização: Abril 2026  
-> Visão de funcionalidades planejadas. Para estado técnico atual, ver `CONTEXT.md`.
-
----
-
-## Formatos de Competição
-
-- **Ligas**: pontos corridos (round robin), Elo rating (já parcialmente implementado)
-- **Torneios com chaveamento**: eliminatória simples, eliminatória dupla (chave dos perdedores), sistema suíço, fase de grupos, montagem de fases personalizadas
-- Cada evento pode combinar formatos (ex: fase de grupos → eliminatória)
+> Last updated: April 2026  
+> Planned feature vision. For the current technical state, see `CONTEXT.md`.
 
 ---
 
-## Comunidade e Social
+## Competition Formats
 
-- **Seguir jogadores + feed de atividade**: usuários seguem outros jogadores e têm um feed personalizado com resultados, mudanças de ranking, novos eventos que entraram, etc. Must-have para comunidade real
-- **Fóruns e posts**: criação de tópicos e publicações em páginas — página do usuário (estilo Steam), página da comunidade (jogo), página de um evento
-- **Perfis customizáveis**: páginas de usuário altamente personalizáveis, inspiradas em Discord e Steam — o "templo" de cada jogador
-- **Sistema de notificações e convites**: convidar usuários para eventos, notificar sobre partidas, atualizações de ranking, posts, etc.
-- **Staff de moderação por evento**: organizadores podem definir moderadores com permissões específicas
-- **Timeline de carreira do jogador**: linha do tempo no perfil exibindo eventos participados, resultados relevantes (1º lugar, maior série de vitórias) e variações de Elo ao longo do tempo
-- **Tabela de líderes cross-evento por jogo**: meta-ranking global por jogo calculado a partir da performance em todos os leagues/tournaments ativos. Para ser justo, deve exigir número mínimo de partidas ou eventos participados como critério de elegibilidade. Futuramente pode evoluir para cross-jogo (jogadores influentes em múltiplos jogos), mas isso exige critérios muito cuidadosos
-- **Vouching / reputação comunitária**: após partidas, participantes avaliam uns aos outros em categorias como fair play, pontualidade e comunicação. Agrega um score de reputação visível no perfil — não influencia ranking, serve para confiança comunitária. Importância secundária por enquanto
-- **Rivalidades e histórico H2H**: card gerado automaticamente entre jogadores com confrontos frequentes, exibindo win/loss histórico e diferença de Elo ao longo do tempo. Feature de "vida" para o site; baixa importância sistêmica, reservada para futuro distante
+- **Leagues**: round robin, Elo rating (already partially implemented)
+- **Bracket tournaments**: single elimination, double elimination (losers bracket), Swiss system, group stage, and custom stage composition
+- Each event can combine formats (for example, group stage -> elimination bracket)
 
 ---
 
-## Partidas e Matchmaking
+## Community and Social
 
-- **Disponibilidade e desafio em ligas**: jogadores em leagues (especialmente Elo) podem declarar disponibilidade, e outros jogadores com Elo próximo enviam desafios. A partida aceita entra automaticamente na liga. No perfil, o usuário pode configurar disponibilidade recorrente (ex: "tardes", "fins de semana e quarta-feira"), aplicável a qualquer contexto
-- **Partidas avulsas e fila de pickup**: fora de eventos formais, jogadores declaram disponibilidade para um jogo/formato; o sistema faz o match por Elo e gera uma partida avulsa registrada no histórico. Serve como aquecimento contínuo entre eventos
-
----
-
-## Times, Capitania e Clãs
-
-- **Times com capitão**: times são criados pelos próprios jogadores, com um membro sendo o capitão. O capitão tem permissões de gestão do roster (adicionar/remover membros, submeter resultados pelo time). O organizador do evento apenas aprova ou recusa os times inscritos, sem precisar microgerenciar roster
-- **Clãs**: agrupamento de usuários com ranking próprio baseado na performance coletiva dos membros. Complexidade alta — exige modelagem cuidadosa de vínculos entre usuários, times, clãs e resultados
-
----
-
-## Temporadas
-
-- **Sistema de temporadas manuais**: ao criar um novo evento, o organizador pode informar um evento de origem ("evento pai"). O novo evento herda configurações do anterior e é tratado como uma nova temporada. No frontend, a página do evento exibe navegação integrada entre temporadas (select, tabs ou similar). Sem automação — a criação de temporada é sempre uma ação intencional do organizador
+- **Follow players + activity feed**: users follow other players and get a personalized feed with results, ranking changes, newly joined events, and more. A must-have for a real community
+- **Forums and posts**: create topics and publications on pages such as the user page (Steam-like), community page (game), and event page
+- **Customizable profiles**: highly customizable user pages inspired by Discord and Steam - each player's personal "temple"
+- **Notification and invite system**: invite users to events, notify them about matches, ranking updates, posts, and more
+- **Event moderation staff**: organizers can define moderators with specific permissions
+- **Player career timeline**: a profile timeline showing participated events, relevant results (1st place, longest win streak), and Elo changes over time
+- **Cross-event leaderboard per game**: global meta-ranking per game calculated from performance across all active leagues and tournaments. To stay fair, it should require a minimum number of matches or participated events as an eligibility rule. In the future it may expand to cross-game ranking (influential players across multiple games), but that requires very careful criteria
+- **Vouching / community reputation**: after matches, participants evaluate each other in categories such as fair play, punctuality, and communication. This produces a visible reputation score on the profile. It does not affect ranking and exists for community trust. Secondary priority for now
+- **Rivalries and H2H history**: auto-generated player cards for frequent matchups, showing historical win/loss and Elo differences over time. This is a "living world" feature for the site, with low systemic priority and reserved for the distant future
 
 ---
 
-## Dados Dinâmicos por Evento
+## Matches and Matchmaking
 
-- Criadores de eventos podem definir **campos customizados** para resultados (formulários dinâmicos)
-- Podem ser dados gerais do evento ou individuais por jogador (ex: kills, assistências, cura realizada, dano causado, nota na partida)
-- Permite que cada comunidade adapte as estatísticas ao seu jogo
-
----
-
-## Integrações
-
-- **Página "ao vivo"**: seção por jogo exibindo partidas em andamento com link de stream (YouTube, Twitch) quando informado na partida/evento. Crítico para dar sensação de plataforma viva e incentivar participantes a streamar
-- **Discord webhook**: organizadores de eventos linkam um webhook de canal Discord e o Ares posta automaticamente resultados de partidas, mudanças no top 3 do ranking e início de fases de torneio. Sem bot — só webhook. No futuro pode evoluir para bot com comandos interativos
-- **Steam API**: busca e sugestão de jogos novos caso não existam no projeto, com cacheamento para evitar uso excessivo da API gratuita
+- **Availability and challenges inside leagues**: players in leagues, especially Elo leagues, can declare availability and nearby-Elo players can issue challenges. Accepted matches enter the league automatically. On the profile, users can configure recurring availability (for example, "afternoons", "weekends and Wednesday"), applicable in any context
+- **Casual matches and pickup queue**: outside formal events, players declare availability for a game/format; the system matches them by Elo and creates a casual match recorded in history. This acts as continuous warm-up between events
 
 ---
 
-## Administração e Moderação
+## Teams, Captaincy, and Clans
 
-- **Painel administrativo**: para usuários com `isAdmin` ou permissões granulares
-- **Sistema de banimento/bloqueio**: banir usuários de eventos, jogos ou da plataforma
-
----
-
-## Performance e Caching
-
-- Cacheamento agressivo de páginas e rankings no Next.js (ISR/revalidação) para reduzir carga na API
-- Estratégia essencial para manter performance com infraestrutura enxuta
+- **Teams with a captain**: teams are created by the players themselves, with one member as captain. The captain manages the roster (add/remove members, submit results for the team). The event organizer only approves or rejects registered teams, without micromanaging the roster
+- **Clans**: groups of users with their own ranking based on the members' collective performance. High complexity - requires careful modeling of links among users, teams, clans, and results
 
 ---
 
-## Modelo de Negócio
+## Seasons
 
-- **100% gratuito, para sempre** — nenhuma funcionalidade atrás de paywall
-- Open-source e aberto a colaboradores
-- Sustentabilidade via patrocinadores e doações
+- **Manual season system**: when creating a new event, the organizer can specify a source event (a "parent event"). The new event inherits the previous event's settings and is treated as a new season. On the frontend, the event page shows integrated season navigation (select, tabs, or similar). No automation - season creation is always an intentional organizer action
 
 ---
 
-## Visão de Longo Prazo
+## Dynamic Event Data
 
-O Ares está evoluindo de uma ferramenta de ligas para uma **plataforma de comunidade competitiva completa**:
-
-1. Qualquer pessoa cadastra um jogo e organiza competições em múltiplos formatos (liga, torneio com chave, sistema suíço, grupos, etc.)
-2. Partidas podem ser **agendadas** ou ter **resultados registrados** com evidência (screenshot/vídeo) e dados customizados
-3. Rankings são atualizados automaticamente — Elo sensível à margem de placar, pontos, ou métricas do formato
-4. Jogadores formam **times** e **clãs** com rankings coletivos
-5. Cada página (usuário, jogo, evento) tem **fóruns próprios** e os perfis são altamente customizáveis
-6. **Notificações, convites e moderação** criam um ecossistema social completo
-7. Tudo 100% gratuito, open-source, sustentado por comunidade
+- Event creators can define **custom result fields** (dynamic forms)
+- They can represent general event data or per-player data (for example, kills, assists, healing done, damage dealt, match rating)
+- This lets each community adapt statistics to its own game
 
 ---
 
-## Expansões de Identidade (Ideias Outside the Box)
+## Integrations
 
-Além do formato clássico de "torneios e ligas", o Ares possui espaço natural para acomodar conceitos adjacentes que enriquecem o ecossistema e atraem novos tipos de público:
-
-### Confirmadas
-
-- **Metajogo de Facções (Controle de Território)**: Jogadores escolhem uma facção (casas/guildas globais). Vitórias em partidas avulsas ou torneios geram "pontos de influência" para a facção. O próprio site ganha um metajogo onde facções dominam o ranking mês a mês, dando propósito ao jogador que nunca ganharia um torneio individualmente.
-- **Hub de Caçadores de Recompensas (Bounties & Challenges)**: Organização de competições assíncronas. Um mural de contratos ("O primeiro a matar o Boss X sem tomar dano", "Speedrun em menos de 2min"). Jogadores dão claim e mandam provas em vídeo. Focado em speedrunners e criadores engajados, não e-sports tradicionais.
-- **Economia de Mentoria (Ares Academy)**: Jogadores de alto Elo criam "Bootcamps". Jogadores experientes têm um _Elo de Ensino_ baseado exclusivamente no percentual de evolução dos seus aprendizes. Incentiva cooperação no lugar de toxicidade.
-- **Ecossistema LFG Avançado (O "Clube da Esquina")**: Matchmaking baseado em comportamento e "vibe", não ranking. Eventos de confraternização no fim de semana focados na união de perfis parecidos (`[Microfone ON]`, `[Zero Tryhard]`, `[Joga Bebendo]`). Trata do problema crônico da falta com quem jogar em ambientes sem estresse.
-- **Oráculo (Mercado de Previsões)**: Jogadores fazem apostas virtuais (sem dinheiro) em partidas e torneios antes de acontecerem — quem vai ganhar, por quanto, quem cai na fase de grupos. Acertos acumulam um _Elo de Previsão_ separado. Cria um e-sport paralelo para espectadores e analistas que nunca competem mas têm prestígio por prever.
-- **Bairrismo / Identidade Geográfica**: Jogadores representam sua cidade, estado ou país. Rankings regionais reais com contribuição agregada. Eventos do tipo "clássico regional" ou "cidade vs cidade" emergem naturalmente dos dados. Dá identidade local a uma cultura que hoje é puramente online-anônima.
-- **Crônicas (Narrador Automático)**: O site observa padrões nos dados e gera manchetes estilo jornalismo esportivo automaticamente — _"Fulano está há 6 partidas sem perder — maior sequência da temporada"_, _"Estes dois nunca se enfrentaram, e podem ser os finalistas"_. Transforma dados frios em storytelling emergente sem moderação humana. Alto impacto, baixo custo técnico.
-- **Laboratório de Formatos**: Usuários inventam formatos de competição próprios, testam em sandbox com partidas simuladas, publicam e outros organizadores adotam. Formatos viram entidades rankeadas por popularidade. Democratiza o game design de competições e cria uma comunidade em torno da criatividade estrutural.
-
-### Possibilidades
-
-- **Hall das Partidas Lendárias**: Partidas podem ser "eternizadas" por voto da comunidade via reações (emojis estilo Discord). O critério de entrada no Hall é o engajamento acumulado. Integração com YouTube e Twitch permite embedar vídeos diretamente no site, com timestamp-linking — usuários comentam e reagem em momentos específicos, e esses links funcionam em posts e fóruns.
-- **Wiki por Jogo**: Cada jogo no Ares teria uma wiki própria, funcionando como um Fandom/Wikia integrado — edição colaborativa com controle de moderação. Complementa os fóruns com conteúdo evergreen (guias, lore, mapa de personagens, meta). O organizador ou a comunidade do jogo gerencia o acesso de edição.
+- **"Live" page**: a per-game section showing ongoing matches, with stream links (YouTube, Twitch) whenever provided on the match or event. Critical for making the platform feel alive and encouraging participants to stream
+- **Discord webhook**: event organizers connect a Discord channel webhook and Ares automatically posts match results, top 3 ranking changes, and tournament phase starts. No bot, just webhook. It can evolve into a bot with interactive commands later
+- **Steam API**: fetch and suggest new games if they do not already exist in the project, with caching to avoid excessive use of the free API
 
 ---
 
-## Backlog de Implementação
+## Administration and Moderation
 
-Itens planejados ou em progresso, sem data definida:
+- **Administrative panel**: for users with `isAdmin` or granular permissions
+- **Ban/block system**: ban users from events, games, or the platform
 
-- **Seleção de jogos no onboarding**: UI implementada com dados mock; persistir no backend (`UserGameInterest`) ainda não feito
-- **Cálculo de Elo no backend**: fórmula definida, mutation de Result com cálculo automático ainda não implementada
-- **Refactor de Match/Result**: separar agendamento de partida e registro de resultado
-- **Refactor de Player**: repensar vínculo User↔Game; lógica de usernames precisa de novo approach
-- **Formatos de torneio**: modelar chaveamentos (eliminatória, suíço, grupos, fases) — apenas ligas existem hoje
-- **Times e Clãs**: modelagem completa de equipes, vínculos e ranking coletivo
-- **Dados dinâmicos por evento**: formulários customizáveis para estatísticas de partida
-- **Fóruns e posts**: sistema de tópicos e publicações por contexto (usuário, jogo, evento)
-- **Perfis customizáveis**: personalização rica da página de perfil
-- **Notificações e convites**: sistema para convidar jogadores e notificar sobre eventos
-- **Painel administrativo**: UI dedicada para admins e moderadores
-- **Banimento/bloqueio**: sistema de moderação de usuários
-- **Integração Steam API**: busca de jogos com cache
-- **Caching de páginas e rankings**: ISR e estratégias de revalidação no Next.js
-- **N+1 / DataLoaders**: existem, mas cobrem pouco
-- **Testes**: cobertura quase zero (só boilerplate)
-- **Padronização i18n**: múltiplos `useTranslations` por arquivo; estrutura dos json pode ser reorganizada
-- **Posição no ranking**: lógica de `position` não consolidada
-- **CI de validação**: sem pipeline automatizado antes do deploy
-- **Tags em jogos**: jogos podem ter tags (ex: "FPS", "MOBA") para facilitar busca
+---
+
+## Performance and Caching
+
+- Aggressive page and ranking caching in Next.js (ISR/revalidation) to reduce API load
+- An essential strategy for maintaining performance with lean infrastructure
+
+---
+
+## Business Model
+
+- **100% free, forever** - no feature behind a paywall
+- Open source and open to contributors
+- Sustainability through sponsors and donations
+
+---
+
+## Long-Term Vision
+
+Ares is evolving from a league tool into a **complete competitive community platform**:
+
+1. Anyone can register a game and organize competitions in multiple formats (league, bracket tournament, Swiss, groups, and so on)
+2. Matches can be **scheduled** or have **results recorded** with evidence (screenshot/video) and custom data
+3. Rankings update automatically - Elo sensitive to score margin, points, or format-specific metrics
+4. Players form **teams** and **clans** with collective rankings
+5. Every page (user, game, event) has its own **forums**, and profiles are highly customizable
+6. **Notifications, invites, and moderation** create a complete social ecosystem
+7. Everything is 100% free, open source, and community-sustained
+
+---
+
+## Identity Expansions (Outside-the-Box Ideas)
+
+Beyond the classic "tournaments and leagues" shape, Ares has natural room for adjacent concepts that enrich the ecosystem and attract new kinds of audiences:
+
+### Confirmed
+
+- **Faction Metagame (Territory Control)**: players choose a faction (global houses/guilds). Wins in casual matches or tournaments generate "influence points" for the faction. The site itself gains a metagame where factions dominate the ranking month by month, giving purpose to players who would never win an individual tournament
+- **Bounty Hunters Hub (Bounties & Challenges)**: asynchronous competition system. A contract board with objectives such as "First to kill Boss X without taking damage" or "Speedrun under 2 minutes". Players claim them and submit video proof. Focused on speedrunners and engaged creators, not traditional esports
+- **Mentorship Economy (Ares Academy)**: high-Elo players create "Bootcamps". Experienced players get a separate _Teaching Elo_ based exclusively on the improvement rate of their students. Encourages cooperation instead of toxicity
+- **Advanced LFG Ecosystem (The "Corner Club")**: matchmaking based on behavior and vibe, not ranking. Weekend social events focused on bringing together similar profiles (`[Mic ON]`, `[Zero Tryhard]`, `[Drinking While Playing]`). This addresses the chronic problem of not having people to play with in low-stress environments
+- **Oracle (Prediction Market)**: players make virtual bets, with no real money, on matches and tournaments before they happen - who will win, by how much, who drops in groups. Correct predictions accumulate a separate _Prediction Elo_. This creates a parallel esport for spectators and analysts who never compete but still earn prestige by predicting well
+- **Regional Pride / Geographic Identity**: players represent their city, state, or country. Real regional rankings with aggregated contribution. Events like "regional derby" or "city vs city" emerge naturally from the data. This gives local identity to a culture that is otherwise purely online and anonymous
+- **Chronicles (Automatic Narrator)**: the site observes patterns in the data and generates sports-journalism-style headlines automatically - _"Player X is on a 6-match unbeaten streak, the longest of the season"_, _"These two have never faced each other and may be the finalists"_. Turns cold data into emergent storytelling without human moderation. High impact, low technical cost
+- **Format Lab**: users invent their own competition formats, test them in a sandbox with simulated matches, publish them, and let other organizers adopt them. Formats become entities ranked by popularity. This democratizes competition design and creates a community around structural creativity
+
+### Possibilities
+
+- **Hall of Legendary Matches**: matches can be "immortalized" through community voting via Discord-style emoji reactions. Admission to the Hall is based on accumulated engagement. YouTube and Twitch integration would let videos be embedded directly on the site with timestamp linking, so users can comment on and react to specific moments, and those links would work in posts and forums
+- **Game Wiki**: each game in Ares could have its own wiki, working as an integrated Fandom/Wikia with collaborative editing and moderation controls. This complements forums with evergreen content such as guides, lore, character maps, and meta information. The organizer or game community manages edit access
+
+---
+
+## Implementation Backlog
+
+Planned or in-progress items, with no defined date:
+
+- **Game selection in onboarding**: UI implemented with mock data; backend persistence (`UserGameInterest`) still missing
+- **Backend Elo calculation**: formula is defined, but the `Result` mutation with automatic calculation is not implemented yet
+- **Match/Result refactor**: separate match scheduling from result registration
+- **Player refactor**: rethink the `User <-> Game` link; username logic needs a new approach
+- **Tournament formats**: model brackets (elimination, Swiss, groups, stages) - only leagues exist today
+- **Teams and Clans**: full modeling of teams, links, and collective ranking
+- **Dynamic event data**: customizable forms for match statistics
+- **Forums and posts**: topic and publication system by context (user, game, event)
+- **Customizable profiles**: rich profile page customization
+- **Notifications and invites**: system for inviting players and notifying about events
+- **Administrative panel**: dedicated UI for admins and moderators
+- **Ban/block system**: user moderation system
+- **Steam API integration**: game lookup with caching
+- **Page and ranking caching**: ISR and revalidation strategies in Next.js
+- **N+1 / DataLoaders**: they exist, but coverage is still limited
+- **Tests**: almost zero coverage, only boilerplate
+- **i18n standardization**: multiple `useTranslations` per file; JSON structure can be reorganized
+- **Ranking position**: `position` logic is not consolidated
+- **Validation CI**: no automated pipeline before deploy
+- **Game tags**: games can have tags (for example, "FPS", "MOBA") to improve search
