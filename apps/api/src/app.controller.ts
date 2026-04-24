@@ -1,4 +1,4 @@
-import { Controller, Get, Head } from '@nestjs/common';
+import { Controller, Get, Head, HttpCode, HttpStatus } from '@nestjs/common';
 
 @Controller()
 export class AppController {
@@ -14,4 +14,8 @@ export class AppController {
   getHealth() {
     return { status: 'ok' };
   }
+
+  @Get('favicon.ico')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  getFavicon() {}
 }
