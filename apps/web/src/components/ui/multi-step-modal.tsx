@@ -133,7 +133,7 @@ export function MultiStepModal({
                     onClick={() => canClick && onStepClick(idx)}
                     disabled={!canClick}
                     className={cn(
-                      "flex items-center gap-2 rounded-2xl border px-4 py-2 transition-all duration-300",
+                      "flex items-center gap-2 rounded-lg border px-4 py-2 transition-all duration-300",
                       isActive
                         ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
                         : isPast || isUnlocked

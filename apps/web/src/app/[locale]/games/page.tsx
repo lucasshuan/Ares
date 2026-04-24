@@ -23,7 +23,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
   const t = await getTranslations("GamesPage");
 
   return (
-    <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-14 pb-12 sm:px-10 lg:px-12">
+    <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col gap-6">
           <SectionHeader title={t("title")} description={t("description")} />
@@ -44,10 +44,10 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
                   : `?${new URLSearchParams({ ...(search ? { search } : {}), sort: "popular" })}`
               }
               className={cn(
-                "flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition-all duration-300",
+                "flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-200",
                 sort !== "name"
-                  ? "bg-primary/20 text-primary border-primary/20 border shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
-                  : "border border-white/5 text-white/40 hover:border-white/10 hover:text-white/60",
+                  ? "border-gold/40 bg-gold/10 text-gold shadow-[0_0_12px_color-mix(in_srgb,var(--gold)_15%,transparent)]"
+                  : "border-border text-muted hover:border-gold/30 hover:text-foreground",
               )}
             >
               <Trophy className="size-4" />
@@ -60,10 +60,10 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
                   : `?${new URLSearchParams({ ...(search ? { search } : {}), sort: "name" })}`
               }
               className={cn(
-                "flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition-all duration-300",
+                "flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-200",
                 sort === "name"
-                  ? "bg-primary/20 text-primary border-primary/20 border shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
-                  : "border border-white/5 text-white/40 hover:border-white/10 hover:text-white/60",
+                  ? "border-gold/40 bg-gold/10 text-gold shadow-[0_0_12px_color-mix(in_srgb,var(--gold)_15%,transparent)]"
+                  : "border-border text-muted hover:border-gold/30 hover:text-foreground",
               )}
             >
               {t("sortAlphabetical")}
@@ -71,7 +71,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
           </div>
         </div>
       </div>
-      <div className="border-b border-white/5" />
+      <div className="border-b border-border" />
 
       <Suspense fallback={<GamesGridSkeleton />}>
         <GamesGrid search={search} />

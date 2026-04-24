@@ -103,7 +103,7 @@ export function EditGameForm({
       <div className="flex flex-col gap-2">
         <label
           htmlFor="name"
-          className="ml-1 text-sm font-medium text-white/70"
+          className="ml-1 text-sm font-medium text-secondary/80"
         >
           {t("name.label")}
         </label>
@@ -125,7 +125,7 @@ export function EditGameForm({
       <div className="flex flex-col gap-2">
         <label
           htmlFor="slug"
-          className="ml-1 text-sm font-medium text-white/70"
+          className="ml-1 text-sm font-medium text-secondary/80"
         >
           {t("slug.label")}
         </label>
@@ -155,7 +155,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="description"
-          className="ml-1 text-sm font-medium text-white/70"
+          className="ml-1 text-sm font-medium text-secondary/80"
         >
           {t("descriptionField.label")}
         </label>
@@ -207,7 +207,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="steamUrl"
-          className="ml-1 text-sm font-medium text-white/70"
+          className="ml-1 text-sm font-medium text-secondary/80"
         >
           {t("steamUrl.label")}
         </label>
@@ -228,7 +228,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="websiteUrl"
-          className="ml-1 text-sm font-medium text-white/70"
+          className="ml-1 text-sm font-medium text-secondary/80"
         >
           {t("websiteUrl.label")}
         </label>

@@ -100,7 +100,7 @@ export function DateInput({
   return (
     <div
       className={cn(
-        "group focus-within:border-primary/50 focus-within:ring-primary/10 relative flex h-10 items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all focus-within:bg-white/[0.07] focus-within:ring-4",
+        "group focus-within:border-gold/45 focus-within:ring-gold/10 relative flex h-10 items-center overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong/50 transition-all focus-within:bg-card-strong/70 focus-within:ring-4",
         className,
       )}
     >
@@ -114,22 +114,22 @@ export function DateInput({
         onChange={(e) => handleInputChange(e.target.value)}
         onBlur={() => setDraftValue(null)}
         placeholder={placeholder}
-        className="h-full flex-1 bg-transparent p-0 text-center text-sm font-bold text-white transition-all outline-none placeholder:text-white/20"
+        className="h-full flex-1 bg-transparent p-0 text-center text-sm font-semibold text-secondary transition-all outline-none placeholder:text-secondary/25"
       />
 
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
             type="button"
-            className="hover:bg-primary/10 flex h-full w-10 shrink-0 items-center justify-center transition-colors outline-none"
+            className="hover:bg-gold/10 flex h-full w-10 shrink-0 items-center justify-center transition-colors outline-none"
           >
-            <CalendarIcon className="text-primary size-4" />
+            <CalendarIcon className="text-gold size-4" />
           </button>
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content sideOffset={8} align="end" className="z-9999">
             <div
-              className="animate-in fade-in zoom-in-95 bg-card-strong/60 transform-gpu rounded-2xl border border-white/20 p-1 shadow-2xl duration-200"
+              className="animate-in fade-in zoom-in-95 bg-card-strong/80 transform-gpu rounded-2xl border border-gold-dim/45 p-1 shadow-2xl duration-200"
               style={{
                 backdropFilter: "blur(16px)",
                 WebkitBackdropFilter: "blur(16px)",

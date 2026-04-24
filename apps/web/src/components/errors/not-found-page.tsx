@@ -38,21 +38,30 @@ function ParticleCanvas() {
     };
 
     const particles: Particle[] = [];
-    const COLORS = ["var(--primary)", "var(--primary-strong)", "#e7d7f3", "#f7f0f3", "#ff4466"];
+    const COLORS = ["#d4711c", "#d4711c", "#a4141b", "#c0320e", "#e8d5a3", "rgba(212,113,28,0.85)"];
 
     const spawnParticle = (): Particle => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.3,
       vy: -Math.random() * 0.6 - 0.1,
-      size: Math.random() * 2 + 0.5,
-      alpha: Math.random() * 0.7 + 0.3,
+      size: Math.random() * 3 + 1.5,
+      alpha: Math.random() * 0.6 + 0.4,
       decay: Math.random() * 0.003 + 0.001,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       isStar: Math.random() > 0.6,
     });
 
-    for (let i = 0; i < 120; i++) particles.push(spawnParticle());
+    for (let i = 0; i < 160; i++) {
+      const p = spawnParticle();
+      // First third start on-screen (already in view), rest staggered below
+      if (i < 53) {
+        p.y = Math.random() * canvas.height;
+      } else {
+        p.y = canvas.height + Math.random() * canvas.height * 0.8;
+      }
+      particles.push(p);
+    }
 
     let raf: number;
     const draw = () => {
@@ -75,14 +84,17 @@ function ParticleCanvas() {
         ctx.fillStyle = p.color;
 
         if (p.isStar) {
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = p.size * 4;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y - p.size * 2);
           ctx.lineTo(p.x, p.y + p.size * 2);
           ctx.moveTo(p.x - p.size * 2, p.y);
           ctx.lineTo(p.x + p.size * 2, p.y);
           ctx.strokeStyle = p.color;
-          ctx.lineWidth = p.size * 0.7;
+          ctx.lineWidth = p.size * 0.8;
           ctx.stroke();
+          ctx.shadowBlur = 0;
         } else {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -132,16 +144,16 @@ function GlitchText() {
     >
       <span
         className={cn(
-          "block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter",
+          "block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase",
           "bg-clip-text text-transparent",
-          "bg-linear-to-b from-white via-[#f7f0f3] to-[var(--primary)]",
+          "bg-linear-to-b from-secondary via-gold to-gold-dim",
           glitching && "animate-[glitch-shake_0.4s_steps(4,end)]",
         )}
         style={{
           textShadow: glitching
-            ? "4px 0 0 var(--primary), -4px 0 0 #e7d7f3"
-            : "0 0 60px color-mix(in srgb, var(--primary) 35%, transparent)",
-          WebkitTextStroke: glitching ? "1px color-mix(in srgb, var(--primary) 60%, transparent)" : undefined,
+            ? "4px 0 0 var(--primary), -4px 0 0 var(--gold)"
+            : "0 0 60px color-mix(in srgb, var(--gold) 40%, transparent)",
+          WebkitTextStroke: glitching ? "1px color-mix(in srgb, var(--gold) 60%, transparent)" : undefined,
         }}
         aria-label="404"
       >
@@ -152,7 +164,7 @@ function GlitchText() {
         <>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter text-primary/60"
+            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase text-primary/60"
             style={{
               transform: "translate(6px, 2px)",
               clipPath: "inset(30% 0 40% 0)",
@@ -162,7 +174,7 @@ function GlitchText() {
           </span>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter text-[#e7d7f3]/40"
+            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase text-(--gold)/40"
             style={{
               transform: "translate(-5px, -2px)",
               clipPath: "inset(60% 0 10% 0)",

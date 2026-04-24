@@ -16,14 +16,14 @@ export function GlowBorder({
   return (
     <div
       className={cn(
-        "bg-border p-px shadow-[0_18px_80px_rgb(0_0_0/0.35)]",
+        "bg-border p-px shadow-[0_4px_24px_rgb(0_0_0/0.25)]",
         className,
         borderClassName,
       )}
     >
       <div
         className={cn(
-          "relative overflow-hidden bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))]",
+          "relative overflow-hidden bg-[linear-gradient(180deg,var(--background-soft),var(--background))]",
           className,
           innerClassName,
         )}

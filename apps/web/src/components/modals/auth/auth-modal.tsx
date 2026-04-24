@@ -42,8 +42,8 @@ function ScanLines() {
 //   label: string;
 // }) {
 //   return (
-//     <div className="flex items-center gap-2.5 text-xs text-white/40">
-//       <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5">
+//     <div className="flex items-center gap-2.5 text-xs text-secondary/45">
+//       <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-gold-dim/35 bg-card-strong/45">
 //         <Icon className="size-2.5 text-[#c00b3b]" />
 //       </div>
 //       {label}
@@ -133,7 +133,7 @@ function AuthModalInner({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 flex size-8 cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/40 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
+          className="absolute top-4 right-4 z-10 flex size-8 cursor-pointer items-center justify-center rounded-xl border border-gold-dim/35 bg-card-strong/45 text-secondary/45 transition-all hover:border-gold-dim/55 hover:bg-card-strong/70 hover:text-white"
           aria-label={t("close")}
         >
           <X className="size-4" />
@@ -176,7 +176,7 @@ function AuthModalInner({
                   {t("title2")}
                 </span>
               </h2>
-              <p className="text-sm leading-5 text-white/40">{t("title")}</p>
+              <p className="text-sm leading-5 text-secondary/45">{t("title")}</p>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ function AuthModalInner({
               className="h-px flex-1"
               style={{ background: "rgba(255,255,255,0.06)" }}
             />
-            <span className="text-[10px] font-medium tracking-widest text-white/25 uppercase">
+            <span className="text-[10px] font-medium tracking-widest text-secondary/30 uppercase">
               {t("continueWith")}
             </span>
             <div
@@ -229,7 +229,7 @@ function AuthModalInner({
           </button>
 
           {/* Footer note */}
-          <p className="mt-6 text-center text-[10px] leading-5 text-white/20">
+          <p className="mt-6 text-center text-[10px] leading-5 text-secondary/25">
             {t("termsNotice")}
           </p>
         </div>

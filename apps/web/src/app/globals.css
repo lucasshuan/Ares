@@ -9,20 +9,20 @@
 
 :root {
   --transparent-scrollbar-image: url("/scrollbar-track.png");
-  --font-space-grotesk: var(--font-barlow), "Aptos", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-space-grotesk: var(--font-outfit), "Aptos", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
   --font-ibm-plex-mono:
     "Cascadia Mono", "IBM Plex Mono", "Consolas", "Liberation Mono", monospace;
   --radius-xl: 11px;
   --radius-2xl: 14px;
   --radius-3xl: 20px;
   --radius-4xl: 26px;
-  --background: #080708;
-  --background-soft: #0e0d0f;
+  --background: #0d0c0e;
+  --background-soft: #1d1b1f;
   --foreground: #ffffff;
-  --muted: #b5afac;
-  --border: color-mix(in srgb, white 10%, transparent);
-  --card: rgb(15 14 16 / 0.88);
-  --card-strong: rgb(20 18 21 / 0.96);
+  --muted: #d4cecc;
+  --border: color-mix(in srgb, white 18%, transparent);
+  --card: rgb(18 16 20 / 0.90);
+  --card-strong: rgb(24 22 27 / 0.97);
   --primary: #a4141b;
   --primary-strong: #6d0d12;
   --secondary: #e8d5a3;
@@ -319,7 +319,7 @@ body {
 
 .app-scroll-shell::-webkit-scrollbar-thumb,
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--primary);
+  background-color: var(--gold-dim);
   border-radius: 999px;
   border: 1px solid transparent;
 }
@@ -445,7 +445,7 @@ button:disabled {
   position: relative;
   background: linear-gradient(180deg, var(--card-strong), var(--card));
   corner-shape: squircle;
-  box-shadow: 0 18px 80px rgb(0 0 0 / 0.35);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.25);
 }
 
 .glass-panel::after {
@@ -456,6 +456,15 @@ button:disabled {
   border-radius: inherit;
   pointer-events: none;
   z-index: 10;
+  transition: border-color 0.2s ease;
+}
+
+.glass-panel:hover::after {
+  border-color: var(--gold);
+}
+
+.glass-panel.no-hover:hover::after {
+  border-color: var(--gold-dim);
 }
 
 /* ── Ember / fire particles ── */
@@ -530,23 +539,23 @@ button:disabled {
 
 @layer components {
   .field-base {
-    @apply focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 text-sm text-white transition-all outline-none placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4;
+    @apply w-full rounded-2xl border bg-card-strong/50 px-5 py-3 text-sm text-secondary transition-all outline-none placeholder:text-secondary/25 hover:border-gold-dim/55 focus:border-gold/45 focus:bg-card-strong/70 focus:ring-4 focus:ring-gold/10;
   }
 
   .field-with-icon {
-    @apply focus:border-primary/50 focus:ring-primary/10 w-full rounded-2xl border bg-white/5 px-5 py-3 pr-12 text-sm text-white transition-all outline-none placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4;
+    @apply w-full rounded-2xl border bg-card-strong/50 px-5 py-3 pr-12 text-sm text-secondary transition-all outline-none placeholder:text-secondary/25 hover:border-gold-dim/55 focus:border-gold/45 focus:bg-card-strong/70 focus:ring-4 focus:ring-gold/10;
   }
 
   .field-textarea {
-    @apply focus:border-primary/50 focus:ring-primary/10 w-full resize-none rounded-2xl border bg-white/5 px-5 py-3 text-sm text-white transition-all outline-none placeholder:text-white/20 focus:bg-white/[0.07] focus:ring-4;
+    @apply w-full resize-none rounded-2xl border bg-card-strong/50 px-5 py-3 text-sm text-secondary transition-all outline-none placeholder:text-secondary/25 hover:border-gold-dim/55 focus:border-gold/45 focus:bg-card-strong/70 focus:ring-4 focus:ring-gold/10;
   }
 
   .field-border-default {
-    @apply border-white/10;
+    @apply border-gold-dim/35;
   }
 
   .field-border-error {
-    @apply border-danger/50;
+    @apply border-danger/60;
   }
 
   .field-error-text {

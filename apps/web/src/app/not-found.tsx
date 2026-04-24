@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteSidebar } from "@/components/layout/site-sidebar";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { Providers } from "@/components/providers";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { ApolloWrapper } from "@/lib/apollo/apollo-provider";
@@ -21,6 +22,9 @@ export default async function GlobalNotFoundPage() {
                 <NotFoundPage />
               </div>
               <SiteFooter />
+            </div>
+            <div className="fixed top-5 right-5 z-40 hidden lg:block">
+              <LocaleSwitcher />
             </div>
           </div>
         </Providers>

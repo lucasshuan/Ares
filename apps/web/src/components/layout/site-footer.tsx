@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 export function SiteFooter() {
   const t = useTranslations("SiteFooter");
   return (
-    <footer className="bg-background-soft relative border-t border-gold-dim">
+    <footer className="bg-background relative border-t border-gold-dim">
       <div className="gold-hairline absolute inset-x-0 top-0 h-px" />
       <div className="text-muted mx-auto flex w-full items-center justify-between gap-4 px-6 py-6 text-xs sm:px-10 lg:px-12">
         <span className="font-display tracking-[0.25em] uppercase">

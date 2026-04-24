@@ -44,7 +44,7 @@ export function NumberInput({
   return (
     <div
       className={cn(
-        "relative flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5",
+        "relative flex items-center overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong/50 transition-colors focus-within:border-gold/45 focus-within:bg-card-strong/70 focus-within:ring-4 focus-within:ring-gold/10",
         className,
       )}
     >
@@ -52,7 +52,7 @@ export function NumberInput({
         type="button"
         onClick={handleDecrement}
         disabled={min !== undefined && value <= min}
-        className="text-primary hover:bg-primary/10 absolute left-0 z-10 flex h-full w-8 items-center justify-center transition-all active:scale-90 disabled:opacity-20"
+        className="text-gold hover:bg-gold/10 absolute left-0 z-10 flex h-full w-8 items-center justify-center transition-all active:scale-90 disabled:opacity-20"
       >
         <ChevronLeft className="size-4" />
       </button>
@@ -76,10 +76,10 @@ export function NumberInput({
               width: `${Math.max(String(value).length, 1)}ch`,
               minWidth: "2ch",
             }}
-            className="h-10 appearance-none bg-transparent text-center text-sm font-bold text-white transition-all outline-none [-moz-appearance:textfield] placeholder:text-white/20"
+            className="h-10 appearance-none bg-transparent text-center text-sm font-semibold text-secondary transition-all outline-none [-moz-appearance:textfield] placeholder:text-secondary/25"
           />
           {unit && (
-            <span className="pointer-events-none ml-1 text-[10px] font-bold whitespace-nowrap text-white/20">
+            <span className="pointer-events-none ml-1 text-[10px] font-semibold whitespace-nowrap text-gold/45">
               {unit}
             </span>
           )}
@@ -90,7 +90,7 @@ export function NumberInput({
         type="button"
         onClick={handleIncrement}
         disabled={max !== undefined && value >= max}
-        className="text-primary hover:bg-primary/10 absolute right-0 z-10 flex h-full w-8 items-center justify-center transition-all active:scale-90 disabled:opacity-20"
+        className="text-gold hover:bg-gold/10 absolute right-0 z-10 flex h-full w-8 items-center justify-center transition-all active:scale-90 disabled:opacity-20"
       >
         <ChevronRight className="size-4" />
       </button>

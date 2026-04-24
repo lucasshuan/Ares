@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Cinzel, Barlow } from "next/font/google";
+import { Cinzel, Outfit } from "next/font/google";
 
 import { env } from "@/env";
 import { routing } from "@/i18n/routing";
@@ -18,10 +18,10 @@ const cinzel = Cinzel({
   display: "swap",
 });
 
-const barlow = Barlow({
+const outfit = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-barlow",
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -74,9 +74,10 @@ export default async function AppLayout({
       lang={locale}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${cinzel.variable} ${barlow.variable}`}
+      className={`${cinzel.variable} ${outfit.variable}`}
     >
       <body>
+        <div className="grid-surface" aria-hidden="true" />
         {children}
         <Analytics />
         <SpeedInsights />

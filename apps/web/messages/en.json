@@ -23,12 +23,11 @@
   },
   "Sidebar": {
     "discover": "Discover",
-    "home": "Home",
+    "dashboard": "Dashboard",
     "games": "Games",
     "events": "Events",
     "leaderboards": "Leaderboards",
     "mySpace": "My Space",
-    "dashboard": "Dashboard",
     "myProfile": "My Profile",
     "myTeams": "Clãs",
     "matchHistory": "Match History",

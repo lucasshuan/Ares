@@ -6,6 +6,7 @@ import { Link } from "@/i18n/routing";
 import type { Route } from "next";
 import { ChevronRight, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 export interface ShowcaseGame {
   id: string;
@@ -138,10 +139,10 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
             {/* CTA */}
             <Link
               href={`/games/${game.slug}` as Route}
-              className="group/cta border-primary/30 bg-primary/8 text-primary hover:border-primary/50 hover:bg-primary/15 inline-flex items-center gap-2 rounded-2xl border px-6 py-2.5 text-sm font-medium transition-all"
+              className={cn(buttonVariants({ intent: "primary", size: "sm" }), "gap-2")}
             >
               {labels.explore}
-              <ChevronRight className="size-4 transition-transform group-hover/cta:translate-x-0.5" />
+              <ChevronRight className="size-4 transition-transform group-hover:-translate-x-0.5" />
             </Link>
           </div>
         </div>
@@ -181,8 +182,8 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               </div>
 
               {/* Gradient masks */}
-              <div className="absolute inset-0 bg-linear-to-t from-[rgb(11_8_15/0.95)] via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-linear-to-r from-[rgb(11_8_15/0.4)] to-transparent lg:from-[rgb(11_8_15/0.7)]" />
+              <div className="absolute inset-0 bg-linear-to-t from-background/95 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-r from-background/40 to-transparent lg:from-background/70" />
 
               {/* Floating game title on image */}
               <div className="absolute right-5 bottom-4 left-5">

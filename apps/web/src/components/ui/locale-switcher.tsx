@@ -80,7 +80,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
       ref={dropdownRef}
       role="listbox"
       style={{ top: coords.top, left: coords.left, width: coords.width }}
-      className="fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-white/10 bg-[#0f0b12]/95 p-1 shadow-2xl backdrop-blur-xl"
+      className="fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-primary/20 bg-background/95 p-1 shadow-2xl backdrop-blur-xl"
     >
       {routing.locales.map((l) => (
         <button
@@ -90,8 +90,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           aria-selected={locale === l}
           onClick={() => switchLocale(l)}
           className={cn(
-            "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-white/8",
-            locale === l ? "bg-white/6 text-white" : "text-white/70",
+            "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-primary/8",
+            locale === l ? "bg-primary/10 text-foreground" : "text-muted",
           )}
         >
           <span
@@ -114,8 +114,9 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         aria-expanded={open}
         aria-haspopup="listbox"
         className={cn(
-          "flex h-10 items-center gap-3 rounded-2xl border border-white/8 px-4 text-sm",
-          "text-white/70 transition-colors hover:bg-white/7 hover:text-white",
+          "flex h-9 items-center gap-2.5 rounded-xl border border-transparent bg-transparent px-3 text-sm",
+          "text-muted transition-all duration-200 hover:border-primary hover:text-foreground",
+          open && "border-primary text-foreground",
           "disabled:cursor-wait disabled:opacity-50",
           className,
         )}

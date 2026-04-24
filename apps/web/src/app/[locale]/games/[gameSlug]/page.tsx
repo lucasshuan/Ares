@@ -125,10 +125,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
         <div className="sticky top-28 flex flex-col gap-4">
           <Link
             href="/games"
-            className={cn(
-              buttonVariants({ intent: "ghost", size: "md" }),
-              "group w-full justify-start gap-3 px-4",
-            )}
+            className="group flex w-full items-center gap-2 rounded-xl border border-gold/45 bg-card px-4 py-2.5 text-sm font-medium text-muted transition-all duration-200 hover:border-gold hover:text-foreground"
           >
             <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
             {t("backToGames")}
@@ -301,7 +298,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
               ))}
             </div>
           ) : (
-            <div className="glass-panel flex flex-col items-center justify-center rounded-3xl p-12 text-center">
+            <div className="glass-panel no-hover flex flex-col items-center justify-center rounded-3xl p-12 text-center">
               <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-white/5">
                 <Ghost className="size-8 text-white/20" />
               </div>

@@ -339,7 +339,7 @@ export function EditProfileForm({
             )}
           />
           {isUsernameChecking ? (
-            <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+            <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-secondary/25" />
           ) : canCheckUsername && !errors.username ? (
             hasUsernameConflict ? (
               <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
@@ -364,7 +364,7 @@ export function EditProfileForm({
             ref={countryTriggerRef}
             type="button"
             onClick={toggleCountryDropdown}
-            className="focus:border-primary/50 focus:ring-primary/10 flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-white transition-all outline-none hover:bg-white/[0.07] focus:ring-4"
+            className="focus:border-primary/50 focus:ring-primary/10 flex w-full items-center justify-between rounded-2xl border border-gold-dim/35 bg-card-strong/45 px-5 py-3 text-sm text-white transition-all outline-none hover:bg-card-strong/60 focus:ring-4"
           >
             <div className="flex items-center gap-3">
               {country ? (
@@ -384,8 +384,8 @@ export function EditProfileForm({
                 </>
               ) : (
                 <>
-                  <Globe className="size-5 text-white/30" />
-                  <span className="text-white/30">
+                  <Globe className="size-5 text-secondary/35" />
+                  <span className="text-secondary/35">
                     {t("country.placeholder")}
                   </span>
                 </>
@@ -393,7 +393,7 @@ export function EditProfileForm({
             </div>
             <ChevronDown
               className={cn(
-                "size-4 text-white/30 transition-transform",
+                "size-4 text-secondary/35 transition-transform",
                 isCountryDropdownOpen && "rotate-180",
               )}
             />
@@ -411,21 +411,21 @@ export function EditProfileForm({
                   width: countryCoords.width,
                 }}
               >
-                <div className="relative border-b border-white/10 p-2">
-                  <Search className="absolute top-5 left-5 size-4 text-white/30" />
+                <div className="relative border-b border-gold-dim/35 p-2">
+                  <Search className="absolute top-5 left-5 size-4 text-secondary/35" />
                   <input
                     autoFocus
                     type="text"
                     value={countrySearch}
                     onChange={(e) => setCountrySearch(e.target.value)}
                     placeholder="Search country..."
-                    className="w-full rounded-xl border-none bg-white/5 py-3 pr-4 pl-10 text-sm text-white outline-none focus:bg-white/10"
+                    className="w-full rounded-xl border-none bg-card-strong/45 py-3 pr-4 pl-10 text-sm text-white outline-none focus:bg-card-strong/70"
                   />
                   {countrySearch && (
                     <button
                       type="button"
                       onClick={() => setCountrySearch("")}
-                      className="absolute top-5 right-5 text-white/30 hover:text-white"
+                      className="absolute top-5 right-5 text-secondary/35 hover:text-white"
                     >
                       <X className="size-4" />
                     </button>
@@ -446,11 +446,11 @@ export function EditProfileForm({
                             setCountrySearch("");
                           }}
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-white/10",
-                            field.value === null && "bg-white/5",
+                            "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
+                            field.value === null && "bg-card-strong/45",
                           )}
                         >
-                          <Globe className="size-5 text-white/30" />
+                          <Globe className="size-5 text-secondary/35" />
                           <span className="text-sm text-white">
                             {t("country.placeholder")}
                           </span>
@@ -466,8 +466,8 @@ export function EditProfileForm({
                               setCountrySearch("");
                             }}
                             className={cn(
-                              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-white/10",
-                              field.value === c.code && "bg-white/5",
+                              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
+                              field.value === c.code && "bg-card-strong/45",
                             )}
                           >
                             <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-sm">

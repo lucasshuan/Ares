@@ -320,13 +320,13 @@ export function EditLeagueForm({
             <h3 className="text-lg font-bold text-white">
               {t("AddLeague.gameSelect.label")}
             </h3>
-            <p className="text-sm text-white/50">{league.game?.name}</p>
+            <p className="text-sm text-secondary/55">{league.game?.name}</p>
           </div>
 
-          <div className="relative flex h-45 flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/2 p-6 transition-all">
+          <div className="relative flex h-45 flex-col items-center justify-center overflow-hidden rounded-3xl border border-gold-dim/35 bg-card-strong/25 p-6 transition-all">
             <div className="animate-in fade-in zoom-in-95 flex w-full flex-col gap-4 duration-300">
               <div className="flex items-center gap-4">
-                <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-2xl">
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl border border-gold-dim/35 bg-black/40 shadow-2xl">
                   {league.game?.thumbnailImageUrl ? (
                     <Image
                       src={league.game.thumbnailImageUrl}
@@ -349,7 +349,7 @@ export function EditLeagueForm({
                   </p>
                 </div>
               </div>
-              <p className="line-clamp-3 text-sm leading-relaxed text-white/50">
+              <p className="line-clamp-3 text-sm leading-relaxed text-secondary/55">
                 {(league.game as { description?: string | null } | undefined)
                   ?.description || "No description."}
               </p>
@@ -403,7 +403,7 @@ export function EditLeagueForm({
                   )}
                 />
                 {isSlugChecking ? (
-                  <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-white/20" />
+                  <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-secondary/25" />
                 ) : canCheckSlug && slug !== league.slug && !errors.slug ? (
                   hasSlugConflict ? (
                     <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
@@ -455,7 +455,7 @@ export function EditLeagueForm({
                     "flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     ratingSystem === "ELO"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                      : "border-white/5 bg-white/5 text-white/40 opacity-40",
+                      : "border-gold-dim/25 bg-card-strong/45 text-secondary/45 opacity-40",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -464,7 +464,7 @@ export function EditLeagueForm({
                       {t("AddLeague.ratingSystem.elo")}
                     </span>
                   </div>
-                  <span className="text-xs leading-relaxed text-white/50">
+                  <span className="text-xs leading-relaxed text-secondary/55">
                     {t("AddLeague.ratingSystem.elo_description")}
                   </span>
                 </button>
@@ -475,7 +475,7 @@ export function EditLeagueForm({
                     "flex cursor-not-allowed flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     ratingSystem === "POINTS"
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                      : "border-white/5 bg-white/5 text-white/40 opacity-40",
+                      : "border-gold-dim/25 bg-card-strong/45 text-secondary/45 opacity-40",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -484,7 +484,7 @@ export function EditLeagueForm({
                       {t("AddLeague.ratingSystem.points")}
                     </span>
                   </div>
-                  <span className="text-xs leading-relaxed text-white/50">
+                  <span className="text-xs leading-relaxed text-secondary/55">
                     {t("AddLeague.ratingSystem.points_description")}
                   </span>
                 </button>
@@ -495,7 +495,7 @@ export function EditLeagueForm({
               {/* Left Column: Config Inputs */}
               <div className="space-y-8 md:col-span-2">
                 {/* Allow Draw Toggle */}
-                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/2 p-4">
+                <div className="flex items-center justify-between rounded-2xl border border-gold-dim/25 bg-card-strong/25 p-4">
                   <LabelTooltip
                     label={t("AddLeague.allowDraw.label")}
                     tooltip={t("AddLeague.allowDraw.tooltip")}
@@ -505,7 +505,7 @@ export function EditLeagueForm({
                     onClick={() => setValue("allowDraw", !allowDraw)}
                     className={cn(
                       "ring-primary/20 relative h-6 w-11 rounded-full transition-colors outline-none focus:ring-4",
-                      allowDraw ? "bg-primary" : "bg-white/10",
+                      allowDraw ? "bg-primary" : "bg-card-strong/70",
                     )}
                   >
                     <div
@@ -579,7 +579,7 @@ export function EditLeagueForm({
                       <div className="flex items-center justify-between gap-4">
                         <LabelTooltip
                           label={t("AddLeague.pointsPerWin.label")}
-                          labelClassName="text-xs font-bold tracking-wider text-white/40"
+                          labelClassName="text-xs font-bold tracking-wider text-secondary/45"
                           required
                         />
                         <Controller
@@ -599,7 +599,7 @@ export function EditLeagueForm({
                         <div className="flex items-center justify-between gap-4">
                           <LabelTooltip
                             label={t("AddLeague.pointsPerDraw.label")}
-                            labelClassName="text-xs font-bold tracking-wider text-white/40"
+                            labelClassName="text-xs font-bold tracking-wider text-secondary/45"
                             required
                           />
                           <Controller
@@ -619,7 +619,7 @@ export function EditLeagueForm({
                       <div className="flex items-center justify-between gap-4">
                         <LabelTooltip
                           label={t("AddLeague.pointsPerLoss.label")}
-                          labelClassName="text-xs font-bold tracking-wider text-white/40"
+                          labelClassName="text-xs font-bold tracking-wider text-secondary/45"
                           required
                         />
                         <Controller
@@ -644,8 +644,8 @@ export function EditLeagueForm({
               <div className="space-y-6 md:col-span-3">
                 {/* Inactivity Settings (Elo only) */}
                 {ratingSystem === "ELO" && (
-                  <div className="space-y-4 rounded-2xl border border-white/5 bg-white/2 p-5">
-                    <div className="flex items-center gap-2 text-white/40">
+                  <div className="space-y-4 rounded-2xl border border-gold-dim/25 bg-card-strong/25 p-5">
+                    <div className="flex items-center gap-2 text-secondary/45">
                       <Clock className="size-3.5" />
                       <span className="text-[10px] font-bold tracking-widest uppercase">
                         {t("AddLeague.inactivityDecay.label")}
@@ -727,8 +727,8 @@ export function EditLeagueForm({
                     {t("AddLeague.explanation.title")}
                   </h4>
 
-                  <div className="space-y-5 text-xs leading-relaxed text-white/60">
-                    <p className="font-medium text-white/80 italic">
+                  <div className="space-y-5 text-xs leading-relaxed text-secondary/70">
+                    <p className="font-medium text-secondary/90 italic">
                       {ratingSystem === "ELO"
                         ? t("AddLeague.explanation.elo.description")
                         : t("AddLeague.explanation.points.description")}
@@ -738,7 +738,7 @@ export function EditLeagueForm({
                       {ratingSystem === "ELO" ? (
                         <>
                           <div className="flex items-center gap-3">
-                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-card-strong/45">
                               <Trophy className="size-3" />
                             </div>
                             <span>
@@ -748,7 +748,7 @@ export function EditLeagueForm({
                             </span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                            <div className="text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-card-strong/45">
                               <ArrowUpRight className="size-3" />
                             </div>
                             <span>
@@ -760,10 +760,10 @@ export function EditLeagueForm({
                           <div className="flex items-center gap-3">
                             <div
                               className={cn(
-                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
+                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-card-strong/45",
                                 scoreRelevance > 0
                                   ? "text-primary"
-                                  : "text-white/40",
+                                  : "text-secondary/45",
                               )}
                             >
                               <TrendingUp className="size-3" />
@@ -802,8 +802,8 @@ export function EditLeagueForm({
                           <div className="flex items-center gap-3">
                             <div
                               className={cn(
-                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5",
-                                allowDraw ? "text-primary" : "text-white/40",
+                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-card-strong/45",
+                                allowDraw ? "text-primary" : "text-secondary/45",
                               )}
                             >
                               {allowDraw ? (
@@ -820,7 +820,7 @@ export function EditLeagueForm({
                           </div>
                           {inactivityDecay > 0 && (
                             <div className="flex items-center gap-3">
-                              <div className="text-danger/50 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                              <div className="text-danger/50 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-card-strong/45">
                                 <Activity className="size-3" />
                               </div>
                               <span>
@@ -837,7 +837,7 @@ export function EditLeagueForm({
                         <div className="grid gap-3">
                           <div className="flex items-center gap-3">
                             <ArrowUpRight className="text-success size-4" />
-                            <span className="text-white/80">
+                            <span className="text-secondary/90">
                               {t("AddLeague.explanation.points.win", {
                                 amount: pointsPerWin || 0,
                               })}
@@ -846,7 +846,7 @@ export function EditLeagueForm({
                           {allowDraw && (
                             <div className="flex items-center gap-3">
                               <Equal className="text-warning size-4" />
-                              <span className="text-white/80">
+                              <span className="text-secondary/90">
                                 {t("AddLeague.explanation.points.draw", {
                                   amount: pointsPerDraw || 0,
                                 })}
@@ -855,7 +855,7 @@ export function EditLeagueForm({
                           )}
                           <div className="flex items-center gap-3">
                             <ArrowDownRight className="text-danger size-4" />
-                            <span className="text-white/80">
+                            <span className="text-secondary/90">
                               {t("AddLeague.explanation.points.loss", {
                                 amount: pointsPerLoss || 0,
                               })}
@@ -894,14 +894,14 @@ export function EditLeagueForm({
                     "flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition-all",
                     isSelected
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                      : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10",
+                      : "border-gold-dim/35 bg-card-strong/45 text-secondary/80 hover:bg-card-strong/70",
                   )}
                 >
                   <div className="flex w-full items-center justify-between gap-2">
                     <span className="text-sm font-bold">{option.label}</span>
                     {isSelected && <Check className="size-4" />}
                   </div>
-                  <span className="text-xs text-white/50">
+                  <span className="text-xs text-secondary/55">
                     {option.description}
                   </span>
                 </button>

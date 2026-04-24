@@ -90,7 +90,7 @@ export function ImageUploadInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="ml-1 text-sm font-medium text-zinc-400">{label}</label>
+      <label className="ml-1 text-sm font-medium text-secondary/70">{label}</label>
 
       <div
         onClick={() => !disabled && inputRef.current?.click()}
@@ -98,13 +98,13 @@ export function ImageUploadInput({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "group relative overflow-hidden rounded-lg border-2 border-dashed transition-colors",
+          "group relative overflow-hidden rounded-2xl border-2 border-dashed bg-card-strong/40 transition-colors",
           dropzoneClassName,
           hasError
-            ? "border-red-500/60"
+            ? "border-danger/60"
             : isDragging
-              ? "border-white/50 bg-white/5"
-              : "border-white/20 hover:border-white/40",
+              ? "border-gold/60 bg-gold/5"
+              : "border-gold-dim/40 hover:border-gold-dim/70",
           !disabled && "cursor-pointer",
           disabled && "opacity-50",
         )}
@@ -124,25 +124,25 @@ export function ImageUploadInput({
           className={cn(
             "absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all",
             previewUrl
-              ? "bg-black/50 opacity-0 group-hover:opacity-100"
-              : "bg-white/3",
+              ? "bg-background/70 opacity-0 group-hover:opacity-100"
+              : "bg-transparent",
           )}
         >
           {previewUrl ? (
             <>
-              <UploadCloud className="h-5 w-5 text-zinc-200" />
-              <span className="text-xs font-medium text-zinc-200">
+              <UploadCloud className="h-5 w-5 text-secondary/90" />
+              <span className="text-xs font-medium text-secondary/90">
                 Click to change
               </span>
             </>
           ) : (
             <>
-              <ImageIcon className="h-7 w-7 text-zinc-500" />
+              <ImageIcon className="h-7 w-7 text-gold/55" />
               <div className="text-center">
-                <p className="text-sm font-medium text-zinc-400">
+                <p className="text-sm font-medium text-secondary/75">
                   Drop image or click to upload
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-secondary/40">
                   JPEG, PNG, WebP, GIF · max 5 MB
                 </p>
               </div>
@@ -155,7 +155,7 @@ export function ImageUploadInput({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute top-2 right-2 rounded-full bg-black/60 p-1 text-zinc-300 opacity-0 transition-opacity group-hover:opacity-100 hover:text-white"
+            className="absolute top-2 right-2 rounded-full border border-gold-dim/40 bg-background/80 p-1 text-secondary/80 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 hover:border-danger/60 hover:text-danger"
           >
             <X className="h-3.5 w-3.5" />
           </button>

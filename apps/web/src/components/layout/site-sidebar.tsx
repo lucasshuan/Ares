@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef, useTransition, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import {
-  Home,
+  LayoutDashboard,
   Gamepad2,
   Trophy,
   BarChart3,
@@ -13,20 +13,18 @@ import {
   Users,
   History,
   ChevronRight,
-  ChevronDown,
   Menu,
   X,
   LogOut,
   LogIn,
   Shield,
-  Check,
   Settings,
   Bell,
   Pencil,
   Palette,
 } from "lucide-react";
-import { useTranslations, useLocale } from "next-intl";
-import { Link, usePathname, useRouter, routing } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { EditProfileModal } from "@/components/modals/profile/edit-profile-modal";
@@ -54,158 +52,6 @@ type SectionDef = {
   titleKey: string;
   items: NavItemDef[];
 };
-
-// ─── Locale flags ─────────────────────────────────────────────────────────────
-
-const LOCALE_FLAGS: Record<(typeof routing.locales)[number], string> = {
-  en: "fi-us",
-  pt: "fi-br",
-};
-
-const LOCALE_LABELS: Record<(typeof routing.locales)[number], string> = {
-  en: "English",
-  pt: "Português",
-};
-
-// ─── LocaleDropdown ────────────────────────────────────────────────────────────────────────
-
-function LocaleDropdown({
-  locale,
-  isPending,
-  collapsed,
-  onSwitch,
-}: {
-  locale: string;
-  isPending: boolean;
-  collapsed: boolean;
-  onSwitch: (l: (typeof routing.locales)[number]) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const tLocale = useTranslations("Sidebar.locale");
-
-  // Calculate fixed position from button rect
-  const updateCoords = () => {
-    if (!buttonRef.current) return;
-    const rect = buttonRef.current.getBoundingClientRect();
-    const minWidth = 160;
-    const width = Math.max(rect.width, minWidth);
-    const left = Math.max(
-      8,
-      Math.min(rect.left, window.innerWidth - width - 8),
-    );
-    setCoords({ top: rect.top, left, width });
-  };
-
-  useEffect(() => {
-    if (!open) return;
-    updateCoords();
-
-    const handleClose = (e: MouseEvent) => {
-      if (
-        buttonRef.current?.contains(e.target as Node) ||
-        dropdownRef.current?.contains(e.target as Node)
-      )
-        return;
-      setOpen(false);
-    };
-    const escape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("scroll", updateCoords, true);
-    window.addEventListener("resize", updateCoords);
-    document.addEventListener("mousedown", handleClose);
-    document.addEventListener("keydown", escape);
-    return () => {
-      window.removeEventListener("scroll", updateCoords, true);
-      window.removeEventListener("resize", updateCoords);
-      document.removeEventListener("mousedown", handleClose);
-      document.removeEventListener("keydown", escape);
-    };
-  }, [open]);
-
-  const dropdown = open ? (
-    <div
-      ref={dropdownRef}
-      role="listbox"
-      aria-label={tLocale("label")}
-      style={{ top: coords.top, left: coords.left, width: coords.width }}
-      className="fixed z-9999 flex -translate-y-full flex-col gap-0.5 overflow-hidden rounded-xl border border-white/10 bg-[#0f0b12]/95 p-1 shadow-2xl backdrop-blur-xl"
-    >
-      {routing.locales.map((l) => (
-        <button
-          key={l}
-          type="button"
-          role="option"
-          aria-selected={locale === l}
-          onClick={() => {
-            onSwitch(l);
-            setOpen(false);
-          }}
-          className={cn(
-            "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-white/8",
-            locale === l ? "bg-white/6 text-white" : "text-white/70",
-          )}
-        >
-          <span
-            className={cn("fi fis size-4 shrink-0 rounded-sm", LOCALE_FLAGS[l])}
-          />
-          <span className="flex-1 font-medium">{LOCALE_LABELS[l]}</span>
-          {locale === l && <Check className="text-primary size-3 shrink-0" />}
-        </button>
-      ))}
-    </div>
-  ) : null;
-
-  return (
-    <>
-      <button
-        ref={buttonRef}
-        type="button"
-        disabled={isPending}
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        aria-label={`${tLocale("label")}: ${tLocale(locale as (typeof routing.locales)[number])}`}
-        className={cn(
-          "flex items-center text-sm",
-          "text-white/70 transition-colors hover:bg-white/7 hover:text-white",
-          "disabled:cursor-wait disabled:opacity-50",
-          collapsed
-            ? "mx-2 w-auto justify-center rounded-lg border-transparent bg-transparent py-1.5 hover:bg-white/5"
-            : "h-12 w-full gap-3 rounded-2xl border border-white/8 px-5",
-        )}
-      >
-        <span
-          className={cn(
-            "fi shrink-0",
-            collapsed ? "fis size-5 rounded-md" : "size-4 rounded-xs",
-            LOCALE_FLAGS[locale as keyof typeof LOCALE_FLAGS],
-            isPending && "opacity-50",
-          )}
-        />
-        {!collapsed && (
-          <>
-            <span className="flex-1 truncate text-left text-sm">
-              {LOCALE_LABELS[locale as keyof typeof LOCALE_LABELS]}
-            </span>
-            <ChevronDown
-              className={cn(
-                "size-3.5 shrink-0 text-white/35 transition-transform",
-                open && "rotate-180",
-                isPending && "text-primary animate-pulse",
-              )}
-            />
-          </>
-        )}
-      </button>
-
-      {typeof document !== "undefined" && createPortal(dropdown, document.body)}
-    </>
-  );
-}
 
 // ─── NavItem ──────────────────────────────────────────────────────────────────
 
@@ -237,11 +83,11 @@ function NavItem({
           collapsed ? "mx-2 justify-center" : "mx-1.5 gap-3 px-2.5",
         )}
       >
-        <Icon className="size-3.5 shrink-0 text-white/20" />
+        <Icon className="size-3.5 shrink-0 text-secondary/20" />
 
         <span
           className={cn(
-            "truncate text-[13px] font-light text-white/22 transition-all duration-300",
+            "truncate text-[13px] font-light text-secondary/20 transition-all duration-300",
             collapsed ? "w-0 max-w-0 overflow-hidden opacity-0" : "flex-1",
           )}
         >
@@ -250,7 +96,7 @@ function NavItem({
 
         <span
           className={cn(
-            "overflow-hidden rounded-md bg-white/5 text-[10px] leading-none font-medium text-white/22 transition-all duration-300",
+            "overflow-hidden rounded-md bg-secondary/5 text-[10px] leading-none font-medium text-secondary/20 transition-all duration-300",
             collapsed
               ? "w-0 max-w-0 px-0 py-0 opacity-0"
               : "px-1.5 py-0.5 opacity-100",
@@ -262,9 +108,9 @@ function NavItem({
         {/* Collapsed tooltip */}
         {collapsed && (
           <div className="pointer-events-none absolute top-1/2 left-full z-50 ml-3 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/nav:opacity-100">
-            <div className="rounded-lg border border-white/8 bg-[#0e0e10] px-2.5 py-1.5 text-xs whitespace-nowrap text-white/40 shadow-2xl">
+            <div className="rounded-lg border border-gold-dim/40 bg-background-soft px-2.5 py-1.5 text-xs whitespace-nowrap text-secondary/35 shadow-2xl">
               {t(item.labelKey as Parameters<typeof t>[0])}
-              <span className="ml-1.5 text-white/20">· {t("soon")}</span>
+              <span className="ml-1.5 text-secondary/20">· {t("soon")}</span>
             </div>
           </div>
         )}
@@ -279,20 +125,21 @@ function NavItem({
         onClick={onClose}
         className={cn(
           "relative flex items-center rounded-lg py-1.5 text-[13px] tracking-wide",
-          "transition-all duration-300",
+          "transition-[background-color,color,opacity] duration-400 ease-in-out",
           isActive
-            ? "bg-primary/15 text-primary font-medium"
-            : "font-light text-white/50 hover:bg-white/5 hover:text-white",
+            ? "bg-primary/50 text-white font-medium"
+            : "font-light text-secondary/45 hover:bg-primary/10 hover:text-secondary/90",
           collapsed ? "mx-2 justify-center" : "mx-1.5 gap-3 px-2.5",
         )}
       >
-        {isActive && !collapsed && (
-          <span className="bg-primary-strong absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-r-full" />
-        )}
+        <span className={cn(
+          "bg-primary-strong absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-r-full transition-[opacity,transform] duration-400 ease-in-out",
+          isActive && !collapsed ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0",
+        )} />
         <Icon
           className={cn(
             "size-3.5 shrink-0 transition-colors",
-            isActive && "text-primary",
+            isActive && "text-white",
           )}
         />
         <span
@@ -310,8 +157,8 @@ function NavItem({
         <div className="pointer-events-none absolute top-1/2 left-full z-50 ml-3 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/nav:opacity-100">
           <div
             className={cn(
-              "flex items-center gap-1.5 rounded-lg border border-white/8 bg-[#0e0e10] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap shadow-2xl",
-              isActive ? "text-primary" : "text-white",
+              "flex items-center gap-1.5 rounded-lg border border-gold-dim/40 bg-background-soft px-2.5 py-1.5 text-xs font-medium whitespace-nowrap shadow-2xl",
+              isActive ? "text-primary" : "text-secondary/90",
             )}
           >
             {t(item.labelKey as Parameters<typeof t>[0])}
@@ -397,7 +244,7 @@ function UserMenuDropdown({
     <div
       ref={dropdownRef}
       style={{ top: coords?.top ?? 0, left: coords?.left ?? 0 }}
-      className="animate-in fixed z-9999 w-68 origin-left overflow-hidden rounded-2xl border border-border bg-card-strong/95 shadow-2xl backdrop-blur-xl"
+      className="animate-in fixed z-9999 w-68 origin-left overflow-hidden rounded-2xl border border-gold-dim bg-card-strong/95 shadow-2xl backdrop-blur-xl"
     >
       {/* ── Header ─────────────────────────────────── */}
       <div className="border-border relative overflow-hidden border-b p-4">
@@ -472,21 +319,21 @@ function UserMenuDropdown({
         <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
           <Settings className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{tUser("editAccount")}</span>
-          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="bg-secondary/5 text-secondary/20 rounded-md px-1.5 py-0.5 text-[10px] leading-none font-medium">
             {t("soon")}
           </span>
         </div>
         <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
           <Bell className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{t("notifications")}</span>
-          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="bg-secondary/5 text-secondary/20 rounded-md px-1.5 py-0.5 text-[10px] leading-none font-medium">
             {t("soon")}
           </span>
         </div>
         <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
           <Palette className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{t("appearance")}</span>
-          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="bg-secondary/5 text-secondary/20 rounded-md px-1.5 py-0.5 text-[10px] leading-none font-medium">
             {t("soon")}
           </span>
         </div>
@@ -517,7 +364,7 @@ function UserMenuDropdown({
           setOpen((v) => !v);
         }}
         className={cn(
-          "flex items-center rounded-lg transition-all duration-300 hover:bg-white/5",
+          "flex items-center rounded-lg transition-all duration-300 hover:bg-primary/10",
           collapsed
             ? "mx-2 w-auto justify-center p-1.5"
             : "mx-1.5 w-[calc(100%-12px)] gap-3 px-2.5 py-2",
@@ -531,19 +378,19 @@ function UserMenuDropdown({
               width={collapsed ? 24 : 32}
               height={collapsed ? 24 : 32}
               className={cn(
-                "rounded-full border border-white/10 object-cover",
+                "rounded-full border border-gold-dim/40 object-cover",
                 collapsed ? "size-6" : "size-8",
               )}
             />
           ) : (
             <div
               className={cn(
-                "flex items-center justify-center rounded-full border border-white/10 bg-white/8",
+                "flex items-center justify-center rounded-full border border-gold-dim/40 bg-secondary/8",
                 collapsed ? "size-6" : "size-8",
               )}
             >
               <User
-                className={cn(collapsed ? "size-3" : "size-4", "text-white/50")}
+                className={cn(collapsed ? "size-3" : "size-4", "text-secondary/40")}
               />
             </div>
           )}
@@ -560,16 +407,16 @@ function UserMenuDropdown({
         {!collapsed && (
           <>
             <div className="flex min-w-0 flex-1 flex-col text-left">
-              <span className="truncate text-[13px] leading-snug font-medium text-white">
+              <span className="truncate text-[13px] leading-snug font-medium text-secondary/90">
                 {user.name ?? user.username ?? "User"}
               </span>
-              <span className="truncate text-[10px] leading-snug text-white/30">
+              <span className="truncate text-[10px] leading-snug text-secondary/30">
                 {user.email ?? ""}
               </span>
             </div>
             <ChevronRight
               className={cn(
-                "size-3.5 shrink-0 text-white/25 transition-transform",
+                "size-3.5 shrink-0 text-secondary/25 transition-transform",
                 open && "rotate-180",
               )}
             />
@@ -623,10 +470,7 @@ function SidebarBody({
 
   const t = useTranslations("Sidebar");
   const tUser = useTranslations("Sidebar.userMenu");
-  const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const effective = isMobile ? false : collapsed;
@@ -640,8 +484,8 @@ function SidebarBody({
               items: [
                 {
                   href: "/start",
-                  labelKey: "home",
-                  icon: Home,
+                  labelKey: "dashboard",
+                  icon: LayoutDashboard,
                 },
 
                 {
@@ -700,20 +544,13 @@ function SidebarBody({
     setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const switchLocale = (newLocale: (typeof routing.locales)[number]) => {
-    if (newLocale === locale) return;
-    startTransition(() => {
-      router.replace(pathname, { locale: newLocale, scroll: false });
-    });
-  };
-
   const avatarSrc = user?.imageUrl ?? user?.image ?? null;
 
   return (
     <div
       className={cn(
         "flex h-full flex-col overflow-hidden border-r border-gold-dim",
-        "bg-background backdrop-blur-xl",
+        "bg-card backdrop-blur-xl",
         ready &&
           "transition-[width] duration-300 ease-in-out will-change-[width]",
         effective ? "w-12" : "w-60",
@@ -742,7 +579,7 @@ function SidebarBody({
             className="h-6.5 w-6.5 shrink-0 object-contain"
           />
           <div className="flex min-w-0 items-center leading-none">
-            <span className="text-secondary font-display text-[11px] font-semibold tracking-[0.22em] whitespace-nowrap uppercase">
+            <span className="text-secondary font-display text-[11px] font-bold tracking-[0.22em] whitespace-nowrap uppercase">
               Bellona
             </span>
           </div>
@@ -752,7 +589,7 @@ function SidebarBody({
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/6 hover:text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-secondary/40 transition-colors hover:bg-primary/10 hover:text-secondary/90"
           >
             <X className="size-4" />
           </button>
@@ -761,7 +598,7 @@ function SidebarBody({
             onClick={onToggle}
             aria-label={effective ? t("expand") : t("collapse")}
             title={effective ? t("expand") : t("collapse")}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-white/35 transition-colors hover:bg-white/6 hover:text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-secondary/35 transition-colors hover:bg-primary/10 hover:text-secondary/90"
           >
             {effective ? <Menu className="size-4" /> : <X className="size-4" />}
           </button>
@@ -783,18 +620,18 @@ function SidebarBody({
             >
               <div
                 className={cn(
-                  "shrink-0 animate-pulse rounded-full bg-white/8",
+                  "shrink-0 animate-pulse rounded-full bg-secondary/8",
                   effective ? "size-6" : "size-8",
                 )}
               />
               {!effective && (
                 <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <div className="h-3 w-24 animate-pulse rounded bg-white/8" />
-                  <div className="h-2 w-16 animate-pulse rounded bg-white/5" />
+                  <div className="h-3 w-24 animate-pulse rounded bg-secondary/8" />
+                  <div className="h-2 w-16 animate-pulse rounded bg-secondary/5" />
                 </div>
               )}
             </div>
-            <div className="mx-3 my-2 h-px bg-white/4" />
+            <div className="mx-3 my-2 h-px bg-gold-dim/25" />
           </>
         ) : user ? (
           <>
@@ -804,11 +641,10 @@ function SidebarBody({
               collapsed={effective}
               onClose={onClose}
             />
-            <div className="mx-3 my-2 h-px bg-white/4" />
+            <div className="mx-3 my-2 h-px bg-gold-dim/25" />
           </>
         ) : null}
 
-        <div className="mx-3 my-2 h-px bg-white/4" />
         {sections.map((section, i) => {
           const isSectionCollapsed =
             !effective && !!collapsedSections[section.titleKey];
@@ -828,12 +664,12 @@ function SidebarBody({
                   onClick={() => toggleSection(section.titleKey)}
                   className="flex w-full items-center gap-1 px-4 pt-1 pb-1.5"
                 >
-                  <span className="flex-1 text-left text-[10px] font-normal tracking-[0.18em] text-white/25 uppercase">
+                  <span className="flex-1 text-left text-[10px] font-normal tracking-[0.18em] text-gold/35 uppercase">
                     {t(section.titleKey as Parameters<typeof t>[0])}
                   </span>
                   <ChevronRight
                     className={cn(
-                      "size-2.5 shrink-0 text-white/20 transition-transform duration-200",
+                      "size-2.5 shrink-0 text-gold/25 transition-transform duration-200",
                       isSectionCollapsed ? "rotate-0" : "rotate-90",
                     )}
                   />
@@ -874,7 +710,7 @@ function SidebarBody({
         >
           {/* Login button — only shown when logged out and expanded */}
           {isLoading && !effective ? (
-            <div className="h-12 w-full animate-pulse rounded-full bg-white/8" />
+            <div className="h-12 w-full animate-pulse rounded-full bg-secondary/8" />
           ) : !user && !effective ? (
             <>
               <button
@@ -898,14 +734,6 @@ function SidebarBody({
               />
             </>
           ) : null}
-
-          {/* Locale switcher — dropdown opens to the right */}
-          <LocaleDropdown
-            locale={locale}
-            isPending={isPending}
-            collapsed={effective}
-            onSwitch={switchLocale}
-          />
         </div>
       </div>
     </div>
@@ -973,11 +801,11 @@ export function SiteSidebar() {
   return (
     <>
       {/* ── Mobile top bar ──────────────────────────────────────────────── */}
-      <div className="fixed top-0 right-0 left-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-gold-dim bg-[#0b0b0e]/90 px-4 backdrop-blur-xl lg:hidden">
+      <div className="fixed top-0 right-0 left-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-gold-dim bg-background/90 px-4 backdrop-blur-xl lg:hidden">
         <button
           onClick={() => setMobileOpen(true)}
           aria-label={t("openMenu")}
-          className="flex size-8 items-center justify-center rounded-lg text-white/55 transition-colors hover:bg-white/8 hover:text-white"
+          className="flex size-8 items-center justify-center rounded-lg text-secondary/55 transition-colors hover:bg-primary/10 hover:text-secondary/90"
         >
           <Menu className="size-5" />
         </button>
@@ -990,7 +818,7 @@ export function SiteSidebar() {
             height={18}
             className="h-4.5 w-4.5 shrink-0 object-contain"
           />
-          <span className="text-secondary font-display text-[11px] font-semibold tracking-[0.22em] uppercase">
+          <span className="text-secondary font-display text-[11px] font-bold tracking-[0.22em] uppercase">
             Bellona
           </span>
         </Link>

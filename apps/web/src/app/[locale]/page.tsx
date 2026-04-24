@@ -1,11 +1,10 @@
 import { Link } from "@/i18n/routing";
 import { Suspense } from "react";
-import { Compass, Home } from "lucide-react";
+import { Compass, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 
 import { SignInButton } from "@/components/triggers/auth/sign-in-button";
-import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { cn } from "@/lib/utils";
 import {
   GameShowcase,
@@ -25,17 +24,10 @@ export default async function HomePage() {
   const user = session?.user;
 
   return (
-    <main className="relative overflow-hidden">
-      <div className="grid-surface" aria-hidden="true" />
-
-      {/* ── Locale switcher ── */}
-      <div className="absolute top-5 right-5 z-30 sm:top-6 sm:right-8">
-        <LocaleSwitcher />
-      </div>
-
+    <main className="relative -mt-12 overflow-hidden lg:mt-0">
       {/* ── Hero background — Bellona ── */}
       <div
-        className="pointer-events-none absolute top-0 hidden h-svh sm:-left-120 sm:block sm:-top-12 md:-left-50 lg:-left-30 lg:top-0"
+        className="pointer-events-none absolute top-0 hidden h-svh sm:-left-120 sm:block md:-left-50 lg:-left-30"
         aria-hidden="true"
       >
           <div className="relative h-full overflow-hidden mask-[linear-gradient(to_left,transparent_0%,transparent_20%,black_50%,black_100%),linear-gradient(to_top,transparent_0%,black_33%,black_100%)] mask-intersect">
@@ -83,7 +75,7 @@ export default async function HomePage() {
                 >
                   Bellona
                 </span>
-                <h1 className="font-display relative bg-[linear-gradient(180deg,#ffffff_0%,#bebebe_100%)] bg-clip-text text-6xl font-normal tracking-[0.06em] text-transparent uppercase sm:text-7xl sm:tracking-[0.08em] lg:text-8xl">
+                <h1 className="font-display relative bg-[linear-gradient(180deg,var(--gold)_0%,var(--gold)_70%,var(--primary)_100%)] bg-clip-text text-6xl font-normal tracking-[0.06em] text-transparent uppercase sm:text-7xl sm:tracking-[0.08em] lg:text-8xl">
                   Bellona
                 </h1>
               </div>
@@ -93,10 +85,7 @@ export default async function HomePage() {
 
               {/* Sub-label */}
               <div className="relative mt-3">
-                <span className="pointer-events-none absolute top-[0.4px] left-[0.4px] z-10 font-sans text-[11px] font-semibold tracking-[0.48em] text-black uppercase filter-[blur(0.5px)] select-none sm:text-sm sm:tracking-[0.55em]">
-                  {t("heroTagline")}
-                </span>
-                <p className="relative z-20 animate-[tagline-shimmer_4s_ease-in-out_infinite] bg-[linear-gradient(90deg,var(--primary),color-mix(in_srgb,var(--primary)_50%,var(--secondary)),var(--primary))] bg-size-[200%_auto] bg-clip-text font-sans text-[11px] font-semibold tracking-[0.48em] text-transparent uppercase antialiased md:text-sm md:tracking-[0.55em]">
+                <p className="relative z-20 animate-[tagline-shimmer_4s_ease-in-out_infinite] bg-[linear-gradient(90deg,var(--primary),color-mix(in_srgb,var(--primary)_50%,var(--secondary)),var(--primary))] bg-size-[200%_auto] bg-clip-text font-sans text-[11px] font-semibold tracking-[0.32em] text-transparent uppercase antialiased md:text-[13px] md:tracking-[0.36em]">
                   {t("heroTagline")}
                 </p>
               </div>
@@ -122,7 +111,7 @@ export default async function HomePage() {
                     "px-8 text-sm sm:text-base",
                   )}
                 >
-                  <Home className="mr-2 size-5" />
+                  <LayoutDashboard className="mr-2 size-5" />
                   {t("start")}
                 </Link>
               ) : (
@@ -297,7 +286,7 @@ export default async function HomePage() {
           </div>
 
           {/* Styled box */}
-          <div className="communities-box border-gold-dim relative z-20 rounded-t-[2.5rem] border border-b-0 bg-linear-to-b from-[rgb(18_12_22/0.95)] to-[rgb(11_8_15/0.98)] px-6 pt-10 pb-2 shadow-[0_-20px_80px_rgb(192_11_59/0.06),inset_0_1px_0_rgb(255_255_255/0.05)] sm:px-10 sm:pt-14 lg:px-12 lg:pt-16">
+          <div className="communities-box border-gold-dim relative z-20 rounded-t-[2.5rem] border border-b-0 bg-linear-to-b from-background-soft to-background px-6 pt-10 pb-2 shadow-[0_-20px_80px_rgb(192_11_59/0.06),inset_0_1px_0_rgb(255_255_255/0.05)] sm:px-10 sm:pt-14 lg:px-12 lg:pt-16">
             {/* Top edge glow line */}
             <div className="via-primary/30 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
 

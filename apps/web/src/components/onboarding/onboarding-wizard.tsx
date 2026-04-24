@@ -56,7 +56,7 @@ function StepIndicator({
                 ? "bg-primary shadow-primary/30 scale-110 text-white shadow-lg"
                 : i < currentStep
                   ? "bg-success text-white"
-                  : "bg-white/10 text-white/30",
+                  : "bg-card-strong/70 text-secondary/35",
             )}
           >
             {i < currentStep ? <Check className="size-4" /> : i + 1}
@@ -65,7 +65,7 @@ function StepIndicator({
             <div
               className={cn(
                 "h-px w-6 transition-colors duration-500 sm:w-10",
-                i < currentStep ? "bg-success/40" : "bg-white/10",
+                i < currentStep ? "bg-success/40" : "bg-card-strong/70",
               )}
             />
           )}
@@ -147,13 +147,13 @@ function CountryDropdown({
           </>
         ) : (
           <>
-            <Globe className="size-5 text-white/30" />
+            <Globe className="size-5 text-secondary/35" />
             <span>{placeholder}</span>
           </>
         )}
         <ChevronDown
           className={cn(
-            "ml-auto size-4 text-white/40 transition-transform",
+            "ml-auto size-4 text-secondary/45 transition-transform",
             isOpen && "rotate-180",
           )}
         />
@@ -162,13 +162,13 @@ function CountryDropdown({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="glass-panel absolute z-50 mt-2 max-h-60 w-full overflow-hidden rounded-2xl border border-white/10"
+          className="glass-panel absolute z-50 mt-2 max-h-60 w-full overflow-hidden rounded-2xl border border-gold-dim/35"
         >
-          <div className="flex items-center gap-2 border-b border-white/5 px-3 py-2">
-            <Search className="size-4 text-white/30" />
+          <div className="flex items-center gap-2 border-b border-gold-dim/25 px-3 py-2">
+            <Search className="size-4 text-secondary/35" />
             <input
               type="text"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-secondary/35"
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -178,7 +178,7 @@ function CountryDropdown({
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="text-white/30 hover:text-white/60"
+                className="text-secondary/35 hover:text-secondary/70"
               >
                 <X className="size-3" />
               </button>
@@ -195,7 +195,7 @@ function CountryDropdown({
                   setSearch("");
                 }}
                 className={cn(
-                  "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/5",
+                  "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-card-strong/45",
                   value === c.code && "bg-primary/10 text-primary",
                 )}
               >
@@ -213,7 +213,7 @@ function CountryDropdown({
               </button>
             ))}
             {filtered.length === 0 && (
-              <p className="px-4 py-3 text-center text-sm text-white/30">
+              <p className="px-4 py-3 text-center text-sm text-secondary/35">
                 No results
               </p>
             )}
@@ -508,11 +508,11 @@ export function OnboardingWizard({
               ].map(({ icon: Icon, label }, i) => (
                 <div
                   key={i}
-                  className="animate-in flex flex-col items-center gap-2 rounded-2xl border border-white/5 bg-white/2 p-4"
+                  className="animate-in flex flex-col items-center gap-2 rounded-2xl border border-gold-dim/25 bg-card-strong/25 p-4"
                   style={{ animationDelay: `${i * 100 + 200}ms` }}
                 >
                   <Icon className="text-primary size-6" />
-                  <span className="text-xs font-medium text-white/70">
+                  <span className="text-xs font-medium text-secondary/80">
                     {label}
                   </span>
                 </div>
@@ -538,7 +538,7 @@ export function OnboardingWizard({
             <div className="space-y-5">
               {/* Display Name */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">
+                <label className="text-sm font-medium text-secondary/90">
                   {t("identity.nameLabel")}
                 </label>
                 <input
@@ -553,12 +553,12 @@ export function OnboardingWizard({
 
               {/* Username / Profile Link */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">
+                <label className="text-sm font-medium text-secondary/90">
                   {t("identity.usernameLabel")}
                 </label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                    <AtSign className="size-4 text-white/30" />
+                    <AtSign className="size-4 text-secondary/35" />
                   </div>
                   <input
                     {...register("username")}
@@ -567,7 +567,7 @@ export function OnboardingWizard({
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-4">
                     {isUsernameChecking && (
-                      <LoaderCircle className="size-4 animate-spin text-white/40" />
+                      <LoaderCircle className="size-4 animate-spin text-secondary/45" />
                     )}
                     {effectiveUsernameStatus.status === "available" &&
                       canCheck && <Check className="text-success size-4" />}
@@ -588,18 +588,18 @@ export function OnboardingWizard({
                 )}
 
                 {/* URL Preview */}
-                <div className="rounded-xl border border-white/5 bg-white/2 px-4 py-2.5">
-                  <p className="text-xs text-white/40">
+                <div className="rounded-xl border border-gold-dim/25 bg-card-strong/25 px-4 py-2.5">
+                  <p className="text-xs text-secondary/45">
                     {t("identity.urlPreview")}
                   </p>
-                  <p className="mt-0.5 font-mono text-sm text-white/70">
+                  <p className="mt-0.5 font-mono text-sm text-secondary/80">
                     bellona.gg/profile/
                     <span className="text-primary font-semibold">
                       {normalizedUsername || "..."}
                     </span>
                   </p>
                 </div>
-                <p className="text-xs text-white/30">{t("identity.urlHint")}</p>
+                <p className="text-xs text-secondary/35">{t("identity.urlHint")}</p>
               </div>
             </div>
           </div>
@@ -632,7 +632,7 @@ export function OnboardingWizard({
               )}
             />
 
-            <p className="text-center text-xs text-white/30">
+            <p className="text-center text-xs text-secondary/35">
               {t("country.hint")}
             </p>
           </div>
@@ -654,7 +654,7 @@ export function OnboardingWizard({
 
             {/* Search */}
             <div className="relative shrink-0">
-              <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-white/30" />
+              <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-secondary/35" />
               <input
                 type="text"
                 value={gameSearch}
@@ -666,7 +666,7 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={() => setGameSearch("")}
-                  className="absolute top-1/2 right-4 -translate-y-1/2 text-white/30 hover:text-white/60"
+                  className="absolute top-1/2 right-4 -translate-y-1/2 text-secondary/35 hover:text-secondary/70"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -678,14 +678,14 @@ export function OnboardingWizard({
               {gamesLoading ? (
                 <div className="flex flex-col items-center gap-3 py-12">
                   <LoaderCircle className="text-primary size-8 animate-spin" />
-                  <p className="text-sm text-white/40">
+                  <p className="text-sm text-secondary/45">
                     {t("games.loading")}
                   </p>
                 </div>
               ) : filteredGames.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-12">
-                  <Gamepad2 className="size-8 text-white/20" />
-                  <p className="text-sm text-white/40">
+                  <Gamepad2 className="size-8 text-secondary/25" />
+                  <p className="text-sm text-secondary/45">
                     {t("games.noGames")}
                   </p>
                 </div>
@@ -702,7 +702,7 @@ export function OnboardingWizard({
                           "group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-200",
                           isSelected
                             ? "border-primary/40 bg-primary/10 shadow-primary/10 shadow-lg"
-                            : "border-white/5 bg-white/2 hover:border-white/10 hover:bg-white/4",
+                            : "border-gold-dim/25 bg-card-strong/25 hover:border-gold-dim/35 hover:bg-white/4",
                         )}
                       >
                         {isSelected && (
@@ -710,7 +710,7 @@ export function OnboardingWizard({
                             <Check className="size-3 text-white" />
                           </div>
                         )}
-                        <div className="relative aspect-368/178 w-full overflow-hidden bg-white/5">
+                        <div className="relative aspect-368/178 w-full overflow-hidden bg-card-strong/45">
                           {game.thumbnailImageUrl ? (
                             <Image
                               src={game.thumbnailImageUrl}
@@ -721,7 +721,7 @@ export function OnboardingWizard({
                             />
                           ) : (
                             <div className="from-primary/20 flex h-full w-full items-center justify-center bg-linear-to-br to-transparent">
-                              <Gamepad2 className="size-6 text-white/20" />
+                              <Gamepad2 className="size-6 text-secondary/25" />
                             </div>
                           )}
                         </div>
@@ -729,7 +729,7 @@ export function OnboardingWizard({
                           <span
                             className={cn(
                               "line-clamp-1 text-center text-xs font-medium",
-                              isSelected ? "text-primary" : "text-white/60",
+                              isSelected ? "text-primary" : "text-secondary/70",
                             )}
                           >
                             {game.name}
@@ -742,7 +742,7 @@ export function OnboardingWizard({
               )}
             </div>
 
-            <p className="shrink-0 text-center text-xs text-white/30">
+            <p className="shrink-0 text-center text-xs text-secondary/35">
               {t("games.hint")}
             </p>
           </div>
@@ -825,7 +825,7 @@ export function OnboardingWizard({
         {/* Card */}
         <div
           key={step}
-          className="animate-in relative z-10 flex min-h-0 w-full flex-1 flex-col rounded-3xl border border-white/5 bg-white/2 p-8 shadow-2xl backdrop-blur-sm sm:p-10"
+          className="animate-in relative z-10 flex min-h-0 w-full flex-1 flex-col rounded-3xl border border-gold-dim/25 bg-card-strong/25 p-8 shadow-2xl backdrop-blur-sm sm:p-10"
         >
           {renderStep()}
         </div>

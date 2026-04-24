@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteSidebar } from "@/components/layout/site-sidebar";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { routing } from "@/i18n/routing";
 
 import { Providers } from "@/components/providers";
@@ -36,6 +37,10 @@ export default async function RootLayout({
             <div className="app-scroll-shell flex flex-1 flex-col">
               <div className="flex-1 pt-12 lg:pt-0">{children}</div>
               <SiteFooter />
+            </div>
+            {/* Locale switcher — fixed top-right, visible on all pages */}
+            <div className="fixed top-5 right-5 z-40 hidden lg:block">
+              <LocaleSwitcher />
             </div>
           </div>
         </Providers>

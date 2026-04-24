@@ -13,7 +13,7 @@ export default async function EventsPage() {
   const t = await getTranslations("EventsPage");
 
   return (
-    <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-14 pb-12 sm:px-10 lg:px-12">
+    <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
       <SectionHeader title={t("title")} description={t("description")} />
 
       <div className="border-b border-white/5" />
@@ -47,7 +47,7 @@ async function EventsGrid() {
 
   if (events.length === 0) {
     return (
-      <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl px-8 py-20 text-center">
+      <div className="glass-panel no-hover flex flex-col items-center justify-center gap-4 rounded-3xl px-8 py-20 text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl border border-white/8 bg-white/5">
           <CalendarX2 className="size-7 text-white/30" />
         </div>

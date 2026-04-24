@@ -59,15 +59,15 @@ export function CustomSelect<T extends string | number>({
         type="button"
         onClick={handleToggle}
         className={cn(
-          "flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-1.5 text-[11px] font-bold text-white transition-all hover:bg-white/10 active:scale-[0.98]",
-          isOpen && "ring-primary/20 bg-white/10 ring-4",
+          "flex items-center justify-between gap-2 rounded-xl border border-gold-dim/35 bg-card-strong/50 px-3 py-1.5 text-[11px] font-semibold text-secondary transition-all hover:border-gold-dim/60 hover:bg-card-strong/75 active:scale-[0.98]",
+          isOpen && "ring-gold/10 border-gold/45 bg-card-strong/80 ring-4",
           triggerClassName,
         )}
       >
         <span className="truncate">{selectedOption?.label}</span>
         <ChevronDown
           className={cn(
-            "size-3.5 text-white/30 transition-transform duration-200",
+            "size-3.5 text-gold/55 transition-transform duration-200",
             isOpen && "rotate-180",
           )}
         />
@@ -93,8 +93,8 @@ export function CustomSelect<T extends string | number>({
                   setIsOpen(false);
                 }}
                 className={cn(
-                  "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-[11px] font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white",
-                  option.value === value && "bg-primary/10 text-primary",
+                  "flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-[11px] font-medium text-secondary/70 transition-colors hover:bg-gold/8 hover:text-foreground",
+                  option.value === value && "bg-primary/12 text-primary",
                 )}
               >
                 {option.label}
