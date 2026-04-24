@@ -19,14 +19,17 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  const session = await getServerAuthSession();
 
   if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+
+  const [session, messages] = await Promise.all([
+    getServerAuthSession(),
+    getMessages(),
+  ]);
 
   return (
     <NextIntlClientProvider messages={messages}>

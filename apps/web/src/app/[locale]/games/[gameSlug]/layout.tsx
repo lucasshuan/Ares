@@ -30,7 +30,7 @@ export default async function GameLayout({
 
   return (
     <>
-      <section className="relative min-h-70 w-full overflow-hidden">
+      <section className="relative min-h-70 w-full overflow-hidden [mask-image:linear-gradient(to_bottom,black_55%,transparent_100%)]">
         {game.backgroundImageUrl ? (
           <>
             <Image
@@ -41,8 +41,8 @@ export default async function GameLayout({
               className="object-cover"
               sizes="100vw"
             />
-            {/* Subtle top-to-bottom darken so text above is legible */}
-            <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-transparent" />
+            {/* Slight top darken for legibility */}
+            <div className="absolute inset-0 bg-linear-to-b from-black/30 to-transparent" />
           </>
         ) : (
           <div className="from-primary/20 to-background/94 absolute inset-0 bg-linear-to-br" />

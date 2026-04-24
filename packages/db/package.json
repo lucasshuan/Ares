@@ -10,7 +10,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "format": "prettier --write . --cache",
     "lint": "eslint . --max-warnings=0 --cache --cache-location .eslintcache",
-    "postinstall": "node -e \"if (process.env.CI || process.env.VERCEL) process.exit(0); const { spawnSync } = require('node:child_process'); const result = spawnSync('prisma generate --schema=./prisma/schema.prisma', { stdio: 'inherit', shell: true }); if (result.error) throw result.error; process.exit(result.status ?? 0);\"",
+    "postinstall": "node -e \"if (process.env.CI || process.env.VERCEL || process.env.RENDER) process.exit(0); const { spawnSync } = require('node:child_process'); const result = spawnSync('prisma generate --schema=./prisma/schema.prisma', { stdio: 'inherit', shell: true }); if (result.error) throw result.error; process.exit(result.status ?? 0);\"",
     "typecheck": "tsc --noEmit"
   },
   "prisma": {

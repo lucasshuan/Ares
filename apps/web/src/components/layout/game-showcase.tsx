@@ -173,7 +173,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
                     alt={game.name}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    sizes="(max-width: 1024px) 100vw, min(55vw, 704px)"
                     priority={active === 0}
                   />
                 ) : (
