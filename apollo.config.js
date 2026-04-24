@@ -1,7 +1,7 @@
 module.exports = {
   client: {
     service: {
-      name: "ares-local",
+      name: "bellona-local",
       localSchemaFile: "apps/api/src/schema.gql",
     },
     includes: ["apps/web/src/**/*.{ts,tsx,graphql,gql}"],

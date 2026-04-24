@@ -18,23 +18,26 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={cn("w-full", className)}>
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         {eyebrow && (
           <p className="text-primary/90 font-mono text-xs font-medium tracking-[0.35em] uppercase">
             {eyebrow}
           </p>
         )}
-        <div className="space-y-4">
+        <div className="space-y-1.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="text-primary font-mono text-2xl font-bold tracking-tight uppercase sm:text-3xl lg:text-4xl">
-              {title}
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="font-display text-foreground text-xl font-bold tracking-[0.06em] uppercase sm:text-2xl">
+                {title}
+              </h2>
+              <div className="bg-primary h-px w-8 shrink-0 rounded-full" />
+            </div>
             {actions && (
               <div className="flex shrink-0 items-center gap-4">{actions}</div>
             )}
           </div>
           {description && (
-            <div className="text-muted sm:text-md max-w-3xl text-base leading-relaxed">
+            <div className="text-muted/60 max-w-3xl text-sm leading-relaxed sm:text-base">
               {description}
             </div>
           )}

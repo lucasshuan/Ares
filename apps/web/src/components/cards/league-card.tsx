@@ -16,7 +16,7 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
   return (
     <Link
       href={`/games/${game}/events/${league.event?.slug ?? ""}` as Route}
-      className="glass-panel group hover:border-primary/30 relative flex h-full min-h-80 flex-col overflow-hidden rounded-4xl border-white/5 p-6 transition-all select-none hover:bg-white/5 active:scale-[0.99]"
+      className="glass-panel group hover:border-gold relative flex h-full min-h-80 flex-col overflow-hidden rounded-3xl border-white/5 p-6 transition-all select-none hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] active:scale-[0.99]"
     >
       <div className="relative mb-6 flex shrink-0 items-center justify-between gap-4">
         <div>

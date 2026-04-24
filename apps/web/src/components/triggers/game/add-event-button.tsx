@@ -39,7 +39,7 @@ export function AddEventButton({
     variant === "sidebar" ? (
       <button
         onClick={handleTriggerClick}
-        className="group hover:border-primary/30 relative flex w-full items-center gap-4 overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-4 transition-all hover:bg-white/10 active:scale-[0.98]"
+        className="group hover:border-primary/30 relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:bg-white/10 active:scale-[0.98]"
       >
         <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex size-12 items-center justify-center rounded-2xl transition-colors">
           <Trophy className="size-6" />

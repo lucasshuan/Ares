@@ -32,7 +32,6 @@ export default async function RootLayout({
       <ApolloWrapper>
         <Providers session={session}>
           <div className="relative flex h-screen overflow-hidden">
-            <div className="grid-surface pointer-events-none fixed inset-0 -z-50" />
             <SiteSidebar />
             <div className="app-scroll-shell flex flex-1 flex-col">
               <div className="flex-1 pt-12 lg:pt-0">{children}</div>

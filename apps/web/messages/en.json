@@ -64,13 +64,13 @@
     "pt": "Português"
   },
   "HomePage": {
-    "heroTagline": "Tournament Platform",
-    "heroSubtitle": "League and tournament management for E-sports and competitive games.",
+    "heroTagline": "Leagues & tournaments. Free and open-source.",
+    "heroSubtitle": "",
     "explore": "Explore",
     "join": "Join",
     "welcomeBack": "Welcome back, {name}",
     "welcomeSubtitle": "Ready to compete?",
-    "start": "Home",
+    "start": "Dashboard",
     "games": {
       "title": "Communities",
       "description": "Join the community, follow the leaderboards, and leave your mark.",
@@ -136,7 +136,7 @@
   "GamePage": {
     "metaTitleNotFound": "Game not found",
     "metaTitleDbUnavailable": "Database unavailable",
-    "metaDescriptionFallback": "Leagues for {gameName} on Ares.",
+    "metaDescriptionFallback": "Leagues for {gameName} on Bellona.",
     "backToGames": "All games",
     "dbUnavailable": "Database unavailable in local development.",
     "dbUnavailableDescription": "Start your Postgres instance or update `.env` with a reachable connection string to view this game page.",
@@ -184,7 +184,7 @@
     "noDescription": "No description."
   },
   "SiteFooter": {
-    "copyright": "Ares © 2026"
+    "copyright": "Bellona © 2026"
   },
   "Admin": {
     "panel": "Manage"
@@ -526,7 +526,7 @@
         "selectedDesc": "Nationality and history will be synced with this profile.",
         "remove": "Remove"
       },
-      "info": "If you pick and link an Ares user, we will use the nationality (flag) defined in their global profile.",
+      "info": "If you pick and link a Bellona user, we will use the nationality (flag) defined in their global profile.",
       "submit": "Confirm Player",
       "submitting": "Adding...",
       "cancel": "Cancel",
@@ -594,7 +594,7 @@
   },
   "Onboarding": {
     "welcome": {
-      "title": "Welcome to Ares",
+      "title": "Welcome to Bellona",
       "subtitle": "Your competitive journey starts here. Let's set up your warrior profile in a few quick steps.",
       "feature1": "Join games",
       "feature2": "Compete in leagues",
@@ -635,7 +635,7 @@
       "next": "Continue",
       "back": "Back",
       "finish": "Complete Setup",
-      "explore": "Explore Ares"
+      "explore": "Explore Bellona"
     }
   },
   "NotFound": {

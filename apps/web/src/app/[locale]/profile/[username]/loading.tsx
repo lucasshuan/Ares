@@ -9,7 +9,7 @@ export default async function ProfileLoading() {
       <div className="mx-auto mt-24 flex w-full max-w-7xl flex-col-reverse gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-12 lg:px-12">
         {/* Sidebar Skeleton */}
         <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
-          <div className="glass-panel sticky top-28 overflow-hidden rounded-4xl">
+          <div className="glass-panel sticky top-28 overflow-hidden rounded-3xl">
             <div className="relative z-10 flex flex-col items-center p-8 text-center">
               {/* Avatar Skeleton */}
               <div className="size-32 animate-pulse rounded-full border-4 border-white/10 bg-white/5 shadow-xl" />
@@ -43,7 +43,7 @@ export default async function ProfileLoading() {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="glass-panel h-64 animate-pulse rounded-4xl bg-white/5"
+                  className="glass-panel h-64 animate-pulse rounded-3xl bg-white/5"
                 />
               ))}
             </section>

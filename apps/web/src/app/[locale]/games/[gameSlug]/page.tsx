@@ -38,6 +38,7 @@ import {
   type GetGameQuery,
   type GetLeaguesQuery,
 } from "@/lib/apollo/generated/graphql";
+import { buttonVariants } from "@/components/ui/button";
 
 export async function generateMetadata({
   params,
@@ -122,21 +123,24 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
       {/* Sidebar */}
       <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
         <div className="sticky top-28 flex flex-col gap-4">
-          <div>
-            <Link
-              href="/games"
-              className="no-lift group border-border relative z-10 -mb-px inline-flex items-center gap-2 rounded-t-2xl border border-b-0 bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))] px-4 py-2.5 text-xs font-bold tracking-wider text-white/50 uppercase transition-colors hover:text-white"
-            >
-              <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-              {t("backToGames")}
-            </Link>
+          <Link
+            href="/games"
+            className={cn(
+              buttonVariants({ intent: "ghost", size: "md" }),
+              "group w-full justify-start gap-3 px-4",
+            )}
+          >
+            <ChevronLeft className="size-4 transition-transform group-hover:-translate-x-1" />
+            {t("backToGames")}
+          </Link>
 
-            <GlowBorder
+          <GlowBorder
               className={cn(
                 canSeeAdminActions
-                  ? "rounded-4xl rounded-tl-none rounded-br-none"
-                  : "rounded-4xl rounded-tl-none",
+                  ? "rounded-3xl rounded-br-none"
+                  : "rounded-3xl",
               )}
+              borderClassName="bg-[color-mix(in_srgb,var(--gold)_45%,transparent)]"
             >
               <div className="relative aspect-368/178 w-full overflow-hidden">
                 {game.thumbnailImageUrl ? (
@@ -257,7 +261,6 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
                 />
               </div>
             )}
-          </div>
 
           {author && (
             <div className="flex flex-row-reverse items-center justify-center gap-3 px-1 py-2 opacity-80 transition-opacity hover:opacity-100">
@@ -298,7 +301,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
               ))}
             </div>
           ) : (
-            <div className="glass-panel flex flex-col items-center justify-center rounded-4xl p-12 text-center">
+            <div className="glass-panel flex flex-col items-center justify-center rounded-3xl p-12 text-center">
               <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-white/5">
                 <Ghost className="size-8 text-white/20" />
               </div>
@@ -324,7 +327,7 @@ function GamePageSkeleton() {
               <div className="size-4 animate-pulse rounded bg-white/10" />
               <div className="h-4 w-24 animate-pulse rounded bg-white/10" />
             </div>
-            <div className="glass-panel overflow-hidden rounded-4xl">
+            <div className="glass-panel overflow-hidden rounded-3xl">
               <div className="aspect-368/178 w-full animate-pulse bg-white/10" />
               <div className="space-y-8 p-6">
                 <div>
@@ -365,7 +368,7 @@ function GamePageSkeleton() {
 
             <div className="grid gap-5 xl:grid-cols-2">
               {[1, 2, 3, 4].map((i) => (
-                <section key={i} className="glass-panel h-70 rounded-4xl p-6">
+                <section key={i} className="glass-panel h-70 rounded-3xl p-6">
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div className="w-full">
                       <div className="h-6 w-32 animate-pulse rounded bg-white/10" />

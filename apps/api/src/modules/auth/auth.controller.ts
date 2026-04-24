@@ -13,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { User } from '@ares/db';
+import { User } from '@bellona/db';
 
 @Controller('auth')
 export class AuthController {

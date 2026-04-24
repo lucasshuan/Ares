@@ -92,7 +92,7 @@ export function MultiStepModal({
     >
       <div
         className={cn(
-          "glass-panel animate-modal-content flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-4xl bg-[#0a080f] will-change-[transform,opacity]",
+          "glass-panel animate-modal-content flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-3xl bg-[#0a080f] will-change-[transform,opacity]",
           className,
         )}
       >
@@ -110,7 +110,7 @@ export function MultiStepModal({
             <button
               onClick={onClose}
               type="button"
-              className="cursor-pointer rounded-full p-2 text-white/70 transition-colors hover:bg-white/10"
+              className="cursor-pointer rounded-xl p-2 text-white/70 transition-colors hover:bg-white/10"
             >
               <X className="size-5" />
             </button>

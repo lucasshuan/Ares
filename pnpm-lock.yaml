@@ -29,12 +29,6 @@ importers:
       '@apollo/server':
         specifier: ^5.5.0
         version: 5.5.0(graphql@16.13.2)
-      '@ares/core':
-        specifier: workspace:^
-        version: link:../../packages/core
-      '@ares/db':
-        specifier: workspace:^
-        version: link:../../packages/db
       '@as-integrations/express5':
         specifier: ^1.1.2
         version: 1.1.2(@apollo/server@5.5.0(graphql@16.13.2))(express@5.2.1)
@@ -44,6 +38,12 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.1032.0
         version: 3.1032.0
+      '@bellona/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      '@bellona/db':
+        specifier: workspace:^
+        version: link:../../packages/db
       '@nestjs/apollo':
         specifier: ^13.2.5
         version: 13.2.5(@apollo/server@5.5.0(graphql@16.13.2))(@as-integrations/express5@1.1.2(@apollo/server@5.5.0(graphql@16.13.2))(express@5.2.1))(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/graphql@13.2.5(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.1))(class-transformer@0.5.1)(class-validator@0.15.1)(graphql@16.13.2)(reflect-metadata@0.2.2))(graphql@16.13.2)
@@ -216,7 +216,7 @@ importers:
       '@apollo/client-integration-nextjs':
         specifier: ^0.14.5
         version: 0.14.5(@apollo/client@4.1.7(graphql-ws@6.0.8(graphql@16.13.2)(ws@8.20.0))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.1)(subscriptions-transport-ws@0.11.0(graphql@16.13.2)))(@types/react@19.2.14)(graphql@16.13.2)(next@16.2.3(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.1)
-      '@ares/core':
+      '@bellona/core':
         specifier: workspace:^
         version: link:../../packages/core
       '@hookform/resolvers':

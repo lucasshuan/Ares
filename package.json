@@ -1,13 +1,13 @@
 {
-  "name": "ares-monorepo",
+  "name": "bellona-monorepo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "turbo run dev codegen:watch",
-    "dev:web": "turbo run dev --filter @ares/web",
-    "dev:api": "turbo run dev --filter @ares/api",
-    "db:migrate": "turbo run migrate --filter @ares/db",
-    "db:seed": "pnpm --filter @ares/db exec prisma db seed",
+    "dev:web": "turbo run dev --filter @bellona/web",
+    "dev:api": "turbo run dev --filter @bellona/api",
+    "db:migrate": "turbo run migrate --filter @bellona/db",
+    "db:seed": "pnpm --filter @bellona/db exec prisma db seed",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "format": "turbo run format || true",

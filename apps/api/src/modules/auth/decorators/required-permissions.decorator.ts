@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { PermissionKey } from '@ares/core';
+import { PermissionKey } from '@bellona/core';
 
 export const PERMISSIONS_KEY = 'permissions';
 export const RequiredPermissions = (...permissions: PermissionKey[]) =>

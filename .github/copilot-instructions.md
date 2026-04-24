@@ -1,4 +1,4 @@
-# Ares — Project Guidelines
+# Bellona — Project Guidelines
 
 Before making any structural change, read `ARCHITECTURE.md` at the repo root. It is the source of truth for this project.
 

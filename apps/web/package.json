@@ -1,5 +1,5 @@
 {
-  "name": "@ares/web",
+  "name": "@bellona/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "@apollo/client": "^4.1.7",
     "@apollo/client-integration-nextjs": "^0.14.5",
-    "@ares/core": "workspace:^",
+    "@bellona/core": "workspace:^",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-popover": "1.1.2",
     "@t3-oss/env-nextjs": "^0.13.11",

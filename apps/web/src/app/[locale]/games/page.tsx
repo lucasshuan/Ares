@@ -44,7 +44,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
                   : `?${new URLSearchParams({ ...(search ? { search } : {}), sort: "popular" })}`
               }
               className={cn(
-                "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+                "flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition-all duration-300",
                 sort !== "name"
                   ? "bg-primary/20 text-primary border-primary/20 border shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
                   : "border border-white/5 text-white/40 hover:border-white/10 hover:text-white/60",
@@ -60,7 +60,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
                   : `?${new URLSearchParams({ ...(search ? { search } : {}), sort: "name" })}`
               }
               className={cn(
-                "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+                "flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition-all duration-300",
                 sort === "name"
                   ? "bg-primary/20 text-primary border-primary/20 border shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
                   : "border border-white/5 text-white/40 hover:border-white/10 hover:text-white/60",
@@ -73,7 +73,7 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
       </div>
       <div className="border-b border-white/5" />
 
-      <Suspense key={`${search}-${sort}`} fallback={<GamesGridSkeleton />}>
+      <Suspense fallback={<GamesGridSkeleton />}>
         <GamesGrid search={search} />
       </Suspense>
     </main>
@@ -127,7 +127,7 @@ async function GamesGrid({ search }: { search?: string }) {
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="glass-panel mb-6 flex size-20 items-center justify-center rounded-3xl">
+      <div className="glass-panel mb-6 flex size-20 items-center justify-center rounded-2xl">
         <Trophy className="text-muted size-10" />
       </div>
       <h3 className="text-xl font-semibold">

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../../database/database.provider';
 import { PaginationInput } from '../../common/pagination/pagination.input';
-import { Prisma } from '@ares/db';
+import { Prisma } from '@bellona/db';
 
 @Injectable()
 export class UsersService {

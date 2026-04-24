@@ -88,8 +88,8 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
         </div>
 
         <div className="relative -ml-4 sm:-ml-7 lg:-ml-10">
-          <h2 className="text-2xl font-bold tracking-tight italic sm:text-3xl">
-            {labels.title}
+          <h2 className="font-display text-2xl font-bold tracking-widest uppercase sm:text-3xl">
+            <span className="text-gold-metallic">{labels.title}</span>
           </h2>
           <p className="text-muted mt-1 text-sm italic sm:text-base">
             {labels.description}
@@ -138,7 +138,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
             {/* CTA */}
             <Link
               href={`/games/${game.slug}` as Route}
-              className="group/cta border-primary/30 bg-primary/8 text-primary hover:border-primary/50 hover:bg-primary/15 inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-all"
+              className="group/cta border-primary/30 bg-primary/8 text-primary hover:border-primary/50 hover:bg-primary/15 inline-flex items-center gap-2 rounded-2xl border px-6 py-2.5 text-sm font-medium transition-all"
             >
               {labels.explore}
               <ChevronRight className="size-4 transition-transform group-hover/cta:translate-x-0.5" />
@@ -159,7 +159,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
           />
 
           {/* Card */}
-          <div className="glass-panel relative overflow-hidden rounded-3xl">
+          <div className="glass-panel relative overflow-hidden rounded-3xl [&::after]:hidden">
             {/* Image */}
             <div className="relative aspect-video w-full overflow-hidden">
               <div
@@ -200,7 +200,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
                     key={g.id}
                     onClick={() => select(i)}
                     className={cn(
-                      "no-lift group/thumb relative h-14 flex-1 overflow-hidden rounded-xl border transition-all duration-300 sm:h-16",
+                      "group/thumb relative h-14 flex-1 overflow-hidden rounded-xl border transition-all duration-300 sm:h-16",
                       i === active
                         ? "border-primary/40 ring-primary/20 ring-1"
                         : "border-white/5 opacity-50 hover:opacity-80",

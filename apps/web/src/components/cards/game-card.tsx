@@ -24,11 +24,11 @@ export function GameCard({
   return (
     <Link
       href={`/games/${game.slug}` as Route}
-      className="glass-panel group flex w-full flex-col overflow-hidden rounded-4xl transition-all duration-300"
+      className="glass-panel group flex w-full flex-col overflow-hidden rounded-xl transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]"
     >
       <div className="relative aspect-368/178 w-full shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-300 ease-out group-hover:brightness-100">
         {game.thumbnailImageUrl ? (
-          <div className="absolute -inset-px transform-gpu transition-transform duration-300 ease-out group-hover:scale-[1.04]">
+          <div className="absolute -inset-px transform-gpu transition-transform duration-300 ease-out">
             <Image
               src={game.thumbnailImageUrl}
               alt={game.name}
@@ -40,13 +40,13 @@ export function GameCard({
             />
           </div>
         ) : (
-          <div className="from-primary/48 absolute -inset-px h-auto w-auto bg-linear-to-br to-[#0b080f]/92 transition-transform duration-300 ease-out group-hover:scale-[1.04]" />
+          <div className="from-primary/48 absolute -inset-px h-auto w-auto bg-linear-to-br to-[#0b080f]/92 transition-transform duration-300 ease-out" />
         )}
       </div>
 
       <div className="flex min-h-26 flex-col px-5 pt-5 pb-8">
         <div className="mb-2 flex items-start justify-between gap-2">
-          <h3 className="line-clamp-2 flex-1 text-lg leading-tight font-semibold">
+          <h3 className="line-clamp-2 flex-1 text-lg leading-tight font-semibold transition-colors duration-200 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
             {game.name}
           </h3>
           {game.status === "PENDING" && pendingLabel && (
@@ -62,7 +62,7 @@ export function GameCard({
             {game.description ?? fallbackDescription}
           </p>
           <div className="flex h-5 items-center">
-            <ChevronRight className="text-secondary size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+            <ChevronRight className="size-5 shrink-0 text-gold/80 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]" />
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export function GameCardSkeleton({
     <div
       aria-disabled="true"
       className={cn(
-        "glass-panel flex w-full flex-col overflow-hidden rounded-4xl",
+        "glass-panel flex w-full flex-col overflow-hidden rounded-xl",
         isFallbackState && "opacity-80",
       )}
     >

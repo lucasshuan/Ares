@@ -47,7 +47,7 @@ async function EventsGrid() {
 
   if (events.length === 0) {
     return (
-      <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-4xl px-8 py-20 text-center">
+      <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl px-8 py-20 text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl border border-white/8 bg-white/5">
           <CalendarX2 className="size-7 text-white/30" />
         </div>

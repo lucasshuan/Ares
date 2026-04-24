@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="apps/web/public/logo.png" alt="Ares" width="80" />
-  <h1>Ares</h1>
+  <img src="apps/web/public/logo.png" alt="Bellona" width="80" />
+  <h1>Bellona</h1>
 </div>
 
 **Plataforma open-source e 100% gratuita de competições e comunidade** com foco em jogos. Comunidades criam jogos, organizam ligas e torneios em diversos formatos (Elo, pontos corridos, eliminatória, suíço, fase de grupos e mais), formam times e clãs, e interagem através de fóruns e perfis customizáveis — tudo sem nenhum paywall.

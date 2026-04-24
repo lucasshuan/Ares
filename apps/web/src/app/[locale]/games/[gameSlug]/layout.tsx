@@ -30,15 +30,7 @@ export default async function GameLayout({
 
   return (
     <>
-      <section
-        className="relative min-h-70 w-full overflow-hidden"
-        style={{
-          maskImage:
-            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
-        }}
-      >
+      <section className="relative min-h-70 w-full overflow-hidden">
         {game.backgroundImageUrl ? (
           <>
             <Image
@@ -49,11 +41,14 @@ export default async function GameLayout({
               className="object-cover"
               sizes="100vw"
             />
-            <div className="to-background absolute inset-0 bg-linear-to-b from-transparent" />
+            {/* Subtle top-to-bottom darken so text above is legible */}
+            <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-background" />
           </>
         ) : (
           <div className="from-primary/20 to-background/94 absolute inset-0 bg-linear-to-br" />
         )}
+        {/* Animated gold separator — replaces the mask fade */}
+        <div className="game-banner-sep" />
       </section>
       {children}
     </>

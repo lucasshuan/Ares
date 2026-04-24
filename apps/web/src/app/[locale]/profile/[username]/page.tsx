@@ -89,7 +89,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
           <div className="sticky top-28 flex flex-col gap-4">
             <div>
               <div
-                className={`glass-panel overflow-hidden rounded-4xl ${isOwnProfile ? "rounded-br-none" : ""}`}
+                className={`glass-panel overflow-hidden rounded-3xl ${isOwnProfile ? "rounded-br-none" : ""}`}
               >
                 {/* Subtle decorations removed */}
 
@@ -161,7 +161,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
 
             <section className="flex flex-col gap-6">
               {calculatedPositions.length === 0 ? (
-                <div className="glass-panel mt-6 flex flex-col items-center justify-center gap-4 rounded-4xl p-12 text-center">
+                <div className="glass-panel mt-6 flex flex-col items-center justify-center gap-4 rounded-3xl p-12 text-center">
                   <Medal className="size-12 text-white" />
                   <div>
                     <h3 className="text-xl font-medium">

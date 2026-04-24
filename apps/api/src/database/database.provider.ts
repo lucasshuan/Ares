@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@ares/db';
+import { PrismaClient } from '@bellona/db';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()

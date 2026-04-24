@@ -1,5 +1,5 @@
 {
-  "name": "@ares/core",
+  "name": "@bellona/core",
   "version": "0.1.0",
   "scripts": {
     "format": "prettier --write . --cache",

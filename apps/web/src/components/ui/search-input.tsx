@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const SEARCH_DEBOUNCE_MS = 250;
+
 export function SearchInput({
   defaultValue = "",
   placeholder,
@@ -23,14 +25,39 @@ export function SearchInput({
     setValue(defaultValue);
   }, [defaultValue]);
 
+  useEffect(() => {
+    const currentSearch = searchParams.get("search") ?? "";
+
+    if (value === currentSearch) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParams);
+
+      if (value) {
+        params.set("search", value);
+      } else {
+        params.delete("search");
+      }
+
+      startTransition(() => {
+        router.replace(`?${params.toString()}`, { scroll: false });
+      });
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [router, searchParams, startTransition, value]);
+
   function handleSearch(term: string) {
     setValue(term);
+  }
+
+  function clearSearch() {
     const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set("search", term);
-    } else {
-      params.delete("search");
-    }
+
+    params.delete("search");
+    setValue("");
 
     startTransition(() => {
       router.replace(`?${params.toString()}`, { scroll: false });
@@ -53,7 +80,7 @@ export function SearchInput({
       />
       {value && (
         <button
-          onClick={() => handleSearch("")}
+          onClick={clearSearch}
           className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/20 hover:text-white/40"
         >
           <X className="size-4" />

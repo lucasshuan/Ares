@@ -15,12 +15,12 @@ export async function SiteNavbar() {
     <nav className="bg-background/80 sticky top-0 z-50 border-b border-white/6 backdrop-blur-xl">
       <div className="mx-auto flex w-full items-center justify-between px-6 py-4 sm:px-10 lg:px-12">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-0.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <div
               className="bg-primary shrink-0"
               style={{
-                width: 16,
-                height: 16,
+                width: 22,
+                height: 22,
                 maskImage: `url(/icon.svg)`,
                 WebkitMaskImage: `url(/icon.svg)`,
                 maskSize: "contain",
@@ -30,12 +30,17 @@ export async function SiteNavbar() {
                 maskPosition: "center",
                 WebkitMaskPosition: "center",
               }}
-              aria-label="Ares icon"
+              aria-label="Bellona icon"
               role="img"
             />
-            <p className="text-primary text-lg font-semibold -tracking-widest">
-              Ares
-            </p>
+            <div className="flex flex-col leading-none">
+              <span className="text-foreground font-display text-base font-semibold tracking-[0.2em] uppercase">
+                Bellona
+              </span>
+              <span className="text-primary font-display mt-0.5 text-[8px] font-semibold tracking-[0.34em] uppercase">
+                Tournament Platform
+              </span>
+            </div>
           </Link>
 
           <NavLinks />

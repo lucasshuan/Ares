@@ -1,6 +1,6 @@
 import { type Session } from "next-auth";
 
-import { type PermissionKey } from "@ares/core";
+import { type PermissionKey } from "@bellona/core";
 
 export function hasPermission(
   session: Session | null,

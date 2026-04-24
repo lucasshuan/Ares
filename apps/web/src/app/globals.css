@@ -9,20 +9,25 @@
 
 :root {
   --transparent-scrollbar-image: url("/scrollbar-track.png");
-  --font-space-grotesk:
-    "Aptos", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-space-grotesk: var(--font-barlow), "Aptos", "Segoe UI Variable Display", "Trebuchet MS", "Segoe UI", sans-serif;
   --font-ibm-plex-mono:
     "Cascadia Mono", "IBM Plex Mono", "Consolas", "Liberation Mono", monospace;
-  --background: #0b080f;
-  --background-soft: #15101a;
-  --foreground: #f7f0f3;
-  --muted: #b9a8b0;
-  --border: color-mix(in srgb, var(--primary) 18%, transparent);
-  --card: rgb(19 13 21 / 0.84);
-  --card-strong: rgb(27 16 23 / 0.94);
-  --primary: #c00b3b;
-  --primary-strong: #8f0c1b;
-  --secondary: #e7d7f3;
+  --radius-xl: 11px;
+  --radius-2xl: 14px;
+  --radius-3xl: 20px;
+  --radius-4xl: 26px;
+  --background: #080708;
+  --background-soft: #0e0d0f;
+  --foreground: #ffffff;
+  --muted: #b5afac;
+  --border: color-mix(in srgb, white 10%, transparent);
+  --card: rgb(15 14 16 / 0.88);
+  --card-strong: rgb(20 18 21 / 0.96);
+  --primary: #a4141b;
+  --primary-strong: #6d0d12;
+  --secondary: #e8d5a3;
+  --gold: #d4711c;
+  --gold-dim: #6b370e;
   --success: #10b981;
   --danger: #ff7b7b;
   --warning: #f5c66a;
@@ -45,6 +50,8 @@
   --color-primary: var(--primary);
   --color-primary-strong: var(--primary-strong);
   --color-secondary: var(--secondary);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--gold-dim);
   --color-success: var(--success);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
@@ -56,6 +63,7 @@
   --color-match-shutout: var(--match-shutout);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-cinzel), "Trajan Pro", "Cormorant Garamond", serif;
   --font-signature: "Dancing Script", cursive;
 
   --animate-modal-overlay: modal-overlay 0.2s ease-out both;
@@ -157,6 +165,11 @@
     }
   }
 
+  @keyframes tagline-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
   @keyframes hero-float {
     0%,
     100% {
@@ -237,10 +250,6 @@
       opacity: 0;
     }
   }
-}
-
-* {
-  border-color: var(--border);
 }
 
 /* Hide spin buttons in numeric inputs */
@@ -334,29 +343,9 @@ button:disabled {
   cursor: not-allowed;
 }
 
-a:hover,
-button:hover {
-  transform: translateY(-2px);
-}
-
-a.no-lift:hover,
-button.no-lift:hover {
-  transform: none;
-}
-
 ::selection {
   background: color-mix(in srgb, var(--primary) 35%, transparent);
   color: var(--foreground);
-}
-
-@keyframes grid-drift {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  100% {
-    transform: translate(84px, 84px);
-  }
 }
 
 /* ── Glow border card ──────────────────────────────────────────────────── */
@@ -399,9 +388,14 @@ button.no-lift:hover {
   opacity: 0.5;
 }
 
+@keyframes trellis-drift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 70px 70px, 70px 70px; }
+}
+
 .grid-surface {
   position: fixed;
-  inset: -100px;
+  inset: 0;
   z-index: -50;
   pointer-events: none;
   overflow: hidden;
@@ -412,30 +406,56 @@ button.no-lift:hover {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
-  background-size: 42px 42px;
-  animation: grid-drift 5s linear infinite;
-  animation-delay: -2.5s;
-  will-change: transform;
+    linear-gradient(
+      45deg,
+      transparent calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      -45deg,
+      transparent calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
+  background-size: 70px 70px;
+  animation: trellis-drift 13s linear infinite;
+}
+
+.grid-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 58% 45%,
+    transparent 25%,
+    rgb(8 7 8 / 0.65) 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .grid-surface {
+  .grid-surface::before {
     animation: none;
   }
 }
 
 .glass-panel {
-  background: linear-gradient(
-    180deg,
-    rgb(20 13 22 / 0.92),
-    rgb(11 8 15 / 0.92)
-  );
-  border: 1px solid var(--border);
-  box-shadow:
-    0 18px 80px rgb(0 0 0 / 0.35),
-    inset 0 1px 0 rgb(255 255 255 / 0.06);
+  position: relative;
+  background: linear-gradient(180deg, var(--card-strong), var(--card));
+  corner-shape: squircle;
+  box-shadow: 0 18px 80px rgb(0 0 0 / 0.35);
+}
+
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--gold-dim);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 10;
 }
 
 /* ── Ember / fire particles ── */

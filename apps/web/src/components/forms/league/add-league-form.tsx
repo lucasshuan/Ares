@@ -37,7 +37,7 @@ import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { NumberInput } from "@/components/ui/number-input";
 import { formatHoursDuration } from "@/lib/date-utils";
 import { cn, slugify } from "@/lib/utils";
-import { MATCH_FORMATS } from "@ares/core";
+import { MATCH_FORMATS } from "@bellona/core";
 import { EloMatchSimulator } from "./elo-match-simulator";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
 

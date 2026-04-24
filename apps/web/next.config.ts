@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
       "@hookform/resolvers",
       "zod",
       "flag-icons",
-      "@ares/core",
+      "@bellona/core",
     ],
   },
   async headers() {

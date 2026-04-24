@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseProvider } from '../../database/database.provider';
-import type { User } from '@ares/db';
+import type { User } from '@bellona/db';
 
 export interface DiscordProfile {
   id: string;

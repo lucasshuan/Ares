@@ -1,4 +1,4 @@
-# Ares — Architecture Reference
+# Bellona — Architecture Reference
 
 > Última atualização: Abril 2026  
 > Fonte de verdade para agentes e desenvolvedores. Antes de criar qualquer arquivo ou fazer qualquer modificação significativa, leia este documento.
@@ -28,9 +28,9 @@ Nunca use `npm` ou `yarn` neste projeto.
 
 ### `packages/db`
 
-- **O quê**: Prisma schema (`prisma/schema.prisma`), migrations (`prisma/migrations/`), seed (`prisma/seed.ts`) e cliente singleton exportado como `@ares/db`.
+- **O quê**: Prisma schema (`prisma/schema.prisma`), migrations (`prisma/migrations/`), seed (`prisma/seed.ts`) e cliente singleton exportado como `@bellona/db`.
 - **Regra**: é a única camada que fala com o banco. Nenhuma outra camada instancia `PrismaClient` diretamente. A API consome via `DatabaseProvider` (`apps/api/src/database/database.provider.ts`).
-- **Enums no schema**: sempre `UPPER_SNAKE_CASE` (ex: `RANKED_LEAGUE`, `APPROVED`). Devem espelhar exatamente os valores em `@ares/core`.
+- **Enums no schema**: sempre `UPPER_SNAKE_CASE` (ex: `RANKED_LEAGUE`, `APPROVED`). Devem espelhar exatamente os valores em `@bellona/core`.
 - **Migrations**: usar `pnpm db:migrate` (nunca `prisma db push` em produção). Cada migration tem nome descritivo.
 
 ### `packages/core`
@@ -94,7 +94,7 @@ O modelo `Event` no schema Prisma é a entidade raiz de todos os tipos de compet
 
 ```
 Banco (Postgres)
-  ↓  Prisma Client (@ares/db)
+  ↓  Prisma Client (@bellona/db)
   ↓  DatabaseProvider (api)
   ↓  Service (lógica de negócio)
   ↓  Resolver (@ObjectType / @ResolveField)
@@ -132,7 +132,7 @@ async updateGame(...) {}
 
 - `GqlAuthGuard`: exige token válido (usuário autenticado).
 - `PermissionsGuard`: exige permissões específicas. `isAdmin` bypassa tudo.
-- Permissões disponíveis: `manage_games`, `manage_players`, `manage_events` — definidas em `@ares/core`.
+- Permissões disponíveis: `manage_games`, `manage_players`, `manage_events` — definidas em `@bellona/core`.
 
 ### Permissões no Frontend (Web)
 
@@ -308,7 +308,7 @@ pnpm codegen:watch    # modo watch durante desenvolvimento
 
 **Biblioteca**: `next-intl` com `localePrefix: "as-needed"` (sem prefixo para `en`, prefixo `/pt` para português).  
 **Locales**: `["en", "pt"]`, default `"en"`.  
-**Cookie**: `ARES_LOCALE` (definido em `src/i18n/routing.ts`).
+**Cookie**: `BELLONA_LOCALE` (definido em `src/i18n/routing.ts`).
 
 ### Arquivos de tradução
 
@@ -350,8 +350,19 @@ apps/web/messages/
 
 ### Regras
 
-- **Nunca cores hardcoded**. Use sempre variáveis: `text-primary`, `bg-primary/10`, `border-border`, `text-foreground`, `text-muted`.
+#### ⛔ Proibido: cores mágicas ou hardcoded
+
+**Toda cor usada no projeto DEVE ser um token do tema.** Cores hardcoded (`#hex`, `rgb(...)`, `hsl(...)` literais, nomes de cor Tailwind fora do tema como `red-500`, `gray-700`) são **proibidas** — sem exceções.
+
+- Tokens disponíveis (definidos em `apps/web/src/app/globals.css`): `--background`, `--background-soft`, `--foreground`, `--muted`, `--border`, `--card`, `--card-strong`, `--primary`, `--primary-strong`, `--secondary`, `--gold`, `--gold-deep`, `--danger`, `--success`, `--warning`.
+- No Tailwind use os nomes mapeados: `text-primary`, `bg-background`, `border-border`, `text-muted`, `text-gold`, `text-danger`, etc.
+- Para variações de opacidade use o modificador `/`: `bg-primary/10`, `text-foreground/60`.
+- Para `color-mix` ou gradientes, referencie sempre a variável CSS: `color-mix(in srgb, var(--gold) 45%, white)`.
 - **Variável `--primary`** é dinâmica por contexto (perfil de usuário muda a cor primária via `style` inline). Por isso nunca use `#hex` inline.
+- Se uma nova cor for necessária, adicione-a como variável CSS no `globals.css` e mapeie no bloco `@theme inline` antes de usar.
+
+---
+
 - `cn()` (de `src/lib/utils.ts`) para merge condicional de classes — nunca concatenação de strings.
 - Classe `no-lift`: desabilita o efeito de hover padrão em botões. Use quando o estilo visual do botão já tem seu próprio hover.
 - `glass-panel`: card com fundo semi-transparente e backdrop blur.
@@ -418,7 +429,7 @@ Estas decisões foram deliberadas. Antes de mudar qualquer uma, leia o PLAN.md e
 
 1. **Pastas de rota limpas**: `app/[locale]/**` contém apenas arquivos reservados do Next.js. Sub-componentes de página vivem em `components/`.
 
-2. **`@ares/core` como fonte única de enums**: enums nunca são duplicados entre API, web e banco. O banco espelha o `core`, não o contrário.
+2. **`@bellona/core` como fonte única de enums**: enums nunca são duplicados entre API, web e banco. O banco espelha o `core`, não o contrário.
 
 3. **GraphQL code-first**: o schema é gerado a partir dos decorators do NestJS. Nunca escreva SDL (`.graphql`) manualmente.
 

@@ -593,7 +593,7 @@ export function OnboardingWizard({
                     {t("identity.urlPreview")}
                   </p>
                   <p className="mt-0.5 font-mono text-sm text-white/70">
-                    ares.felsen.io/profile/
+                    bellona.gg/profile/
                     <span className="text-primary font-semibold">
                       {normalizedUsername || "..."}
                     </span>

@@ -25,12 +25,12 @@ export function EventCard({ event }: EventCardProps) {
   return (
     <Link
       href={`/games/${gameSlug}/events/${eventSlug}` as Route}
-      className="glass-panel group hover:border-primary/30 relative flex h-full min-h-80 flex-col overflow-hidden rounded-4xl border-white/5 p-6 transition-all select-none hover:bg-white/5 active:scale-[0.99]"
+      className="glass-panel group relative flex h-full min-h-80 flex-col overflow-hidden rounded-3xl p-6 transition-all select-none hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] active:scale-[0.99]"
     >
       {/* Header */}
       <div className="relative mb-4 flex shrink-0 items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <h3 className="group-hover:text-primary line-clamp-2 text-xl font-bold transition-colors">
+          <h3 className="line-clamp-2 text-xl font-bold transition-colors group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
             {eventName}
           </h3>
 
@@ -70,7 +70,7 @@ export function EventCard({ event }: EventCardProps) {
         </div>
       </div>
 
-      <div className="mb-4 border-b border-white/5" />
+      <div className="mb-4 border-b border-gold transition-colors group-hover:border-[color-mix(in_srgb,var(--gold)_45%,white)]" />
 
       <div className="relative flex flex-1 flex-col justify-center">
         {event.event?.startDate ? (
@@ -84,7 +84,7 @@ export function EventCard({ event }: EventCardProps) {
         )}
       </div>
 
-      <div className="group-hover:text-primary mt-4 flex items-center justify-end text-[10px] font-bold tracking-widest text-white/20 uppercase transition-colors">
+      <div className="mt-4 flex items-center justify-end text-[10px] font-bold tracking-widest text-white/20 uppercase transition-colors group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
         View event →
       </div>
     </Link>
@@ -93,7 +93,7 @@ export function EventCard({ event }: EventCardProps) {
 
 export function EventCardSkeleton() {
   return (
-    <div className="glass-panel flex h-full min-h-80 flex-col overflow-hidden rounded-4xl p-6">
+    <div className="glass-panel flex h-full min-h-80 flex-col overflow-hidden rounded-3xl p-6">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex flex-1 flex-col gap-2">
           <div className="h-6 w-40 animate-pulse rounded bg-white/10" />
@@ -104,7 +104,7 @@ export function EventCardSkeleton() {
           <div className="h-4 w-14 animate-pulse rounded-full bg-white/5" />
         </div>
       </div>
-      <div className="mb-4 border-b border-white/5" />
+      <div className="mb-4 border-b border-gold" />
       <div className="space-y-2">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center gap-3 py-1">

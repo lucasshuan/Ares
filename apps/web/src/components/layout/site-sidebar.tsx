@@ -145,7 +145,7 @@ function LocaleDropdown({
             setOpen(false);
           }}
           className={cn(
-            "no-lift flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-white/8",
+            "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-white/8",
             locale === l ? "bg-white/6 text-white" : "text-white/70",
           )}
         >
@@ -170,12 +170,12 @@ function LocaleDropdown({
         aria-haspopup="listbox"
         aria-label={`${tLocale("label")}: ${tLocale(locale as (typeof routing.locales)[number])}`}
         className={cn(
-          "no-lift flex items-center text-sm",
+          "flex items-center text-sm",
           "text-white/70 transition-colors hover:bg-white/7 hover:text-white",
           "disabled:cursor-wait disabled:opacity-50",
           collapsed
             ? "mx-2 w-auto justify-center rounded-lg border-transparent bg-transparent py-1.5 hover:bg-white/5"
-            : "h-12 w-full gap-3 rounded-full border border-white/8 px-5",
+            : "h-12 w-full gap-3 rounded-2xl border border-white/8 px-5",
         )}
       >
         <span
@@ -278,16 +278,16 @@ function NavItem({
         href={item.href}
         onClick={onClose}
         className={cn(
-          "no-lift relative flex items-center rounded-lg py-1.5 text-[13px] font-light tracking-wide",
+          "relative flex items-center rounded-lg py-1.5 text-[13px] tracking-wide",
           "transition-all duration-300",
           isActive
-            ? "bg-primary/10 text-primary"
-            : "text-white/50 hover:bg-white/5 hover:text-white",
+            ? "bg-primary/15 text-primary font-medium"
+            : "font-light text-white/50 hover:bg-white/5 hover:text-white",
           collapsed ? "mx-2 justify-center" : "mx-1.5 gap-3 px-2.5",
         )}
       >
         {isActive && !collapsed && (
-          <span className="bg-primary absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-r-full" />
+          <span className="bg-primary-strong absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-r-full" />
         )}
         <Icon
           className={cn(
@@ -397,10 +397,10 @@ function UserMenuDropdown({
     <div
       ref={dropdownRef}
       style={{ top: coords?.top ?? 0, left: coords?.left ?? 0 }}
-      className="animate-in fixed z-9999 w-68 origin-left overflow-hidden rounded-2xl border border-white/8 bg-[#0e0a13]/95 shadow-2xl backdrop-blur-xl"
+      className="animate-in fixed z-9999 w-68 origin-left overflow-hidden rounded-2xl border border-border bg-card-strong/95 shadow-2xl backdrop-blur-xl"
     >
       {/* ── Header ─────────────────────────────────── */}
-      <div className="relative overflow-hidden border-b border-white/6 p-4">
+      <div className="border-border relative overflow-hidden border-b p-4">
         <div className="from-primary/8 absolute inset-0 bg-linear-to-br via-transparent to-transparent" />
         <div className="relative flex items-center gap-3">
           <div className="relative shrink-0">
@@ -410,22 +410,22 @@ function UserMenuDropdown({
                 alt={user.name ?? "Avatar"}
                 width={44}
                 height={44}
-                className="size-11 rounded-full border-2 border-white/10 object-cover shadow-lg"
+                className="border-border size-11 rounded-full border-2 object-cover shadow-lg"
               />
             ) : (
-              <div className="flex size-11 items-center justify-center rounded-full border-2 border-white/10 bg-white/8 shadow-lg">
-                <User className="size-5 text-white/50" />
+              <div className="border-border bg-background/60 flex size-11 items-center justify-center rounded-full border-2 shadow-lg">
+                <User className="text-muted size-5" />
               </div>
             )}
-            <span className="absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-[#0e0a13]">
+            <span className="bg-card-strong absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full">
               <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
             </span>
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-semibold text-white">
+            <span className="text-foreground truncate text-sm font-semibold">
               {user.name ?? user.username ?? "User"}
             </span>
-            <span className="truncate text-xs text-white/35">
+            <span className="text-muted truncate text-xs">
               @{user.username}
             </span>
             <div className="mt-1 flex items-center gap-1.5">
@@ -446,9 +446,9 @@ function UserMenuDropdown({
             setOpen(false);
             onClose?.();
           }}
-          className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/6 hover:text-white"
+          className="text-muted hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] hover:text-foreground flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] transition-colors"
         >
-          <User className="size-4 shrink-0 text-white/40" />
+          <User className="text-gold/75 size-4 shrink-0" />
           <span>{tUser("viewProfile")}</span>
         </Link>
         <button
@@ -458,47 +458,47 @@ function UserMenuDropdown({
             onClose?.();
             setEditProfileOpen(true);
           }}
-          className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/70 transition-colors hover:bg-white/6 hover:text-white"
+          className="text-muted hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] hover:text-foreground flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] transition-colors"
         >
-          <Pencil className="size-4 shrink-0 text-white/40" />
+          <Pencil className="text-gold/75 size-4 shrink-0" />
           <span>{tUser("editProfile")}</span>
         </button>
       </div>
 
-      <div className="mx-3 h-px bg-white/6" />
+      <div className="bg-border mx-3 h-px" />
 
       {/* ── Settings (soon) ────────────────────────── */}
       <div className="p-1.5">
-        <div className="flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/25 select-none">
-          <Settings className="size-4 shrink-0" />
+        <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
+          <Settings className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{tUser("editAccount")}</span>
-          <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
             {t("soon")}
           </span>
         </div>
-        <div className="flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/25 select-none">
-          <Bell className="size-4 shrink-0" />
+        <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
+          <Bell className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{t("notifications")}</span>
-          <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
             {t("soon")}
           </span>
         </div>
-        <div className="flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-white/25 select-none">
-          <Palette className="size-4 shrink-0" />
+        <div className="text-muted/45 flex w-full cursor-default items-center gap-3 rounded-xl px-3 py-2 text-[13px] select-none">
+          <Palette className="text-gold/45 size-4 shrink-0" />
           <span className="flex-1">{t("appearance")}</span>
-          <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
+          <span className="border-border bg-background/40 text-muted rounded-md border px-1.5 py-0.5 text-[9px] leading-none font-semibold tracking-wider uppercase">
             {t("soon")}
           </span>
         </div>
       </div>
 
-      <div className="mx-3 h-px bg-white/6" />
+      <div className="bg-border mx-3 h-px" />
 
       {/* ── Sign out ───────────────────────────────── */}
       <div className="p-1.5">
         <button
           onClick={() => signOut()}
-          className="no-lift flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] text-red-400/70 transition-colors hover:bg-red-500/10 hover:text-red-400"
+          className="text-danger/80 hover:bg-danger/10 hover:text-danger flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] transition-colors"
         >
           <LogOut className="size-4 shrink-0" />
           <span>{tUser("logout")}</span>
@@ -517,7 +517,7 @@ function UserMenuDropdown({
           setOpen((v) => !v);
         }}
         className={cn(
-          "no-lift flex items-center rounded-lg transition-all duration-300 hover:bg-white/5",
+          "flex items-center rounded-lg transition-all duration-300 hover:bg-white/5",
           collapsed
             ? "mx-2 w-auto justify-center p-1.5"
             : "mx-1.5 w-[calc(100%-12px)] gap-3 px-2.5 py-2",
@@ -580,7 +580,7 @@ function UserMenuDropdown({
       {/* Collapsed tooltip */}
       {collapsed && (
         <div className="pointer-events-none absolute top-1/2 left-full z-50 ml-3 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/user:opacity-100">
-          <div className="rounded-lg border border-white/8 bg-[#0e0e10] px-2.5 py-1.5 text-xs whitespace-nowrap text-white shadow-2xl">
+          <div className="border-border bg-card-strong text-foreground rounded-lg border px-2.5 py-1.5 text-xs whitespace-nowrap shadow-2xl">
             {user.name ?? user.username}
           </div>
         </div>
@@ -712,7 +712,7 @@ function SidebarBody({
   return (
     <div
       className={cn(
-        "flex h-full flex-col overflow-hidden border-r border-white/6",
+        "flex h-full flex-col overflow-hidden border-r border-gold-dim",
         "bg-background backdrop-blur-xl",
         ready &&
           "transition-[width] duration-300 ease-in-out will-change-[width]",
@@ -730,37 +730,29 @@ function SidebarBody({
           href="/"
           onClick={onClose}
           className={cn(
-            "no-lift flex min-w-0 items-center gap-1 overflow-hidden transition-all duration-300",
+            "flex min-w-0 items-center gap-1.5 overflow-hidden transition-all duration-300",
             effective ? "w-0 opacity-0" : "w-auto opacity-100",
           )}
         >
-          <div
-            className="bg-primary shrink-0"
-            style={{
-              width: 14,
-              height: 14,
-              maskImage: "url(/icon.svg)",
-              WebkitMaskImage: "url(/icon.svg)",
-              maskSize: "contain",
-              WebkitMaskSize: "contain",
-              maskRepeat: "no-repeat",
-              WebkitMaskRepeat: "no-repeat",
-              maskPosition: "center",
-              WebkitMaskPosition: "center",
-            }}
-            role="img"
-            aria-label="Ares"
+          <Image
+            src="/logo.png"
+            alt="Bellona"
+            width={26}
+            height={26}
+            className="h-6.5 w-6.5 shrink-0 object-contain"
           />
-          <span className="text-primary w-8 text-base font-bold -tracking-widest whitespace-nowrap">
-            Ares
-          </span>
+          <div className="flex min-w-0 items-center leading-none">
+            <span className="text-secondary font-display text-[11px] font-semibold tracking-[0.22em] whitespace-nowrap uppercase">
+              Bellona
+            </span>
+          </div>
         </Link>
 
         {isMobile ? (
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="no-lift flex size-8 shrink-0 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/6 hover:text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/6 hover:text-white"
           >
             <X className="size-4" />
           </button>
@@ -769,7 +761,7 @@ function SidebarBody({
             onClick={onToggle}
             aria-label={effective ? t("expand") : t("collapse")}
             title={effective ? t("expand") : t("collapse")}
-            className="no-lift flex size-8 shrink-0 items-center justify-center rounded-lg text-white/35 transition-colors hover:bg-white/6 hover:text-white"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-white/35 transition-colors hover:bg-white/6 hover:text-white"
           >
             {effective ? <Menu className="size-4" /> : <X className="size-4" />}
           </button>
@@ -834,7 +826,7 @@ function SidebarBody({
                 <button
                   type="button"
                   onClick={() => toggleSection(section.titleKey)}
-                  className="no-lift flex w-full items-center gap-1 px-4 pt-1 pb-1.5"
+                  className="flex w-full items-center gap-1 px-4 pt-1 pb-1.5"
                 >
                   <span className="flex-1 text-left text-[10px] font-normal tracking-[0.18em] text-white/25 uppercase">
                     {t(section.titleKey as Parameters<typeof t>[0])}
@@ -889,11 +881,11 @@ function SidebarBody({
                 onClick={() => setAuthModalOpen(true)}
                 title={tUser("login")}
                 className={cn(
-                  "no-lift flex items-center justify-center text-sm font-medium",
+                  "flex items-center justify-center text-sm font-medium",
                   "bg-primary/90 hover:bg-primary text-white transition-colors",
                   effective
                     ? "mx-2 w-auto rounded-lg py-1.5"
-                    : "h-12 w-full gap-3 rounded-full px-5",
+                    : "h-12 w-full gap-3 rounded-2xl px-5",
                 )}
               >
                 <LogIn className="size-4 shrink-0" />
@@ -981,33 +973,25 @@ export function SiteSidebar() {
   return (
     <>
       {/* ── Mobile top bar ──────────────────────────────────────────────── */}
-      <div className="fixed top-0 right-0 left-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-white/6 bg-[#0b0b0e]/90 px-4 backdrop-blur-xl lg:hidden">
+      <div className="fixed top-0 right-0 left-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-gold-dim bg-[#0b0b0e]/90 px-4 backdrop-blur-xl lg:hidden">
         <button
           onClick={() => setMobileOpen(true)}
           aria-label={t("openMenu")}
-          className="no-lift flex size-8 items-center justify-center rounded-lg text-white/55 transition-colors hover:bg-white/8 hover:text-white"
+          className="flex size-8 items-center justify-center rounded-lg text-white/55 transition-colors hover:bg-white/8 hover:text-white"
         >
           <Menu className="size-5" />
         </button>
 
-        <Link href="/" className="flex items-center gap-2">
-          <div
-            className="bg-primary shrink-0"
-            style={{
-              width: 16,
-              height: 16,
-              maskImage: "url(/icon.svg)",
-              WebkitMaskImage: "url(/icon.svg)",
-              maskSize: "contain",
-              WebkitMaskSize: "contain",
-              maskRepeat: "no-repeat",
-              WebkitMaskRepeat: "no-repeat",
-              maskPosition: "center",
-              WebkitMaskPosition: "center",
-            }}
+        <Link href="/" className="flex items-center gap-1.5">
+          <Image
+            src="/logo.png"
+            alt="Bellona"
+            width={18}
+            height={18}
+            className="h-4.5 w-4.5 shrink-0 object-contain"
           />
-          <span className="text-primary text-sm font-bold -tracking-widest">
-            Ares
+          <span className="text-secondary font-display text-[11px] font-semibold tracking-[0.22em] uppercase">
+            Bellona
           </span>
         </Link>
       </div>

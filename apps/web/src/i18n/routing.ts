@@ -1,7 +1,7 @@
 import { defineRouting } from "next-intl/routing";
 import { createNavigation } from "next-intl/navigation";
 
-export const LOCALE_COOKIE_NAME = "ARES_LOCALE";
+export const LOCALE_COOKIE_NAME = "BELLONA_LOCALE";
 
 export const routing = defineRouting({
   locales: ["en", "pt"],

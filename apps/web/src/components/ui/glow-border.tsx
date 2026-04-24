@@ -4,18 +4,21 @@ interface GlowBorderProps {
   children: React.ReactNode;
   className?: string;
   innerClassName?: string;
+  borderClassName?: string;
 }
 
 export function GlowBorder({
   children,
   className,
   innerClassName,
+  borderClassName,
 }: GlowBorderProps) {
   return (
     <div
       className={cn(
         "bg-border p-px shadow-[0_18px_80px_rgb(0_0_0/0.35)]",
         className,
+        borderClassName,
       )}
     >
       <div

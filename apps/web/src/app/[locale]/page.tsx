@@ -5,6 +5,7 @@ import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 
 import { SignInButton } from "@/components/triggers/auth/sign-in-button";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { cn } from "@/lib/utils";
 import {
   GameShowcase,
@@ -25,6 +26,30 @@ export default async function HomePage() {
 
   return (
     <main className="relative overflow-hidden">
+      <div className="grid-surface" aria-hidden="true" />
+
+      {/* ── Locale switcher ── */}
+      <div className="absolute top-5 right-5 z-30 sm:top-6 sm:right-8">
+        <LocaleSwitcher />
+      </div>
+
+      {/* ── Hero background — Bellona ── */}
+      <div
+        className="pointer-events-none absolute top-0 hidden h-svh sm:-left-120 sm:block sm:-top-12 md:-left-50 lg:-left-30 lg:top-0"
+        aria-hidden="true"
+      >
+          <div className="relative h-full overflow-hidden mask-[linear-gradient(to_left,transparent_0%,transparent_20%,black_50%,black_100%),linear-gradient(to_top,transparent_0%,black_33%,black_100%)] mask-intersect">
+          <Image
+            src="/hero-bg.png"
+            alt=""
+            width={1718}
+            height={916}
+            className="h-full w-auto max-w-none brightness-70"
+            priority
+          />
+        </div>
+      </div>
+
       <div className="mx-auto flex w-full max-w-7xl flex-col px-6 sm:px-10 lg:px-12">
         {/* ── Hero ── */}
         <section className="relative flex min-h-[calc(100svh)] flex-col items-center justify-center pb-24 text-center">
@@ -34,124 +59,111 @@ export default async function HomePage() {
             aria-hidden="true"
           >
             <div className="animate-hero-glow bg-primary/8 absolute -top-24 left-1/2 h-120 w-170 -translate-x-1/2 rounded-full blur-[140px]" />
-            <div className="animate-hero-glow bg-primary-strong/10 absolute -bottom-32 -left-10 h-80 w-120 rounded-full blur-[120px] [animation-delay:-3s]" />
+            <div className="animate-hero-glow bg-primary-strong/10 absolute -bottom-32 -right-10 h-80 w-120 rounded-full blur-[120px] [animation-delay:-3s]" />
           </div>
 
-          <div className="relative flex flex-col items-center gap-6">
-            {user ? (
-              <>
-                {/* Title */}
-                <h1 className="animate-hero-fade-up flex flex-wrap items-baseline justify-center gap-x-5 text-5xl tracking-tight sm:text-6xl lg:text-7xl">
-                  <span className="text-primary font-bold drop-shadow-[0_0_40px_rgba(192,11,59,0.3)]">
-                    Ares
-                    <span className="text-primary/25 font-extralight">:</span>
-                  </span>
-                  <span className="text-foreground/80 font-extralight">
-                    {t("heroTagline")}
-                  </span>
+          <div className="relative flex flex-col items-center gap-6 md:max-w-[52%] md:self-end">
+            {/* ── Imperial wordmark ── */}
+            <div className="animate-hero-fade-up flex flex-col items-center">
+              {/* Top ornament */}
+              <div
+                className="flex items-center gap-3 pb-2 opacity-80"
+                aria-hidden="true"
+              >
+                <span className="via-primary/60 h-px w-10 bg-linear-to-r from-transparent to-transparent sm:w-16" />
+                <span className="text-primary/70 text-xs">✦</span>
+                <span className="via-primary/60 h-px w-10 bg-linear-to-r from-transparent to-transparent sm:w-16" />
+              </div>
+
+              {/* Wordmark */}
+              <div className="relative">
+                <span
+                  aria-hidden="true"
+                  className="font-display pointer-events-none absolute inset-0 top-0.5 left-0.5 text-6xl font-normal tracking-[0.06em] text-black uppercase filter-[blur(0.5px)] select-none sm:text-7xl sm:tracking-[0.08em] lg:text-8xl"
+                >
+                  Bellona
+                </span>
+                <h1 className="font-display relative bg-[linear-gradient(180deg,#ffffff_0%,#bebebe_100%)] bg-clip-text text-6xl font-normal tracking-[0.06em] text-transparent uppercase sm:text-7xl sm:tracking-[0.08em] lg:text-8xl">
+                  Bellona
                 </h1>
+              </div>
 
-                {/* Decorative divider */}
-                <div className="animate-hero-line via-primary/50 h-px w-20 bg-linear-to-r from-transparent to-transparent sm:w-32" />
+              {/* Divider */}
+              <div className="animate-hero-line via-primary/60 mt-3 h-px w-24 bg-linear-to-r from-transparent to-transparent sm:w-40" />
 
-                {/* Subtitle */}
-                <p className="animate-hero-fade-up text-muted max-w-xl text-base leading-relaxed [animation-delay:150ms] sm:text-lg">
-                  {t("heroSubtitle")}
+              {/* Sub-label */}
+              <div className="relative mt-3">
+                <span className="pointer-events-none absolute top-[0.4px] left-[0.4px] z-10 font-sans text-[11px] font-semibold tracking-[0.48em] text-black uppercase filter-[blur(0.5px)] select-none sm:text-sm sm:tracking-[0.55em]">
+                  {t("heroTagline")}
+                </span>
+                <p className="relative z-20 animate-[tagline-shimmer_4s_ease-in-out_infinite] bg-[linear-gradient(90deg,var(--primary),color-mix(in_srgb,var(--primary)_50%,var(--secondary)),var(--primary))] bg-size-[200%_auto] bg-clip-text font-sans text-[11px] font-semibold tracking-[0.48em] text-transparent uppercase antialiased md:text-sm md:tracking-[0.55em]">
+                  {t("heroTagline")}
                 </p>
+              </div>
+            </div>
 
-                {/* CTAs */}
-                <div className="animate-hero-fade-up flex gap-3 pt-2 [animation-delay:300ms] sm:gap-4">
-                  <Link
-                    href="/games"
-                    className={cn(
-                      buttonVariants({ intent: "secondary", size: "lg" }),
-                      "px-8 text-sm sm:text-base",
-                    )}
-                  >
-                    <Compass className="mr-2 size-5" />
-                    {t("explore")}
-                  </Link>
-                  <Link
-                    href="/start"
-                    className={cn(
-                      buttonVariants({ intent: "primary", size: "lg" }),
-                      "px-8 text-sm sm:text-base",
-                    )}
-                  >
-                    <Home className="mr-2 size-5" />
-                    {t("start")}
-                  </Link>
-                </div>
+            {/* CTAs */}
+            <div className="animate-hero-fade-up flex gap-3 pt-2 [animation-delay:300ms] sm:gap-4">
+              <Link
+                href="/games"
+                className={cn(
+                  buttonVariants({ intent: "gold", size: "lg" }),
+                  "px-8 text-sm sm:text-base",
+                )}
+              >
+                <Compass className="mr-2 size-5" />
+                {t("explore")}
+              </Link>
+              {user ? (
+                <Link
+                  href="/start"
+                  className={cn(
+                    buttonVariants({ intent: "primary", size: "lg" }),
+                    "px-8 text-sm sm:text-base",
+                  )}
+                >
+                  <Home className="mr-2 size-5" />
+                  {t("start")}
+                </Link>
+              ) : (
+                <SignInButton
+                  size="lg"
+                  intent="primary"
+                  label={t("join")}
+                  className="text-sm sm:text-base"
+                />
+              )}
+            </div>
 
-                {/* Avatar + Welcome card */}
-                <div className="animate-hero-fade-up mt-16 [animation-delay:150ms]">
-                  <div className="glow-border-card animate-hero-float rounded-4xl px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="relative shrink-0">
-                        <div className="bg-primary/15 absolute -inset-2 rounded-full blur-lg" />
-                        <div className="relative overflow-hidden rounded-full border-2 border-white/10 shadow-lg shadow-black/30">
-                          {user.image ? (
-                            <Image
-                              src={user.image}
-                              alt={user.name ?? "Avatar"}
-                              width={40}
-                              height={40}
-                              className="size-10 object-cover"
-                            />
-                          ) : (
-                            <div className="flex size-10 items-center justify-center bg-white/5 text-base font-bold text-white/40">
-                              {(user.name ?? user.username)?.[0]?.toUpperCase()}
-                            </div>
-                          )}
-                        </div>
+            {/* Avatar + Welcome card (logged-in only) */}
+            {user && (
+              <div className="animate-hero-fade-up mt-16 [animation-delay:450ms]">
+                <div className="glow-border-card animate-hero-float rounded-4xl px-5 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative shrink-0">
+                      <div className="bg-primary/15 absolute -inset-2 rounded-full blur-lg" />
+                      <div className="relative overflow-hidden rounded-full border-2 border-white/10 shadow-lg shadow-black/30">
+                        {user.image ? (
+                          <Image
+                            src={user.image}
+                            alt={user.name ?? "Avatar"}
+                            width={40}
+                            height={40}
+                            className="size-10 object-cover"
+                          />
+                        ) : (
+                          <div className="flex size-10 items-center justify-center bg-white/5 text-base font-bold text-white/40">
+                            {(user.name ?? user.username)?.[0]?.toUpperCase()}
+                          </div>
+                        )}
                       </div>
-                      <p className="text-muted text-base sm:text-lg">
-                        {t("welcomeBack", { name: user.name ?? user.username })}
-                      </p>
                     </div>
+                    <p className="text-muted text-base sm:text-lg">
+                      {t("welcomeBack", { name: user.name ?? user.username })}
+                    </p>
                   </div>
                 </div>
-              </>
-            ) : (
-              <>
-                {/* Title */}
-                <h1 className="animate-hero-fade-up flex flex-wrap items-baseline justify-center gap-x-5 text-5xl tracking-tight sm:text-6xl lg:text-7xl">
-                  <span className="text-primary font-bold drop-shadow-[0_0_40px_rgba(192,11,59,0.3)]">
-                    Ares
-                    <span className="text-primary/25 font-extralight">:</span>
-                  </span>
-                  <span className="text-foreground/80 font-extralight">
-                    {t("heroTagline")}
-                  </span>
-                </h1>
-
-                {/* Decorative divider */}
-                <div className="animate-hero-line via-primary/50 h-px w-20 bg-linear-to-r from-transparent to-transparent sm:w-32" />
-
-                {/* Subtitle */}
-                <p className="animate-hero-fade-up text-muted max-w-xl text-base leading-relaxed [animation-delay:150ms] sm:text-lg">
-                  {t("heroSubtitle")}
-                </p>
-
-                {/* CTAs */}
-                <div className="animate-hero-fade-up flex gap-3 pt-2 [animation-delay:300ms] sm:gap-4">
-                  <Link
-                    href="/games"
-                    className={cn(
-                      buttonVariants({ intent: "secondary", size: "lg" }),
-                      "px-8 text-sm sm:text-base",
-                    )}
-                  >
-                    <Compass className="mr-2 size-5" />
-                    {t("explore")}
-                  </Link>
-                  <SignInButton
-                    size="lg"
-                    label={t("join")}
-                    className="text-sm sm:text-base"
-                  />
-                </div>
-              </>
+              </div>
             )}
           </div>
         </section>
@@ -285,7 +297,7 @@ export default async function HomePage() {
           </div>
 
           {/* Styled box */}
-          <div className="communities-box relative z-20 rounded-t-[2.5rem] border border-b-0 border-white/6 bg-linear-to-b from-[rgb(18_12_22/0.95)] to-[rgb(11_8_15/0.98)] px-6 pt-10 pb-2 shadow-[0_-20px_80px_rgb(192_11_59/0.06),inset_0_1px_0_rgb(255_255_255/0.05)] sm:px-10 sm:pt-14 lg:px-12 lg:pt-16">
+          <div className="communities-box border-gold-dim relative z-20 rounded-t-[2.5rem] border border-b-0 bg-linear-to-b from-[rgb(18_12_22/0.95)] to-[rgb(11_8_15/0.98)] px-6 pt-10 pb-2 shadow-[0_-20px_80px_rgb(192_11_59/0.06),inset_0_1px_0_rgb(255_255_255/0.05)] sm:px-10 sm:pt-14 lg:px-12 lg:pt-16">
             {/* Top edge glow line */}
             <div className="via-primary/30 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
 

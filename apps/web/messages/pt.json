@@ -64,13 +64,13 @@
     "pt": "Português"
   },
   "HomePage": {
-    "heroTagline": "Plataforma de torneios",
-    "heroSubtitle": "Gerenciamento de ligas e torneios para E-sports e jogos competitivos.",
+    "heroTagline": "Ligas e torneios. Gratuito e open-source.",
+    "heroSubtitle": "",
     "explore": "Explorar",
     "join": "Entrar",
     "welcomeBack": "Bem-vindo de volta, {name}",
     "welcomeSubtitle": "Pronto para competir?",
-    "start": "Início",
+    "start": "Dashboard",
     "games": {
       "title": "Comunidades",
       "description": "Faça parte da comunidade, acompanhe as ligas e deixe sua marca.",
@@ -136,7 +136,7 @@
   "GamePage": {
     "metaTitleNotFound": "Jogo não encontrado",
     "metaTitleDbUnavailable": "Banco de dados indisponível",
-    "metaDescriptionFallback": "Ligas para {gameName} no Ares.",
+    "metaDescriptionFallback": "Ligas para {gameName} na Bellona.",
     "backToGames": "Todos os jogos",
     "dbUnavailable": "Banco de dados indisponível no desenvolvimento local.",
     "dbUnavailableDescription": "Inicie sua instância do Postgres ou atualize `.env` com uma string de conexão alcançável para ver a página deste jogo.",
@@ -184,7 +184,7 @@
     "noDescription": "Sem descrição."
   },
   "SiteFooter": {
-    "copyright": "Ares © 2026"
+    "copyright": "Bellona © 2026"
   },
   "Admin": {
     "panel": "Gerenciar"
@@ -204,7 +204,7 @@
       "signingIn": "Entrando...",
       "continueWith": "Continuar com",
       "continueWithDiscord": "Continuar com Discord",
-      "termsNotice": "Ao entrar, você concorda com os nossos termos de uso e política de privacidade da plataforma Ares.",
+      "termsNotice": "Ao entrar, você concorda com os nossos termos de uso e política de privacidade da plataforma Bellona.",
       "title1": "Junte-se à",
       "title2": "guerra"
     },
@@ -526,7 +526,7 @@
         "selectedDesc": "A nacionalidade e o histórico serão sincronizados com este perfil.",
         "remove": "Remover"
       },
-      "info": "Se você pesquisar e vincular um usuário do Ares, utilizaremos a nacionalidade (bandeira) definida no perfil global dele.",
+      "info": "Se você pesquisar e vincular um usuário da Bellona, utilizaremos a nacionalidade (bandeira) definida no perfil global dele.",
       "submit": "Confirmar Jogador",
       "submitting": "Adicionando...",
       "cancel": "Cancelar",
@@ -594,7 +594,7 @@
   },
   "Onboarding": {
     "welcome": {
-      "title": "Bem-vindo ao Ares",
+      "title": "Bem-vindo à Bellona",
       "subtitle": "Sua jornada competitiva começa aqui. Vamos montar seu perfil de guerreiro em poucos passos.",
       "feature1": "Entre em jogos",
       "feature2": "Compita em ligas",
@@ -635,7 +635,7 @@
       "next": "Continuar",
       "back": "Voltar",
       "finish": "Concluir",
-      "explore": "Explorar Ares"
+      "explore": "Explorar Bellona"
     }
   },
   "NotFound": {

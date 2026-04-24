@@ -1,4 +1,4 @@
-# Ares — Contexto Geral do Projeto
+# Bellona — Contexto Geral do Projeto
 
 > Última atualização: Abril 2026  
 > Referência rápida para IA e memória de desenvolvimento
@@ -229,7 +229,7 @@ A sessão no web é revalidada a cada **5 minutos** via `/auth/me`.
 - Autenticação ponta a ponta (Discord OAuth → JWT → NextAuth → Apollo)
 - RBAC com guards no backend (GqlAuthGuard, PermissionsGuard)
 - GraphQL codegen no frontend (tipos gerados automaticamente)
-- Enums e permissões centralizados em `@ares/core`
+- Enums e permissões centralizados em `@bellona/core`
 - Migrations versionadas com Prisma
 - Logger estruturado (pino na API, custom no web)
 - Bootstrap hardened (ValidationPipe, CORS estrito, introspection/playground só em dev)

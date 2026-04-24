@@ -24,7 +24,7 @@ export function ActionButton({
       className={cn(
         buttonVariants({ intent, size }),
         "w-full cursor-pointer rounded-2xl py-6 font-medium shadow-sm transition-all duration-300",
-        "hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/10 hover:shadow-lg hover:shadow-black/20",
+        "hover:border-white/30 hover:bg-white/10 hover:shadow-lg hover:shadow-black/20",
         className,
       )}
       {...props}

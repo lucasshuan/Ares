@@ -106,7 +106,7 @@ export function DataTable<T>({
         "glass-panel group flex flex-col overflow-hidden transition-all duration-300",
         isFullScreen
           ? "fixed inset-0 z-99999 h-screen w-screen rounded-none bg-[#0b080f]!"
-          : "relative rounded-4xl",
+          : "relative rounded-3xl",
       )}
     >
       {/* Search & Actions Header */}

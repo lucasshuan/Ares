@@ -38,7 +38,7 @@ function ParticleCanvas() {
     };
 
     const particles: Particle[] = [];
-    const COLORS = ["#c00b3b", "#8f0c1b", "#e7d7f3", "#f7f0f3", "#ff4466"];
+    const COLORS = ["var(--primary)", "var(--primary-strong)", "#e7d7f3", "#f7f0f3", "#ff4466"];
 
     const spawnParticle = (): Particle => ({
       x: Math.random() * canvas.width,
@@ -134,14 +134,14 @@ function GlitchText() {
         className={cn(
           "block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter",
           "bg-clip-text text-transparent",
-          "bg-linear-to-b from-white via-[#f7f0f3] to-[#c00b3b]",
+          "bg-linear-to-b from-white via-[#f7f0f3] to-[var(--primary)]",
           glitching && "animate-[glitch-shake_0.4s_steps(4,end)]",
         )}
         style={{
           textShadow: glitching
-            ? "4px 0 0 #c00b3b, -4px 0 0 #e7d7f3"
-            : "0 0 60px rgba(192,11,59,0.35)",
-          WebkitTextStroke: glitching ? "1px rgba(192,11,59,0.6)" : undefined,
+            ? "4px 0 0 var(--primary), -4px 0 0 #e7d7f3"
+            : "0 0 60px color-mix(in srgb, var(--primary) 35%, transparent)",
+          WebkitTextStroke: glitching ? "1px color-mix(in srgb, var(--primary) 60%, transparent)" : undefined,
         }}
         aria-label="404"
       >
@@ -152,7 +152,7 @@ function GlitchText() {
         <>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter text-[#c00b3b]/60"
+            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-black tracking-tighter text-primary/60"
             style={{
               transform: "translate(6px, 2px)",
               clipPath: "inset(30% 0 40% 0)",
@@ -209,7 +209,7 @@ export function NotFoundPage() {
             {t("description")}{" "}
             <Link
               href="/"
-              className="text-[#c00b3b] transition-colors hover:text-[#c00b3b]/80 hover:underline"
+              className="text-primary transition-colors hover:text-primary/80 hover:underline"
             >
               {t("descriptionHighlight")}
             </Link>
@@ -217,7 +217,7 @@ export function NotFoundPage() {
         </div>
 
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 font-mono text-xs text-white/50 backdrop-blur-sm">
-          <span className="size-1.5 animate-pulse rounded-full bg-[#c00b3b]" />
+          <span className="size-1.5 animate-pulse rounded-full bg-primary" />
           {t("errorInfo")}
         </div>
 
@@ -226,17 +226,17 @@ export function NotFoundPage() {
             href="/"
             className={cn(
               buttonVariants({ intent: "primary", size: "lg" }),
-              "group gap-2",
+              "gap-2",
             )}
           >
-            <Home className="size-4 transition-transform group-hover:-translate-y-0.5" />
+            <Home className="size-4" />
             {t("backHome")}
           </Link>
           <button
             type="button"
             onClick={() => window.history.back()}
             className={cn(
-              buttonVariants({ intent: "secondary", size: "lg" }),
+              buttonVariants({ intent: "gold", size: "lg" }),
               "group gap-2",
             )}
           >
@@ -251,7 +251,7 @@ export function NotFoundPage() {
         className="absolute bottom-0 left-1/2 h-px w-64 -translate-x-1/2"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(192,11,59,0.6), transparent)",
+            "linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 60%, transparent), transparent)",
         }}
       />
     </main>

@@ -1,5 +1,5 @@
 {
-  "name": "@ares/api",
+  "name": "@bellona/api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -12,7 +12,7 @@
     "dev": "nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "pnpm --filter @ares/db migrate:deploy && node dist/main",
+    "start:prod": "pnpm --filter @bellona/db migrate:deploy && node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --cache --cache-location .eslintcache",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --cache --cache-location .eslintcache",
     "test": "jest",
@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@apollo/server": "^5.5.0",
-    "@ares/core": "workspace:^",
-    "@ares/db": "workspace:^",
+    "@bellona/core": "workspace:^",
+    "@bellona/db": "workspace:^",
     "@as-integrations/express5": "^1.1.2",
     "@aws-sdk/client-s3": "^3.1032.0",
     "@aws-sdk/s3-request-presigner": "^3.1032.0",

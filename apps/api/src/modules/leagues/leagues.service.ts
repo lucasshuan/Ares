@@ -7,7 +7,7 @@ import {
   UpdateLeagueEventInput,
   UpdateLeagueConfigInput,
 } from './dto/leagues.input';
-import { Prisma } from '@ares/db';
+import { Prisma } from '@bellona/db';
 
 @Injectable()
 export class LeaguesService {

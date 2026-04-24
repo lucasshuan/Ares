@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../../database/database.provider';
 import { CreateGameInput, UpdateGameInput } from './dto/games.input';
 import { PaginationInput } from '../../common/pagination/pagination.input';
-import { Prisma } from '@ares/db';
+import { Prisma } from '@bellona/db';
 import { StorageService } from '../storage/storage.service';
 
 @Injectable()

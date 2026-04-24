@@ -5,11 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-full border text-sm font-medium transition cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-2xl [corner-shape:squircle] border text-sm font-medium transition cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       intent: {
-        primary: "border-primary/70 bg-primary text-white hover:bg-primary/90",
+        primary:
+          "bg-[color-mix(in_srgb,var(--primary)_80%,black)] [border-color:color-mix(in_srgb,var(--primary)_80%,black)] text-white hover:bg-primary hover:[border-color:var(--primary)]",
         secondary:
           "border-white/10 bg-white/5 text-foreground hover:border-primary/40 hover:bg-white/8",
         ghost:
@@ -18,6 +19,8 @@ export const buttonVariants = cva(
           "border-danger/50 bg-danger/10 text-danger hover:border-danger hover:bg-danger/20",
         outline:
           "border-white/20 bg-transparent text-white hover:border-white/40 hover:bg-white/5",
+        gold:
+          "[border-color:var(--gold)] bg-transparent text-[color-mix(in_srgb,var(--gold)_75%,black)] hover:[border-color:var(--gold)] hover:text-gold",
       },
       size: {
         sm: "h-10 px-4",

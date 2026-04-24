@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
-import { MATCH_FORMATS } from "@ares/core";
+import { MATCH_FORMATS } from "@bellona/core";
 
 type TFunction = (
   key: string,

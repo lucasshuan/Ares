@@ -76,7 +76,7 @@ export function Modal({
     >
       <div
         className={cn(
-          "glass-panel animate-modal-content flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-4xl bg-[#0a080f] will-change-[transform,opacity]",
+          "glass-panel animate-modal-content flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-3xl bg-[#0a080f] will-change-[transform,opacity]",
           className,
         )}
       >
@@ -93,7 +93,7 @@ export function Modal({
             </div>
             <button
               onClick={onClose}
-              className="cursor-pointer rounded-full p-2 text-white/70 transition-colors hover:bg-white/10"
+              className="cursor-pointer rounded-xl p-2 text-white/70 transition-colors hover:bg-white/10"
             >
               <X className="size-5" />
             </button>
@@ -101,7 +101,7 @@ export function Modal({
         ) : (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 cursor-pointer rounded-full p-2 text-white/30 transition-colors hover:bg-white/10 hover:text-white"
+            className="absolute top-4 right-4 z-10 cursor-pointer rounded-xl p-2 text-white/30 transition-colors hover:bg-white/10 hover:text-white"
           >
             <X className="size-5" />
           </button>

@@ -1,4 +1,4 @@
-# Ares — Roadmap de Produto
+# Bellona — Roadmap de Produto
 
 > Última atualização: Abril 2026  
 > Visão de funcionalidades planejadas. Para estado técnico atual, ver `CONTEXT.md`.
@@ -144,3 +144,4 @@ Itens planejados ou em progresso, sem data definida:
 - **Padronização i18n**: múltiplos `useTranslations` por arquivo; estrutura dos json pode ser reorganizada
 - **Posição no ranking**: lógica de `position` não consolidada
 - **CI de validação**: sem pipeline automatizado antes do deploy
+- **Tags em jogos**: jogos podem ter tags (ex: "FPS", "MOBA") para facilitar busca

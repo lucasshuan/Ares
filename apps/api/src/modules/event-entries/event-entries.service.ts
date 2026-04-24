@@ -7,7 +7,7 @@ import {
   ClaimEntryInput,
   ReviewClaimInput,
 } from './dto/event-entries.input';
-import { Prisma } from '@ares/db';
+import { Prisma } from '@bellona/db';
 
 @Injectable()
 export class EventEntriesService {
