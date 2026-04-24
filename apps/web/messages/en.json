@@ -191,6 +191,7 @@
   "Auth": {
     "Errors": {
       "title": "Login failed",
+      "cancelled": "Discord sign-in was cancelled.",
       "callback": "We couldn't finish the Discord sign-in flow. Please try again.",
       "generic": "We couldn't sign you in right now. Please try again.",
       "dismiss": "Dismiss login error"
@@ -202,7 +203,7 @@
       "close": "Close",
       "signingIn": "Signing in...",
       "continueWith": "Continue with",
-      "continueWithDiscord": "Continue with Discord",
+      "continueWithDiscord": "Discord",
       "termsNotice": "By signing in, you agree to our terms of use and privacy policy.",
       "title1": "Join the",
       "title2": "fight"

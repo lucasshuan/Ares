@@ -8,6 +8,7 @@ import { AuthResolver } from './auth.resolver';
 import { DiscordStrategy } from './discord.strategy';
 import { JwtStrategy } from './jwt.strategy';
 
+import { DiscordCallbackGuard } from './guards/discord-callback.guard';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { StorageModule } from '../storage/storage.module';
 
@@ -26,6 +27,7 @@ import { StorageModule } from '../storage/storage.module';
   providers: [
     AuthService,
     AuthResolver,
+    DiscordCallbackGuard,
     DiscordStrategy,
     JwtStrategy,
     PermissionsGuard,

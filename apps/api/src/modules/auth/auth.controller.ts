@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 
 import { AuthService } from './auth.service';
+import { DiscordCallbackGuard } from './guards/discord-callback.guard';
 import { User } from '@bellona/db';
 
 @Controller('auth')
@@ -27,7 +28,7 @@ export class AuthController {
   async discordAuth() {}
 
   @Get('discord/callback')
-  @UseGuards(AuthGuard('discord'))
+  @UseGuards(DiscordCallbackGuard)
   async discordAuthCallback(@Req() req: { user: User }, @Res() res: Response) {
     const frontendUrl = this.configService.getOrThrow<string>('CORS_ORIGIN');
     const { accessToken } = await this.authService.login(req.user);

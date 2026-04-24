@@ -16,6 +16,9 @@ export function LoginErrorHandler() {
 
     let message = "";
     switch (error) {
+      case "Cancelled":
+        message = t("cancelled");
+        break;
       case "Callback":
         message = t("callback");
         break;

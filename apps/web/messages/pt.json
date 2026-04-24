@@ -191,6 +191,7 @@
   "Auth": {
     "Errors": {
       "title": "Falha no login",
+      "cancelled": "O login com Discord foi cancelado.",
       "callback": "Não foi possível concluir o login com Discord. Tente novamente.",
       "generic": "Não foi possível fazer login agora. Tente novamente.",
       "dismiss": "Dispensar erro de login"
@@ -202,7 +203,7 @@
       "close": "Fechar",
       "signingIn": "Entrando...",
       "continueWith": "Continuar com",
-      "continueWithDiscord": "Continuar com Discord",
+      "continueWithDiscord": "Discord",
       "termsNotice": "Ao entrar, você concorda com os nossos termos de uso e política de privacidade da plataforma Bellona.",
       "title1": "Junte-se à",
       "title2": "guerra"
