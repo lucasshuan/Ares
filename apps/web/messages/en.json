@@ -275,7 +275,8 @@
       },
       "slug": {
         "label": "Identifier",
-        "placeholder": "game-identifier"
+        "placeholder": "game-identifier",
+        "tooltip": "Defines the unique URL segment for this game (e.g., /games/counter-strike). Auto-generated from the name, but can be customized."
       },
       "descriptionField": {
         "label": "Description",
@@ -329,7 +330,8 @@
       },
       "slug": {
         "label": "Identifier",
-        "placeholder": "game-identifier"
+        "placeholder": "game-identifier",
+        "tooltip": "Defines the unique URL segment for this game (e.g., /games/counter-strike). Auto-generated from the name, but can be customized."
       },
       "descriptionField": {
         "label": "Description",

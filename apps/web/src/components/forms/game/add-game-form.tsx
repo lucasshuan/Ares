@@ -10,6 +10,7 @@ import { createGame } from "@/actions/game";
 import { cn } from "@/lib/utils";
 import { resolveImageValue } from "@/lib/upload";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
+import { LabelTooltip } from "@/components/ui/label-tooltip";
 
 interface AddGameFormProps {
   onSuccess: (slug: string) => void;
@@ -81,7 +82,7 @@ export function AddGameForm({
 
       if (result.success) {
         toast.success(t("success"));
-        onSuccess(result.data.game?.slug ?? "");
+        onSuccess(result.data?.game?.slug ?? "");
       } else {
         toast.error(result.error || t("error"));
       }
@@ -95,15 +96,16 @@ export function AddGameForm({
       className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2"
     >
       <div className="flex flex-col gap-2">
-        <label
+        <LabelTooltip
           htmlFor="name"
-          className="text-secondary/80 ml-1 text-sm font-medium"
-        >
-          {t("name.label")}
-        </label>
+          label={t("name.label")}
+          required
+          className="ml-1"
+        />
         <input
           id="name"
           type="text"
+          required
           {...register("name")}
           onChange={(e) => {
             const value = e.target.value;
@@ -129,15 +131,17 @@ export function AddGameForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label
+        <LabelTooltip
           htmlFor="slug"
-          className="text-secondary/80 ml-1 text-sm font-medium"
-        >
-          {t("slug.label")}
-        </label>
+          label={t("slug.label")}
+          tooltip={t("slug.tooltip")}
+          required
+          className="ml-1"
+        />
         <input
           id="slug"
           type="text"
+          required
           {...register("slug")}
           onChange={(e) => {
             const sanitized = e.target.value

@@ -11,6 +11,7 @@ import { type Game } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils";
 import { resolveImageValue } from "@/lib/upload";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
+import { LabelTooltip } from "@/components/ui/label-tooltip";
 
 interface EditGameFormProps {
   game: Game;
@@ -87,7 +88,7 @@ export function EditGameForm({
 
       if (result.success) {
         toast.success(t("success"));
-        onSuccess(result.data.slug);
+        onSuccess(result.data?.slug ?? "");
       } else {
         toast.error(result.error || t("error"));
       }
@@ -101,15 +102,16 @@ export function EditGameForm({
       className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2"
     >
       <div className="flex flex-col gap-2">
-        <label
+        <LabelTooltip
           htmlFor="name"
-          className="ml-1 text-sm font-medium text-secondary/80"
-        >
-          {t("name.label")}
-        </label>
+          label={t("name.label")}
+          required
+          className="ml-1"
+        />
         <input
           id="name"
           type="text"
+          required
           {...register("name")}
           placeholder={t("name.placeholder")}
           className={cn(
@@ -123,15 +125,17 @@ export function EditGameForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label
+        <LabelTooltip
           htmlFor="slug"
-          className="ml-1 text-sm font-medium text-secondary/80"
-        >
-          {t("slug.label")}
-        </label>
+          label={t("slug.label")}
+          tooltip={t("slug.tooltip")}
+          required
+          className="ml-1"
+        />
         <input
           id="slug"
           type="text"
+          required
           {...register("slug")}
           onChange={(e) => {
             const sanitized = e.target.value

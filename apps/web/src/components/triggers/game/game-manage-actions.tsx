@@ -40,7 +40,7 @@ export function GameManageActions({
       <DeleteGameModal
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        gameId={gameId}
+        gameSlug={gameSlug}
         gameName={gameName}
         eventCount={eventCount}
       />

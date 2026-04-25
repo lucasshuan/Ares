@@ -10,7 +10,7 @@ import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { deleteGame } from "@/actions/game";
 
 interface DeleteGameModalProps {
-  gameId: string;
+  gameSlug: string;
   gameName: string;
   eventCount: number;
   isOpen: boolean;
@@ -18,7 +18,7 @@ interface DeleteGameModalProps {
 }
 
 export function DeleteGameModal({
-  gameId,
+  gameSlug,
   gameName,
   eventCount,
   isOpen,
@@ -32,7 +32,7 @@ export function DeleteGameModal({
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deleteGame(gameId);
+      const result = await deleteGame(gameSlug);
       if (result.success) {
         toast.success(t("success"));
         onClose();

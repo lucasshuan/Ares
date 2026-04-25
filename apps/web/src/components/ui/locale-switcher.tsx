@@ -80,7 +80,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
       ref={dropdownRef}
       role="listbox"
       style={{ top: coords.top, left: coords.left, width: coords.width }}
-      className="fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-primary/20 bg-background/95 p-1 shadow-2xl backdrop-blur-xl"
+      className="fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-white/10 bg-background/95 p-1 shadow-2xl backdrop-blur-xl"
     >
       {routing.locales.map((l) => (
         <button
@@ -115,8 +115,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         aria-haspopup="listbox"
         className={cn(
           "flex h-9 items-center gap-2.5 rounded-xl border border-transparent bg-transparent px-3 text-sm",
-          "text-muted transition-all duration-200 hover:border-primary hover:text-foreground",
-          open && "border-primary text-foreground",
+          "text-muted transition-all duration-200 hover:border-white/10 hover:bg-white/5 hover:text-foreground",
+          open && "border-white/10 bg-white/5 text-foreground",
           "disabled:cursor-wait disabled:opacity-50",
           className,
         )}

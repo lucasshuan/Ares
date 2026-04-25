@@ -30,7 +30,7 @@ export default async function GameLayout({
 
   return (
     <>
-      <section className="relative min-h-70 w-full overflow-hidden [mask-image:linear-gradient(to_bottom,black_55%,transparent_100%)]">
+      <section className="relative min-h-70 w-full overflow-hidden mask-[linear-gradient(to_bottom,black_55%,transparent_100%)]">
         {game.backgroundImageUrl ? (
           <>
             <Image

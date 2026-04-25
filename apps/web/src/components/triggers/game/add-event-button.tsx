@@ -67,7 +67,7 @@ export function AddEventButton({
           "group rounded-xl",
         )}
       >
-        <Plus className="mr-1.5 size-4 transition-transform duration-300 group-hover:rotate-180" />
+        <Plus className="mr-1.5 size-4 transition-transform duration-300 group-hover:rotate-90" />
         {variant === "header" ? t("headerTrigger") : t("trigger")}
       </button>
     );

@@ -324,15 +324,15 @@ export const updateLeague = createSafeAction(
 
 export const deleteGame = createSafeAction(
   "deleteGame",
-  async (gameId: string) => {
+  async (gameSlug: string) => {
     const session = await getServerAuthSession();
-    const game = await getGameRecord(gameId);
+    const game = await getGameRecord(gameSlug);
     if (!game) throw new Error("Game not found");
     if (!canEditGame(session, game.authorId)) throw new Error("Unauthorized");
 
     await getClient().mutate({
       mutation: DELETE_GAME,
-      variables: { id: gameId },
+      variables: { id: game.id },
     });
 
     revalidatePath("/");

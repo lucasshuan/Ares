@@ -120,7 +120,7 @@ export function DataTable<T>({
           <DensityIcon className="size-4" />
         </button>
 
-        <div className="relative w-full max-w-[240px]">
+        <div className="relative w-full max-w-60">
           <Search className="absolute top-1/2 left-3 size-3.5 -translate-y-1/2 opacity-30 transition-opacity group-focus-within:opacity-60" />
           <input
             type="text"

@@ -304,7 +304,59 @@ pnpm codegen:watch    # watch mode during development
 
 ---
 
-## 8. Internationalization (i18n)
+## 8. Form Validation (Zod)
+
+All front-end form schemas live in `src/schemas/<domain>.ts`.
+
+### Pattern: i18n-aware schema factory
+
+Zod schemas are written as **factory functions** that receive a `t` translation function and return the schema with pre-translated error messages. A companion hook wires in `useTranslations` from next-intl and memoizes the result.
+
+```typescript
+// schemas/game.ts
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { z } from "zod";
+
+type TFunction = (
+  key: string,
+  values?: Record<string, string | number | Date>,
+) => string;
+
+// Pure factory — no React dependency, testable in isolation
+export const getEditGameSchema = (t: TFunction) =>
+  z.object({
+    name: z
+      .string()
+      .min(2, t("nameMin", { count: 2 }))
+      .max(50, t("nameMax", { count: 50 })),
+    slug: z
+      .string()
+      .min(2, t("min", { count: 2 }))
+      .max(50, t("max", { count: 50 }))
+      .regex(/^[a-z0-9_-]+$/, t("slugFormat")),
+  });
+
+// Hook for Client Components
+export const useEditGameSchema = () => {
+  const t = useTranslations("Validations");
+  return useMemo(() => getEditGameSchema(t), [t]);
+};
+
+export type EditGameValues = z.infer<ReturnType<typeof getEditGameSchema>>;
+```
+
+**Rules**:
+
+- Error message strings always come from the `Validations` namespace in `messages/en.json` and `messages/pt.json`.
+- Never hardcode English strings inside `.min()`, `.max()`, `.regex()`, etc.
+- The factory (`get*Schema`) must stay a pure function — no hooks inside it — so it can be called from Server Actions if needed (passing `await getTranslations("Validations")`).
+- The hook (`use*Schema`) is the only entry point for Client Components; it calls `useTranslations` and wraps the factory in `useMemo`.
+- `EditValues` / `AddValues` types are always inferred from the factory return type, never written by hand.
+
+---
+
+## 9. Internationalization (i18n)
 
 **Library**: `next-intl` with `localePrefix: "as-needed"` (no prefix for `en`, `/pt` prefix for Portuguese).  
 **Locales**: `["en", "pt"]`, default is `"en"`.  
@@ -344,7 +396,7 @@ apps/web/messages/
 
 ---
 
-## 9. Styling and Tailwind
+## 10. Styling and Tailwind
 
 **Configuration**: `apps/web/tailwind.config.ts`. Design tokens are exposed through CSS variables (`--primary`, `--border`, `--foreground`, `--muted`, and so on).
 
@@ -373,7 +425,7 @@ bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))]
 
 ---
 
-## 10. Naming Conventions
+## 11. Naming Conventions
 
 | Context                | Convention             | Example                         |
 | ---------------------- | ---------------------- | ------------------------------- |
@@ -392,7 +444,7 @@ bg-[linear-gradient(180deg,rgb(20_13_22),rgb(11_8_15))]
 
 ---
 
-## 11. Environment Variables
+## 12. Environment Variables
 
 ### `apps/web`
 
