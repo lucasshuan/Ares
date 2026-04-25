@@ -6,6 +6,7 @@ export const envSchema = z.object({
     .default('development'),
   DATABASE_URL: z.url(),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  FRONTEND_URL: z.string().default('http://localhost:3000'),
   JWT_SECRET: z.string().min(32),
   DISCORD_CLIENT_ID: z.string().min(1),
   DISCORD_CLIENT_SECRET: z.string().min(1),

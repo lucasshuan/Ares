@@ -452,6 +452,7 @@ Validated through `@t3-oss/env-nextjs` in `src/env.ts`. Every variable must be d
 
 | Variable              | Type           | Description            |
 | --------------------- | -------------- | ---------------------- |
+| `NODE_ENV`            | string         | Environment mode       |
 | `NEXTAUTH_SECRET`     | string (>=32)  | Session signing secret |
 | `NEXTAUTH_URL`        | url (optional) | Base NextAuth URL      |
 | `NEXT_PUBLIC_API_URL` | url            | GraphQL backend URL    |
@@ -462,14 +463,17 @@ Validated through `@t3-oss/env-nextjs` in `src/env.ts`. Every variable must be d
 
 Validated through `@nestjs/config` + Joi (or similar) in `src/env.ts`.
 
-| Variable                | Description                 |
-| ----------------------- | --------------------------- |
-| `DATABASE_URL`          | Postgres connection string  |
-| `JWT_SECRET`            | JWT signing secret          |
-| `DISCORD_CLIENT_ID`     | Discord OAuth               |
-| `DISCORD_CLIENT_SECRET` | Discord OAuth               |
-| `CORS_ORIGIN`           | Allowed CORS URL            |
-| `PORT`                  | Server port (default: 4000) |
+| Variable                | Type   | Description                     |
+| ----------------------- | ------ | ------------------------------- |
+| `NODE_ENV`              | string | Environment mode                |
+| `DATABASE_URL`          | string | Postgres connection string      |
+| `JWT_SECRET`            | string | JWT signing secret              |
+| `DISCORD_CLIENT_ID`     | string | Discord OAuth                   |
+| `DISCORD_CLIENT_SECRET` | string | Discord OAuth                   |
+| `CORS_ORIGIN`           | string | Allowed CORS URL                |
+| `FRONTEND_URL`          | string | Frontend base URL for redirects |
+| `LOG_LEVEL`             | string | Logger level (default: "info")  |
+| `PORT`                  | number | Server port (default: 4000)     |
 
 ---
 
