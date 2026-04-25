@@ -310,6 +310,16 @@
       "success": "Game approved successfully!",
       "error": "Error approving game."
     },
+    "DeleteGame": {
+      "title": "Delete Game",
+      "submit": "Delete Game",
+      "submitting": "Deleting...",
+      "cancel": "Cancel",
+      "hasEventsWarning": "{gameName} has {count, plural, one {# event} other {# events}} and cannot be deleted. Remove all events first.",
+      "noEventsWarning": "You are about to permanently delete {gameName}. This action cannot be undone.",
+      "success": "Game deleted successfully.",
+      "error": "Failed to delete game."
+    },
     "AddGame": {
       "title": "Add New Game",
       "description": "Fill in the details to add a new game to the platform.",

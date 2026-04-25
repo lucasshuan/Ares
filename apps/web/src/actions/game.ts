@@ -6,6 +6,7 @@ import {
   APPROVE_GAME,
   CREATE_GAME,
   UPDATE_GAME,
+  DELETE_GAME,
 } from "@/lib/apollo/queries/game-mutations";
 import {
   CREATE_LEAGUE,
@@ -318,5 +319,23 @@ export const updateLeague = createSafeAction(
 
     revalidatePath("/");
     return true;
+  },
+);
+
+export const deleteGame = createSafeAction(
+  "deleteGame",
+  async (gameId: string) => {
+    const session = await getServerAuthSession();
+    const game = await getGameRecord(gameId);
+    if (!game) throw new Error("Game not found");
+    if (!canEditGame(session, game.authorId)) throw new Error("Unauthorized");
+
+    await getClient().mutate({
+      mutation: DELETE_GAME,
+      variables: { id: gameId },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/games");
   },
 );

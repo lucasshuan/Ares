@@ -310,6 +310,16 @@
       "success": "Jogo aprovado com sucesso!",
       "error": "Erro ao aprovar o jogo."
     },
+    "DeleteGame": {
+      "title": "Excluir Jogo",
+      "submit": "Excluir Jogo",
+      "submitting": "Excluindo...",
+      "cancel": "Cancelar",
+      "hasEventsWarning": "{gameName} possui {count, plural, one {# evento} other {# eventos}} e não pode ser excluído. Remova todos os eventos primeiro.",
+      "noEventsWarning": "Você está prestes a excluir permanentemente {gameName}. Esta ação não pode ser desfeita.",
+      "success": "Jogo excluído com sucesso.",
+      "error": "Falha ao excluir o jogo."
+    },
     "AddGame": {
       "title": "Adicionar Novo Jogo",
       "description": "Preencha os dados para adicionar um novo jogo à plataforma.",

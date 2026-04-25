@@ -101,4 +101,13 @@ export class GamesResolver {
   async approveGame(@Args('id', { type: () => ID }) id: string) {
     return this.gamesService.approve(id);
   }
+
+  @Mutation(() => Game)
+  @UseGuards(GqlAuthGuard)
+  async deleteGame(
+    @Args('id', { type: () => ID }) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.gamesService.delete(id, user.isAdmin ? undefined : user.id);
+  }
 }

@@ -30,7 +30,6 @@ export const dynamic = "force-dynamic";
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
 import {
-  type Game,
   type GetGameQuery,
   type GetLeaguesQuery,
 } from "@/lib/apollo/generated/graphql";
@@ -138,7 +137,12 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
               )}
               {canEditCurrentGame && (
                 <div className="absolute top-3 right-3 z-10">
-                  <GameManageActions game={game as Game} />
+                  <GameManageActions
+                    gameId={game.id}
+                    gameSlug={game.slug}
+                    gameName={game.name}
+                    eventCount={game._count?.events ?? 0}
+                  />
                 </div>
               )}
             </div>

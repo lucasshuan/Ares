@@ -147,4 +147,39 @@ export class GamesService {
       },
     });
   }
+
+  async delete(id: string, userId?: string) {
+    const game = await this.databaseProvider.game.findUnique({
+      where: { id },
+      select: {
+        authorId: true,
+        backgroundImageUrl: true,
+        thumbnailImageUrl: true,
+        _count: { select: { events: true } },
+      },
+    });
+
+    if (!game) throw new Error('Game not found');
+
+    if (userId && game.authorId && game.authorId !== userId) {
+      throw new Error('You do not have permission to delete this game');
+    }
+
+    if (game._count.events > 0) {
+      throw new Error(
+        'Cannot delete a game that has events. Remove all events first.',
+      );
+    }
+
+    const deletions: Promise<void>[] = [];
+    if (game.backgroundImageUrl) {
+      deletions.push(this.storageService.deleteFile(game.backgroundImageUrl));
+    }
+    if (game.thumbnailImageUrl) {
+      deletions.push(this.storageService.deleteFile(game.thumbnailImageUrl));
+    }
+    if (deletions.length > 0) await Promise.all(deletions);
+
+    return this.databaseProvider.game.delete({ where: { id } });
+  }
 }

@@ -213,6 +213,7 @@ type Mutation {
   createGame(input: CreateGameInput!): Game!
   updateGame(id: ID!, input: UpdateGameInput!): Game!
   approveGame(id: ID!): Game!
+  deleteGame(id: ID!): Game!
   requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
   updateProfile(input: UpdateProfileInput!): User!
   completeOnboarding: User!

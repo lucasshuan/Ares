@@ -15,6 +15,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   isPending?: boolean;
+  confirmDisabled?: boolean;
   variant?: "info" | "danger" | "success" | "warning";
   icon?: ElementType;
 }
@@ -29,6 +30,7 @@ export function ConfirmModal({
   confirmText,
   cancelText,
   isPending,
+  confirmDisabled,
   variant = "info",
   icon: CustomIcon,
 }: ConfirmModalProps) {
@@ -57,6 +59,7 @@ export function ConfirmModal({
       confirmText={confirmText}
       cancelText={cancelText}
       isPending={isPending}
+      disabled={confirmDisabled}
       confirmIntent={intent}
       confirmIcon={Icon}
       showHeader={false}
