@@ -30,7 +30,8 @@ export class AuthController {
   @Get('discord/callback')
   @UseGuards(DiscordCallbackGuard)
   async discordAuthCallback(@Req() req: { user: User }, @Res() res: Response) {
-    const frontendUrl = this.configService.getOrThrow<string>('CORS_ORIGIN');
+    const raw = this.configService.getOrThrow<string>('CORS_ORIGIN');
+    const frontendUrl = raw.split(',')[0].trim();
     const { accessToken } = await this.authService.login(req.user);
 
     const code = await this.authService.createAuthCode(accessToken);

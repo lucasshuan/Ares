@@ -19,7 +19,8 @@ export class DiscordCallbackGuard extends AuthGuard('discord') {
     const request = context.switchToHttp().getRequest<Request>();
 
     if (request.query['error']) {
-      const frontendUrl = this.configService.getOrThrow<string>('CORS_ORIGIN');
+      const raw = this.configService.getOrThrow<string>('CORS_ORIGIN');
+      const frontendUrl = raw.split(',')[0].trim();
       const response = context.switchToHttp().getResponse<Response>();
       response.redirect(`${frontendUrl}/?error=Cancelled`);
       return false;
