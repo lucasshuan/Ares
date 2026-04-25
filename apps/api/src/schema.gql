@@ -65,8 +65,6 @@ type League {
   allowDraw: Boolean!
   allowedFormats: [String!]!
   customFieldSchema: JSON
-  createdAt: DateTime!
-  updatedAt: DateTime!
   event: Event
 }
 
@@ -197,6 +195,7 @@ type Query {
   user(username: String!): User
   searchUsers(pagination: PaginationInput, query: String): PaginatedUsers!
   league(gameSlug: String!, slug: String!): League
+  checkEventSlug(gameId: String!, slug: String!, excludeEventId: ID): Boolean!
   leagues(gameId: String!, pagination: PaginationInput): PaginatedLeagues!
   eventEntries(eventId: ID!, pagination: PaginationInput): PaginatedEventEntries!
   eventEntry(id: ID!): EventEntry
@@ -217,7 +216,7 @@ type Mutation {
   requestUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
   updateProfile(input: UpdateProfileInput!): User!
   completeOnboarding: User!
-  createLeague(event: CreateLeagueEventInput!, league: CreateLeagueConfigInput!): League!
+  createLeague(event: CreateLeagueEventInput!, league: CreateLeagueConfigInput!, staff: [InitialStaffInput!], participants: [InitialEntryInput!]): League!
   updateLeague(eventId: ID!, event: UpdateLeagueEventInput, league: UpdateLeagueConfigInput): League!
   addEventEntry(input: CreateEventEntryInput!): EventEntry!
   updateEventEntry(id: ID!, input: UpdateEventEntryInput!): EventEntry!
@@ -281,6 +280,17 @@ input CreateLeagueConfigInput {
   allowDraw: Boolean
   allowedFormats: [String!]
   customFieldSchema: JSON
+}
+
+input InitialStaffInput {
+  userId: String!
+  role: String
+}
+
+input InitialEntryInput {
+  displayName: String!
+  userId: String
+  imageUrl: String
 }
 
 input UpdateLeagueEventInput {

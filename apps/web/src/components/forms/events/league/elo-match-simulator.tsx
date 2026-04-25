@@ -121,7 +121,7 @@ export function EloMatchSimulator({
           : "text-secondary/45";
 
   return (
-    <div className="bg-card-strong/25 mt-1 rounded-2xl p-4">
+    <div className="border-secondary/20 border mt-1 rounded-2xl p-4">
       {/* Header */}
       <div className="mb-3 flex items-center gap-2">
         <Gamepad2 className="text-secondary/30 size-3" />

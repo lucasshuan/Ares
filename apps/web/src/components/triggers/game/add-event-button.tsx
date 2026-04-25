@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Trophy, ChevronRight, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/components/providers";
-import { AddEventModal } from "@/components/modals/events/add-event-modal";
+import { useRouter } from "@/i18n/routing";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,14 +17,14 @@ interface AddEventButtonProps {
 }
 
 export function AddEventButton({
-  gameId,
+  gameId: _gameId,
   game,
   variant = "sidebar",
 }: AddEventButtonProps) {
   const t = useTranslations("Modals.AddEvent");
   const { user, isLoading } = useUser();
+  const router = useRouter();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAddLeagueOpen, setIsAddLeagueOpen] = useState(false);
   const [isPending] = useTransition();
 
   const handleTriggerClick = () => {
@@ -33,7 +33,10 @@ export function AddEventButton({
     if (!user) {
       setIsAuthModalOpen(true);
     } else {
-      setIsAddLeagueOpen(true);
+      const href = game?.slug
+        ? `/events/new?game=${game.slug}`
+        : "/events/new";
+      router.push(href);
     }
   };
 
@@ -60,11 +63,11 @@ export function AddEventButton({
       <button
         onClick={handleTriggerClick}
         className={cn(
-          buttonVariants({ intent: "primary" }),
-          "gap-2 rounded-2xl px-5 text-xs font-bold tracking-wider uppercase",
+          buttonVariants({ intent: "primary", size: "sm" }),
+          "rounded-xl",
         )}
       >
-        <Plus className="size-4" />
+        <Plus className="mr-1.5 size-4" />
         {variant === "header" ? t("headerTrigger") : t("trigger")}
       </button>
     );
@@ -72,14 +75,6 @@ export function AddEventButton({
   return (
     <>
       {menuButton}
-
-      <AddEventModal
-        gameId={gameId}
-        initialGame={game}
-        isGameFixed={true}
-        isOpen={isAddLeagueOpen}
-        onClose={() => setIsAddLeagueOpen(false)}
-      />
 
       <AuthModal
         isOpen={isAuthModalOpen}
@@ -89,3 +84,5 @@ export function AddEventButton({
     </>
   );
 }
+
+

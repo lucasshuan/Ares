@@ -6,20 +6,83 @@ import { EventCard, EventCardSkeleton } from "@/components/cards/event-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { CalendarX2 } from "lucide-react";
+import { getServerAuthSession } from "@/auth";
+import { AddEventButton } from "@/components/triggers/game/add-event-button";
+import { SearchInput } from "@/components/ui/search-input";
+import { Link } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export default async function EventsPage() {
+type EventsPageProps = {
+  searchParams: Promise<{ search?: string; sort?: string }>;
+};
+
+export default async function EventsPage({ searchParams }: EventsPageProps) {
   const t = await getTranslations("EventsPage");
+  const { search, sort } = await searchParams;
+  const session = await getServerAuthSession();
+  const isLoggedIn = !!session?.user;
 
   return (
     <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
-      <SectionHeader title={t("title")} description={t("description")} />
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex flex-col gap-6">
+          <SectionHeader title={t("title")} description={t("description")} />
+          {isLoggedIn && (
+            <div>
+              <AddEventButton gameId="" variant="header" />
+            </div>
+          )}
+        </div>
+
+        <div className="flex w-full flex-col gap-4 lg:max-w-sm lg:items-end">
+          <Suspense fallback={<div className="h-10 w-full animate-pulse rounded-xl bg-white/5" />}>
+            <SearchInput
+              defaultValue={search}
+              placeholder={t("searchPlaceholder")}
+              className="w-full"
+            />
+          </Suspense>
+          <div className="flex flex-wrap items-center gap-3 lg:justify-end">
+            <Link
+              href={
+                sort !== "name"
+                  ? "#"
+                  : `?${new URLSearchParams(search ? { search } : {})}`
+              }
+              className={cn(
+                "flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-200",
+                sort !== "name"
+                  ? "border-gold/40 bg-gold/10 text-gold shadow-[0_0_12px_color-mix(in_srgb,var(--gold)_15%,transparent)]"
+                  : "border-border text-muted hover:border-gold/30 hover:text-foreground",
+              )}
+            >
+              {t("sortRecent")}
+            </Link>
+            <Link
+              href={
+                sort === "name"
+                  ? "#"
+                  : `?${new URLSearchParams({ ...(search ? { search } : {}), sort: "name" })}`
+              }
+              className={cn(
+                "flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-200",
+                sort === "name"
+                  ? "border-gold/40 bg-gold/10 text-gold shadow-[0_0_12px_color-mix(in_srgb,var(--gold)_15%,transparent)]"
+                  : "border-border text-muted hover:border-gold/30 hover:text-foreground",
+              )}
+            >
+              {t("sortAlphabetical")}
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <div className="border-b border-white/5" />
 
       <Suspense fallback={<EventsGridSkeleton />}>
-        <EventsGrid />
+        <EventsGrid search={search} sort={sort} />
       </Suspense>
     </main>
   );
@@ -35,7 +98,13 @@ function EventsGridSkeleton() {
   );
 }
 
-async function EventsGrid() {
+async function EventsGrid({
+  search,
+  sort,
+}: {
+  search?: string;
+  sort?: string;
+}) {
   const t = await getTranslations("EventsPage");
 
   const data = await safeServerQuery<GetLeaguesQuery>({
@@ -43,7 +112,22 @@ async function EventsGrid() {
     variables: { pagination: { skip: 0, take: 50 } },
   });
 
-  const events = data?.leagues?.nodes ?? [];
+  const allEvents = data?.leagues?.nodes ?? [];
+
+  let events = allEvents;
+  if (search) {
+    const q = search.toLowerCase();
+    events = allEvents.filter(
+      (e) =>
+        e.event?.name?.toLowerCase().includes(q) ||
+        e.event?.game?.name?.toLowerCase().includes(q),
+    );
+  }
+  if (sort === "name") {
+    events = [...events].sort((a, b) =>
+      (a.event?.name ?? "").localeCompare(b.event?.name ?? ""),
+    );
+  }
 
   if (events.length === 0) {
     return (

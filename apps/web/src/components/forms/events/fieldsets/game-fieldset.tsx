@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Search, Trophy, LoaderCircle, AlertTriangle } from "lucide-react";
+import { Search, Trophy, LoaderCircle, AlertTriangle, Gamepad2 } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { getGamesSimple, type SimpleGame } from "@/actions/get-games";
@@ -15,6 +16,7 @@ interface GameSearchFieldsetProps {
   gameId?: string;
   initialGame?: SimpleGame;
   isGameFixed?: boolean;
+  onGameSelect?: (game: SimpleGame | null) => void;
 }
 
 type GameFormFields = {
@@ -26,6 +28,7 @@ export function GameSearchFieldset({
   gameId,
   initialGame,
   isGameFixed,
+  onGameSelect,
 }: GameSearchFieldsetProps) {
   const t = useTranslations("Modals.AddEvent");
   const {
@@ -40,7 +43,25 @@ export function GameSearchFieldset({
     initialGame ?? null,
   );
   const [showResults, setShowResults] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [dropdownCoords, setDropdownCoords] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
+  const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(!!initialGame);
+
+  const updateCoords = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownCoords({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  };
 
   const hasExactMatch = useMemo(() => {
     if (!gameSearch) return false;
@@ -86,17 +107,31 @@ export function GameSearchFieldset({
     if (selectedGame) {
       setValue("gameId", selectedGame.id, { shouldValidate: true });
       setValue("gameName", undefined, { shouldValidate: true });
+      onGameSelect?.(selectedGame);
     } else if (gameSearch && !hasExactMatch && !isGamesLoading) {
       setValue("gameId", undefined, { shouldValidate: true });
       setValue("gameName", gameSearch, { shouldValidate: true });
+      onGameSelect?.(null);
     } else {
       setValue("gameId", undefined, { shouldValidate: true });
       setValue("gameName", undefined, { shouldValidate: true });
+      onGameSelect?.(null);
     }
-  }, [selectedGame, gameSearch, hasExactMatch, isGamesLoading, setValue]);
+  }, [selectedGame, gameSearch, hasExactMatch, isGamesLoading, setValue, onGameSelect]);
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
+      {/* Header */}
+      <div className="flex items-start gap-3">
+        <div className="border-primary/20 bg-primary/10 mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl border">
+          <Gamepad2 className="text-primary size-4" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-white">{t("game.title")}</p>
+          <p className="text-muted mt-0.5 text-xs">{t("game.description")}</p>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-6">
         <LabelTooltip label={t("gameSelect.label")} required />
 
@@ -104,16 +139,22 @@ export function GameSearchFieldset({
           <div className="relative">
             <Search className="text-secondary/25 absolute top-1/2 left-4 size-5 -translate-y-1/2" />
             <input
+              ref={inputRef}
               type="text"
               placeholder={t("gameSelect.placeholder")}
               value={gameSearch}
-              onFocus={() => setShowResults(true)}
+              onFocus={() => {
+                updateCoords();
+                setIsInputFocused(true);
+                setShowResults(true);
+              }}
+              onBlur={() => setIsInputFocused(false)}
               onChange={(e) => {
                 setGameSearch(e.target.value);
                 setShowResults(true);
                 if (selectedGame) setSelectedGame(null);
               }}
-              disabled={isGameFixed}
+              disabled={false}
               className={cn(
                 "field-base py-3.5 pr-4 pl-12",
                 "disabled:cursor-not-allowed disabled:opacity-50",
@@ -130,13 +171,27 @@ export function GameSearchFieldset({
           {gameSearch &&
             !selectedGame &&
             showResults &&
-            (games.length > 0 || !isGamesLoading) && (
-              <div className="glass-panel animate-in fade-in slide-in-from-top-2 border-gold-dim/35 absolute top-full left-0 z-50 mt-2 w-full overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200">
+            isInputFocused &&
+            (games.length > 0 || !isGamesLoading) &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <div
+                onMouseDown={(e) => e.preventDefault()}
+                className="animate-in fade-in slide-in-from-top-2 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200"
+                style={{
+                  top: dropdownCoords.top,
+                  left: dropdownCoords.left,
+                  width: dropdownCoords.width,
+                }}
+              >
                 <div className="custom-scrollbar max-h-60 overflow-y-auto p-2">
                   {!hasExactMatch && !isGamesLoading && (
                     <button
                       type="button"
-                      onClick={() => setShowResults(false)}
+                      onClick={() => {
+                        setShowResults(false);
+                        setIsInputFocused(false);
+                      }}
                       className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
                     >
                       <div className="border-primary/20 bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-lg border">
@@ -161,6 +216,7 @@ export function GameSearchFieldset({
                         setSelectedGame(game);
                         setGameSearch(game.name);
                         setShowResults(false);
+                        setIsInputFocused(false);
                       }}
                       className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
                     >
@@ -189,7 +245,8 @@ export function GameSearchFieldset({
                     </button>
                   ))}
                 </div>
-              </div>
+              </div>,
+              document.body,
             )}
         </div>
 

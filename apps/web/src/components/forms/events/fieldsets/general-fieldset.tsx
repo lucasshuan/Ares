@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useFormContext, useWatch, Controller } from "react-hook-form";
-import { LoaderCircle, Check, X } from "lucide-react";
+import { LoaderCircle, Check, X, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
@@ -98,6 +98,17 @@ export function GeneralFieldset({
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
+      {/* Header */}
+      <div className="flex items-start gap-3">
+        <div className="border-primary/20 bg-primary/10 mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl border">
+          <FileText className="text-primary size-4" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-white">{t("general.title")}</p>
+          <p className="text-muted mt-0.5 text-xs">{t("general.description")}</p>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-2">
         <LabelTooltip label={t("aboutField.label")} />
         <Controller

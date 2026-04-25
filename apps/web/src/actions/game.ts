@@ -11,6 +11,7 @@ import {
   CREATE_LEAGUE,
   UPDATE_LEAGUE,
 } from "@/lib/apollo/queries/league-mutations";
+import { CHECK_EVENT_SLUG } from "@/lib/apollo/queries/leagues";
 import {
   UpdateGameMutation,
   CreateGameMutation,
@@ -106,7 +107,7 @@ export const updateGame = createSafeAction(
     if (result?.updateGame) {
       revalidateGamePaths(result.updateGame);
     }
-    return true;
+    return { slug: result?.updateGame?.slug ?? "" };
   },
 );
 
@@ -206,6 +207,7 @@ export const createLeague = createSafeAction(
     allowedFormats?: string[];
     customFieldSchema?: unknown;
     staff?: Array<{ userId: string; role: string }>;
+    participants?: Array<{ displayName: string; userId?: string }>;
   }) => {
     const session = await getServerAuthSession();
     if (!session?.user?.id) throw new Error("Unauthorized");
@@ -239,6 +241,7 @@ export const createLeague = createSafeAction(
           customFieldSchema: data.customFieldSchema,
         },
         staff: data.staff,
+        participants: data.participants,
       },
     });
 
@@ -255,9 +258,14 @@ export const createLeague = createSafeAction(
 
 export const checkLeagueSlugAvailability = createSafeAction(
   "checkLeagueSlugAvailability",
-  async (_gameIdOrSlug: string, _slug: string, _currentLeagueId?: string) => {
-    // TODO: implement via API query once leagues query supports slug lookup
-    return { available: true };
+  async (gameId: string, slug: string, excludeEventId?: string) => {
+    if (!gameId || !slug) return { available: true };
+    const result = await getClient().query<{ checkEventSlug: boolean }>({
+      query: CHECK_EVENT_SLUG,
+      variables: { gameId, slug, excludeEventId },
+      fetchPolicy: "no-cache",
+    });
+    return { available: result.data?.checkEventSlug ?? true };
   },
 );
 

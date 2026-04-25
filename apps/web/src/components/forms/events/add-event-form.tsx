@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState, useEffect, useCallback } from "react";
+import { useTransition, useState, useEffect, useCallback, useRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,18 +13,25 @@ import { type SimpleGame } from "@/actions/get-games";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { GameSearchFieldset } from "./fieldsets/game-fieldset";
-import { TypeFieldset } from "./fieldsets/type-fieldset";
-import { LeagueConfigFieldset } from "./fieldsets/league-config-fieldset";
+import { FormatFieldset } from "./fieldsets/format-fieldset";
 import { GeneralFieldset } from "./fieldsets/general-fieldset";
-import { MatchFormatsFieldset } from "./fieldsets/match-formats-fieldset";
 import {
   StaffFieldset,
   type StaffMember,
 } from "./fieldsets/staff-fieldset";
+import {
+  ParticipantsFieldset,
+  type ParticipantEntry,
+} from "./fieldsets/participants-fieldset";
+
+export type AddEventSuccessData = {
+  gameSlug?: string;
+  eventSlug: string;
+};
 
 interface AddEventFormProps {
   gameId: string;
-  onSuccess: () => void;
+  onSuccess: (data: AddEventSuccessData) => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
   onStepValidationChange?: (isValid: boolean) => void;
@@ -35,6 +42,8 @@ interface AddEventFormProps {
   currentUserId?: string;
   staffMembers?: StaffMember[];
   onStaffChange?: (members: StaffMember[]) => void;
+  participants?: ParticipantEntry[];
+  onParticipantsChange?: (participants: ParticipantEntry[]) => void;
 }
 
 export function AddEventForm({
@@ -50,16 +59,25 @@ export function AddEventForm({
   currentUserId,
   staffMembers,
   onStaffChange,
+  participants,
+  onParticipantsChange,
 }: AddEventFormProps) {
   const t = useTranslations("Modals.AddEvent");
   const schema = useAddLeagueSchema();
   const [isPending, startTransition] = useTransition();
-  const [participationMode, setParticipationMode] = useState<"SOLO" | "TEAM">(
-    "SOLO",
+  const [participationMode, setParticipationMode] = useState<
+    "SOLO" | "TEAM" | null
+  >(null);
+  const [eventType, setEventType] = useState<"LEAGUE" | "TOURNAMENT" | null>(
+    null,
   );
-  const [eventType, setEventType] = useState<"LEAGUE" | "TOURNAMENT">("LEAGUE");
   const [isSlugChecking, setIsSlugChecking] = useState(false);
   const [hasSlugConflict, setHasSlugConflict] = useState(false);
+  const selectedGameSlugRef = useRef<string | undefined>(initialGame?.slug);
+
+  const handleGameSelect = useCallback((game: SimpleGame | null) => {
+    selectedGameSlugRef.current = game?.slug;
+  }, []);
 
   const methods = useForm<AddLeagueValues>({
     resolver: zodResolver(schema),
@@ -70,7 +88,7 @@ export function AddEventForm({
       slug: "",
       description: "",
       about: "",
-      ratingSystem: "ELO",
+      ratingSystem: undefined,
       initialElo: LEAGUE_DEFAULT_SETTINGS.initialElo,
       allowDraw: false,
       kFactor: LEAGUE_DEFAULT_SETTINGS.kFactor,
@@ -99,6 +117,7 @@ export function AddEventForm({
   const watchName = watch("name") ?? "";
   const watchSlug = watch("slug") ?? "";
   const allowedFormats = watch("allowedFormats") ?? [];
+  const watchRatingSystem = watch("ratingSystem");
 
   const handleSlugStatusChange = useCallback(
     (checking: boolean, conflict: boolean) => {
@@ -129,33 +148,40 @@ export function AddEventForm({
     if (currentStep === 0) {
       valid = !!watchGameId || !!watchGameName;
     } else if (currentStep === 1) {
-      valid = true;
+      valid =
+        eventType !== null &&
+        participationMode !== null &&
+        !!watchRatingSystem &&
+        allowedFormats.length > 0;
     } else if (currentStep === 2) {
-      valid = allowedFormats.length > 0;
-    } else if (currentStep === 3) {
       const values = getValues();
       const parseResult = schema.safeParse(values);
       if (parseResult.success) {
         valid = true;
       } else {
-        const step3Fields = ["name", "slug"];
+        const step2Fields = ["name", "slug"];
         const hasErrors = parseResult.error.issues.some((issue) =>
-          step3Fields.includes(issue.path[0] as string),
+          step2Fields.includes(issue.path[0] as string),
         );
         valid = !hasErrors;
       }
       if (valid) valid = !isSlugChecking && !hasSlugConflict;
+    } else if (currentStep === 3) {
+      valid = true; // participants step — optional
     } else if (currentStep === 4) {
-      valid = true;
+      valid = true; // staff step — optional
     }
 
     onStepValidationChange?.(valid);
   }, [
     currentStep,
+    eventType,
+    participationMode,
     watchGameId,
     watchGameName,
     watchName,
     watchSlug,
+    watchRatingSystem,
     isSlugChecking,
     hasSlugConflict,
     allowedFormats.length,
@@ -201,7 +227,7 @@ export function AddEventForm({
         slug: values.slug,
         description: values.description ?? null,
         about: values.about ?? null,
-        participationMode,
+        participationMode: participationMode ?? "SOLO",
         classificationSystem: isElo ? "ELO" : "POINTS",
         allowDraw: values.allowDraw,
         allowedFormats: values.allowedFormats,
@@ -209,11 +235,15 @@ export function AddEventForm({
         staff: staffMembers
           ?.filter((m) => m.userId !== currentUserId)
           .map(({ userId, role }) => ({ userId, role })),
+        participants: participants?.map(({ displayName, linkedUser }) => ({
+          displayName,
+          userId: linkedUser?.userId,
+        })),
       });
 
       if (result.success) {
         toast.success(t("success"));
-        onSuccess();
+        onSuccess({ gameSlug: selectedGameSlugRef.current, eventSlug: values.slug });
       } else {
         toast.error(result.error || t("error"));
       }
@@ -232,26 +262,27 @@ export function AddEventForm({
             gameId={gameId}
             initialGame={initialGame}
             isGameFixed={isGameFixed}
+            onGameSelect={handleGameSelect}
           />
         )}
         {currentStep === 1 && (
-          <TypeFieldset
-            participationMode={participationMode}
-            onParticipationModeChange={setParticipationMode}
+          <FormatFieldset
             eventType={eventType}
             onEventTypeChange={setEventType}
+            participationMode={participationMode}
+            onParticipationModeChange={setParticipationMode}
           />
         )}
         {currentStep === 2 && (
-          <div className="space-y-10">
-            <LeagueConfigFieldset />
-            <MatchFormatsFieldset />
-          </div>
-        )}
-        {currentStep === 3 && (
           <GeneralFieldset
             onSlugStatusChange={handleSlugStatusChange}
             checkSlugAvailability={checkSlugAvailability}
+          />
+        )}
+        {currentStep === 3 && participants && onParticipantsChange && (
+          <ParticipantsFieldset
+            participants={participants}
+            onParticipantsChange={onParticipantsChange}
           />
         )}
         {currentStep === 4 && currentUserId && staffMembers && onStaffChange && (

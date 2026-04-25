@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import { Trophy } from "lucide-react";
+import { Plus, Trophy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import { getServerAuthSession } from "@/auth";
 
 interface GamesPageProps {
   params: Promise<{ locale: string }>;
@@ -20,13 +21,32 @@ export const dynamic = "force-dynamic";
 
 export default async function GamesPage({ searchParams }: GamesPageProps) {
   const { search, sort } = await searchParams;
-  const t = await getTranslations("GamesPage");
+  const [t, session] = await Promise.all([
+    getTranslations("GamesPage"),
+    getServerAuthSession(),
+  ]);
+
+  const isLoggedIn = !!session?.user;
 
   return (
     <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col gap-6">
           <SectionHeader title={t("title")} description={t("description")} />
+          {isLoggedIn && (
+            <div>
+              <Link
+                href="/games/new"
+                className={cn(
+                  buttonVariants({ intent: "primary", size: "sm" }),
+                  "rounded-xl",
+                )}
+              >
+                <Plus className="mr-1.5 size-4" />
+                {t("newGame")}
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="flex w-full flex-col gap-4 lg:max-w-md lg:items-end">

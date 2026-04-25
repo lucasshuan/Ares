@@ -3,32 +3,29 @@
 import { useTransition, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEditGameSchema, type EditGameValues } from "@/schemas/game";
+import { useAddGameSchema, type AddGameValues } from "@/schemas/game";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { updateGame } from "@/actions/game";
-import { type Game } from "@/lib/apollo/generated/graphql";
+import { createGame } from "@/actions/game";
 import { cn } from "@/lib/utils";
 import { resolveImageValue } from "@/lib/upload";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
 
-interface EditGameFormProps {
-  game: Game;
-  onSuccess: (newSlug: string) => void;
+interface AddGameFormProps {
+  onSuccess: (slug: string) => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
   formId: string;
 }
 
-export function EditGameForm({
-  game,
+export function AddGameForm({
   onSuccess,
   onLoadingChange,
   onValidationChange,
   formId,
-}: EditGameFormProps) {
-  const t = useTranslations("Modals.EditGame");
-  const schema = useEditGameSchema();
+}: AddGameFormProps) {
+  const t = useTranslations("Modals.AddGame");
+  const schema = useAddGameSchema();
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -37,31 +34,29 @@ export function EditGameForm({
     control,
     setValue,
     formState: { errors, isValid },
-  } = useForm<EditGameValues>({
+  } = useForm<AddGameValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: game.name,
-      slug: game.slug,
-      description: game.description || "",
-      backgroundImageUrl: game.backgroundImageUrl || "",
-      thumbnailImageUrl: game.thumbnailImageUrl || "",
-      steamUrl: game.steamUrl || "",
-      websiteUrl: game.websiteUrl || "",
+      name: "",
+      slug: "",
+      description: "",
+      backgroundImageUrl: "",
+      thumbnailImageUrl: "",
+      steamUrl: "",
+      websiteUrl: "",
     },
     mode: "onChange",
   });
 
-  // Notify parent about loading state
   useEffect(() => {
     onLoadingChange?.(isPending);
   }, [isPending, onLoadingChange]);
 
-  // Notify parent about validation state
   useEffect(() => {
     onValidationChange?.(isValid);
   }, [isValid, onValidationChange]);
 
-  const onSubmit = async (values: EditGameValues) => {
+  const onSubmit = async (values: AddGameValues) => {
     startTransition(async () => {
       let backgroundImageUrl: string | null;
       let thumbnailImageUrl: string | null;
@@ -71,13 +66,12 @@ export function EditGameForm({
           resolveImageValue(values.thumbnailImageUrl),
         ]);
       } catch {
-        toast.error(t("uploadError") || "Failed to upload image.");
+        toast.error(t("uploadError"));
         return;
       }
 
-      const result = await updateGame(game.slug, {
+      const result = await createGame({
         ...values,
-        slug: values.slug,
         backgroundImageUrl,
         thumbnailImageUrl,
         steamUrl: values.steamUrl || null,
@@ -87,7 +81,7 @@ export function EditGameForm({
 
       if (result.success) {
         toast.success(t("success"));
-        onSuccess(result.data.slug);
+        onSuccess(result.data.game?.slug ?? "");
       } else {
         toast.error(result.error || t("error"));
       }
@@ -103,7 +97,7 @@ export function EditGameForm({
       <div className="flex flex-col gap-2">
         <label
           htmlFor="name"
-          className="ml-1 text-sm font-medium text-secondary/80"
+          className="text-secondary/80 ml-1 text-sm font-medium"
         >
           {t("name.label")}
         </label>
@@ -111,6 +105,18 @@ export function EditGameForm({
           id="name"
           type="text"
           {...register("name")}
+          onChange={(e) => {
+            const value = e.target.value;
+            setValue("name", value, { shouldValidate: true });
+            const slug = value
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/[^a-z0-9_-\s]/g, "")
+              .trim()
+              .replace(/\s+/g, "-");
+            setValue("slug", slug, { shouldValidate: true });
+          }}
           placeholder={t("name.placeholder")}
           className={cn(
             "field-base",
@@ -125,7 +131,7 @@ export function EditGameForm({
       <div className="flex flex-col gap-2">
         <label
           htmlFor="slug"
-          className="ml-1 text-sm font-medium text-secondary/80"
+          className="text-secondary/80 ml-1 text-sm font-medium"
         >
           {t("slug.label")}
         </label>
@@ -155,7 +161,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="description"
-          className="ml-1 text-sm font-medium text-secondary/80"
+          className="text-secondary/80 ml-1 text-sm font-medium"
         >
           {t("descriptionField.label")}
         </label>
@@ -207,7 +213,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="steamUrl"
-          className="ml-1 text-sm font-medium text-secondary/80"
+          className="text-secondary/80 ml-1 text-sm font-medium"
         >
           {t("steamUrl.label")}
         </label>
@@ -228,7 +234,7 @@ export function EditGameForm({
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="websiteUrl"
-          className="ml-1 text-sm font-medium text-secondary/80"
+          className="text-secondary/80 ml-1 text-sm font-medium"
         >
           {t("websiteUrl.label")}
         </label>

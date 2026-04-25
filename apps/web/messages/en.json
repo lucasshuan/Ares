@@ -90,7 +90,10 @@
     "players": "{count, plural, one {# player} other {# players}}",
     "leagueType": "League",
     "tournamentType": "Tournament",
-    "noPlayers": "No players yet."
+    "noPlayers": "No players yet.",
+    "searchPlaceholder": "Search events...",
+    "sortRecent": "Most Recent",
+    "sortAlphabetical": "Alphabetical (A-Z)"
   },
   "GamesPage": {
     "title": "Games",
@@ -106,6 +109,7 @@
     "noGamesFound": "No games found for this search",
     "noGamesFoundDescription": "Try searching for another game title or check for typos.",
     "clearSearch": "Clear search",
+    "newGame": "New Game",
     "events": "Events",
     "players": "Players",
     "posts": "Posts",
@@ -141,6 +145,9 @@
     "dbUnavailableDescription": "Start your Postgres instance or update `.env` with a reachable connection string to view this game page.",
     "eventsTitle": "Events",
     "eventsDescription": "Track and participate in competitive leagues and tournaments for {gameName}.",
+    "searchPlaceholder": "Search events...",
+    "sortRecent": "Most Recent",
+    "sortAlphabetical": "Alphabetical (A-Z)",
     "league": "League",
     "noEvents": "No events created for this game.",
     "noEventsDescription": "Once events are entered, this page will list leagues and tournaments.",
@@ -290,6 +297,7 @@
       "submitting": "Saving...",
       "cancel": "Cancel",
       "success": "Game updated successfully!",
+      "uploadError": "Failed to upload image.",
       "error": "Error updating game."
     },
     "ApproveGame": {
@@ -301,6 +309,40 @@
       "cancel": "Cancel",
       "success": "Game approved successfully!",
       "error": "Error approving game."
+    },
+    "AddGame": {
+      "title": "Add New Game",
+      "description": "Fill in the details to add a new game to the platform.",
+      "name": {
+        "label": "Game Name",
+        "placeholder": "Enter game name..."
+      },
+      "slug": {
+        "label": "Identifier",
+        "placeholder": "game-identifier"
+      },
+      "descriptionField": {
+        "label": "Description",
+        "placeholder": "Game description..."
+      },
+      "backgroundImage": {
+        "label": "Background Image"
+      },
+      "thumbnailImage": {
+        "label": "Thumbnail Image"
+      },
+      "steamUrl": {
+        "label": "Steam URL"
+      },
+      "websiteUrl": {
+        "label": "Official Website"
+      },
+      "submit": "Create Game",
+      "submitting": "Creating...",
+      "cancel": "Cancel",
+      "success": "Game created successfully!",
+      "uploadError": "Failed to upload image.",
+      "error": "Error creating game."
     },
     "AddEvent": {
       "trigger": "Add event",
@@ -397,12 +439,12 @@
         "title": "Format Logic",
         "elo": {
           "title": "Elo System",
-          "description": "Players gain points by winning and lose by losing. The exact amount is calculated based on the skill gap between opponents (Win Probability).",
+          "description": "Rating shifts scale with surprise — beating a stronger opponent earns far more than beating a weaker one, and losing to a weaker player costs far more than losing to a stronger one.",
           "relevance_1": "Win margin is ignored; only the final result matters.",
           "relevance_2": "Win margin has low impact on the final calculation.",
           "relevance_3": "Win margin has moderate impact on performance.",
           "relevance_4": "Win margin is highly relevant for point gains.",
-          "relevance_5": "Win margin is the primary factor; crushing victories grant massive bonuses.",
+          "relevance_5": "Close wins barely move ratings; only a dominant, decisive score margin earns meaningful Elo gains.",
           "initial_score": "Everyone starts with {initialElo} pts.",
           "match_impact": "Results in this league typically move ratings by around {kFactor} pts.",
           "draws_enabled": "Draws are permitted.",
@@ -449,6 +491,18 @@
       "initialElo": {
         "label": "Initial Rating (Elo)"
       },
+      "game": {
+        "title": "Select a Game",
+        "description": "Choose which game this event is for, or enter a custom name if it isn't listed."
+      },
+      "format": {
+        "title": "Event Format",
+        "description": "Define the event type, participation mode, and the classification system for your standings."
+      },
+      "general": {
+        "title": "Event Details",
+        "description": "Set the public-facing name, URL identifier, and description for this event."
+      },
       "steps": {
         "game": "Game",
         "type": "Type",
@@ -456,7 +510,30 @@
         "general": "General",
         "format": "Format",
         "matchFormats": "Match",
+        "participants": "Participants",
         "staff": "Staff"
+      },
+      "participants": {
+        "title": "Participants",
+        "description": "Add the players who will compete in this event. You can link them to Bellona accounts to track stats and identity.",
+        "addButton": "Add participant",
+        "empty": "No participants added yet.",
+        "emptyHint": "You can add participants later from the event page or users can join themselves.",
+        "inputPlaceholder": "In-game name or alias...",
+        "inputEmpty": "Name cannot be empty.",
+        "linkUser": "Link user",
+        "changeUser": "Change user",
+        "unlinkUser": "Unlink",
+        "noLinkedUser": "No user linked",
+        "searchPlaceholder": "Search by name or @username...",
+        "noResults": "No users found.",
+        "remove": "Remove",
+        "removeConfirmTitle": "Remove participant?",
+        "removeConfirmDesc": "This participant has recorded matches. Removing them may affect standings. Are you sure?",
+        "removeConfirmAction": "Remove anyway",
+        "claimPending": "Pending",
+        "claimAccepted": "Linked",
+        "claimRejected": "Rejected"
       },
       "staff": {
         "title": "Event Staff",

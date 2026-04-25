@@ -14,6 +14,7 @@ import { MatchFormatsFieldset } from "./fieldsets/match-formats-fieldset";
 
 type LeagueForEdit = {
   eventId: string;
+  gameId: string;
   name: string;
   slug: string;
   description?: string | null;
@@ -103,8 +104,8 @@ export function EditEventForm({
 
   const checkSlugAvailability = useCallback(
     (slug: string) =>
-      checkLeagueSlugAvailability(league.eventId, slug, league.eventId),
-    [league.eventId],
+      checkLeagueSlugAvailability(league.gameId, slug, league.eventId),
+    [league.gameId, league.eventId],
   );
 
   useEffect(() => {

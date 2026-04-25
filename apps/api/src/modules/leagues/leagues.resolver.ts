@@ -13,6 +13,7 @@ import {
   UpdateLeagueEventInput,
   UpdateLeagueConfigInput,
   InitialStaffInput,
+  InitialEntryInput,
 } from './dto/leagues.input';
 
 @Resolver(() => League)
@@ -25,6 +26,16 @@ export class LeaguesResolver {
     @Args('slug') slug: string,
   ) {
     return this.leaguesService.findByEventSlug(gameSlug, slug);
+  }
+
+  @Query(() => Boolean, { name: 'checkEventSlug' })
+  async checkEventSlug(
+    @Args('gameId') gameId: string,
+    @Args('slug') slug: string,
+    @Args('excludeEventId', { type: () => ID, nullable: true })
+    excludeEventId?: string,
+  ): Promise<boolean> {
+    return this.leaguesService.checkSlug(gameId, slug, excludeEventId);
   }
 
   @Query(() => PaginatedLeagues, { name: 'leagues' })
@@ -45,9 +56,17 @@ export class LeaguesResolver {
     @Args('league') leagueInput: CreateLeagueConfigInput,
     @Args('staff', { type: () => [InitialStaffInput], nullable: true })
     staff: InitialStaffInput[] | undefined,
+    @Args('participants', { type: () => [InitialEntryInput], nullable: true })
+    participants: InitialEntryInput[] | undefined,
     @CurrentUser() user: User,
   ) {
-    return this.leaguesService.create(eventInput, leagueInput, user.id, staff);
+    return this.leaguesService.create(
+      eventInput,
+      leagueInput,
+      user.id,
+      staff,
+      participants,
+    );
   }
 
   @Mutation(() => League)

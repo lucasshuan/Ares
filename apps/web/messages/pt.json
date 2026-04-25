@@ -90,7 +90,10 @@
     "players": "{count, plural, one {# jogador} other {# jogadores}}",
     "leagueType": "Liga",
     "tournamentType": "Torneio",
-    "noPlayers": "Nenhum jogador ainda."
+    "noPlayers": "Nenhum jogador ainda.",
+    "searchPlaceholder": "Buscar eventos...",
+    "sortRecent": "Mais Recentes",
+    "sortAlphabetical": "Alfabético (A-Z)"
   },
   "GamesPage": {
     "title": "Jogos",
@@ -106,6 +109,7 @@
     "noGamesFound": "Nenhum jogo encontrado para esta pesquisa",
     "noGamesFoundDescription": "Tente pesquisar por outro título de jogo ou verifique se há erros ortográficos.",
     "clearSearch": "Limpar pesquisa",
+    "newGame": "Novo Jogo",
     "events": "Eventos",
     "players": "Jogadores",
     "posts": "Postagens",
@@ -141,6 +145,9 @@
     "dbUnavailableDescription": "Inicie sua instância do Postgres ou atualize `.env` com uma string de conexão alcançável para ver a página deste jogo.",
     "eventsTitle": "Eventos",
     "eventsDescription": "Acompanhe e participe das ligas e torneios competitivos de {gameName}.",
+    "searchPlaceholder": "Buscar eventos...",
+    "sortRecent": "Mais Recentes",
+    "sortAlphabetical": "Alfabético (A-Z)",
     "league": "Liga",
     "noEvents": "Nenhum evento criado para este jogo.",
     "noEventsDescription": "Assim que eventos forem inseridos, esta página listará ligas e torneios.",
@@ -290,6 +297,7 @@
       "submitting": "Salvando...",
       "cancel": "Cancelar",
       "success": "Jogo atualizado com sucesso!",
+      "uploadError": "Erro ao fazer upload da imagem.",
       "error": "Erro ao atualizar o jogo."
     },
     "ApproveGame": {
@@ -301,6 +309,40 @@
       "cancel": "Cancelar",
       "success": "Jogo aprovado com sucesso!",
       "error": "Erro ao aprovar o jogo."
+    },
+    "AddGame": {
+      "title": "Adicionar Novo Jogo",
+      "description": "Preencha os dados para adicionar um novo jogo à plataforma.",
+      "name": {
+        "label": "Nome do Jogo",
+        "placeholder": "Digite o nome do jogo..."
+      },
+      "slug": {
+        "label": "Identificador",
+        "placeholder": "identificador-do-jogo"
+      },
+      "descriptionField": {
+        "label": "Descrição",
+        "placeholder": "Descrição do jogo..."
+      },
+      "backgroundImage": {
+        "label": "Imagem de Fundo"
+      },
+      "thumbnailImage": {
+        "label": "Thumbnail"
+      },
+      "steamUrl": {
+        "label": "URL da Steam"
+      },
+      "websiteUrl": {
+        "label": "Site Oficial"
+      },
+      "submit": "Criar Jogo",
+      "submitting": "Criando...",
+      "cancel": "Cancelar",
+      "success": "Jogo criado com sucesso!",
+      "uploadError": "Erro ao fazer upload da imagem.",
+      "error": "Erro ao criar o jogo."
     },
     "AddEvent": {
       "trigger": "Adicionar evento",
@@ -397,12 +439,12 @@
         "title": "Lógica do Formato",
         "elo": {
           "title": "Sistema Elo",
-          "description": "Jogadores ganham pontos ao vencer e perdem ao sofrer derrotas. A quantia exata é calculada com base na diferença de nível entre os oponentes (Probabilidade de Vitória).",
+          "description": "A variação de rating é proporcional à surpresa do resultado — vencer um adversário mais forte rende muito mais Elo do que vencer um mais fraco, e perder para um adversário mais fraco custa muito mais do que perder para um mais forte.",
           "relevance_1": "A margem de vitória é ignorada; apenas o resultado final importa.",
           "relevance_2": "A margem de vitória tem baixo impacto no cálculo final.",
           "relevance_3": "A margem de vitória tem impacto moderado no desempenho.",
           "relevance_4": "A margem de vitória é altamente relevante para o ganho de pontos.",
-          "relevance_5": "A margem de vitória é o fator primário; vitórias esmagadoras dão bônus massivos.",
+          "relevance_5": "Vitórias apertadas mal alteram o rating; apenas uma vantagem de placar clara e decisiva gera ganhos de Elo significativos.",
           "initial_score": "Todos começam com {initialElo} pts.",
           "match_impact": "Os resultados desta liga costumam mover a pontuação em cerca de {kFactor} pts.",
           "draws_enabled": "Empates são permitidos.",
@@ -449,6 +491,18 @@
       "initialElo": {
         "label": "Pontuação Inicial (Elo)"
       },
+      "game": {
+        "title": "Selecione um Jogo",
+        "description": "Escolha o jogo para este evento ou insira um nome personalizado caso ele não esteja listado."
+      },
+      "format": {
+        "title": "Formato do Evento",
+        "description": "Defina o tipo de evento, o modo de participação e o sistema de classificação para as standings."
+      },
+      "general": {
+        "title": "Detalhes do Evento",
+        "description": "Configure o nome público, identificador de URL e descrição deste evento."
+      },
       "steps": {
         "game": "Jogo",
         "type": "Tipo",
@@ -456,7 +510,30 @@
         "general": "Geral",
         "format": "Formato",
         "matchFormats": "Partida",
+        "participants": "Participantes",
         "staff": "Equipe"
+      },
+      "participants": {
+        "title": "Participantes",
+        "description": "Adicione os jogadores que irão competir neste evento. Você pode vinculá-los a contas Bellona para rastrear estatísticas e identidade.",
+        "addButton": "Adicionar participante",
+        "empty": "Nenhum participante adicionado.",
+        "emptyHint": "Você pode adicionar participantes depois na página do evento ou os usuários podem se inscrever sozinhos.",
+        "inputPlaceholder": "Nome in-game ou apelido...",
+        "inputEmpty": "O nome não pode estar vazio.",
+        "linkUser": "Vincular usuário",
+        "changeUser": "Alterar usuário",
+        "unlinkUser": "Desvincular",
+        "noLinkedUser": "Sem usuário vinculado",
+        "searchPlaceholder": "Buscar por nome ou @usuário...",
+        "noResults": "Nenhum usuário encontrado.",
+        "remove": "Remover",
+        "removeConfirmTitle": "Remover participante?",
+        "removeConfirmDesc": "Este participante possui partidas registradas. Removê-lo pode afetar a classificação. Tem certeza?",
+        "removeConfirmAction": "Remover mesmo assim",
+        "claimPending": "Pendente",
+        "claimAccepted": "Vinculado",
+        "claimRejected": "Rejeitado"
       },
       "staff": {
         "title": "Equipe do Evento",
@@ -468,8 +545,8 @@
         "roleOrganizer": "Organizador",
         "roleModerator": "Moderador",
         "roleModeratorShort": "Moderador",
-        "roleScorekeeper": "Placar",
-        "roleScorekeeperShort": "Placar",
+        "roleScorekeeper": "Registrador",
+        "roleScorekeeperShort": "Registrador",
         "organizerDesc": "Controle total do evento: editar configurações, gerenciar equipe e participantes.",
         "moderatorDesc": "Pode gerenciar partidas, participantes e aprovar inscrições.",
         "scorekeeperDesc": "Pode apenas registrar e editar o placar das partidas."

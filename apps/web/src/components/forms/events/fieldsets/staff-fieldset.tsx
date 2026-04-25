@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useLazyQuery } from "@apollo/client/react";
 import Image from "next/image";
-import { Search, X, LoaderCircle, Users, ShieldCheck, Shield, ClipboardList } from "lucide-react";
+import { Search, X, LoaderCircle, ShieldCheck, Shield, ClipboardList } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SEARCH_USERS } from "@/lib/apollo/queries/user";
 import { CustomSelect } from "@/components/ui/custom-select";
@@ -121,7 +121,7 @@ export function StaffFieldset({
       {/* Header */}
       <div className="flex items-start gap-3">
         <div className="border-primary/20 bg-primary/10 mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl border">
-          <Users className="text-primary size-4" />
+          <ShieldCheck className="text-primary size-4" />
         </div>
         <div>
           <p className="text-sm font-semibold text-white">{t("title")}</p>
@@ -157,7 +157,7 @@ export function StaffFieldset({
             <div
               // Prevent mousedown from blurring the input so onClick on results fires
               onMouseDown={(e) => e.preventDefault()}
-              className="animate-in fade-in zoom-in-95 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-[#0d0c0e]/95 shadow-2xl backdrop-blur-xl duration-150"
+              className="animate-in fade-in slide-in-from-top-2 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200"
               style={{
                 top: dropdownCoords.top,
                 left: dropdownCoords.left,
@@ -176,9 +176,9 @@ export function StaffFieldset({
                       key={user.id}
                       type="button"
                       onClick={() => handleAdd(user)}
-                      className="hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
+                      className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
                     >
-                      <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
+                      <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
                         {user.imageUrl ? (
                           <Image
                             src={user.imageUrl}
@@ -193,10 +193,10 @@ export function StaffFieldset({
                         )}
                       </div>
                       <div className="flex min-w-0 flex-col">
-                        <span className="truncate text-sm font-semibold text-white">
+                        <span className="group-hover:text-primary truncate text-sm font-bold text-white transition-colors">
                           {user.name}
                         </span>
-                        <span className="text-muted truncate text-xs">
+                        <span className="text-secondary/35 truncate text-[10px] tracking-widest uppercase">
                           @{user.username}
                         </span>
                       </div>

@@ -22,12 +22,6 @@ export class League {
   @Field(() => Object, { nullable: true })
   customFieldSchema?: unknown;
 
-  @Field()
-  createdAt: Date;
-
-  @Field()
-  updatedAt: Date;
-
   // Populated by ResolveField in resolver (not always present)
   @Field(() => Event, { nullable: true })
   event?: Event;

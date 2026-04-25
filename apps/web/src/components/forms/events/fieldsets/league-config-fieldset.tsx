@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { EloMatchSimulator } from "@/components/forms/events/league/elo-match-simulator";
 
 type LeagueConfigValues = {
-  ratingSystem: "ELO" | "POINTS";
+  ratingSystem?: "ELO" | "POINTS";
   allowDraw: boolean;
   initialElo?: number;
   kFactor?: number;
@@ -36,10 +36,12 @@ type LeagueConfigValues = {
 
 interface LeagueConfigFieldsetProps {
   disableRatingSystemChange?: boolean;
+  hideRatingSystemPicker?: boolean;
 }
 
 export function LeagueConfigFieldset({
   disableRatingSystemChange,
+  hideRatingSystemPicker,
 }: LeagueConfigFieldsetProps) {
   const t = useTranslations("Modals.AddEvent");
   const locale = useLocale();
@@ -64,28 +66,11 @@ export function LeagueConfigFieldset({
     locale,
   );
 
-  const getEloExplanationText = (
-    key: "initial_score" | "match_impact",
-    values: { initialElo?: number; kFactor?: number } = {},
-  ) => {
-    try {
-      return t(`explanation.elo.${key}`, values);
-    } catch {
-      if (key === "initial_score") {
-        return locale === "pt"
-          ? `Todos começam com ${values.initialElo ?? 0} pts.`
-          : `Everyone starts with ${values.initialElo ?? 0} pts.`;
-      }
-      return locale === "pt"
-        ? `Os resultados desta liga costumam mover a pontuação em cerca de ${values.kFactor ?? 0} pts.`
-        : `Results in this league typically move ratings by around ${values.kFactor ?? 0} pts.`;
-    }
-  };
-
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
       <div className="flex flex-col gap-10">
         {/* Rating System Selector */}
+        {!hideRatingSystemPicker && (
         <div className="flex flex-col gap-4">
           <LabelTooltip label={t("ratingSystem.label")} />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -137,6 +122,7 @@ export function LeagueConfigFieldset({
             </button>
           </div>
         </div>
+        )}
 
         <div className="grid gap-8 md:grid-cols-5">
           {/* Left column: Config inputs */}
@@ -167,7 +153,7 @@ export function LeagueConfigFieldset({
             <div className="space-y-6">
               {ratingSystem === "ELO" ? (
                 <div className="grid gap-6">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 items-end gap-4">
                     <div className="flex flex-col gap-2">
                       <LabelTooltip label={t("initialElo.label")} />
                       <Controller
@@ -402,9 +388,7 @@ export function LeagueConfigFieldset({
                           <Trophy className="size-3" />
                         </div>
                         <span>
-                          {getEloExplanationText("initial_score", {
-                            initialElo,
-                          })}
+                          {t("explanation.elo.initial_score", { initialElo })}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -412,7 +396,7 @@ export function LeagueConfigFieldset({
                           <ArrowUpRight className="size-3" />
                         </div>
                         <span>
-                          {getEloExplanationText("match_impact", { kFactor })}
+                          {t("explanation.elo.match_impact", { kFactor })}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">

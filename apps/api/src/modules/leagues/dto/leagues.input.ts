@@ -21,6 +21,23 @@ export class InitialStaffInput {
 }
 
 @InputType()
+export class InitialEntryInput {
+  @Field()
+  @IsString()
+  displayName!: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  userId?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
+}
+
+@InputType()
 export class CreateLeagueEventInput {
   @Field({ nullable: true })
   @IsString()

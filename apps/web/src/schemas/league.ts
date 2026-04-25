@@ -28,7 +28,7 @@ export const getAddLeagueSchema = (t: TFunction) => {
       allowDraw: z.boolean(),
       gameId: z.string().optional(),
       gameName: z.string().optional(),
-      ratingSystem: z.enum(["ELO", "POINTS"]),
+      ratingSystem: z.enum(["ELO", "POINTS"]).optional(),
       // Elo fields (optional in base object, required by superRefine)
       initialElo: z.number().min(0).optional(),
       kFactor: z.number().min(1).max(100).optional(),
@@ -58,6 +58,15 @@ export const getAddLeagueSchema = (t: TFunction) => {
           message: t("required"),
           path: ["gameId"],
         });
+      }
+
+      if (!data.ratingSystem) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("required"),
+          path: ["ratingSystem"],
+        });
+        return;
       }
 
       if (data.ratingSystem === "ELO") {

@@ -2,6 +2,12 @@
 
 Before making any structural change, read `ARCHITECTURE.md` at the repo root. It is the source of truth for this project.
 
+## Documents
+
+- [ROADMAP.md](../ROADMAP.md) — product vision and timeline, should be updated as the project evolves.
+- [CONTEXT.md](../CONTEXT.md) — high-level overview of the problem space, should also be evaluated periodically for checking if an update is necessary.
+- [ARCHITECTURE.md](../ARCHITECTURE.md) — technical reference for the codebase structure, data flow, and conventions.
+
 ## Architecture
 
 Always refer to [ARCHITECTURE.md](../ARCHITECTURE.md) for the full reference before making any changes. Key rules enforced here:

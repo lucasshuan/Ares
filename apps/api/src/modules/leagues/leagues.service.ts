@@ -57,6 +57,22 @@ export class LeaguesService {
     return league ? this.mapLeague(league) : null;
   }
 
+  async checkSlug(
+    gameId: string,
+    slug: string,
+    excludeEventId?: string,
+  ): Promise<boolean> {
+    const existing = await this.db.event.findFirst({
+      where: {
+        gameId,
+        slug,
+        ...(excludeEventId ? { id: { not: excludeEventId } } : {}),
+      },
+      select: { id: true },
+    });
+    return !existing;
+  }
+
   async findByEventSlug(gameSlug: string, eventSlug: string) {
     const league = await this.db.league.findFirst({
       where: { event: { slug: eventSlug, game: { slug: gameSlug } } },
@@ -91,6 +107,11 @@ export class LeaguesService {
     leagueInput: CreateLeagueConfigInput,
     authorId: string,
     initialStaff?: Array<{ userId: string; role?: string }>,
+    initialEntries?: Array<{
+      displayName: string;
+      userId?: string;
+      imageUrl?: string;
+    }>,
   ) {
     const gameId =
       eventInput.gameId ?? (await this.resolveGameId(eventInput.gameName));
@@ -144,6 +165,27 @@ export class LeaguesService {
               },
             });
           }
+        }
+      }
+
+      // Create initial event entries
+      if (initialEntries && initialEntries.length > 0) {
+        const seenUserIds = new Set<string>();
+        for (const entry of initialEntries) {
+          if (!entry.displayName.trim()) continue;
+          const userId =
+            entry.userId && !seenUserIds.has(entry.userId)
+              ? entry.userId
+              : undefined;
+          if (userId) seenUserIds.add(userId);
+          await tx.eventEntry.create({
+            data: {
+              eventId: event.id,
+              displayName: entry.displayName.trim(),
+              imageUrl: entry.imageUrl ?? null,
+              userId: userId ?? null,
+            },
+          });
         }
       }
 

@@ -1,5 +1,11 @@
 import { gql } from "@apollo/client";
 
+export const CHECK_EVENT_SLUG = gql`
+  query CheckEventSlug($gameId: String!, $slug: String!, $excludeEventId: ID) {
+    checkEventSlug(gameId: $gameId, slug: $slug, excludeEventId: $excludeEventId)
+  }
+`;
+
 export const GET_LEAGUES = gql`
   query GetLeagues($gameId: String!, $pagination: PaginationInput) {
     leagues(gameId: $gameId, pagination: $pagination) {
@@ -40,8 +46,6 @@ export const GET_LEAGUE = gql`
       allowDraw
       allowedFormats
       customFieldSchema
-      createdAt
-      updatedAt
       event {
         id
         name

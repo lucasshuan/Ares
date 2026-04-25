@@ -7,11 +7,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import {
-  canEditGame,
-  canManageLeagues,
-  canManagePlayers,
-} from "@/lib/permissions";
+import { canEditGame } from "@/lib/permissions";
 import { LeagueCard } from "@/components/cards/league-card";
 import { AlertCircle, ChevronLeft, Ghost } from "lucide-react";
 import { UserChip } from "@/components/ui/user-chip";
@@ -101,14 +97,6 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   const leagues = leaguesData?.leagues?.nodes ?? [];
 
   const canEditCurrentGame = canEditGame(session, game.authorId);
-  const viewerCanManagePlayers = canManagePlayers(session);
-  const viewerCanManageLeagues = canManageLeagues(session);
-  const canApproveGame = !!session?.user?.permissions?.includes("manage_games");
-  const canSeeAdminActions =
-    canEditCurrentGame ||
-    viewerCanManagePlayers ||
-    viewerCanManageLeagues ||
-    canApproveGame;
 
   const gameWithCounts = {
     ...game,
@@ -132,11 +120,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           </Link>
 
           <GlowBorder
-            className={cn(
-              canSeeAdminActions
-                ? "rounded-3xl rounded-br-none"
-                : "rounded-3xl",
-            )}
+            className="rounded-3xl"
             borderClassName="bg-[color-mix(in_srgb,var(--gold)_45%,transparent)]"
           >
             <div className="relative aspect-368/178 w-full overflow-hidden">
@@ -151,6 +135,11 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
                 />
               ) : (
                 <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
+              )}
+              {canEditCurrentGame && (
+                <div className="absolute top-3 right-3 z-10">
+                  <GameManageActions game={game as Game} />
+                </div>
               )}
             </div>
 
@@ -248,16 +237,6 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
               )}
             </div>
           </GlowBorder>
-
-          {canSeeAdminActions && (
-            <div className="flex w-full justify-end">
-              <GameManageActions
-                game={game as Game}
-                canEditGame={canEditCurrentGame}
-                canApproveGame={canApproveGame}
-              />
-            </div>
-          )}
 
           {author && (
             <div className="flex flex-row-reverse items-center justify-center gap-3 px-1 py-2 opacity-80 transition-opacity hover:opacity-100">

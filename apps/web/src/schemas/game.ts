@@ -46,3 +46,7 @@ export const useEditGameSchema = () => {
 };
 
 export type EditGameValues = z.infer<ReturnType<typeof getEditGameSchema>>;
+
+export const getAddGameSchema = getEditGameSchema;
+export const useAddGameSchema = useEditGameSchema;
+export type AddGameValues = EditGameValues;
