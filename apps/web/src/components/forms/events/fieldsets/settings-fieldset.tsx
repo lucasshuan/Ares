@@ -1,7 +1,16 @@
 "use client";
 
-import { useFormContext, useWatch, Controller } from "react-hook-form";
-import { Settings, Globe, Lock } from "lucide-react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import {
+  Settings,
+  Globe,
+  Lock,
+  PencilRuler,
+  UserRoundPlus,
+  PlayCircle,
+  Flag,
+  Ban,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { cn } from "@/lib/utils";
@@ -22,11 +31,67 @@ export function SettingsFieldset() {
   const status = useWatch({ control, name: "status" }) ?? "PENDING";
 
   const STATUS_OPTIONS = [
-    { value: "PENDING", label: t("status.pending") },
-    { value: "ACTIVE", label: t("status.active") },
-    { value: "FINISHED", label: t("status.finished") },
-    { value: "CANCELLED", label: t("status.cancelled") },
+    {
+      value: "PENDING",
+      label: t("status.pending"),
+      icon: PencilRuler,
+      accentClassName:
+        "border-warning/35 bg-warning/10 text-warning shadow-warning/10",
+    },
+    ...(registrationsEnabled
+      ? [
+          {
+            value: "REGISTRATION",
+            label: t("status.registration"),
+            icon: UserRoundPlus,
+            accentClassName:
+              "border-primary/35 bg-primary/10 text-primary shadow-primary/10",
+          },
+        ]
+      : []),
+    {
+      value: "ACTIVE",
+      label: t("status.active"),
+      icon: PlayCircle,
+      accentClassName:
+        "border-success/35 bg-success/10 text-success shadow-success/10",
+      disabled: registrationsEnabled,
+    },
+    {
+      value: "FINISHED",
+      label: t("status.finished"),
+      icon: Flag,
+      accentClassName:
+        "border-primary/35 bg-primary/10 text-primary shadow-primary/10",
+      disabled: true,
+    },
+    {
+      value: "CANCELLED",
+      label: t("status.cancelled"),
+      icon: Ban,
+      accentClassName: "border-danger/35 bg-danger/10 text-danger shadow-danger/10",
+      disabled: true,
+    },
   ] as const;
+
+  const handleRegistrationPhaseToggle = () => {
+    const nextValue = !registrationsEnabled;
+
+    setValue("registrationsEnabled", nextValue, { shouldValidate: true });
+
+    if (nextValue && status === "ACTIVE") {
+      setValue("status", "PENDING", { shouldValidate: true });
+    }
+
+    if (!nextValue) {
+      setValue("registrationStartDate", null, { shouldValidate: true });
+      setValue("registrationEndDate", null, { shouldValidate: true });
+
+      if (status === "REGISTRATION") {
+        setValue("status", "PENDING", { shouldValidate: true });
+      }
+    }
+  };
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
@@ -38,30 +103,6 @@ export function SettingsFieldset() {
         <div>
           <p className="text-sm font-semibold text-white">{t("title")}</p>
           <p className="text-muted mt-0.5 text-xs">{t("description")}</p>
-        </div>
-      </div>
-
-      {/* Status */}
-      <div className="flex flex-col gap-3">
-        <LabelTooltip label={t("status.label")} tooltip={t("status.tooltip")} />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {STATUS_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() =>
-                setValue("status", opt.value, { shouldValidate: true })
-              }
-              className={cn(
-                "flex items-center justify-center rounded-2xl border px-4 py-3 text-sm font-semibold transition-all",
-                status === opt.value
-                  ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
-                  : "border-gold-dim/25 bg-card-strong/45 text-secondary/45 hover:bg-card-strong/70",
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -146,11 +187,7 @@ export function SettingsFieldset() {
             type="button"
             role="switch"
             aria-checked={registrationsEnabled}
-            onClick={() =>
-              setValue("registrationsEnabled", !registrationsEnabled, {
-                shouldValidate: true,
-              })
-            }
+            onClick={handleRegistrationPhaseToggle}
             className={cn(
               "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none",
               registrationsEnabled ? "bg-primary" : "bg-white/10",
@@ -231,6 +268,42 @@ export function SettingsFieldset() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Status */}
+      <div className="flex flex-col gap-3">
+        <LabelTooltip label={t("status.label")} tooltip={t("status.tooltip")} />
+        <div
+          className={cn(
+            "grid grid-cols-2 gap-3",
+            registrationsEnabled ? "sm:grid-cols-5" : "sm:grid-cols-4",
+          )}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() =>
+                !opt.disabled &&
+                setValue("status", opt.value, { shouldValidate: true })
+              }
+              disabled={opt.disabled}
+              aria-disabled={opt.disabled}
+              className={cn(
+                "flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all",
+                status === opt.value
+                  ? cn(opt.accentClassName, "shadow-lg")
+                  : "border-gold-dim/25 bg-card-strong/45 text-secondary/45",
+                !opt.disabled && status !== opt.value && "hover:bg-card-strong/70",
+                opt.disabled &&
+                  "cursor-not-allowed border-gold-dim/15 bg-card-strong/25 text-secondary/25 opacity-60",
+              )}
+            >
+              <opt.icon className="size-4 shrink-0" />
+              <span>{opt.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );

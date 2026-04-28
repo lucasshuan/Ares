@@ -529,12 +529,13 @@
       },
       "settings": {
         "title": "Event Access",
-        "description": "Control publication, visibility, registrations, and max capacity.",
+        "description": "Control visibility, max capacity, the registration window, and the event's current phase.",
         "status": {
           "label": "Status",
-          "tooltip": "Sets the current state of the event. 'Draft' events are only visible to staff.",
+          "tooltip": "Sets the event's current phase. When the registration phase is enabled, Open Registration becomes available and In Progress is blocked.",
           "pending": "Draft",
-          "active": "Active",
+          "registration": "Open Registration",
+          "active": "In Progress",
           "finished": "Finished",
           "cancelled": "Cancelled"
         },
@@ -551,10 +552,10 @@
           "placeholder": "No limit"
         },
         "registrations": {
-          "label": "Registrations",
-          "tooltip": "Enables open registrations for the event. You can optionally set an open period.",
-          "enabled": "Registrations enabled",
-          "disabled": "Registrations disabled",
+          "label": "Registration phase",
+          "tooltip": "If enabled, you can set the registration window below and use the open-registration status.",
+          "enabled": "Registration phase enabled",
+          "disabled": "Registration phase disabled",
           "startDate": "Registration Start Date",
           "endDate": "Registration End Date"
         },
@@ -566,6 +567,15 @@
           "add": "Add link",
           "remove": "Remove link"
         }
+      },
+      "registrationPhase": {
+        "title": "Registration Phase",
+        "description": "Configure the window when participants can sign up before the event moves into its in-progress phase.",
+        "phaseHint": "This phase is separate from the event being in progress. If you leave both dates blank, registrations stay open until you close them manually.",
+        "startDate": "Registration Start",
+        "startDateTooltip": "Date when the registration phase begins. Leave blank to open it immediately.",
+        "endDate": "Registration End",
+        "endDateTooltip": "Date when the registration phase ends. Leave blank to keep it open indefinitely."
       },
       "steps": {
         "game": "Game",
@@ -589,6 +599,7 @@
         "emptyHint": "You can add participants later from the event page or users can join themselves.",
         "inputPlaceholder": "In-game name or alias...",
         "inputEmpty": "Name cannot be empty.",
+        "duplicateName": "Another participant already uses this name.",
         "linkUser": "Link user",
         "changeUser": "Change user",
         "unlinkUser": "Unlink",
@@ -660,7 +671,10 @@
         "noOptions": "No games found.",
         "newGameWarning": "This game does not exist yet and will be created automatically.",
         "newGameInstructions": "Make absolutely sure the game doesn't exist before proceeding.",
-        "searchNew": "Create new game: \"{name}\""
+        "searchNew": "Create new game: \"{name}\"",
+        "confirmUnknownTitle": "Are you sure you couldn't find this game?",
+        "confirmUnknownDescription": "Please confirm that you searched the site and that this game really does not exist before moving to the next step.",
+        "confirmUnknownAction": "Yes, continue anyway"
       },
       "next": "Next Step",
       "back": "Back",

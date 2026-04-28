@@ -11,6 +11,7 @@ export type GameStatus = (typeof GAME_STATUSES)[number];
 
 export const EVENT_STATUSES = [
   "PENDING",
+  "REGISTRATION",
   "ACTIVE",
   "FINISHED",
   "CANCELLED",
@@ -75,3 +76,11 @@ export const ENTRY_CLAIM_STATUSES = [
   "REJECTED",
 ] as const;
 export type EntryClaimStatus = (typeof ENTRY_CLAIM_STATUSES)[number];
+
+export const ENTRY_STATUSES = [
+  "CONFIRMED",
+  "PENDING_APPROVAL",
+  "WAITLISTED",
+  "REJECTED",
+] as const;
+export type EntryStatus = (typeof ENTRY_STATUSES)[number];

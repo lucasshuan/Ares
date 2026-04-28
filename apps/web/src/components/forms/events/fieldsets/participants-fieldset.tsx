@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useLazyQuery } from "@apollo/client/react";
 import Image from "next/image";
@@ -10,9 +10,7 @@ import {
   X,
   LoaderCircle,
   Search,
-  UserRoundPlus,
   UserRoundX,
-  Check,
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -40,6 +38,10 @@ type LinkedUser = NonNullable<ParticipantEntry["linkedUser"]>;
 interface ParticipantsFieldsetProps {
   participants: ParticipantEntry[];
   onParticipantsChange: (participants: ParticipantEntry[]) => void;
+}
+
+function normalizeParticipantName(name: string): string {
+  return name.trim().toLocaleLowerCase();
 }
 
 function genLocalId(): string {
@@ -79,20 +81,15 @@ export function ParticipantsFieldset({
 }: ParticipantsFieldsetProps) {
   const t = useTranslations("Modals.AddEvent.participants");
 
-  // Add-new-participant form state
-  const [addingNew, setAddingNew] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [nameError, setNameError] = useState(false);
-  const [newLinkedUser, setNewLinkedUser] = useState<LinkedUser | null>(null);
-  const newNameRef = useRef<HTMLInputElement>(null);
+  const nameInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // User link state (shared — only one link search is open at a time)
-  // "new" = the new-participant row, or a participant localId
+  // User link state (shared - only one dropdown is open at a time)
   const [linkTargetId, setLinkTargetId] = useState<string | null>(null);
+  const [linkQueries, setLinkQueries] = useState<Record<string, string>>({});
   const [linkQuery, setLinkQuery] = useState("");
   const [linkFocused, setLinkFocused] = useState(false);
   const [linkCoords, setLinkCoords] = useState({ top: 0, left: 0, width: 0 });
-  const linkInputRef = useRef<HTMLInputElement>(null);
+  const linkInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Confirm-remove state (for entries with hasMatches=true)
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
@@ -113,9 +110,11 @@ export function ParticipantsFieldset({
 
   const showLinkDropdown = linkFocused && linkQuery.trim().length > 0;
 
-  const updateLinkCoords = useCallback(() => {
-    if (linkInputRef.current) {
-      const rect = linkInputRef.current.getBoundingClientRect();
+  const updateLinkCoords = useCallback((targetId: string) => {
+    const input = linkInputRefs.current[targetId];
+
+    if (input) {
+      const rect = input.getBoundingClientRect();
       setLinkCoords({
         top: rect.bottom + window.scrollY + 8,
         left: rect.left + window.scrollX,
@@ -124,53 +123,72 @@ export function ParticipantsFieldset({
     }
   }, []);
 
-  const linkedUserIds = new Set(
-    participants.map((p) => p.linkedUser?.userId).filter(Boolean),
+  const duplicateNameIds = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    for (const participant of participants) {
+      const normalizedName = normalizeParticipantName(participant.displayName);
+
+      if (!normalizedName) {
+        continue;
+      }
+
+      counts.set(normalizedName, (counts.get(normalizedName) ?? 0) + 1);
+    }
+
+    return new Set(
+      participants
+        .filter((participant) => {
+          const normalizedName = normalizeParticipantName(
+            participant.displayName,
+          );
+
+          return normalizedName && (counts.get(normalizedName) ?? 0) > 1;
+        })
+        .map((participant) => participant.localId),
+    );
+  }, [participants]);
+
+  const reservedLinkedUserIds = new Set(
+    participants
+      .filter((participant) => participant.localId !== linkTargetId)
+      .map((participant) => participant.linkedUser?.userId)
+      .filter(Boolean),
   );
 
   const searchResults =
-    searchData?.searchUsers.nodes.filter((u) => !linkedUserIds.has(u.id)) ?? [];
+    searchData?.searchUsers.nodes.filter(
+      (user) => !reservedLinkedUserIds.has(user.id),
+    ) ?? [];
 
   // --- Handlers ---
 
   const handleAddNew = () => {
-    setAddingNew(true);
-    setTimeout(() => newNameRef.current?.focus(), 50);
-  };
+    const localId = genLocalId();
 
-  const handleCancelNew = () => {
-    setAddingNew(false);
-    setNewName("");
-    setNameError(false);
-    setNewLinkedUser(null);
-    if (linkTargetId === "new") {
-      setLinkTargetId(null);
-      setLinkQuery("");
-    }
-  };
-
-  const handleConfirmNew = () => {
-    if (!newName.trim()) {
-      setNameError(true);
-      return;
-    }
     onParticipantsChange([
       ...participants,
       {
-        localId: genLocalId(),
-        displayName: newName.trim(),
-        linkedUser: newLinkedUser ?? null,
+        localId,
+        displayName: "",
+        linkedUser: null,
         claimStatus: null,
       },
     ]);
-    setAddingNew(false);
-    setNewName("");
-    setNameError(false);
-    setNewLinkedUser(null);
-    if (linkTargetId === "new") {
-      setLinkTargetId(null);
-      setLinkQuery("");
-    }
+
+    requestAnimationFrame(() => {
+      nameInputRefs.current[localId]?.focus();
+    });
+  };
+
+  const handleDisplayNameChange = (localId: string, displayName: string) => {
+    onParticipantsChange(
+      participants.map((participant) =>
+        participant.localId === localId
+          ? { ...participant, displayName }
+          : participant,
+      ),
+    );
   };
 
   const handleRemove = (localId: string) => {
@@ -182,7 +200,13 @@ export function ParticipantsFieldset({
       if (linkTargetId === localId) {
         setLinkTargetId(null);
         setLinkQuery("");
+        setLinkFocused(false);
       }
+      setLinkQueries((current) => {
+        const next = { ...current };
+        delete next[localId];
+        return next;
+      });
     }
   };
 
@@ -194,22 +218,34 @@ export function ParticipantsFieldset({
     if (linkTargetId === confirmRemoveId) {
       setLinkTargetId(null);
       setLinkQuery("");
+      setLinkFocused(false);
     }
+    setLinkQueries((current) => {
+      const next = { ...current };
+      delete next[confirmRemoveId];
+      return next;
+    });
     setConfirmRemoveId(null);
   };
 
-  const handleOpenLinkSearch = (targetId: string) => {
+  const handleLinkSearchFocus = (targetId: string) => {
     setLinkTargetId(targetId);
-    setLinkQuery("");
-    setTimeout(() => {
-      updateLinkCoords();
-      linkInputRef.current?.focus();
-    }, 50);
+    setLinkQuery(linkQueries[targetId] ?? "");
+    updateLinkCoords(targetId);
+    setLinkFocused(true);
+  };
+
+  const handleLinkSearchChange = (targetId: string, value: string) => {
+    setLinkTargetId(targetId);
+    setLinkQuery(value);
+    setLinkQueries((current) => ({
+      ...current,
+      [targetId]: value,
+    }));
+    updateLinkCoords(targetId);
   };
 
   const handleCloseLinkSearch = () => {
-    setLinkTargetId(null);
-    setLinkQuery("");
     setLinkFocused(false);
   };
 
@@ -219,24 +255,35 @@ export function ParticipantsFieldset({
     username: string;
     imageUrl?: string | null;
   }) => {
+    if (!linkTargetId) {
+      return;
+    }
+
     const linkedUser: LinkedUser = {
       userId: user.id,
       name: user.name,
       username: user.username,
       imageUrl: user.imageUrl,
     };
-    if (linkTargetId === "new") {
-      setNewLinkedUser(linkedUser);
-    } else if (linkTargetId) {
-      onParticipantsChange(
-        participants.map((p) =>
-          p.localId === linkTargetId
-            ? { ...p, linkedUser, claimStatus: null }
-            : p,
-        ),
-      );
-    }
-    handleCloseLinkSearch();
+
+    onParticipantsChange(
+      participants.map((participant) =>
+        participant.localId === linkTargetId
+          ? {
+              ...participant,
+              displayName: participant.displayName.trim()
+                ? participant.displayName
+                : user.name,
+              linkedUser,
+              claimStatus: null,
+            }
+          : participant,
+      ),
+    );
+    setLinkQueries((current) => ({ ...current, [linkTargetId]: "" }));
+    setLinkQuery("");
+    setLinkFocused(false);
+    setLinkTargetId(null);
   };
 
   const handleUnlinkUser = (localId: string) => {
@@ -247,6 +294,18 @@ export function ParticipantsFieldset({
           : p,
       ),
     );
+  };
+
+  const getNameError = (entry: ParticipantEntry): string | null => {
+    if (!entry.displayName.trim()) {
+      return t("inputEmpty");
+    }
+
+    if (duplicateNameIds.has(entry.localId)) {
+      return t("duplicateName");
+    }
+
+    return null;
   };
 
   return (
@@ -266,51 +325,116 @@ export function ParticipantsFieldset({
       {participants.length > 0 && (
         <ul className="space-y-2">
           {participants.map((entry) => {
+            const nameError = getNameError(entry);
             const isLinkActive = linkTargetId === entry.localId;
+
             return (
               <li
                 key={entry.localId}
                 className="border-border/50 bg-card/40 rounded-2xl border p-3 transition-all"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <EntryAvatar
                     displayName={entry.displayName}
                     imageUrl={entry.linkedUser?.imageUrl ?? entry.imageUrl}
                   />
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="text-sm font-semibold text-white">
-                      {entry.displayName}
-                    </span>
-                    {entry.linkedUser ? (
-                      <span className="text-muted truncate text-xs">
-                        @{entry.linkedUser.username}
-                      </span>
-                    ) : (
-                      <span className="text-muted/50 text-xs">
-                        {t("noLinkedUser")}
-                      </span>
-                    )}
+                  <div className="flex min-w-0 flex-1 flex-col gap-3">
+                    <div className="flex min-w-0 flex-col gap-1.5">
+                      <input
+                        ref={(node) => {
+                          nameInputRefs.current[entry.localId] = node;
+                        }}
+                        type="text"
+                        value={entry.displayName}
+                        placeholder={t("inputPlaceholder")}
+                        onChange={(e) =>
+                          handleDisplayNameChange(entry.localId, e.target.value)
+                        }
+                        className={cn(
+                          "field-base py-2 text-sm",
+                          nameError
+                            ? "field-border-error"
+                            : "field-border-default",
+                        )}
+                      />
+                      {nameError && (
+                        <p className="text-xs text-red-400">{nameError}</p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {entry.linkedUser ? (
+                        <div className="border-border/40 flex min-w-0 items-center gap-2 rounded-full border bg-black/20 px-2.5 py-1">
+                          <div className="relative size-5 shrink-0 overflow-hidden rounded-full">
+                            {entry.linkedUser.imageUrl ? (
+                              <Image
+                                src={entry.linkedUser.imageUrl}
+                                alt={entry.linkedUser.name}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="flex size-full items-center justify-center bg-white/10 text-[8px] font-bold text-white/50">
+                                {entry.linkedUser.name
+                                  .slice(0, 2)
+                                  .toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-muted truncate text-xs">
+                            @{entry.linkedUser.username}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-muted/50 text-xs">
+                          {t("noLinkedUser")}
+                        </span>
+                      )}
+
+                      {entry.claimStatus && (
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+                            CLAIM_STATUS_STYLES[entry.claimStatus],
+                          )}
+                        >
+                          {entry.claimStatus === "PENDING"
+                            ? t("claimPending")
+                            : entry.claimStatus === "ACCEPTED"
+                              ? t("claimAccepted")
+                              : t("claimRejected")}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="relative">
+                      <Search className="text-secondary/25 absolute top-1/2 left-4 size-4 -translate-y-1/2" />
+                      <input
+                        ref={(node) => {
+                          linkInputRefs.current[entry.localId] = node;
+                        }}
+                        type="text"
+                        value={
+                          linkTargetId === entry.localId
+                            ? linkQuery
+                            : (linkQueries[entry.localId] ?? "")
+                        }
+                        placeholder={t("searchPlaceholder")}
+                        onChange={(e) =>
+                          handleLinkSearchChange(entry.localId, e.target.value)
+                        }
+                        onFocus={() => handleLinkSearchFocus(entry.localId)}
+                        onBlur={handleCloseLinkSearch}
+                        className="field-base field-border-default py-2.5 pr-4 pl-11 text-sm"
+                      />
+                      {searchLoading && isLinkActive && (
+                        <LoaderCircle className="text-primary/40 absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
+                      )}
+                    </div>
                   </div>
 
-                  {/* Claim status badge */}
-                  {entry.claimStatus && (
-                    <span
-                      className={cn(
-                        "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
-                        CLAIM_STATUS_STYLES[entry.claimStatus],
-                      )}
-                    >
-                      {entry.claimStatus === "PENDING"
-                        ? t("claimPending")
-                        : entry.claimStatus === "ACCEPTED"
-                          ? t("claimAccepted")
-                          : t("claimRejected")}
-                    </span>
-                  )}
-
-                  {/* Action buttons */}
-                  <div className="flex shrink-0 items-center gap-1">
-                    {entry.linkedUser && !isLinkActive && (
+                  <div className="flex shrink-0 items-center gap-1 pt-1">
+                    {entry.linkedUser && (
                       <button
                         type="button"
                         title={t("unlinkUser")}
@@ -318,27 +442,6 @@ export function ParticipantsFieldset({
                         className="text-muted flex size-7 items-center justify-center rounded-xl transition-colors hover:text-red-400"
                       >
                         <UserRoundX className="size-3.5" />
-                      </button>
-                    )}
-                    {!isLinkActive && (
-                      <button
-                        type="button"
-                        title={
-                          entry.linkedUser ? t("changeUser") : t("linkUser")
-                        }
-                        onClick={() => handleOpenLinkSearch(entry.localId)}
-                        className="text-muted hover:text-primary flex size-7 items-center justify-center rounded-xl transition-colors"
-                      >
-                        <UserRoundPlus className="size-3.5" />
-                      </button>
-                    )}
-                    {isLinkActive && (
-                      <button
-                        type="button"
-                        onClick={handleCloseLinkSearch}
-                        className="text-muted flex size-7 items-center justify-center rounded-xl transition-colors hover:text-white"
-                      >
-                        <X className="size-3.5" />
                       </button>
                     )}
                     <button
@@ -351,34 +454,6 @@ export function ParticipantsFieldset({
                     </button>
                   </div>
                 </div>
-
-                {/* Inline user search for this entry */}
-                {isLinkActive && (
-                  <div className="mt-3 border-t border-white/5 pt-3">
-                    <div className="relative">
-                      <Search className="text-secondary/25 absolute top-1/2 left-4 size-4 -translate-y-1/2" />
-                      <input
-                        ref={linkInputRef}
-                        type="text"
-                        value={linkQuery}
-                        placeholder={t("searchPlaceholder")}
-                        onChange={(e) => {
-                          setLinkQuery(e.target.value);
-                          updateLinkCoords();
-                        }}
-                        onFocus={() => {
-                          updateLinkCoords();
-                          setLinkFocused(true);
-                        }}
-                        onBlur={() => setLinkFocused(false)}
-                        className="field-base field-border-default py-2.5 pr-4 pl-11 text-sm"
-                      />
-                      {searchLoading && (
-                        <LoaderCircle className="text-primary/40 absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
-                      )}
-                    </div>
-                  </div>
-                )}
               </li>
             );
           })}
@@ -386,7 +461,7 @@ export function ParticipantsFieldset({
       )}
 
       {/* Empty state */}
-      {participants.length === 0 && !addingNew && (
+      {participants.length === 0 && (
         <div className="border-border/30 flex flex-col items-center gap-2 rounded-2xl border border-dashed px-6 py-8 text-center">
           <Users className="text-muted/30 size-8" />
           <p className="text-muted text-sm">{t("empty")}</p>
@@ -394,136 +469,15 @@ export function ParticipantsFieldset({
         </div>
       )}
 
-      {/* New participant form */}
-      {addingNew && (
-        <div className="border-border/50 bg-card/40 animate-in fade-in slide-in-from-bottom-2 rounded-2xl border p-3 duration-200">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5">
-              <EntryAvatar
-                displayName={newName || "?"}
-                imageUrl={newLinkedUser?.imageUrl}
-              />
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-              <input
-                ref={newNameRef}
-                type="text"
-                value={newName}
-                placeholder={t("inputPlaceholder")}
-                onChange={(e) => {
-                  setNewName(e.target.value);
-                  if (e.target.value.trim()) setNameError(false);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleConfirmNew();
-                  }
-                  if (e.key === "Escape") handleCancelNew();
-                }}
-                className={cn(
-                  "field-base py-2 text-sm",
-                  nameError ? "field-border-error" : "field-border-default",
-                )}
-              />
-              {nameError && (
-                <p className="text-xs text-red-400">{t("inputEmpty")}</p>
-              )}
-              {newLinkedUser ? (
-                <div className="flex items-center gap-1.5">
-                  <div className="relative size-4 shrink-0 overflow-hidden rounded-full">
-                    {newLinkedUser.imageUrl ? (
-                      <Image
-                        src={newLinkedUser.imageUrl}
-                        alt={newLinkedUser.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex size-full items-center justify-center bg-white/10 text-[8px] font-bold text-white/50">
-                        {newLinkedUser.name.slice(0, 2).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-muted text-xs">
-                    @{newLinkedUser.username}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setNewLinkedUser(null)}
-                    className="text-muted ml-0.5 transition-colors hover:text-red-400"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleOpenLinkSearch("new")}
-                  className="text-muted hover:text-primary flex items-center gap-1.5 text-xs transition-colors"
-                >
-                  <UserRoundPlus className="size-3" />
-                  {t("linkUser")}
-                </button>
-              )}
-
-              {/* Inline user search for new entry */}
-              {linkTargetId === "new" && (
-                <div className="relative mt-1">
-                  <Search className="text-secondary/25 absolute top-1/2 left-4 size-4 -translate-y-1/2" />
-                  <input
-                    ref={linkInputRef}
-                    type="text"
-                    value={linkQuery}
-                    placeholder={t("searchPlaceholder")}
-                    onChange={(e) => {
-                      setLinkQuery(e.target.value);
-                      updateLinkCoords();
-                    }}
-                    onFocus={() => {
-                      updateLinkCoords();
-                      setLinkFocused(true);
-                    }}
-                    onBlur={() => setLinkFocused(false)}
-                    className="field-base field-border-default py-2.5 pr-4 pl-11 text-sm"
-                  />
-                  {searchLoading && (
-                    <LoaderCircle className="text-primary/40 absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="flex shrink-0 items-center gap-1 pt-0.5">
-              <button
-                type="button"
-                onClick={handleConfirmNew}
-                className="text-primary hover:bg-primary/10 flex size-7 items-center justify-center rounded-xl transition-colors"
-              >
-                <Check className="size-4" />
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelNew}
-                className="text-muted flex size-7 items-center justify-center rounded-xl transition-colors hover:text-white"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Add participant button */}
-      {!addingNew && (
-        <button
-          type="button"
-          onClick={handleAddNew}
-          className="border-border/40 text-muted hover:border-primary/40 hover:text-primary flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-3 text-sm font-medium transition-all"
-        >
-          <Plus className="size-4" />
-          {t("addButton")}
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={handleAddNew}
+        className="border-border/40 text-muted hover:border-primary/40 hover:text-primary flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-3 text-sm font-medium transition-all"
+      >
+        <Plus className="size-4" />
+        {t("addButton")}
+      </button>
 
       {/* Portal: user search dropdown */}
       {showLinkDropdown &&

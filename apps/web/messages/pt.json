@@ -529,12 +529,13 @@
       },
       "settings": {
         "title": "Acesso do Evento",
-        "description": "Controle publicação, visibilidade, inscrições e capacidade máxima.",
+        "description": "Controle visibilidade, capacidade máxima, janela de inscrições e fase atual do evento.",
         "status": {
           "label": "Status",
-          "tooltip": "Define o estado atual do evento. Eventos em 'Rascunho' ficam visíveis apenas para a equipe.",
+          "tooltip": "Define a fase atual do evento. Se a fase de inscrição estiver habilitada, o status de inscrições abertas fica disponível e Em andamento fica bloqueado.",
           "pending": "Rascunho",
-          "active": "Ativo",
+          "registration": "Inscrições abertas",
+          "active": "Em andamento",
           "finished": "Encerrado",
           "cancelled": "Cancelado"
         },
@@ -551,10 +552,10 @@
           "placeholder": "Sem limite"
         },
         "registrations": {
-          "label": "Inscrições",
-          "tooltip": "Habilita inscrições abertas para o evento. Você pode definir um período de abertura.",
-          "enabled": "Inscrições habilitadas",
-          "disabled": "Inscrições desabilitadas",
+          "label": "Fase de inscrição",
+          "tooltip": "Se habilitada, você poderá definir a janela de inscrições abaixo e usar o status de inscrições abertas.",
+          "enabled": "Fase de inscrição habilitada",
+          "disabled": "Fase de inscrição desabilitada",
           "startDate": "Data de Abertura das Inscrições",
           "endDate": "Data de Encerramento das Inscrições"
         },
@@ -566,6 +567,15 @@
           "add": "Adicionar link",
           "remove": "Remover link"
         }
+      },
+      "registrationPhase": {
+        "title": "Fase de inscrição",
+        "description": "Configure a janela em que participantes poderão se inscrever antes do evento entrar em andamento.",
+        "phaseHint": "Esta fase é separada da fase em andamento. Se deixar as datas em branco, as inscrições permanecem abertas até serem fechadas manualmente.",
+        "startDate": "Início das inscrições",
+        "startDateTooltip": "Data em que a fase de inscrição começa. Deixe em branco para abrir imediatamente.",
+        "endDate": "Fim das inscrições",
+        "endDateTooltip": "Data em que a fase de inscrição termina. Deixe em branco para manter aberta por tempo indeterminado."
       },
       "steps": {
         "game": "Jogo",
@@ -589,6 +599,7 @@
         "emptyHint": "Você pode adicionar participantes depois na página do evento ou os usuários podem se inscrever sozinhos.",
         "inputPlaceholder": "Nome in-game ou apelido...",
         "inputEmpty": "O nome não pode estar vazio.",
+        "duplicateName": "Já existe outro participante com esse nome.",
         "linkUser": "Vincular usuário",
         "changeUser": "Alterar usuário",
         "unlinkUser": "Desvincular",
@@ -660,7 +671,10 @@
         "noOptions": "Nenhum jogo encontrado.",
         "newGameWarning": "Este jogo ainda não existe e será criado automaticamente.",
         "newGameInstructions": "Tenha certeza absoluta de que o jogo não existe antes de continuar.",
-        "searchNew": "Criar novo jogo: \"{name}\""
+        "searchNew": "Criar novo jogo: \"{name}\"",
+        "confirmUnknownTitle": "Você realmente não encontrou esse jogo?",
+        "confirmUnknownDescription": "Confirme que você procurou no site e que esse jogo ainda não existe antes de continuar para a próxima etapa.",
+        "confirmUnknownAction": "Sim, continuar mesmo assim"
       },
       "next": "Próxima Etapa",
       "back": "Voltar",

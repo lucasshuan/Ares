@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { Trophy, LoaderCircle } from "lucide-react";
+import { Search, Trophy, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { MultiStepFormLayout } from "@/components/ui/multi-step-form-layout";
@@ -33,7 +33,11 @@ export function CreateEventTemplate({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
+  const [requiresUnknownGameConfirmation, setRequiresUnknownGameConfirmation] =
+    useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isUnknownGameConfirmOpen, setIsUnknownGameConfirmOpen] =
+    useState(false);
   const [participants, setParticipants] = useState<ParticipantEntry[]>([]);
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() =>
     user
@@ -48,6 +52,7 @@ export function CreateEventTemplate({
         ]
       : [],
   );
+  const pendingNextStepRef = useRef<(() => void) | null>(null);
 
   const steps = [
     { label: t("steps.game") },
@@ -77,6 +82,29 @@ export function CreateEventTemplate({
     }
   };
 
+  const handleBeforeNext = (currentStep: number, proceed: () => void) => {
+    if (currentStep === 0 && requiresUnknownGameConfirmation) {
+      pendingNextStepRef.current = proceed;
+      setIsUnknownGameConfirmOpen(true);
+      return;
+    }
+
+    proceed();
+  };
+
+  const handleCloseUnknownGameConfirm = () => {
+    pendingNextStepRef.current = null;
+    setIsUnknownGameConfirmOpen(false);
+  };
+
+  const handleConfirmUnknownGame = () => {
+    const proceed = pendingNextStepRef.current;
+
+    pendingNextStepRef.current = null;
+    setIsUnknownGameConfirmOpen(false);
+    proceed?.();
+  };
+
   return (
     <>
       <MultiStepFormLayout
@@ -86,6 +114,7 @@ export function CreateEventTemplate({
         initialStep={isGameFixed ? 1 : 0}
         isLoading={isLoading}
         isStepValid={isStepValid}
+        onBeforeNext={handleBeforeNext}
         labels={{ back: t("back"), next: t("next") }}
         renderSubmit={
           <Button
@@ -114,6 +143,7 @@ export function CreateEventTemplate({
             onSuccess={handleSuccess}
             onLoadingChange={setIsLoading}
             onStepValidationChange={setIsStepValid}
+            onUnknownGameSelectionChange={setRequiresUnknownGameConfirmation}
             currentUserId={user?.id}
             participants={participants}
             onParticipantsChange={setParticipants}
@@ -133,6 +163,18 @@ export function CreateEventTemplate({
         cancelText={t("confirm.cancel")}
         isPending={isLoading}
         icon={Trophy}
+      />
+
+      <ConfirmModal
+        isOpen={isUnknownGameConfirmOpen}
+        onClose={handleCloseUnknownGameConfirm}
+        onConfirm={handleConfirmUnknownGame}
+        title={t("gameSelect.confirmUnknownTitle")}
+        description={t("gameSelect.confirmUnknownDescription")}
+        confirmText={t("gameSelect.confirmUnknownAction")}
+        cancelText={t("cancel")}
+        variant="warning"
+        icon={Search}
       />
     </>
   );

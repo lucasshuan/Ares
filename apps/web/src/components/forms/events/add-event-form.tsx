@@ -28,12 +28,37 @@ export type AddEventSuccessData = {
   eventSlug: string;
 };
 
+function normalizeParticipantName(name: string): string {
+  return name.trim().toLocaleLowerCase();
+}
+
+function areParticipantsValid(participants: ParticipantEntry[] | undefined): boolean {
+  if (!participants || participants.length === 0) {
+    return true;
+  }
+
+  const counts = new Map<string, number>();
+
+  for (const participant of participants) {
+    const normalizedName = normalizeParticipantName(participant.displayName);
+
+    if (!normalizedName) {
+      return false;
+    }
+
+    counts.set(normalizedName, (counts.get(normalizedName) ?? 0) + 1);
+  }
+
+  return [...counts.values()].every((count) => count === 1);
+}
+
 interface AddEventFormProps {
   gameId: string;
   onSuccess: (data: AddEventSuccessData) => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
   onStepValidationChange?: (isValid: boolean) => void;
+  onUnknownGameSelectionChange?: (requiresConfirmation: boolean) => void;
   formId: string;
   currentStep: number;
   initialGame?: SimpleGame;
@@ -51,6 +76,7 @@ export function AddEventForm({
   onLoadingChange,
   onValidationChange,
   onStepValidationChange,
+  onUnknownGameSelectionChange,
   formId,
   currentStep,
   initialGame,
@@ -72,12 +98,12 @@ export function AddEventForm({
   );
   const [isSlugChecking, setIsSlugChecking] = useState(false);
   const [hasSlugConflict, setHasSlugConflict] = useState(false);
-  const [selectedGameSlug, setSelectedGameSlug] = useState<string | undefined>(
-    initialGame?.slug,
+  const [selectedGame, setSelectedGame] = useState<SimpleGame | null>(
+    initialGame ?? null,
   );
 
   const handleGameSelect = useCallback((game: SimpleGame | null) => {
-    setSelectedGameSlug(game?.slug);
+    setSelectedGame(game);
   }, []);
 
   const methods = useForm<AddLeagueValues>({
@@ -126,6 +152,8 @@ export function AddEventForm({
   const watchSlug = useWatch({ control, name: "slug" }) ?? "";
   const allowedFormats = useWatch({ control, name: "allowedFormats" }) ?? [];
   const watchRatingSystem = useWatch({ control, name: "ratingSystem" });
+  const requiresUnknownGameConfirmation =
+    !watchGameId && !!watchGameName?.trim();
 
   const handleSlugStatusChange = useCallback(
     (checking: boolean, conflict: boolean) => {
@@ -149,6 +177,10 @@ export function AddEventForm({
   useEffect(() => {
     onValidationChange?.(isFormValid);
   }, [isFormValid, onValidationChange]);
+
+  useEffect(() => {
+    onUnknownGameSelectionChange?.(requiresUnknownGameConfirmation);
+  }, [requiresUnknownGameConfirmation, onUnknownGameSelectionChange]);
 
   useEffect(() => {
     let valid = false;
@@ -178,7 +210,7 @@ export function AddEventForm({
     } else if (currentStep === 4) {
       valid = true; // access step — all optional
     } else if (currentStep === 5) {
-      valid = true; // participants step — optional
+      valid = areParticipantsValid(participants);
     } else if (currentStep === 6) {
       valid = true; // staff step — optional
     }
@@ -193,9 +225,11 @@ export function AddEventForm({
     watchName,
     watchSlug,
     watchRatingSystem,
+    requiresUnknownGameConfirmation,
     isSlugChecking,
     hasSlugConflict,
     allowedFormats.length,
+    participants,
     getValues,
     schema,
     onStepValidationChange,
@@ -265,7 +299,7 @@ export function AddEventForm({
       if (result.success) {
         toast.success(t("success"));
         onSuccess({
-          gameSlug: selectedGameSlug,
+          gameSlug: selectedGame?.slug,
           eventSlug: values.slug,
         });
       } else {
@@ -283,8 +317,8 @@ export function AddEventForm({
       >
         {currentStep === 0 && (
           <GameSearchFieldset
-            gameId={gameId}
-            initialGame={initialGame}
+            gameId={watchGameId ?? gameId}
+            initialGame={selectedGame ?? undefined}
             isGameFixed={isGameFixed}
             onGameSelect={handleGameSelect}
           />

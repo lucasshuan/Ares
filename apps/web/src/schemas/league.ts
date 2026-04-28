@@ -51,7 +51,9 @@ export const getAddLeagueSchema = (t: TFunction) => {
         )
         .min(1, t("required")),
       // Event settings
-      status: z.enum(["PENDING", "ACTIVE", "FINISHED", "CANCELLED"]).optional(),
+      status: z
+        .enum(["PENDING", "REGISTRATION", "ACTIVE", "FINISHED", "CANCELLED"])
+        .optional(),
       visibility: z.enum(["PUBLIC", "PRIVATE"]).optional(),
       registrationsEnabled: z.boolean().optional(),
       registrationStartDate: z.date().optional().nullable(),

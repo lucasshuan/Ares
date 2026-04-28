@@ -3,8 +3,14 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Search, Trophy, LoaderCircle, AlertTriangle, Gamepad2 } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import {
+  Search,
+  Trophy,
+  LoaderCircle,
+  AlertTriangle,
+  Gamepad2,
+} from "lucide-react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { getGamesSimple, type SimpleGame } from "@/actions/get-games";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
@@ -32,13 +38,17 @@ export function GameSearchFieldset({
 }: GameSearchFieldsetProps) {
   const t = useTranslations("Modals.AddEvent");
   const {
+    control,
     setValue,
     formState: { errors },
   } = useFormContext<GameFormFields>();
+  const persistedGameName = useWatch({ control, name: "gameName" }) ?? "";
 
   const [games, setGames] = useState<SimpleGame[]>([]);
   const [isGamesLoading, setIsGamesLoading] = useState(false);
-  const [gameSearch, setGameSearch] = useState(initialGame?.name ?? "");
+  const [gameSearch, setGameSearch] = useState(
+    initialGame?.name ?? persistedGameName,
+  );
   const [selectedGame, setSelectedGame] = useState<SimpleGame | null>(
     initialGame ?? null,
   );
@@ -117,7 +127,14 @@ export function GameSearchFieldset({
       setValue("gameName", undefined, { shouldValidate: true });
       onGameSelect?.(null);
     }
-  }, [selectedGame, gameSearch, hasExactMatch, isGamesLoading, setValue, onGameSelect]);
+  }, [
+    selectedGame,
+    gameSearch,
+    hasExactMatch,
+    isGamesLoading,
+    setValue,
+    onGameSelect,
+  ]);
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
@@ -154,7 +171,7 @@ export function GameSearchFieldset({
                 setShowResults(true);
                 if (selectedGame) setSelectedGame(null);
               }}
-              disabled={false}
+              disabled={isGameFixed}
               className={cn(
                 "field-base py-3.5 pr-4 pl-12",
                 "disabled:cursor-not-allowed disabled:opacity-50",
@@ -190,7 +207,6 @@ export function GameSearchFieldset({
                       type="button"
                       onClick={() => {
                         setShowResults(false);
-                        setIsInputFocused(false);
                       }}
                       className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
                     >
@@ -216,7 +232,6 @@ export function GameSearchFieldset({
                         setSelectedGame(game);
                         setGameSearch(game.name);
                         setShowResults(false);
-                        setIsInputFocused(false);
                       }}
                       className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
                     >

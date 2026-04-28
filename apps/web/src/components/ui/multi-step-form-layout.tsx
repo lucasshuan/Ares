@@ -16,6 +16,7 @@ interface MultiStepFormLayoutProps {
   initialStep?: number;
   isLoading?: boolean;
   isStepValid?: boolean;
+  onBeforeNext?: (currentStep: number, proceed: () => void) => void;
   labels: {
     back: string;
     next: string;
@@ -31,26 +32,40 @@ export function MultiStepFormLayout({
   initialStep = 0,
   isLoading = false,
   isStepValid = false,
+  onBeforeNext,
   labels,
   renderSubmit,
   children,
 }: MultiStepFormLayoutProps) {
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [maxReachedStep, setMaxReachedStep] = useState(initialStep);
+  const lastStepIndex = steps.length - 1;
+  const visibleCurrentStep = Math.min(currentStep, lastStepIndex);
+  const visibleMaxReachedStep = Math.min(maxReachedStep, lastStepIndex);
 
-  const isLastStep = currentStep === steps.length - 1;
-  const canGoBack = currentStep > 0;
+  const isLastStep = visibleCurrentStep === lastStepIndex;
+  const canGoBack = visibleCurrentStep > 0;
 
   const handleNext = () => {
-    const next = currentStep + 1;
-    if (next > maxReachedStep) setMaxReachedStep(next);
+    const next = Math.min(visibleCurrentStep + 1, lastStepIndex);
+    if (next > visibleMaxReachedStep) setMaxReachedStep(next);
     setCurrentStep(next);
   };
 
   const handleStepClick = (idx: number) => {
     const isUnlocked =
-      idx <= currentStep || (idx <= maxReachedStep && isStepValid);
+      idx <= visibleCurrentStep ||
+      (idx <= visibleMaxReachedStep && isStepValid);
     if (isUnlocked) setCurrentStep(idx);
+  };
+
+  const handleNextClick = () => {
+    if (onBeforeNext) {
+      onBeforeNext(visibleCurrentStep, handleNext);
+      return;
+    }
+
+    handleNext();
   };
 
   return (
@@ -65,44 +80,57 @@ export function MultiStepFormLayout({
 
       {/* Steps indicator */}
       <div className="custom-scrollbar mb-8 overflow-x-auto pb-1">
-        <div className="relative flex min-w-fit items-center pb-6 px-6">
+        <div className="relative flex min-w-fit items-center px-6 pb-6">
           {steps.flatMap((step, idx) => {
-            const isActive = idx === currentStep;
-            const isPast = idx < currentStep;
-            const isUnlocked = idx <= maxReachedStep && idx !== currentStep;
-            const canClick = (isPast || isUnlocked) && !isActive;
+            const isActive = idx === visibleCurrentStep;
+            const isPast = idx < visibleCurrentStep;
+            const isReachedFuture =
+              idx > visibleCurrentStep && idx <= visibleMaxReachedStep;
+            const isBlocked = isReachedFuture && !isStepValid;
+            const isUnlocked = isReachedFuture && isStepValid;
+            const canClick = !isActive && (isPast || isUnlocked);
 
             const button = (
               <button
                 key={`step-${idx}`}
                 type="button"
-                onClick={() => canClick && handleStepClick(idx)}
+                onClick={() => handleStepClick(idx)}
                 disabled={!canClick}
                 className={cn(
                   "group relative size-6 shrink-0 transition-all duration-300",
-                  canClick ? "cursor-pointer" : !isActive ? "cursor-not-allowed" : "cursor-default",
+                  canClick
+                    ? "cursor-pointer"
+                    : isBlocked
+                      ? "cursor-not-allowed"
+                      : !isActive
+                        ? "cursor-not-allowed"
+                        : "cursor-default",
                 )}
               >
                 <div
                   className={cn(
                     "flex size-6 items-center justify-center rounded-full text-[10px] font-bold transition-all duration-300",
                     isActive
-                      ? "bg-primary text-white shadow-primary/30 shadow-md"
+                      ? "bg-primary shadow-primary/30 text-white shadow-md"
                       : isPast || isUnlocked
                         ? "bg-success text-white group-hover:brightness-110"
-                        : "bg-white/10 text-white/40",
+                        : isBlocked
+                          ? "bg-warning/15 text-warning ring-warning/30 ring-1"
+                          : "bg-white/10 text-white/40",
                   )}
                 >
                   {idx + 1}
                 </div>
                 <span
                   className={cn(
-                    "absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold tracking-wider uppercase transition-colors duration-300",
+                    "absolute top-8 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider whitespace-nowrap uppercase transition-colors duration-300",
                     isActive
                       ? "text-primary"
                       : isPast || isUnlocked
                         ? "text-success/60 group-hover:text-success/90"
-                        : "text-white/25",
+                        : isBlocked
+                          ? "text-warning/80"
+                          : "text-white/25",
                   )}
                 >
                   {step.label}
@@ -116,8 +144,16 @@ export function MultiStepFormLayout({
                 <div
                   key={`connector-${idx}`}
                   className={cn(
-                    "h-px min-w-3 flex-1 mx-1.5",
-                    idx < maxReachedStep ? "bg-success/20" : "bg-white/5",
+                    "mx-1.5 h-px min-w-3 flex-1",
+                    idx < visibleCurrentStep
+                      ? "bg-success/20"
+                      : idx >= visibleCurrentStep &&
+                          idx < visibleMaxReachedStep &&
+                          !isStepValid
+                        ? "bg-warning/20"
+                        : idx < visibleMaxReachedStep
+                          ? "bg-success/20"
+                          : "bg-white/5",
                   )}
                 />,
               ];
@@ -128,7 +164,7 @@ export function MultiStepFormLayout({
       </div>
 
       {/* Form content */}
-      <div className="rounded-3xl border border-gold-dim bg-card-strong">
+      <div className="border-gold-dim bg-card-strong rounded-3xl border">
         <div className="p-6 lg:p-8">{children(currentStep)}</div>
 
         {/* Footer nav */}
@@ -138,7 +174,7 @@ export function MultiStepFormLayout({
               <Button
                 type="button"
                 intent="ghost"
-                onClick={() => setCurrentStep((s) => s - 1)}
+                onClick={() => setCurrentStep(visibleCurrentStep - 1)}
                 disabled={isLoading}
                 className="rounded-2xl px-6"
               >
@@ -152,7 +188,7 @@ export function MultiStepFormLayout({
             {!isLastStep ? (
               <Button
                 type="button"
-                onClick={handleNext}
+                onClick={handleNextClick}
                 disabled={!isStepValid || isLoading}
                 intent="primary"
                 className="rounded-2xl px-8"
