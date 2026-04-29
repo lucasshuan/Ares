@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { createPortal } from "react-dom";
-import { useLazyQuery } from "@apollo/client/react";
 import Image from "next/image";
 import {
   Medal,
@@ -10,12 +8,17 @@ import {
   X,
   LoaderCircle,
   Search,
-  UserRoundX,
+  UserRoundPlus,
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useLazyQuery } from "@apollo/client/react";
 import { SEARCH_USERS } from "@/lib/apollo/queries/user";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import {
+  useComboboxKeyboard,
+  SearchComboboxDropdown,
+} from "@/components/ui/search-combobox";
 import { cn } from "@/lib/utils";
 import type { SearchUsersQuery } from "@/lib/apollo/generated/graphql";
 
@@ -88,8 +91,9 @@ export function ParticipantsFieldset({
   const [linkQueries, setLinkQueries] = useState<Record<string, string>>({});
   const [linkQuery, setLinkQuery] = useState("");
   const [linkFocused, setLinkFocused] = useState(false);
-  const [linkCoords, setLinkCoords] = useState({ top: 0, left: 0, width: 0 });
   const linkInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  // Ref pointing to the currently-active link input for keyboard nav + positioning
+  const activeInputRef = useRef<HTMLInputElement | null>(null);
 
   // Confirm-remove state (for entries with hasMatches=true)
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
@@ -111,16 +115,7 @@ export function ParticipantsFieldset({
   const showLinkDropdown = linkFocused && linkQuery.trim().length > 0;
 
   const updateLinkCoords = useCallback((targetId: string) => {
-    const input = linkInputRefs.current[targetId];
-
-    if (input) {
-      const rect = input.getBoundingClientRect();
-      setLinkCoords({
-        top: rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
+    activeInputRef.current = linkInputRefs.current[targetId] ?? null;
   }, []);
 
   const duplicateNameIds = useMemo(() => {
@@ -249,6 +244,27 @@ export function ParticipantsFieldset({
     setLinkFocused(false);
   };
 
+  const handleOpenLink = (targetId: string) => {
+    activeInputRef.current = linkInputRefs.current[targetId] ?? null;
+    setLinkTargetId(targetId);
+    setLinkQuery(linkQueries[targetId] ?? "");
+    setLinkFocused(false);
+    requestAnimationFrame(() => {
+      linkInputRefs.current[targetId]?.focus();
+    });
+  };
+
+  const handleCancelLink = (targetId: string) => {
+    setLinkTargetId(null);
+    setLinkQuery("");
+    setLinkFocused(false);
+    setLinkQueries((current) => {
+      const next = { ...current };
+      delete next[targetId];
+      return next;
+    });
+  };
+
   const handleSelectLinkedUser = (user: {
     id: string;
     name: string;
@@ -308,6 +324,16 @@ export function ParticipantsFieldset({
     return null;
   };
 
+  type SearchUser = NonNullable<SearchUsersQuery["searchUsers"]["nodes"]>[number];
+
+  const { highlightedIndex, onInputKeyDown } = useComboboxKeyboard<SearchUser>({
+    isOpen: showLinkDropdown,
+    items: searchResults,
+    onSelectItem: handleSelectLinkedUser,
+    onClose: () => setLinkFocused(false),
+    inputRef: activeInputRef,
+  });
+
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
       {/* Header */}
@@ -338,7 +364,7 @@ export function ParticipantsFieldset({
                     displayName={entry.displayName}
                     imageUrl={entry.linkedUser?.imageUrl ?? entry.imageUrl}
                   />
-                  <div className="flex min-w-0 flex-1 flex-col gap-3">
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex min-w-0 flex-col gap-1.5">
                       <input
                         ref={(node) => {
@@ -362,88 +388,111 @@ export function ParticipantsFieldset({
                       )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      {entry.linkedUser ? (
-                        <div className="border-border/40 flex min-w-0 items-center gap-2 rounded-full border bg-black/20 px-2.5 py-1">
-                          <div className="relative size-5 shrink-0 overflow-hidden rounded-full">
-                            {entry.linkedUser.imageUrl ? (
-                              <Image
-                                src={entry.linkedUser.imageUrl}
-                                alt={entry.linkedUser.name}
-                                fill
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="flex size-full items-center justify-center bg-white/10 text-[8px] font-bold text-white/50">
-                                {entry.linkedUser.name
-                                  .slice(0, 2)
-                                  .toUpperCase()}
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-muted truncate text-xs">
-                            @{entry.linkedUser.username}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted/50 text-xs">
-                          {t("noLinkedUser")}
-                        </span>
-                      )}
-
-                      {entry.claimStatus && (
-                        <span
-                          className={cn(
-                            "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
-                            CLAIM_STATUS_STYLES[entry.claimStatus],
+                    {isLinkActive ? (
+                      <div className="animate-in fade-in slide-in-from-top-1 flex items-center gap-2 duration-150">
+                        <div className="relative flex-1">
+                          <Search className="text-secondary/25 absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2" />
+                          <input
+                            ref={(node) => {
+                              linkInputRefs.current[entry.localId] = node;
+                            }}
+                            type="text"
+                            value={linkQuery}
+                            placeholder={t("searchPlaceholder")}
+                            onChange={(e) =>
+                              handleLinkSearchChange(
+                                entry.localId,
+                                e.target.value,
+                              )
+                            }
+                            onFocus={() =>
+                              handleLinkSearchFocus(entry.localId)
+                            }
+                            onBlur={handleCloseLinkSearch}
+                            onKeyDown={onInputKeyDown}
+                            className="field-base field-border-default py-2 pr-4 pl-9 text-sm"
+                            autoFocus
+                          />
+                          {searchLoading && (
+                            <LoaderCircle className="text-primary/40 absolute top-1/2 right-3 size-3.5 -translate-y-1/2 animate-spin" />
                           )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCancelLink(entry.localId)}
+                          className="text-muted hover:text-white flex size-7 shrink-0 items-center justify-center rounded-xl transition-colors"
                         >
-                          {entry.claimStatus === "PENDING"
-                            ? t("claimPending")
-                            : entry.claimStatus === "ACCEPTED"
-                              ? t("claimAccepted")
-                              : t("claimRejected")}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="relative">
-                      <Search className="text-secondary/25 absolute top-1/2 left-4 size-4 -translate-y-1/2" />
-                      <input
-                        ref={(node) => {
-                          linkInputRefs.current[entry.localId] = node;
-                        }}
-                        type="text"
-                        value={
-                          linkTargetId === entry.localId
-                            ? linkQuery
-                            : (linkQueries[entry.localId] ?? "")
-                        }
-                        placeholder={t("searchPlaceholder")}
-                        onChange={(e) =>
-                          handleLinkSearchChange(entry.localId, e.target.value)
-                        }
-                        onFocus={() => handleLinkSearchFocus(entry.localId)}
-                        onBlur={handleCloseLinkSearch}
-                        className="field-base field-border-default py-2.5 pr-4 pl-11 text-sm"
-                      />
-                      {searchLoading && isLinkActive && (
-                        <LoaderCircle className="text-primary/40 absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
-                      )}
-                    </div>
+                          <X className="size-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap items-center gap-2">
+                        {entry.linkedUser ? (
+                          <>
+                            <button
+                              type="button"
+                              title={t("changeUser")}
+                              onClick={() => handleOpenLink(entry.localId)}
+                              className="border-border/40 hover:border-primary/40 flex min-w-0 items-center gap-2 rounded-full border bg-black/20 px-2.5 py-1 transition-colors"
+                            >
+                              <div className="relative size-5 shrink-0 overflow-hidden rounded-full">
+                                {entry.linkedUser.imageUrl ? (
+                                  <Image
+                                    src={entry.linkedUser.imageUrl}
+                                    alt={entry.linkedUser.name}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <div className="flex size-full items-center justify-center bg-white/10 text-[8px] font-bold text-white/50">
+                                    {entry.linkedUser.name
+                                      .slice(0, 2)
+                                      .toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-muted truncate text-xs">
+                                @{entry.linkedUser.username}
+                              </span>
+                            </button>
+                            <button
+                              type="button"
+                              title={t("unlinkUser")}
+                              onClick={() => handleUnlinkUser(entry.localId)}
+                              className="text-muted/50 hover:text-red-400 flex size-5 shrink-0 items-center justify-center rounded-full transition-colors"
+                            >
+                              <X className="size-3" />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenLink(entry.localId)}
+                            className="text-muted/60 hover:text-primary flex items-center gap-1.5 text-xs transition-colors"
+                          >
+                            <UserRoundPlus className="size-3.5" />
+                            {t("linkUser")}
+                          </button>
+                        )}
+                        {entry.claimStatus && (
+                          <span
+                            className={cn(
+                              "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+                              CLAIM_STATUS_STYLES[entry.claimStatus],
+                            )}
+                          >
+                            {entry.claimStatus === "PENDING"
+                              ? t("claimPending")
+                              : entry.claimStatus === "ACCEPTED"
+                                ? t("claimAccepted")
+                                : t("claimRejected")}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1 pt-1">
-                    {entry.linkedUser && (
-                      <button
-                        type="button"
-                        title={t("unlinkUser")}
-                        onClick={() => handleUnlinkUser(entry.localId)}
-                        className="text-muted flex size-7 items-center justify-center rounded-xl transition-colors hover:text-red-400"
-                      >
-                        <UserRoundX className="size-3.5" />
-                      </button>
-                    )}
                     <button
                       type="button"
                       title={t("remove")}
@@ -479,66 +528,56 @@ export function ParticipantsFieldset({
         {t("addButton")}
       </button>
 
-      {/* Portal: user search dropdown */}
-      {showLinkDropdown &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            onMouseDown={(e) => e.preventDefault()}
-            className="animate-in fade-in slide-in-from-top-2 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200"
-            style={{
-              top: linkCoords.top,
-              left: linkCoords.left,
-              width: linkCoords.width,
-            }}
+      {/* User search dropdown */}
+      <SearchComboboxDropdown<SearchUser>
+        isOpen={showLinkDropdown}
+        anchorRef={activeInputRef}
+        items={searchResults}
+        isLoading={searchLoading}
+        showEmpty
+        noResultsText={t("noResults")}
+        highlightedIndex={highlightedIndex}
+        maxHeight="max-h-56"
+        renderItem={(user, highlighted) => (
+          <button
+            key={user.id}
+            type="button"
+            onClick={() => handleSelectLinkedUser(user)}
+            className={cn(
+              "group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all",
+              highlighted ? "bg-card-strong/45" : "hover:bg-card-strong/45",
+            )}
           >
-            <div className="custom-scrollbar max-h-56 overflow-y-auto p-2">
-              {searchLoading && (
-                <div className="flex items-center justify-center gap-2 px-3 py-4">
-                  <LoaderCircle className="text-primary/50 size-4 animate-spin" />
-                </div>
-              )}
-              {!searchLoading &&
-                searchResults.map((user) => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    onClick={() => handleSelectLinkedUser(user)}
-                    className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
-                  >
-                    <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
-                      {user.imageUrl ? (
-                        <Image
-                          src={user.imageUrl}
-                          alt={user.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
-                          {user.name.slice(0, 2).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex min-w-0 flex-col">
-                      <span className="group-hover:text-primary truncate text-sm font-bold text-white transition-colors">
-                        {user.name}
-                      </span>
-                      <span className="text-secondary/35 truncate text-[10px] tracking-widest uppercase">
-                        @{user.username}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              {!searchLoading && searchResults.length === 0 && (
-                <p className="text-muted px-3 py-4 text-center text-sm">
-                  {t("noResults")}
-                </p>
+            <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
+              {user.imageUrl ? (
+                <Image
+                  src={user.imageUrl}
+                  alt={user.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
+                  {user.name.slice(0, 2).toUpperCase()}
+                </span>
               )}
             </div>
-          </div>,
-          document.body,
+            <div className="flex min-w-0 flex-col">
+              <span
+                className={cn(
+                  "truncate text-sm font-bold text-white transition-colors",
+                  highlighted ? "text-primary" : "group-hover:text-primary",
+                )}
+              >
+                {user.name}
+              </span>
+              <span className="text-secondary/35 truncate text-[10px] tracking-widest uppercase">
+                @{user.username}
+              </span>
+            </div>
+          </button>
         )}
+      />
 
       {/* Confirm-remove modal (for entries with recorded matches) */}
       <ConfirmModal

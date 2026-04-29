@@ -115,6 +115,16 @@ export class CreateLeagueEventInput {
   @IsOptional()
   maxParticipants?: number;
 
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  requiresApproval?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  waitlistEnabled?: boolean;
+
   @Field(() => Object, { nullable: true })
   @IsOptional()
   officialLinks?: unknown;
@@ -213,6 +223,16 @@ export class UpdateLeagueEventInput {
   @Min(1)
   @IsOptional()
   maxParticipants?: number;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  requiresApproval?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  waitlistEnabled?: boolean;
 
   @Field(() => Object, { nullable: true })
   @IsOptional()

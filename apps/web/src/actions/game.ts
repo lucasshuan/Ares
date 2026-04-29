@@ -204,6 +204,8 @@ export const createLeague = createSafeAction(
     registrationStartDate?: Date | null;
     registrationEndDate?: Date | null;
     maxParticipants?: number | null;
+    requiresApproval?: boolean;
+    waitlistEnabled?: boolean;
     officialLinks?: unknown;
     startDate?: Date | null;
     endDate?: Date | null;
@@ -240,6 +242,8 @@ export const createLeague = createSafeAction(
           registrationStartDate: data.registrationStartDate,
           registrationEndDate: data.registrationEndDate,
           maxParticipants: data.maxParticipants,
+          requiresApproval: data.requiresApproval,
+          waitlistEnabled: data.waitlistEnabled,
           officialLinks: data.officialLinks,
           startDate: data.startDate,
           endDate: data.endDate,

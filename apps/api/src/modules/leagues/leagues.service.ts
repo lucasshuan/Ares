@@ -38,6 +38,8 @@ export class LeaguesService {
       registrationStartDate: Date | null;
       registrationEndDate: Date | null;
       maxParticipants: number | null;
+      requiresApproval: boolean;
+      waitlistEnabled: boolean;
       officialLinks: Prisma.JsonValue | null;
       authorId: string | null;
       createdAt: Date;
@@ -138,6 +140,8 @@ export class LeaguesService {
           registrationStartDate: eventInput.registrationStartDate,
           registrationEndDate: eventInput.registrationEndDate,
           maxParticipants: eventInput.maxParticipants ?? null,
+          requiresApproval: eventInput.requiresApproval ?? false,
+          waitlistEnabled: eventInput.waitlistEnabled ?? false,
           officialLinks:
             (eventInput.officialLinks as Prisma.InputJsonValue) ??
             Prisma.JsonNull,

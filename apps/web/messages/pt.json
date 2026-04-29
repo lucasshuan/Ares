@@ -532,7 +532,7 @@
         "description": "Controle visibilidade, capacidade máxima, janela de inscrições e fase atual do evento.",
         "status": {
           "label": "Status",
-          "tooltip": "Define a fase atual do evento. Se a fase de inscrição estiver habilitada, o status de inscrições abertas fica disponível e Em andamento fica bloqueado.",
+          "tooltip": "Define a fase atual do evento. Rascunho = configuração em progresso; Inscrições abertas = período de inscrição; Em andamento = evento acontecendo; Encerrado e Cancelado ficam disponíveis após o evento ser criado.",
           "pending": "Rascunho",
           "registration": "Inscrições abertas",
           "active": "Em andamento",
@@ -551,13 +551,25 @@
           "tooltip": "Limite de participantes aceitos no evento. Deixe em branco para ilimitado.",
           "placeholder": "Sem limite"
         },
-        "registrations": {
-          "label": "Fase de inscrição",
-          "tooltip": "Se habilitada, você poderá definir a janela de inscrições abaixo e usar o status de inscrições abertas.",
-          "enabled": "Fase de inscrição habilitada",
-          "disabled": "Fase de inscrição desabilitada",
+        "openRegistrations": {
+          "label": "Inscrições abertas",
+          "tooltip": "Se habilitado, participantes podem se inscrever sozinhos neste evento.",
+          "enabled": "Inscrições abertas habilitadas",
+          "disabled": "Inscrições abertas desabilitadas",
           "startDate": "Data de Abertura das Inscrições",
           "endDate": "Data de Encerramento das Inscrições"
+        },
+        "requiresApproval": {
+          "label": "Inscrições precisam de aprovação",
+          "tooltip": "Quando ativo, inscrições de participantes ficam em espera até serem aprovadas por um organizador. Útil quando você quer controlar quem entra no evento.",
+          "enabled": "Aprovação necessária",
+          "disabled": "Aprovação não necessária"
+        },
+        "waitlist": {
+          "label": "Fila de espera",
+          "tooltip": "Quando a capacidade máxima for atingida, novos inscritos entram em uma fila de espera e podem ocupar vagas que forem liberadas.",
+          "enabled": "Fila de espera habilitada",
+          "disabled": "Fila de espera desabilitada"
         },
         "officialLinks": {
           "label": "Links Oficiais (Opcional)",
@@ -567,15 +579,6 @@
           "add": "Adicionar link",
           "remove": "Remover link"
         }
-      },
-      "registrationPhase": {
-        "title": "Fase de inscrição",
-        "description": "Configure a janela em que participantes poderão se inscrever antes do evento entrar em andamento.",
-        "phaseHint": "Esta fase é separada da fase em andamento. Se deixar as datas em branco, as inscrições permanecem abertas até serem fechadas manualmente.",
-        "startDate": "Início das inscrições",
-        "startDateTooltip": "Data em que a fase de inscrição começa. Deixe em branco para abrir imediatamente.",
-        "endDate": "Fim das inscrições",
-        "endDateTooltip": "Data em que a fase de inscrição termina. Deixe em branco para manter aberta por tempo indeterminado."
       },
       "steps": {
         "game": "Jogo",

@@ -532,7 +532,7 @@
         "description": "Control visibility, max capacity, the registration window, and the event's current phase.",
         "status": {
           "label": "Status",
-          "tooltip": "Sets the event's current phase. When the registration phase is enabled, Open Registration becomes available and In Progress is blocked.",
+          "tooltip": "Sets the event's current phase. Draft = setup in progress; Open Registration = enrollment period; In Progress = event running; Finished and Cancelled become available after the event is created.",
           "pending": "Draft",
           "registration": "Open Registration",
           "active": "In Progress",
@@ -551,13 +551,25 @@
           "tooltip": "Maximum number of participants accepted. Leave blank for unlimited.",
           "placeholder": "No limit"
         },
-        "registrations": {
-          "label": "Registration phase",
-          "tooltip": "If enabled, you can set the registration window below and use the open-registration status.",
-          "enabled": "Registration phase enabled",
-          "disabled": "Registration phase disabled",
+        "openRegistrations": {
+          "label": "Open registrations",
+          "tooltip": "If enabled, participants can sign up for this event on their own.",
+          "enabled": "Open registrations enabled",
+          "disabled": "Open registrations disabled",
           "startDate": "Registration Start Date",
           "endDate": "Registration End Date"
+        },
+        "requiresApproval": {
+          "label": "Registrations require approval",
+          "tooltip": "When enabled, participants' registrations are held in a pending queue until approved by an organizer. Useful when you want to control who gets in.",
+          "enabled": "Approval required",
+          "disabled": "No approval required"
+        },
+        "waitlist": {
+          "label": "Waitlist",
+          "tooltip": "When max capacity is reached, new registrations join a waitlist and can take spots that open up.",
+          "enabled": "Waitlist enabled",
+          "disabled": "Waitlist disabled"
         },
         "officialLinks": {
           "label": "Official Links (Optional)",
@@ -567,15 +579,6 @@
           "add": "Add link",
           "remove": "Remove link"
         }
-      },
-      "registrationPhase": {
-        "title": "Registration Phase",
-        "description": "Configure the window when participants can sign up before the event moves into its in-progress phase.",
-        "phaseHint": "This phase is separate from the event being in progress. If you leave both dates blank, registrations stay open until you close them manually.",
-        "startDate": "Registration Start",
-        "startDateTooltip": "Date when the registration phase begins. Leave blank to open it immediately.",
-        "endDate": "Registration End",
-        "endDateTooltip": "Date when the registration phase ends. Leave blank to keep it open indefinitely."
       },
       "steps": {
         "game": "Game",

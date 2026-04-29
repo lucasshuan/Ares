@@ -69,6 +69,9 @@ export class EventEntry {
   @Field({ nullable: true })
   userId?: string;
 
+  @Field()
+  entryStatus: string;
+
   @Field(() => Object)
   stats: unknown;
 

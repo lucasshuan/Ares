@@ -47,12 +47,42 @@ export class EventEntriesService {
   }
 
   async addEntry(input: CreateEventEntryInput) {
+    const event = await this.db.event.findUnique({
+      where: { id: input.eventId },
+      select: {
+        requiresApproval: true,
+        waitlistEnabled: true,
+        maxParticipants: true,
+      },
+    });
+
+    if (!event) throw new Error('Event not found');
+
+    let entryStatus: 'CONFIRMED' | 'PENDING_APPROVAL' | 'WAITLISTED' =
+      'CONFIRMED';
+
+    if (event.requiresApproval) {
+      entryStatus = 'PENDING_APPROVAL';
+    } else if (event.maxParticipants !== null) {
+      const confirmedCount = await this.db.eventEntry.count({
+        where: { eventId: input.eventId, entryStatus: 'CONFIRMED' },
+      });
+      if (confirmedCount >= event.maxParticipants) {
+        if (event.waitlistEnabled) {
+          entryStatus = 'WAITLISTED';
+        } else {
+          throw new Error('Event is full');
+        }
+      }
+    }
+
     return this.db.eventEntry.create({
       data: {
         eventId: input.eventId,
         displayName: input.displayName,
         imageUrl: input.imageUrl,
         userId: input.userId,
+        entryStatus,
         stats: Prisma.JsonNull,
       },
       include: { user: true, members: true },

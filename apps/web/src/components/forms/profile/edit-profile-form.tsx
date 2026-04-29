@@ -16,7 +16,6 @@ import {
   Check,
   LoaderCircle,
 } from "lucide-react";
-import { createPortal } from "react-dom";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { checkUsernameAvailability, updateProfile } from "@/actions/user";
@@ -27,6 +26,10 @@ import { cn } from "@/lib/utils";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
 import { resolveImageValue } from "@/lib/upload";
+import {
+  useComboboxKeyboard,
+  SearchComboboxDropdown,
+} from "@/components/ui/search-combobox";
 
 export type UserData = {
   id: string;
@@ -78,6 +81,7 @@ export function EditProfileForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isValid },
   } = useForm<EditProfileValues>({
     resolver: zodResolver(schema),
@@ -105,15 +109,11 @@ export function EditProfileForm({
 
   // Country Selection Logic
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
-  const [countryCoords, setCountryCoords] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
   const [countrySearch, setCountrySearch] = useState("");
+  const countryTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const countrySearchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const countryTriggerRef = useRef<HTMLButtonElement>(null);
+  type LocalizedCountry = { code: string; name: string };
 
   // Localized and sorted countries
   const localizedCountries = COUNTRIES.map((c) => {
@@ -138,34 +138,28 @@ export function EditProfileForm({
     (c) => c.code === country,
   );
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        !(
-          event.target instanceof Element &&
-          event.target.closest(".country-portal-content")
-        )
-      ) {
-        setIsCountryDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const {
+    highlightedIndex: countryHighlightedIndex,
+    onInputKeyDown: onCountryKeyDown,
+  } = useComboboxKeyboard<LocalizedCountry>({
+    isOpen: isCountryDropdownOpen,
+    items: filteredCountries,
+    hasPrependItem: true, // the "None" option
+    onSelectItem: (c) => {
+      setValue("country", c.code, { shouldValidate: true });
+      setIsCountryDropdownOpen(false);
+      setCountrySearch("");
+    },
+    onSelectPrepend: () => {
+      setValue("country", null, { shouldValidate: true });
+      setIsCountryDropdownOpen(false);
+      setCountrySearch("");
+    },
+    onClose: () => setIsCountryDropdownOpen(false),
+    inputRef: countrySearchInputRef,
+  });
 
-  const toggleCountryDropdown = () => {
-    if (!isCountryDropdownOpen && countryTriggerRef.current) {
-      const rect = countryTriggerRef.current.getBoundingClientRect();
-      setCountryCoords({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-    setIsCountryDropdownOpen(!isCountryDropdownOpen);
-  };
+  const toggleCountryDropdown = () => setIsCountryDropdownOpen((v) => !v);
 
   // Notify parent about loading state
   useEffect(() => {
@@ -339,7 +333,7 @@ export function EditProfileForm({
             )}
           />
           {isUsernameChecking ? (
-            <LoaderCircle className="absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-secondary/25" />
+            <LoaderCircle className="text-secondary/25 absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin" />
           ) : canCheckUsername && !errors.username ? (
             hasUsernameConflict ? (
               <X className="text-danger absolute top-1/2 right-4 size-4 -translate-y-1/2" />
@@ -359,12 +353,12 @@ export function EditProfileForm({
       {/* Country Selector */}
       <div className="flex flex-col gap-2">
         <LabelTooltip label={t("country.label")} />
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
           <button
             ref={countryTriggerRef}
             type="button"
             onClick={toggleCountryDropdown}
-            className="focus:border-primary/50 focus:ring-primary/10 flex w-full items-center justify-between rounded-2xl border border-gold-dim/35 bg-card-strong/45 px-5 py-3 text-sm text-white transition-all outline-none hover:bg-card-strong/60 focus:ring-4"
+            className="focus:border-primary/50 focus:ring-primary/10 border-gold-dim/35 bg-card-strong/45 hover:bg-card-strong/60 flex w-full items-center justify-between rounded-2xl border px-5 py-3 text-sm text-white transition-all outline-none focus:ring-4"
           >
             <div className="flex items-center gap-3">
               {country ? (
@@ -384,7 +378,7 @@ export function EditProfileForm({
                 </>
               ) : (
                 <>
-                  <Globe className="size-5 text-secondary/35" />
+                  <Globe className="text-secondary/35 size-5" />
                   <span className="text-secondary/35">
                     {t("country.placeholder")}
                   </span>
@@ -393,107 +387,98 @@ export function EditProfileForm({
             </div>
             <ChevronDown
               className={cn(
-                "size-4 text-secondary/35 transition-transform",
+                "text-secondary/35 size-4 transition-transform",
                 isCountryDropdownOpen && "rotate-180",
               )}
             />
           </button>
           <input type="hidden" name="country" value={country || ""} />
 
-          {isCountryDropdownOpen &&
-            typeof document !== "undefined" &&
-            createPortal(
-              <div
-                className="country-portal-content custom-scrollbar fixed z-9999 flex max-h-62.5 flex-col overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong shadow-2xl"
-                style={{
-                  top: countryCoords.top,
-                  left: countryCoords.left,
-                  width: countryCoords.width,
-                }}
-              >
-                <div className="relative border-b border-gold-dim/35 p-2">
-                  <Search className="absolute top-5 left-5 size-4 text-secondary/35" />
-                  <input
-                    autoFocus
-                    type="text"
-                    value={countrySearch}
-                    onChange={(e) => setCountrySearch(e.target.value)}
-                    placeholder="Search country..."
-                    className="w-full rounded-xl border-none bg-card-strong/45 py-3 pr-4 pl-10 text-sm text-white outline-none focus:bg-card-strong/70"
-                  />
-                  {countrySearch && (
-                    <button
-                      type="button"
-                      onClick={() => setCountrySearch("")}
-                      className="absolute top-5 right-5 text-secondary/35 hover:text-white"
-                    >
-                      <X className="size-4" />
-                    </button>
+          <SearchComboboxDropdown<LocalizedCountry>
+            isOpen={isCountryDropdownOpen}
+            anchorRef={countryTriggerRef}
+            items={filteredCountries}
+            highlightedIndex={countryHighlightedIndex}
+            onClickOutside={() => setIsCountryDropdownOpen(false)}
+            containerClassName="fixed z-9999 flex max-h-[250px] flex-col overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong shadow-2xl"
+            listClassName="custom-scrollbar flex-1 overflow-y-auto px-1 py-1"
+            header={
+              <div className="border-gold-dim/35 relative border-b p-2">
+                <Search className="text-secondary/35 absolute top-5 left-5 size-4" />
+                <input
+                  ref={countrySearchInputRef}
+                  autoFocus
+                  type="text"
+                  value={countrySearch}
+                  onChange={(e) => setCountrySearch(e.target.value)}
+                  onKeyDown={onCountryKeyDown}
+                  placeholder="Search country..."
+                  className="bg-card-strong/45 focus:bg-card-strong/70 w-full rounded-xl border-none py-3 pr-4 pl-10 text-sm text-white outline-none"
+                />
+                {countrySearch && (
+                  <button
+                    type="button"
+                    onClick={() => setCountrySearch("")}
+                    className="text-secondary/35 absolute top-5 right-5 hover:text-white"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
+            }
+            prependItem={{
+              render: (highlighted) => (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue("country", null, { shouldValidate: true });
+                    setIsCountryDropdownOpen(false);
+                    setCountrySearch("");
+                  }}
+                  className={cn(
+                    "hover:bg-card-strong/70 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
+                    highlighted
+                      ? "bg-card-strong/45"
+                      : country === null && "bg-card-strong/45",
                   )}
-                </div>
-
-                <div className="custom-scrollbar overflow-y-auto px-1 py-1">
-                  <Controller
-                    name="country"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            field.onChange(null);
-                            setIsCountryDropdownOpen(false);
-                            setCountrySearch("");
-                          }}
-                          className={cn(
-                            "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
-                            field.value === null && "bg-card-strong/45",
-                          )}
-                        >
-                          <Globe className="size-5 text-secondary/35" />
-                          <span className="text-sm text-white">
-                            {t("country.placeholder")}
-                          </span>
-                        </button>
-
-                        {filteredCountries.map((c) => (
-                          <button
-                            key={c.code}
-                            type="button"
-                            onClick={() => {
-                              field.onChange(c.code);
-                              setIsCountryDropdownOpen(false);
-                              setCountrySearch("");
-                            }}
-                            className={cn(
-                              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
-                              field.value === c.code && "bg-card-strong/45",
-                            )}
-                          >
-                            <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-                              <span
-                                className={cn(
-                                  "fi",
-                                  `fi-${c.code.toLowerCase()}`,
-                                  "h-3 w-4 rounded-xs object-cover",
-                                )}
-                              />
-                            </div>
-                            <span className="truncate text-sm text-white">
-                              {c.name}
-                            </span>
-                            {field.value === c.code && (
-                              <Check className="text-primary ml-auto size-4" />
-                            )}
-                          </button>
-                        ))}
-                      </>
+                >
+                  <Globe className="text-secondary/35 size-5" />
+                  <span className="text-sm text-white">
+                    {t("country.placeholder")}
+                  </span>
+                </button>
+              ),
+            }}
+            renderItem={(c, highlighted) => (
+              <button
+                key={c.code}
+                type="button"
+                onClick={() => {
+                  setValue("country", c.code, { shouldValidate: true });
+                  setIsCountryDropdownOpen(false);
+                  setCountrySearch("");
+                }}
+                className={cn(
+                  "hover:bg-card-strong/70 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
+                  highlighted || country === c.code ? "bg-card-strong/45" : "",
+                )}
+              >
+                <div className="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-sm">
+                  <span
+                    className={cn(
+                      "fi",
+                      `fi-${c.code.toLowerCase()}`,
+                      "h-3 w-4 rounded-xs object-cover",
                     )}
                   />
                 </div>
-              </div>,
-              document.body,
+                <span className="truncate text-sm text-white">{c.name}</span>
+                {country === c.code && (
+                  <Check className="text-primary ml-auto size-4" />
+                )}
+              </button>
             )}
+          />
         </div>
       </div>
 

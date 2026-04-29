@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
   Search,
@@ -14,6 +13,10 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { getGamesSimple, type SimpleGame } from "@/actions/get-games";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
+import {
+  useComboboxKeyboard,
+  SearchComboboxDropdown,
+} from "@/components/ui/search-combobox";
 import { cn } from "@/lib/utils";
 
 /* ─────────────────────── Game Search Fieldset (add form) ─────────────────── */
@@ -54,24 +57,8 @@ export function GameSearchFieldset({
   );
   const [showResults, setShowResults] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [dropdownCoords, setDropdownCoords] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const hasInitialized = useRef(!!initialGame);
-
-  const updateCoords = () => {
-    if (inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect();
-      setDropdownCoords({
-        top: rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-  };
 
   const hasExactMatch = useMemo(() => {
     if (!gameSearch) return false;
@@ -79,6 +66,8 @@ export function GameSearchFieldset({
       (g) => g.name.toLowerCase().trim() === gameSearch.toLowerCase().trim(),
     );
   }, [games, gameSearch]);
+
+  const showPrependItem = !hasExactMatch && !isGamesLoading;
 
   useEffect(() => {
     if (
@@ -136,6 +125,27 @@ export function GameSearchFieldset({
     onGameSelect,
   ]);
 
+  const isDropdownOpen =
+    !!gameSearch &&
+    !selectedGame &&
+    showResults &&
+    isInputFocused &&
+    (games.length > 0 || !isGamesLoading);
+
+  const { highlightedIndex, onInputKeyDown } = useComboboxKeyboard<SimpleGame>({
+    isOpen: isDropdownOpen,
+    items: games,
+    hasPrependItem: showPrependItem,
+    onSelectItem: (game) => {
+      setSelectedGame(game);
+      setGameSearch(game.name);
+      setShowResults(false);
+    },
+    onSelectPrepend: () => setShowResults(false),
+    onClose: () => setShowResults(false),
+    inputRef,
+  });
+
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
       {/* Header */}
@@ -161,7 +171,6 @@ export function GameSearchFieldset({
               placeholder={t("gameSelect.placeholder")}
               value={gameSearch}
               onFocus={() => {
-                updateCoords();
                 setIsInputFocused(true);
                 setShowResults(true);
               }}
@@ -171,6 +180,7 @@ export function GameSearchFieldset({
                 setShowResults(true);
                 if (selectedGame) setSelectedGame(null);
               }}
+              onKeyDown={onInputKeyDown}
               disabled={isGameFixed}
               className={cn(
                 "field-base py-3.5 pr-4 pl-12",
@@ -185,84 +195,86 @@ export function GameSearchFieldset({
             )}
           </div>
 
-          {gameSearch &&
-            !selectedGame &&
-            showResults &&
-            isInputFocused &&
-            (games.length > 0 || !isGamesLoading) &&
-            typeof document !== "undefined" &&
-            createPortal(
-              <div
-                onMouseDown={(e) => e.preventDefault()}
-                className="animate-in fade-in slide-in-from-top-2 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200"
-                style={{
-                  top: dropdownCoords.top,
-                  left: dropdownCoords.left,
-                  width: dropdownCoords.width,
-                }}
-              >
-                <div className="custom-scrollbar max-h-60 overflow-y-auto p-2">
-                  {!hasExactMatch && !isGamesLoading && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowResults(false);
-                      }}
-                      className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
-                    >
-                      <div className="border-primary/20 bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-lg border">
-                        <Search className="size-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-primary text-sm font-bold">
-                          {t("gameSelect.searchNew", { name: gameSearch })}
-                        </span>
-                        <span className="text-secondary/35 text-[10px] tracking-widest uppercase">
-                          {t("gameSelect.newGameWarning")}
-                        </span>
-                      </div>
-                    </button>
-                  )}
-
-                  {games.map((game) => (
-                    <button
-                      key={game.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedGame(game);
-                        setGameSearch(game.name);
-                        setShowResults(false);
-                      }}
-                      className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
-                    >
-                      <div className="border-gold-dim/25 relative size-10 shrink-0 overflow-hidden rounded-lg border bg-black/40">
-                        {game.thumbnailImageUrl ? (
-                          <Image
-                            src={game.thumbnailImageUrl}
-                            alt={game.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="bg-card-strong/45 flex size-full items-center justify-center">
-                            <Trophy className="text-secondary/25 size-4" />
-                          </div>
+          <SearchComboboxDropdown<SimpleGame>
+            isOpen={isDropdownOpen}
+            anchorRef={inputRef}
+            items={games}
+            isLoading={isGamesLoading}
+            highlightedIndex={highlightedIndex}
+            prependItem={
+              showPrependItem
+                ? {
+                    render: (highlighted) => (
+                      <button
+                        type="button"
+                        onClick={() => setShowResults(false)}
+                        className={cn(
+                          "group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all",
+                          highlighted
+                            ? "bg-card-strong/45"
+                            : "hover:bg-card-strong/45",
                         )}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="group-hover:text-primary text-sm font-bold text-white transition-colors">
-                          {game.name}
-                        </span>
-                        <span className="text-secondary/35 text-[10px] tracking-widest uppercase">
-                          {game.slug}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                      >
+                        <div className="border-primary/20 bg-primary/10 text-primary flex size-10 shrink-0 items-center justify-center rounded-lg border">
+                          <Search className="size-4" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-primary text-sm font-bold">
+                            {t("gameSelect.searchNew", { name: gameSearch })}
+                          </span>
+                          <span className="text-secondary/35 text-[10px] tracking-widest uppercase">
+                            {t("gameSelect.newGameWarning")}
+                          </span>
+                        </div>
+                      </button>
+                    ),
+                  }
+                : undefined
+            }
+            renderItem={(game, highlighted) => (
+              <button
+                key={game.id}
+                type="button"
+                onClick={() => {
+                  setSelectedGame(game);
+                  setGameSearch(game.name);
+                  setShowResults(false);
+                }}
+                className={cn(
+                  "group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all",
+                  highlighted ? "bg-card-strong/45" : "hover:bg-card-strong/45",
+                )}
+              >
+                <div className="border-gold-dim/25 relative size-10 shrink-0 overflow-hidden rounded-lg border bg-black/40">
+                  {game.thumbnailImageUrl ? (
+                    <Image
+                      src={game.thumbnailImageUrl}
+                      alt={game.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="bg-card-strong/45 flex size-full items-center justify-center">
+                      <Trophy className="text-secondary/25 size-4" />
+                    </div>
+                  )}
                 </div>
-              </div>,
-              document.body,
+                <div className="flex flex-col">
+                  <span
+                    className={cn(
+                      "text-sm font-bold text-white transition-colors",
+                      highlighted ? "text-primary" : "group-hover:text-primary",
+                    )}
+                  >
+                    {game.name}
+                  </span>
+                  <span className="text-secondary/35 text-[10px] tracking-widest uppercase">
+                    {game.slug}
+                  </span>
+                </div>
+              </button>
             )}
+          />
         </div>
 
         <div className="border-gold-dim/35 bg-card-strong/25 relative flex h-45 flex-col items-center justify-center overflow-hidden rounded-3xl border p-6 transition-all">

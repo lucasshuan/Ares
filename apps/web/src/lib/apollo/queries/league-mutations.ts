@@ -26,6 +26,8 @@ export const CREATE_LEAGUE = gql`
         registrationStartDate
         registrationEndDate
         maxParticipants
+        requiresApproval
+        waitlistEnabled
         officialLinks
       }
     }

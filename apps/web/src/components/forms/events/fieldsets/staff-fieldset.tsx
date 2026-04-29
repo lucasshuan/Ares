@@ -1,13 +1,23 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
-import { useLazyQuery } from "@apollo/client/react";
 import Image from "next/image";
-import { Search, X, LoaderCircle, ShieldCheck, Shield, ClipboardList } from "lucide-react";
+import {
+  Search,
+  X,
+  LoaderCircle,
+  ShieldCheck,
+  Shield,
+  ClipboardList,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useLazyQuery } from "@apollo/client/react";
 import { SEARCH_USERS } from "@/lib/apollo/queries/user";
 import { CustomSelect } from "@/components/ui/custom-select";
+import {
+  useComboboxKeyboard,
+  SearchComboboxDropdown,
+} from "@/components/ui/search-combobox";
 import { cn } from "@/lib/utils";
 import type { SearchUsersQuery } from "@/lib/apollo/generated/graphql";
 
@@ -39,12 +49,7 @@ export function StaffFieldset({
   const t = useTranslations("Modals.AddEvent.staff");
   const [query, setQuery] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [dropdownCoords, setDropdownCoords] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const showResults = isInputFocused && query.trim().length > 0;
 
@@ -66,25 +71,15 @@ export function StaffFieldset({
     return () => window.clearTimeout(id);
   }, [query, searchUsers]);
 
-  const updateCoords = () => {
-    if (inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect();
-      setDropdownCoords({
-        top: rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-  };
-
   const alreadyAdded = new Set(staffMembers.map((m) => m.userId));
+  const results =
+    data?.searchUsers.nodes.filter((u) => !alreadyAdded.has(u.id)) ?? [];
 
-  const handleAdd = (user: {
-    id: string;
-    name: string;
-    username: string;
-    imageUrl?: string | null;
-  }) => {
+  type SearchUser = NonNullable<
+    SearchUsersQuery["searchUsers"]["nodes"]
+  >[number];
+
+  const handleAdd = (user: SearchUser) => {
     if (alreadyAdded.has(user.id)) return;
     onStaffChange([
       ...staffMembers,
@@ -113,8 +108,13 @@ export function StaffFieldset({
     );
   };
 
-  const results =
-    data?.searchUsers.nodes.filter((u) => !alreadyAdded.has(u.id)) ?? [];
+  const { highlightedIndex, onInputKeyDown } = useComboboxKeyboard<SearchUser>({
+    isOpen: showResults,
+    items: results,
+    onSelectItem: handleAdd,
+    onClose: () => setIsInputFocused(false),
+    inputRef,
+  });
 
   return (
     <section className="animate-in fade-in slide-in-from-right-4 space-y-6 duration-500">
@@ -139,11 +139,9 @@ export function StaffFieldset({
             value={query}
             placeholder={t("searchPlaceholder")}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => {
-              updateCoords();
-              setIsInputFocused(true);
-            }}
+            onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
+            onKeyDown={onInputKeyDown}
             className="field-base field-border-default py-3 pr-4 pl-11"
           />
           {loading && (
@@ -151,66 +149,55 @@ export function StaffFieldset({
           )}
         </div>
 
-        {showResults &&
-          typeof document !== "undefined" &&
-          createPortal(
-            <div
-              // Prevent mousedown from blurring the input so onClick on results fires
-              onMouseDown={(e) => e.preventDefault()}
-              className="animate-in fade-in slide-in-from-top-2 border-gold-dim/35 fixed z-9999 overflow-hidden rounded-3xl border bg-black/60 shadow-2xl backdrop-blur-xl duration-200"
-              style={{
-                top: dropdownCoords.top,
-                left: dropdownCoords.left,
-                width: dropdownCoords.width,
-              }}
+        <SearchComboboxDropdown<SearchUser>
+          isOpen={showResults}
+          anchorRef={inputRef}
+          items={results}
+          isLoading={loading}
+          showEmpty={data !== undefined}
+          noResultsText={t("noResults")}
+          highlightedIndex={highlightedIndex}
+          maxHeight="max-h-56"
+          renderItem={(user, highlighted) => (
+            <button
+              key={user.id}
+              type="button"
+              onClick={() => handleAdd(user)}
+              className={cn(
+                "group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all",
+                highlighted ? "bg-card-strong/45" : "hover:bg-card-strong/45",
+              )}
             >
-              <div className="custom-scrollbar max-h-56 overflow-y-auto p-2">
-                {loading && (
-                  <div className="flex items-center justify-center gap-2 px-3 py-4">
-                    <LoaderCircle className="text-primary/50 size-4 animate-spin" />
-                  </div>
-                )}
-                {!loading &&
-                  results.map((user) => (
-                    <button
-                      key={user.id}
-                      type="button"
-                      onClick={() => handleAdd(user)}
-                      className="group hover:bg-card-strong/45 flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all"
-                    >
-                      <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
-                        {user.imageUrl ? (
-                          <Image
-                            src={user.imageUrl}
-                            alt={user.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
-                            {user.name.slice(0, 2).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex min-w-0 flex-col">
-                        <span className="group-hover:text-primary truncate text-sm font-bold text-white transition-colors">
-                          {user.name}
-                        </span>
-                        <span className="text-secondary/35 truncate text-[10px] tracking-widest uppercase">
-                          @{user.username}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                {!loading && data !== undefined && results.length === 0 && (
-                  <p className="text-muted px-3 py-4 text-center text-sm">
-                    {t("noResults")}
-                  </p>
+              <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
+                {user.imageUrl ? (
+                  <Image
+                    src={user.imageUrl}
+                    alt={user.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
+                    {user.name.slice(0, 2).toUpperCase()}
+                  </span>
                 )}
               </div>
-            </div>,
-            document.body,
+              <div className="flex min-w-0 flex-col">
+                <span
+                  className={cn(
+                    "truncate text-sm font-bold text-white transition-colors",
+                    highlighted ? "text-primary" : "group-hover:text-primary",
+                  )}
+                >
+                  {user.name}
+                </span>
+                <span className="text-secondary/35 truncate text-[10px] tracking-widest uppercase">
+                  @{user.username}
+                </span>
+              </div>
+            </button>
           )}
+        />
       </div>
 
       {/* Role Legend */}

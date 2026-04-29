@@ -100,6 +100,13 @@ enum EntryClaimStatus {
   REJECTED
 }
 
+enum EntryStatus {
+  CONFIRMED
+  PENDING_APPROVAL
+  WAITLISTED
+  REJECTED
+}
+
 // --- AUTH MODELS ---
 
 model User {
@@ -239,6 +246,8 @@ model Event {
   registrationStartDate DateTime? @map("registration_start_date")
   registrationEndDate   DateTime? @map("registration_end_date")
   maxParticipants       Int?      @map("max_participants")
+  requiresApproval      Boolean   @default(false) @map("requires_approval")
+  waitlistEnabled       Boolean   @default(false) @map("waitlist_enabled")
   officialLinks         Json?     @map("official_links")
   approvedAt            DateTime? @map("approved_at")
 
@@ -345,6 +354,9 @@ model EventEntry {
 
   displayName String  @map("display_name")
   imageUrl    String? @map("image_url")
+
+  // Registration status of this entry
+  entryStatus EntryStatus @default(CONFIRMED) @map("entry_status")
 
   // Confirmed solo user link — null if unlinked or team entry
   userId String? @map("user_id")

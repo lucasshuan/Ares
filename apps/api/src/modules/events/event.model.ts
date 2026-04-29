@@ -52,6 +52,12 @@ export class Event {
   @Field(() => Number, { nullable: true })
   maxParticipants?: number;
 
+  @Field()
+  requiresApproval: boolean;
+
+  @Field()
+  waitlistEnabled: boolean;
+
   @Field(() => Object, { nullable: true })
   officialLinks?: unknown;
 

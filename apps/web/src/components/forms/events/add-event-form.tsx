@@ -134,6 +134,8 @@ export function AddEventForm({
       registrationStartDate: null,
       registrationEndDate: null,
       maxParticipants: null,
+      requiresApproval: LEAGUE_DEFAULT_SETTINGS.requiresApproval,
+      waitlistEnabled: LEAGUE_DEFAULT_SETTINGS.waitlistEnabled,
       officialLinks: [],
     },
     mode: "onChange",
@@ -279,6 +281,8 @@ export function AddEventForm({
         registrationStartDate: values.registrationStartDate ?? null,
         registrationEndDate: values.registrationEndDate ?? null,
         maxParticipants: values.maxParticipants ?? null,
+        requiresApproval: values.requiresApproval ?? false,
+        waitlistEnabled: values.waitlistEnabled ?? false,
         officialLinks:
           values.officialLinks && values.officialLinks.length > 0
             ? values.officialLinks

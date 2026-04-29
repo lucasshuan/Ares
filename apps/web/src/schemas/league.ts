@@ -59,6 +59,8 @@ export const getAddLeagueSchema = (t: TFunction) => {
       registrationStartDate: z.date().optional().nullable(),
       registrationEndDate: z.date().optional().nullable(),
       maxParticipants: z.number().int().min(1).optional().nullable(),
+      requiresApproval: z.boolean().optional(),
+      waitlistEnabled: z.boolean().optional(),
       officialLinks: z
         .array(
           z.object({
@@ -311,4 +313,6 @@ export const LEAGUE_DEFAULT_SETTINGS = {
   status: "PENDING" as const,
   visibility: "PUBLIC" as const,
   registrationsEnabled: false,
+  requiresApproval: false,
+  waitlistEnabled: false,
 } as const;

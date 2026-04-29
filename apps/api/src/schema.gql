@@ -94,6 +94,8 @@ type Event {
   registrationStartDate: DateTime
   registrationEndDate: DateTime
   maxParticipants: Float
+  requiresApproval: Boolean!
+  waitlistEnabled: Boolean!
   officialLinks: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -141,6 +143,7 @@ type EventEntry {
   displayName: String!
   imageUrl: String
   userId: String
+  entryStatus: String!
   stats: JSON!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -282,6 +285,8 @@ input CreateLeagueEventInput {
   registrationStartDate: DateTime
   registrationEndDate: DateTime
   maxParticipants: Int
+  requiresApproval: Boolean
+  waitlistEnabled: Boolean
   officialLinks: JSON
 }
 
@@ -317,6 +322,8 @@ input UpdateLeagueEventInput {
   registrationStartDate: DateTime
   registrationEndDate: DateTime
   maxParticipants: Int
+  requiresApproval: Boolean
+  waitlistEnabled: Boolean
   officialLinks: JSON
 }
 
