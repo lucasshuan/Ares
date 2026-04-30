@@ -51,14 +51,16 @@ export function GeneralFieldset({
   const name = useWatch({ control, name: "name" }) ?? "";
   const slug = useWatch({ control, name: "slug" }) ?? "";
 
-  const [isSlugModified, setIsSlugModified] = useState(false);
+  const [isSlugModified, setIsSlugModified] = useState(
+    () => !!slug && !!name && slug !== slugify(name),
+  );
   const [slugAvailability, setSlugAvailability] = useState<{
     value: string;
     status: "idle" | "available" | "conflict";
-  }>({
-    value: originalSlug ?? "",
-    status: originalSlug ? "available" : "idle",
-  });
+  }>(() => ({
+    value: slug || originalSlug || "",
+    status: originalSlug ? "available" : slug ? "available" : "idle",
+  }));
   const slugRequestRef = useRef(0);
 
   const canCheckSlug = !!slug && slugify(slug).length > 0;

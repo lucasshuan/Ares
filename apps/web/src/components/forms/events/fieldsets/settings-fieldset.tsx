@@ -58,6 +58,7 @@ export function SettingsFieldset() {
       icon: UserRoundPlus,
       accentClassName:
         "border-primary/35 bg-primary/10 text-primary shadow-primary/10",
+      disabled: !registrationsEnabled,
     },
     {
       value: "ACTIVE",
@@ -92,6 +93,9 @@ export function SettingsFieldset() {
       setValue("registrationEndDate", null, { shouldValidate: true });
       setValue("requiresApproval", false, { shouldValidate: true });
       setValue("waitlistEnabled", false, { shouldValidate: true });
+      if (status === "REGISTRATION") {
+        setValue("status", "PENDING", { shouldValidate: true });
+      }
     }
   };
 
@@ -372,9 +376,11 @@ export function SettingsFieldset() {
                 status === opt.value
                   ? cn(opt.accentClassName, "shadow-lg")
                   : "border-gold-dim/25 bg-card-strong/45 text-secondary/45",
-                !opt.disabled && status !== opt.value && "hover:bg-card-strong/70",
+                !opt.disabled &&
+                  status !== opt.value &&
+                  "hover:bg-card-strong/70",
                 opt.disabled &&
-                  "cursor-not-allowed border-gold-dim/15 bg-card-strong/25 text-secondary/25 opacity-60",
+                  "border-gold-dim/15 bg-card-strong/25 text-secondary/25 cursor-not-allowed opacity-60",
               )}
             >
               <opt.icon className="size-4 shrink-0" />
@@ -386,4 +392,3 @@ export function SettingsFieldset() {
     </section>
   );
 }
-
