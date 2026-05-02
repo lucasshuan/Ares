@@ -55,7 +55,7 @@ type EventMeta {
 
 type UploadUrlResponse {
   uploadUrl: String!
-  finalUrl: String!
+  path: String!
 }
 
 type League {

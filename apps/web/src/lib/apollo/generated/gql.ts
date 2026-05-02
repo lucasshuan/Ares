@@ -15,7 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n  query GetEventMeta($gameSlug: String!, $slug: String!) {\n    eventMeta(gameSlug: $gameSlug, slug: $slug) {\n      id\n      type\n    }\n  }\n": typeof types.GetEventMetaDocument,
-    "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      finalUrl\n    }\n  }\n": typeof types.RequestUploadUrlDocument,
+    "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n": typeof types.RequestUploadUrlDocument,
     "\n  mutation CreateGame($input: CreateGameInput!) {\n    createGame(input: $input) {\n      id\n      name\n      slug\n      status\n    }\n  }\n": typeof types.CreateGameDocument,
     "\n  mutation UpdateGame($id: ID!, $input: UpdateGameInput!) {\n    updateGame(id: $id, input: $input) {\n      id\n      name\n      slug\n    }\n  }\n": typeof types.UpdateGameDocument,
     "\n  mutation ApproveGame($id: ID!) {\n    approveGame(id: $id) {\n      id\n      status\n    }\n  }\n": typeof types.ApproveGameDocument,
@@ -38,7 +38,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n  query GetEventMeta($gameSlug: String!, $slug: String!) {\n    eventMeta(gameSlug: $gameSlug, slug: $slug) {\n      id\n      type\n    }\n  }\n": types.GetEventMetaDocument,
-    "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      finalUrl\n    }\n  }\n": types.RequestUploadUrlDocument,
+    "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n": types.RequestUploadUrlDocument,
     "\n  mutation CreateGame($input: CreateGameInput!) {\n    createGame(input: $input) {\n      id\n      name\n      slug\n      status\n    }\n  }\n": types.CreateGameDocument,
     "\n  mutation UpdateGame($id: ID!, $input: UpdateGameInput!) {\n    updateGame(id: $id, input: $input) {\n      id\n      name\n      slug\n    }\n  }\n": types.UpdateGameDocument,
     "\n  mutation ApproveGame($id: ID!) {\n    approveGame(id: $id) {\n      id\n      status\n    }\n  }\n": types.ApproveGameDocument,
@@ -81,7 +81,7 @@ export function graphql(source: "\n  query GetEventMeta($gameSlug: String!, $slu
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      finalUrl\n    }\n  }\n"): (typeof documents)["\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      finalUrl\n    }\n  }\n"];
+export function graphql(source: "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n"): (typeof documents)["\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

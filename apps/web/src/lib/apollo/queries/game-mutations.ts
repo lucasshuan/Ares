@@ -4,7 +4,7 @@ export const REQUEST_UPLOAD_URL = gql`
   mutation RequestUploadUrl($filename: String!, $contentType: String!) {
     requestUploadUrl(filename: $filename, contentType: $contentType) {
       uploadUrl
-      finalUrl
+      path
     }
   }
 `;

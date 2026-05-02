@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { ImageIcon, UploadCloud, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { cdnUrl } from "@/lib/cdn";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -31,7 +32,10 @@ export function ImageUploadInput({
     if (value instanceof File) {
       return URL.createObjectURL(value);
     }
-    return typeof value === "string" && value ? value : null;
+    if (typeof value === "string" && value) {
+      return cdnUrl(value) ?? value;
+    }
+    return null;
   }, [value]);
 
   useEffect(() => {
@@ -90,7 +94,9 @@ export function ImageUploadInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="ml-1 text-sm font-medium text-secondary/70">{label}</label>
+      <label className="text-secondary/70 ml-1 text-sm font-medium">
+        {label}
+      </label>
 
       <div
         onClick={() => !disabled && inputRef.current?.click()}
@@ -98,7 +104,7 @@ export function ImageUploadInput({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "group relative overflow-hidden rounded-2xl border-2 border-dashed bg-card-strong/40 transition-colors",
+          "group bg-card-strong/40 relative overflow-hidden rounded-2xl border-2 border-dashed transition-colors",
           dropzoneClassName,
           hasError
             ? "border-danger/60"
@@ -130,19 +136,19 @@ export function ImageUploadInput({
         >
           {previewUrl ? (
             <>
-              <UploadCloud className="h-5 w-5 text-secondary/90" />
-              <span className="text-xs font-medium text-secondary/90">
+              <UploadCloud className="text-secondary/90 h-5 w-5" />
+              <span className="text-secondary/90 text-xs font-medium">
                 Click to change
               </span>
             </>
           ) : (
             <>
-              <ImageIcon className="h-7 w-7 text-gold/55" />
+              <ImageIcon className="text-gold/55 h-7 w-7" />
               <div className="text-center">
-                <p className="text-sm font-medium text-secondary/75">
+                <p className="text-secondary/75 text-sm font-medium">
                   Drop image or click to upload
                 </p>
-                <p className="text-xs text-secondary/40">
+                <p className="text-secondary/40 text-xs">
                   JPEG, PNG, WebP, GIF · max 5 MB
                 </p>
               </div>
@@ -155,7 +161,7 @@ export function ImageUploadInput({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute top-2 right-2 rounded-full border border-gold-dim/40 bg-background/80 p-1 text-secondary/80 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 hover:border-danger/60 hover:text-danger"
+            className="border-gold-dim/40 bg-background/80 text-secondary/80 hover:border-danger/60 hover:text-danger absolute top-2 right-2 rounded-full border p-1 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100"
           >
             <X className="h-3.5 w-3.5" />
           </button>

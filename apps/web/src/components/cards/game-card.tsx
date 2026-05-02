@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { type Game } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { cdnUrl } from "@/lib/cdn";
 
 interface GameCardProps {
   game: Pick<
@@ -26,11 +27,11 @@ export function GameCard({
       href={`/games/${game.slug}` as Route}
       className="glass-panel group flex w-full flex-col overflow-hidden rounded-xl transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]"
     >
-      <div className="relative aspect-368/178 w-full rounded-xl shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-300 ease-out group-hover:brightness-100">
+      <div className="relative aspect-368/178 w-full shrink-0 overflow-hidden rounded-xl bg-[#0b080f] brightness-75 transition-all duration-300 ease-out group-hover:brightness-100">
         {game.thumbnailImageUrl ? (
           <div className="absolute -inset-px transform-gpu transition-transform duration-300 ease-out">
             <Image
-              src={game.thumbnailImageUrl}
+              src={cdnUrl(game.thumbnailImageUrl)!}
               alt={game.name}
               fill
               priority={priority}
@@ -62,7 +63,7 @@ export function GameCard({
             {game.description ?? fallbackDescription}
           </p>
           <div className="flex h-5 items-center">
-            <ChevronRight className="size-5 shrink-0 text-gold/80 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]" />
+            <ChevronRight className="text-gold/80 size-5 shrink-0 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]" />
           </div>
         </div>
       </div>

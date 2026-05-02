@@ -1,8 +1,8 @@
 import { requestUploadUrl } from "@/actions/game";
 
 /**
- * If value is a File, uploads it to S3 and returns the CDN URL.
- * If value is already a string URL, returns it as-is.
+ * If value is a File, uploads it to S3 and returns the stored path.
+ * If value is already a string (existing path), returns it as-is.
  * If value is null/undefined, returns null.
  */
 export async function resolveImageValue(
@@ -16,7 +16,7 @@ export async function resolveImageValue(
     throw new Error(result.error ?? "Upload failed");
   }
 
-  const { uploadUrl, finalUrl } = result.data;
+  const { uploadUrl, path } = result.data;
   const res = await fetch(uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": value.type },
@@ -24,5 +24,5 @@ export async function resolveImageValue(
   });
 
   if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
-  return finalUrl;
+  return path;
 }

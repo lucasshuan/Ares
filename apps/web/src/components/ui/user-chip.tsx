@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { cdnUrl } from "@/lib/cdn";
 
 interface UserChipProps {
   user: {
@@ -29,7 +30,7 @@ export function UserChip({ user, className }: UserChipProps) {
       <div className="relative size-6 overflow-hidden rounded-full bg-white/10">
         {user.imageUrl ? (
           <Image
-            src={user.imageUrl}
+            src={cdnUrl(user.imageUrl)!}
             alt={displayName}
             fill
             className="object-cover transition-transform group-hover:scale-110"

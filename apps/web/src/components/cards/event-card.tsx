@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/date-utils";
+import { cdnUrl } from "@/lib/cdn";
 
 type LeagueNode = NonNullable<GetLeaguesQuery["leagues"]["nodes"][number]>;
 
@@ -38,7 +39,7 @@ export function EventCard({ event }: EventCardProps) {
           <div className="flex items-center gap-1.5">
             {gameThumbnail ? (
               <Image
-                src={gameThumbnail}
+                src={cdnUrl(gameThumbnail)!}
                 alt={gameName}
                 width={16}
                 height={16}

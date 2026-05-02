@@ -6,5 +6,5 @@ export class UploadUrlResponse {
   uploadUrl!: string;
 
   @Field()
-  finalUrl!: string;
+  path!: string;
 }

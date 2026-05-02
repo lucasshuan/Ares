@@ -28,6 +28,7 @@ import { Link, usePathname } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
+import { cdnUrl } from "@/lib/cdn";
 import { EditProfileModal } from "@/components/modals/profile/edit-profile-modal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -552,7 +553,7 @@ function SidebarBody({
     setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const avatarSrc = user?.imageUrl ?? user?.image ?? null;
+  const avatarSrc = cdnUrl(user?.imageUrl) ?? user?.image ?? null;
 
   return (
     <div

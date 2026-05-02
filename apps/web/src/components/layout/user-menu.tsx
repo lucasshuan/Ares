@@ -6,6 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { EditProfileTrigger } from "@/components/triggers/profile/edit-profile-trigger";
+import { cdnUrl } from "@/lib/cdn";
 
 type UserProps = {
   id: string;
@@ -40,7 +41,7 @@ export function UserMenu({ user: initialUser }: { user: UserProps }) {
       >
         {user?.imageUrl ? (
           <Image
-            src={user.imageUrl}
+            src={cdnUrl(user.imageUrl)!}
             alt={user.name || "Avatar"}
             width={32}
             height={32}
@@ -58,7 +59,7 @@ export function UserMenu({ user: initialUser }: { user: UserProps }) {
           <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
             {user?.imageUrl ? (
               <Image
-                src={user.imageUrl}
+                src={cdnUrl(user.imageUrl)!}
                 alt={user.name ?? "Avatar"}
                 width={36}
                 height={36}

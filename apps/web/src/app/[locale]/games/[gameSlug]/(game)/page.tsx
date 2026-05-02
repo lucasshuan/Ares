@@ -18,6 +18,7 @@ import { GameManageActions } from "@/components/triggers/game/game-manage-action
 import { AddEventButton } from "@/components/triggers/game/add-event-button";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import type { SimpleGame } from "@/actions/get-games";
+import { cdnUrl } from "@/lib/cdn";
 
 type GamePageProps = {
   params: Promise<{
@@ -125,7 +126,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
             <div className="relative aspect-368/178 w-full overflow-hidden">
               {game.thumbnailImageUrl ? (
                 <Image
-                  src={game.thumbnailImageUrl}
+                  src={cdnUrl(game.thumbnailImageUrl)!}
                   alt={game.name}
                   fill
                   priority

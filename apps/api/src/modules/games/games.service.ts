@@ -95,6 +95,7 @@ export class GamesService {
   }
 
   async update(id: string, data: UpdateGameInput, userId?: string) {
+    let mutableData = { ...data };
     const current = await this.databaseProvider.game.findUnique({
       where: { id },
       select: {
@@ -111,21 +112,59 @@ export class GamesService {
       }
     }
 
+    // Move tmp uploads to permanent location
+    const moves: Promise<string>[] = [];
+    if (
+      mutableData.backgroundImageUrl &&
+      this.storageService.isTmpPath(mutableData.backgroundImageUrl)
+    ) {
+      const filename = mutableData.backgroundImageUrl.split('/').pop()!;
+      moves.push(
+        this.storageService
+          .moveFile(
+            mutableData.backgroundImageUrl,
+            `games/${id}/background-${filename}`,
+          )
+          .then((p) => {
+            mutableData = { ...mutableData, backgroundImageUrl: p };
+            return p;
+          }),
+      );
+    }
+    if (
+      mutableData.thumbnailImageUrl &&
+      this.storageService.isTmpPath(mutableData.thumbnailImageUrl)
+    ) {
+      const filename = mutableData.thumbnailImageUrl.split('/').pop()!;
+      moves.push(
+        this.storageService
+          .moveFile(
+            mutableData.thumbnailImageUrl,
+            `games/${id}/thumbnail-${filename}`,
+          )
+          .then((p) => {
+            mutableData = { ...mutableData, thumbnailImageUrl: p };
+            return p;
+          }),
+      );
+    }
+    if (moves.length > 0) await Promise.all(moves);
+
     // Delete old CDN images when they are replaced
     const deletions: Promise<void>[] = [];
     if (
-      data.backgroundImageUrl !== undefined &&
+      mutableData.backgroundImageUrl !== undefined &&
       current?.backgroundImageUrl &&
-      current.backgroundImageUrl !== data.backgroundImageUrl
+      current.backgroundImageUrl !== mutableData.backgroundImageUrl
     ) {
       deletions.push(
         this.storageService.deleteFile(current.backgroundImageUrl),
       );
     }
     if (
-      data.thumbnailImageUrl !== undefined &&
+      mutableData.thumbnailImageUrl !== undefined &&
       current?.thumbnailImageUrl &&
-      current.thumbnailImageUrl !== data.thumbnailImageUrl
+      current.thumbnailImageUrl !== mutableData.thumbnailImageUrl
     ) {
       deletions.push(this.storageService.deleteFile(current.thumbnailImageUrl));
     }
@@ -135,7 +174,7 @@ export class GamesService {
 
     return this.databaseProvider.game.update({
       where: { id },
-      data,
+      data: mutableData,
     });
   }
 

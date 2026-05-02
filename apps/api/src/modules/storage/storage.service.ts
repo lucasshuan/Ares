@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
@@ -51,12 +52,37 @@ export class StorageService {
     return ALLOWED_CONTENT_TYPES.has(contentType);
   }
 
+  /** Returns true if the path is a temporary upload awaiting confirmation. */
+  isTmpPath(path: string): boolean {
+    return path.startsWith('tmp/');
+  }
+
+  /** Returns the full public URL for a stored path. */
+  getPublicUrl(path: string): string {
+    return `${this.cdnUrl}/${path}`;
+  }
+
+  /**
+   * Resolves a stored value (path or legacy full URL) to an S3 key.
+   * Returns null for external URLs not owned by this CDN.
+   */
+  private toKey(pathOrUrl: string): string | null {
+    if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+      const prefix = `${this.cdnUrl}/`;
+      if (pathOrUrl.startsWith(prefix)) {
+        return pathOrUrl.slice(prefix.length);
+      }
+      return null; // external URL, not owned
+    }
+    return pathOrUrl; // already a path/key
+  }
+
   async getPresignedPutUrl(
     filename: string,
     contentType: string,
-  ): Promise<{ uploadUrl: string; finalUrl: string }> {
+  ): Promise<{ uploadUrl: string; path: string }> {
     const ext = filename.split('.').pop() ?? '';
-    const key = `uploads/${randomUUID()}${ext ? `.${ext}` : ''}`;
+    const key = `tmp/${randomUUID()}${ext ? `.${ext}` : ''}`;
 
     const command = new PutObjectCommand({
       Bucket: this.bucket,
@@ -68,16 +94,50 @@ export class StorageService {
       expiresIn: PRESIGNED_URL_EXPIRES_IN,
     });
 
-    return { uploadUrl, finalUrl: `${this.cdnUrl}/${key}` };
+    return { uploadUrl, path: key };
   }
 
-  isOwnedUrl(url: string): boolean {
-    return url.startsWith(this.cdnUrl);
+  /**
+   * Copies a file from sourcePath to destPath and deletes the source.
+   * Returns the destination path.
+   */
+  async moveFile(sourcePath: string, destPath: string): Promise<string> {
+    await this.s3.send(
+      new CopyObjectCommand({
+        Bucket: this.bucket,
+        CopySource: `${this.bucket}/${sourcePath}`,
+        Key: destPath,
+      }),
+    );
+    await this.s3.send(
+      new DeleteObjectCommand({ Bucket: this.bucket, Key: sourcePath }),
+    );
+    return destPath;
   }
 
-  async deleteFile(url: string): Promise<void> {
-    if (!this.isOwnedUrl(url)) return;
-    const key = url.slice(this.cdnUrl.length + 1); // strip leading slash
+  /** Uploads a buffer directly to S3 and returns the stored path (key). */
+  async uploadBuffer(
+    buffer: Buffer,
+    contentType: string,
+    path: string,
+  ): Promise<string> {
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        ContentType: contentType,
+        Body: buffer,
+      }),
+    );
+
+    return path;
+  }
+
+  /** Deletes a file by its stored path or a legacy full CDN URL. */
+  async deleteFile(pathOrUrl: string | null | undefined): Promise<void> {
+    if (!pathOrUrl) return;
+    const key = this.toKey(pathOrUrl);
+    if (!key) return;
     await this.s3.send(
       new DeleteObjectCommand({ Bucket: this.bucket, Key: key }),
     );

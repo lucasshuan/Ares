@@ -7,7 +7,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     NEXTAUTH_SECRET: z.string().min(32),
-    NEXTAUTH_URL: z.url().optional(),
+    NEXTAUTH_URL: z.url(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url().optional(),

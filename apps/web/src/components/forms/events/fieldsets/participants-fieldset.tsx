@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/search-combobox";
 import { cn } from "@/lib/utils";
 import type { SearchUsersQuery } from "@/lib/apollo/generated/graphql";
+import { cdnUrl } from "@/lib/cdn";
 
 export interface ParticipantEntry {
   localId: string;
@@ -61,7 +62,7 @@ function EntryAvatar({
   if (imageUrl) {
     return (
       <div className="relative size-9 shrink-0 overflow-hidden rounded-full">
-        <Image src={imageUrl} alt={displayName} fill className="object-cover" />
+        <Image src={cdnUrl(imageUrl)!} alt={displayName} fill className="object-cover" />
       </div>
     );
   }
@@ -438,7 +439,7 @@ export function ParticipantsFieldset({
                               <div className="relative size-5 shrink-0 overflow-hidden rounded-full">
                                 {entry.linkedUser.imageUrl ? (
                                   <Image
-                                    src={entry.linkedUser.imageUrl}
+                                    src={cdnUrl(entry.linkedUser.imageUrl)!}
                                     alt={entry.linkedUser.name}
                                     fill
                                     className="object-cover"
@@ -551,7 +552,7 @@ export function ParticipantsFieldset({
             <div className="border-gold-dim/25 relative size-9 shrink-0 overflow-hidden rounded-full border bg-black/40">
               {user.imageUrl ? (
                 <Image
-                  src={user.imageUrl}
+                  src={cdnUrl(user.imageUrl)!}
                   alt={user.name}
                   fill
                   className="object-cover"

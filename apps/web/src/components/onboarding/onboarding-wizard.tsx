@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import confetti from "canvas-confetti";
 
 import { cn } from "@/lib/utils";
+import { cdnUrl } from "@/lib/cdn";
 import { Button } from "@/components/ui/button";
 import { COUNTRIES } from "@/lib/countries";
 import { checkUsernameAvailability } from "@/actions/user";
@@ -713,7 +714,7 @@ export function OnboardingWizard({
                         <div className="relative aspect-368/178 w-full overflow-hidden bg-card-strong/45">
                           {game.thumbnailImageUrl ? (
                             <Image
-                              src={game.thumbnailImageUrl}
+                              src={cdnUrl(game.thumbnailImageUrl)!}
                               alt={game.name}
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-110"

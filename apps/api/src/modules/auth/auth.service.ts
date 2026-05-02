@@ -1,6 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+﻿import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { randomUUID } from 'crypto';
 import { DatabaseProvider } from '../../database/database.provider';
+import { StorageService } from '../storage/storage.service';
 import type { User } from '@bellona/db';
 
 export interface DiscordProfile {
@@ -13,9 +15,12 @@ export interface DiscordProfile {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private databaseProvider: DatabaseProvider,
     private jwtService: JwtService,
+    private storageService: StorageService,
   ) {}
 
   async validateDiscordUser(profile: DiscordProfile) {
@@ -45,17 +50,12 @@ export class AuthService {
       return existingAccount.user;
     }
 
-    // 2. If not, create user and account
-    const imageUrl = avatar
-      ? `https://cdn.discordapp.com/avatars/${providerAccountId}/${avatar}.png`
-      : null;
-
+    // 2. If not, create user and account (without avatar first)
     const user = await this.databaseProvider.user.create({
       data: {
         name: global_name || username,
         username: username,
         email: email,
-        imageUrl: imageUrl,
         accounts: {
           create: {
             type: 'oauth',
@@ -66,7 +66,52 @@ export class AuthService {
       },
     });
 
+    // Upload Discord avatar to users/{id}/ now that we have the user ID
+    const imageUrl = await this.uploadDiscordAvatar(
+      user.id,
+      providerAccountId,
+      avatar,
+    );
+    if (imageUrl) {
+      await this.databaseProvider.user.update({
+        where: { id: user.id },
+        data: { imageUrl },
+      });
+      return { ...user, imageUrl };
+    }
+
     return user;
+  }
+
+  private async uploadDiscordAvatar(
+    userId: string,
+    providerAccountId: string,
+    avatar: string | undefined,
+  ): Promise<string | null> {
+    if (!avatar) return null;
+
+    const discordUrl = `https://cdn.discordapp.com/avatars/${providerAccountId}/${avatar}.png`;
+
+    try {
+      const response = await fetch(discordUrl);
+
+      if (!response.ok) {
+        this.logger.warn(
+          `Failed to fetch Discord avatar (${response.status}): ${discordUrl}`,
+        );
+        return null;
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const contentType = response.headers.get('content-type') ?? 'image/png';
+      const path = `users/${userId}/${randomUUID()}.png`;
+
+      return await this.storageService.uploadBuffer(buffer, contentType, path);
+    } catch {
+      this.logger.warn('Could not upload Discord avatar to CDN');
+      return null;
+    }
   }
 
   async login(user: User) {

@@ -3,6 +3,7 @@ import { GET_GAME_LAYOUT } from "@/lib/apollo/queries/games";
 import { GetGameLayoutQuery } from "@/lib/apollo/generated/graphql";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import Image from "next/image";
+import { cdnUrl } from "@/lib/cdn";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -34,7 +35,7 @@ export default async function GameLayout({
         {game.backgroundImageUrl ? (
           <>
             <Image
-              src={game.backgroundImageUrl}
+              src={cdnUrl(game.backgroundImageUrl)!}
               alt=""
               fill
               priority

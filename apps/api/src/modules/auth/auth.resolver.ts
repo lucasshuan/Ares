@@ -41,12 +41,25 @@ export class AuthResolver {
       if (existing) throw new Error('Username taken');
     }
 
-    // Delete old CDN image if being replaced
+    // Move tmp upload to permanent location, delete old file if replaced
     if (input.imageUrl !== undefined) {
       const current = await this.databaseProvider.user.findUnique({
         where: { id: userId },
         select: { imageUrl: true },
       });
+
+      if (input.imageUrl && this.storageService.isTmpPath(input.imageUrl)) {
+        const filename = input.imageUrl.split('/').pop()!;
+        const destPath = `users/${userId}/${filename}`;
+        input = {
+          ...input,
+          imageUrl: await this.storageService.moveFile(
+            input.imageUrl,
+            destPath,
+          ),
+        };
+      }
+
       if (current?.imageUrl && current.imageUrl !== input.imageUrl) {
         await this.storageService.deleteFile(current.imageUrl);
       }

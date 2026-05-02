@@ -7,6 +7,7 @@ import type { Route } from "next";
 import { ChevronRight, Trophy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { cdnUrl } from "@/lib/cdn";
 
 export interface ShowcaseGame {
   id: string;
@@ -169,7 +170,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               >
                 {game.backgroundImageUrl || game.thumbnailImageUrl ? (
                   <Image
-                    src={game.backgroundImageUrl ?? game.thumbnailImageUrl!}
+                    src={cdnUrl(game.backgroundImageUrl ?? game.thumbnailImageUrl)!}
                     alt={game.name}
                     fill
                     className="object-cover"
@@ -209,7 +210,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
                   >
                     {g.thumbnailImageUrl ? (
                       <Image
-                        src={g.thumbnailImageUrl}
+                        src={cdnUrl(g.thumbnailImageUrl)!}
                         alt={g.name}
                         fill
                         className="object-cover"

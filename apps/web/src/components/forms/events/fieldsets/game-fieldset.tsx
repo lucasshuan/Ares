@@ -18,6 +18,7 @@ import {
   SearchComboboxDropdown,
 } from "@/components/ui/search-combobox";
 import { cn } from "@/lib/utils";
+import { cdnUrl } from "@/lib/cdn";
 
 /* ─────────────────────── Game Search Fieldset (add form) ─────────────────── */
 
@@ -248,7 +249,7 @@ export function GameSearchFieldset({
                 <div className="border-gold-dim/25 relative size-10 shrink-0 overflow-hidden rounded-lg border bg-black/40">
                   {game.thumbnailImageUrl ? (
                     <Image
-                      src={game.thumbnailImageUrl}
+                      src={cdnUrl(game.thumbnailImageUrl)!}
                       alt={game.name}
                       fill
                       className="object-cover"
@@ -284,7 +285,7 @@ export function GameSearchFieldset({
                 <div className="border-gold-dim/35 relative size-16 shrink-0 overflow-hidden rounded-2xl border bg-black/40 shadow-2xl">
                   {selectedGame.thumbnailImageUrl ? (
                     <Image
-                      src={selectedGame.thumbnailImageUrl}
+                      src={cdnUrl(selectedGame.thumbnailImageUrl)!}
                       alt={selectedGame.name}
                       fill
                       className="object-cover"
@@ -368,7 +369,7 @@ export function GameDisplayFieldset({ game }: GameDisplayFieldsetProps) {
             <div className="border-gold-dim/35 relative size-16 shrink-0 overflow-hidden rounded-2xl border bg-black/40 shadow-2xl">
               {game?.thumbnailImageUrl ? (
                 <Image
-                  src={game.thumbnailImageUrl}
+                  src={cdnUrl(game.thumbnailImageUrl)!}
                   alt={game.name}
                   fill
                   className="object-cover"

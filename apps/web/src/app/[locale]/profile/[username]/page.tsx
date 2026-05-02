@@ -11,6 +11,7 @@ import { ProfileManageActions } from "@/components/triggers/profile/profile-mana
 import { ProfileTabs } from "@/components/ui/tabs";
 import { Metadata } from "next";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import { cdnUrl } from "@/lib/cdn";
 
 type ProfilePageProps = {
   params: Promise<{
@@ -96,7 +97,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                 <div className="relative z-10 flex flex-col items-center p-8 text-center">
                   {targetUser.imageUrl ? (
                     <Image
-                      src={targetUser.imageUrl}
+                      src={cdnUrl(targetUser.imageUrl)!}
                       alt={targetUser.name ?? targetUser.username ?? "Avatar"}
                       width={140}
                       height={140}
