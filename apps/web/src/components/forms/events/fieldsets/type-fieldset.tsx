@@ -4,7 +4,7 @@ import { Layers, User, Users, Trophy, Swords } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { MatchFormatsFieldset } from "./match-formats-fieldset";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface TypeFieldsetProps {
   participationMode: "SOLO" | "TEAM" | null;

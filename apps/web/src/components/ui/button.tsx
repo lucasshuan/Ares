@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from "react";
 
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 export const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-2xl [corner-shape:squircle] border text-sm font-medium transition-all cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50",
@@ -19,8 +19,7 @@ export const buttonVariants = cva(
           "border-danger/50 bg-danger/10 text-danger hover:border-danger hover:bg-danger/20",
         outline:
           "border-gold-dim/40 bg-transparent text-secondary/90 hover:border-gold/40 hover:bg-gold/5 hover:text-foreground",
-        gold:
-          "border-gold/50 bg-gradient-to-b from-gold/10 to-gold-dim/15 text-gold hover:border-gold hover:from-gold/20 hover:to-gold-dim/25 hover:text-foreground",
+        gold: "border-gold/50 bg-gradient-to-b from-gold/10 to-gold-dim/15 text-gold hover:border-gold hover:from-gold/20 hover:to-gold-dim/25 hover:text-foreground",
       },
       size: {
         sm: "h-10 px-4",

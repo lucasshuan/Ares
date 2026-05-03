@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter, routing } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { ChevronDown, Check } from "lucide-react";
 
 const LOCALE_FLAGS: Record<(typeof routing.locales)[number], string> = {
@@ -80,7 +80,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
       ref={dropdownRef}
       role="listbox"
       style={{ top: coords.top, left: coords.left, width: coords.width }}
-      className="fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-white/10 bg-background/95 p-1 shadow-2xl backdrop-blur-xl"
+      className="bg-background/95 fixed z-9999 flex flex-col gap-0.5 overflow-hidden rounded-xl border border-white/10 p-1 shadow-2xl backdrop-blur-xl"
     >
       {routing.locales.map((l) => (
         <button
@@ -90,7 +90,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           aria-selected={locale === l}
           onClick={() => switchLocale(l)}
           className={cn(
-            "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-primary/8",
+            "hover:bg-primary/8 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors",
             locale === l ? "bg-primary/10 text-foreground" : "text-muted",
           )}
         >
@@ -115,8 +115,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         aria-haspopup="listbox"
         className={cn(
           "flex h-9 items-center gap-2.5 rounded-xl border border-transparent bg-transparent px-3 text-sm",
-          "text-muted transition-all duration-200 hover:border-white/10 hover:bg-white/5 hover:text-foreground",
-          open && "border-white/10 bg-white/5 text-foreground",
+          "text-muted hover:text-foreground transition-all duration-200 hover:border-white/10 hover:bg-white/5",
+          open && "text-foreground border-white/10 bg-white/5",
           "disabled:cursor-wait disabled:opacity-50",
           className,
         )}

@@ -1,5 +1,5 @@
 import { type ElementType, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface InfoFieldProps {
   /** Field label shown on the left (or above when stacked). */

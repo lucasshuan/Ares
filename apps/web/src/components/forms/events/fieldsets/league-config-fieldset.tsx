@@ -16,8 +16,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { Slider } from "@/components/ui/slider";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { NumberInput } from "@/components/ui/number-input";
-import { formatHoursDuration } from "@/lib/date-utils";
-import { cn } from "@/lib/utils";
+import { formatHoursDuration } from "@/lib/utils/date-utils";
+import { cn } from "@/lib/utils/helpers";
 import { EloMatchSimulator } from "@/components/forms/events/league/elo-match-simulator";
 
 type LeagueConfigValues = {

@@ -14,10 +14,10 @@ import { toast } from "sonner";
 import { checkUsernameAvailability, updateProfile } from "@/actions/user";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSession } from "next-auth/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
-import { resolveImageValue } from "@/lib/upload";
+import { resolveImageValue } from "@/lib/utils/upload";
 import { CountryCombobox } from "@/components/ui/country-combobox";
 
 export type UserData = {

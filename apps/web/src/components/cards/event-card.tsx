@@ -3,9 +3,9 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/date-utils";
-import { cdnUrl } from "@/lib/cdn";
+import { cn } from "@/lib/utils/helpers";
+import { formatDate } from "@/lib/utils/date-utils";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 type LeagueNode = NonNullable<GetLeaguesQuery["leagues"]["nodes"][number]>;
 
@@ -71,7 +71,7 @@ export function EventCard({ event }: EventCardProps) {
         </div>
       </div>
 
-      <div className="mb-4 border-b border-gold transition-colors group-hover:border-[color-mix(in_srgb,var(--gold)_45%,white)]" />
+      <div className="border-gold mb-4 border-b transition-colors group-hover:border-[color-mix(in_srgb,var(--gold)_45%,white)]" />
 
       <div className="relative flex flex-1 flex-col justify-center">
         {event.event?.startDate ? (
@@ -105,7 +105,7 @@ export function EventCardSkeleton() {
           <div className="h-4 w-14 animate-pulse rounded-full bg-white/5" />
         </div>
       </div>
-      <div className="mb-4 border-b border-gold" />
+      <div className="border-gold mb-4 border-b" />
       <div className="space-y-2">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center gap-3 py-1">

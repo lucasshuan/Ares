@@ -3,7 +3,7 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { format, parseISO, isValid } from "date-fns";
 import { useMemo, useState } from "react";
 
@@ -100,7 +100,7 @@ export function DateInput({
   return (
     <div
       className={cn(
-        "group focus-within:border-gold/45 focus-within:ring-gold/10 relative flex h-10 items-center overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong/50 transition-all focus-within:bg-card-strong/70 focus-within:ring-4",
+        "group focus-within:border-gold/45 focus-within:ring-gold/10 border-gold-dim/35 bg-card-strong/50 focus-within:bg-card-strong/70 relative flex h-10 items-center overflow-hidden rounded-2xl border transition-all focus-within:ring-4",
         className,
       )}
     >
@@ -114,7 +114,7 @@ export function DateInput({
         onChange={(e) => handleInputChange(e.target.value)}
         onBlur={() => setDraftValue(null)}
         placeholder={placeholder}
-        className="h-full flex-1 bg-transparent p-0 text-center text-sm font-semibold text-secondary transition-all outline-none placeholder:text-secondary/25"
+        className="text-secondary placeholder:text-secondary/25 h-full flex-1 bg-transparent p-0 text-center text-sm font-semibold transition-all outline-none"
       />
 
       <Popover.Root>
@@ -129,7 +129,7 @@ export function DateInput({
         <Popover.Portal>
           <Popover.Content sideOffset={8} align="end" className="z-9999">
             <div
-              className="animate-in fade-in zoom-in-95 bg-card-strong/80 transform-gpu rounded-2xl border border-gold-dim/45 p-1 shadow-2xl duration-200"
+              className="animate-in fade-in zoom-in-95 bg-card-strong/80 border-gold-dim/45 transform-gpu rounded-2xl border p-1 shadow-2xl duration-200"
               style={{
                 backdropFilter: "blur(16px)",
                 WebkitBackdropFilter: "blur(16px)",

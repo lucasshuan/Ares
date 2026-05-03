@@ -9,8 +9,8 @@ import { GlowBorder } from "@/components/ui/glow-border";
 import { UserChip } from "@/components/ui/user-chip";
 import { GameManageActions } from "@/components/triggers/game/game-manage-actions";
 import { GameInfoModal } from "@/components/modals/game/game-info-modal";
-import { cdnUrl } from "@/lib/cdn";
-import { cn, formatCompactNumber } from "@/lib/utils";
+import { cdnUrl } from "@/lib/utils/cdn";
+import { cn, formatCompactNumber } from "@/lib/utils/helpers";
 import type { GetGameQuery } from "@/lib/apollo/generated/graphql";
 
 type Game = NonNullable<GetGameQuery["game"]>;
@@ -119,7 +119,7 @@ export function GameInfoCard({
             </div>
 
             {/* Game info content */}
-            <div className="space-y-6 p-5">
+            <div className="space-y-4 p-4">
               <div>
                 {game.status === "PENDING" && (
                   <div className="animate-pending-pulse mb-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-orange-400">
@@ -129,7 +129,7 @@ export function GameInfoCard({
                     </p>
                   </div>
                 )}
-                <h1 className="text-foreground text-2xl font-bold tracking-tight">
+                <h1 className="text-foreground text-xl font-bold tracking-tight">
                   {game.name}
                 </h1>
                 <p className="text-muted mt-2 text-[13px] leading-snug">
@@ -138,28 +138,28 @@ export function GameInfoCard({
               </div>
 
               {game.status !== "PENDING" && (
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                <div className="grid grid-cols-3 gap-1.5">
+                  <div className="rounded-xl border border-white/5 bg-white/5 px-2 py-1.5 transition-colors hover:bg-white/10">
                     <p className="text-muted font-mono text-[9px] opacity-60">
                       {t("events")}
                     </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
+                    <p className="text-secondary mt-0.5 text-base font-bold">
                       {formatCompactNumber(leagueCount)}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                  <div className="rounded-xl border border-white/5 bg-white/5 px-2 py-1.5 transition-colors hover:bg-white/10">
                     <p className="text-muted font-mono text-[9px] opacity-60">
                       {t("sidebarPlayers")}
                     </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
+                    <p className="text-secondary mt-0.5 text-base font-bold">
                       {formatCompactNumber(playerCount)}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-white/5 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10">
+                  <div className="rounded-xl border border-white/5 bg-white/5 px-2 py-1.5 transition-colors hover:bg-white/10">
                     <p className="text-muted font-mono text-[9px] opacity-60">
                       {t("posts")}
                     </p>
-                    <p className="text-secondary mt-0.5 text-lg font-bold">
+                    <p className="text-secondary mt-0.5 text-base font-bold">
                       {formatCompactNumber(postCount)}
                     </p>
                   </div>

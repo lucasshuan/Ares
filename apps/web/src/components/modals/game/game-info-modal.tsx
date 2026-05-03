@@ -23,15 +23,18 @@ import {
 import { InfoModal } from "@/components/ui/info-modal";
 import { InfoSection } from "@/components/ui/info-section";
 import { InfoField } from "@/components/ui/info-field";
-import { GET_GAME_STAFF, GET_GLOBAL_GAME_MANAGERS } from "@/lib/apollo/queries/games";
+import {
+  GET_GAME_STAFF,
+  GET_GLOBAL_GAME_MANAGERS,
+} from "@/lib/apollo/queries/games";
 import type {
   GetGameStaffQuery,
   GetGlobalGameManagersQuery,
   GetGameQuery,
 } from "@/lib/apollo/generated/graphql";
-import { cdnUrl } from "@/lib/cdn";
-import { formatDate } from "@/lib/date-utils";
-import { cn } from "@/lib/utils";
+import { cdnUrl } from "@/lib/utils/cdn";
+import { formatDate } from "@/lib/utils/date-utils";
+import { cn } from "@/lib/utils/helpers";
 
 type Game = NonNullable<GetGameQuery["game"]>;
 
@@ -48,7 +51,8 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
   const [adminsExpanded, setAdminsExpanded] = useState(false);
 
   const gamePagePath = `/games/${game.slug}`;
-  const isOnGamePage = pathname === gamePagePath || pathname.startsWith(`${gamePagePath}/`);
+  const isOnGamePage =
+    pathname === gamePagePath || pathname.startsWith(`${gamePagePath}/`);
 
   const { data: staffData } = useQuery<GetGameStaffQuery>(GET_GAME_STAFF, {
     variables: { gameId: game.id },
@@ -92,7 +96,7 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
           className={cn(
             "flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm transition-colors",
             isOnGamePage
-              ? "cursor-not-allowed opacity-30 pointer-events-none"
+              ? "pointer-events-none cursor-not-allowed opacity-30"
               : "hover:border-white/40 hover:text-white",
           )}
         >
@@ -249,7 +253,9 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
                         <p className="text-sm font-medium text-white">
                           {s.user?.name}
                         </p>
-                        <p className="text-muted text-xs">@{s.user?.username}</p>
+                        <p className="text-muted text-xs">
+                          @{s.user?.username}
+                        </p>
                       </div>
                     </div>
                     <div>
@@ -292,7 +298,9 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-white">{m.name}</p>
+                        <p className="text-sm font-medium text-white">
+                          {m.name}
+                        </p>
                         <p className="text-muted text-xs">@{m.username}</p>
                       </div>
                     </div>
@@ -305,7 +313,9 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
               ))}
 
               {totalAdminCount === 0 && (
-                <li className="text-muted px-4 py-3 text-xs">{t("noAdmins")}</li>
+                <li className="text-muted px-4 py-3 text-xs">
+                  {t("noAdmins")}
+                </li>
               )}
             </ul>
           )}

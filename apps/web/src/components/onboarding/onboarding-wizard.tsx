@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useTransition, useCallback, useSyncExternalStore } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+  useCallback,
+  useSyncExternalStore,
+} from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,8 +33,8 @@ import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 
-import { cn } from "@/lib/utils";
-import { cdnUrl } from "@/lib/cdn";
+import { cn } from "@/lib/utils/helpers";
+import { cdnUrl } from "@/lib/utils/cdn";
 import { Button } from "@/components/ui/button";
 import { checkUsernameAvailability, completeOnboarding } from "@/actions/user";
 import { getGamesSimple, type SimpleGame } from "@/actions/game";
@@ -221,8 +228,20 @@ export function OnboardingWizard({
     const fire = confetti.create(canvas, { resize: true, useWorker: false });
     const colors = ["#c00b3b", "#ff4655", "#f59e0b", "#10b981", "#8b5cf6"];
 
-    void fire({ particleCount: 50, angle: 60, spread: 70, origin: { x: 0, y: 0.75 }, colors });
-    void fire({ particleCount: 50, angle: 120, spread: 70, origin: { x: 1, y: 0.75 }, colors });
+    void fire({
+      particleCount: 50,
+      angle: 60,
+      spread: 70,
+      origin: { x: 0, y: 0.75 },
+      colors,
+    });
+    void fire({
+      particleCount: 50,
+      angle: 120,
+      spread: 70,
+      origin: { x: 1, y: 0.75 },
+      colors,
+    });
   }, []);
 
   const isUsernameOk =
@@ -358,11 +377,11 @@ export function OnboardingWizard({
               ].map(({ icon: Icon, label }, i) => (
                 <div
                   key={i}
-                  className="animate-in flex flex-col items-center gap-2 rounded-2xl border border-gold-dim/25 bg-card-strong/25 p-4"
+                  className="animate-in border-gold-dim/25 bg-card-strong/25 flex flex-col items-center gap-2 rounded-2xl border p-4"
                   style={{ animationDelay: `${i * 100 + 200}ms` }}
                 >
                   <Icon className="text-primary size-6" />
-                  <span className="text-xs font-medium text-secondary/80">
+                  <span className="text-secondary/80 text-xs font-medium">
                     {label}
                   </span>
                 </div>
@@ -388,7 +407,7 @@ export function OnboardingWizard({
             <div className="space-y-5">
               {/* Display Name */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-secondary/90">
+                <label className="text-secondary/90 text-sm font-medium">
                   {t("identity.nameLabel")}
                 </label>
                 <input
@@ -403,12 +422,12 @@ export function OnboardingWizard({
 
               {/* Username / Profile Link */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-secondary/90">
+                <label className="text-secondary/90 text-sm font-medium">
                   {t("identity.usernameLabel")}
                 </label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                    <AtSign className="size-4 text-secondary/35" />
+                    <AtSign className="text-secondary/35 size-4" />
                   </div>
                   <input
                     {...register("username")}
@@ -417,7 +436,7 @@ export function OnboardingWizard({
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-4">
                     {isUsernameChecking && (
-                      <LoaderCircle className="size-4 animate-spin text-secondary/45" />
+                      <LoaderCircle className="text-secondary/45 size-4 animate-spin" />
                     )}
                     {effectiveUsernameStatus.status === "available" &&
                       canCheck && <Check className="text-success size-4" />}
@@ -438,18 +457,20 @@ export function OnboardingWizard({
                 )}
 
                 {/* URL Preview */}
-                <div className="rounded-xl border border-gold-dim/25 bg-card-strong/25 px-4 py-2.5">
-                  <p className="text-xs text-secondary/45">
+                <div className="border-gold-dim/25 bg-card-strong/25 rounded-xl border px-4 py-2.5">
+                  <p className="text-secondary/45 text-xs">
                     {t("identity.urlPreview")}
                   </p>
-                  <p className="mt-0.5 font-mono text-sm text-secondary/80">
+                  <p className="text-secondary/80 mt-0.5 font-mono text-sm">
                     bellona.gg/profile/
                     <span className="text-primary font-semibold">
                       {normalizedUsername || "..."}
                     </span>
                   </p>
                 </div>
-                <p className="text-xs text-secondary/35">{t("identity.urlHint")}</p>
+                <p className="text-secondary/35 text-xs">
+                  {t("identity.urlHint")}
+                </p>
               </div>
             </div>
           </div>
@@ -483,7 +504,7 @@ export function OnboardingWizard({
               )}
             />
 
-            <p className="text-center text-xs text-secondary/35">
+            <p className="text-secondary/35 text-center text-xs">
               {t("country.hint")}
             </p>
           </div>
@@ -505,7 +526,7 @@ export function OnboardingWizard({
 
             {/* Search */}
             <div className="relative shrink-0">
-              <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-secondary/35" />
+              <Search className="text-secondary/35 pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2" />
               <input
                 type="text"
                 value={gameSearch}
@@ -517,7 +538,7 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={() => setGameSearch("")}
-                  className="absolute top-1/2 right-4 -translate-y-1/2 text-secondary/35 hover:text-secondary/70"
+                  className="text-secondary/35 hover:text-secondary/70 absolute top-1/2 right-4 -translate-y-1/2"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -529,14 +550,14 @@ export function OnboardingWizard({
               {gamesLoading ? (
                 <div className="flex flex-col items-center gap-3 py-12">
                   <LoaderCircle className="text-primary size-8 animate-spin" />
-                  <p className="text-sm text-secondary/45">
+                  <p className="text-secondary/45 text-sm">
                     {t("games.loading")}
                   </p>
                 </div>
               ) : filteredGames.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-12">
-                  <Gamepad2 className="size-8 text-secondary/25" />
-                  <p className="text-sm text-secondary/45">
+                  <Gamepad2 className="text-secondary/25 size-8" />
+                  <p className="text-secondary/45 text-sm">
                     {t("games.noGames")}
                   </p>
                 </div>
@@ -561,7 +582,7 @@ export function OnboardingWizard({
                             <Check className="size-3 text-white" />
                           </div>
                         )}
-                        <div className="relative aspect-368/178 w-full overflow-hidden bg-card-strong/45">
+                        <div className="bg-card-strong/45 relative aspect-368/178 w-full overflow-hidden">
                           {game.thumbnailImagePath ? (
                             <Image
                               src={cdnUrl(game.thumbnailImagePath)!}
@@ -572,7 +593,7 @@ export function OnboardingWizard({
                             />
                           ) : (
                             <div className="from-primary/20 flex h-full w-full items-center justify-center bg-linear-to-br to-transparent">
-                              <Gamepad2 className="size-6 text-secondary/25" />
+                              <Gamepad2 className="text-secondary/25 size-6" />
                             </div>
                           )}
                         </div>
@@ -593,7 +614,7 @@ export function OnboardingWizard({
               )}
             </div>
 
-            <p className="shrink-0 text-center text-xs text-secondary/35">
+            <p className="text-secondary/35 shrink-0 text-center text-xs">
               {t("games.hint")}
             </p>
           </div>
@@ -676,7 +697,7 @@ export function OnboardingWizard({
         {/* Card */}
         <div
           key={step}
-          className="animate-in relative z-10 flex min-h-0 w-full flex-1 flex-col rounded-3xl border border-gold-dim/25 bg-card-strong/25 p-8 shadow-2xl backdrop-blur-sm sm:p-10"
+          className="animate-in border-gold-dim/25 bg-card-strong/25 relative z-10 flex min-h-0 w-full flex-1 flex-col rounded-3xl border p-8 shadow-2xl backdrop-blur-sm sm:p-10"
         >
           {renderStep()}
         </div>

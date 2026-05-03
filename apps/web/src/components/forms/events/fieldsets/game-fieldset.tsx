@@ -17,8 +17,8 @@ import {
   useComboboxKeyboard,
   SearchComboboxDropdown,
 } from "@/components/ui/search-combobox";
-import { cn } from "@/lib/utils";
-import { cdnUrl } from "@/lib/cdn";
+import { cn } from "@/lib/utils/helpers";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 /* ─────────────────────── Game Search Fieldset (add form) ─────────────────── */
 

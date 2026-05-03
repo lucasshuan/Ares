@@ -4,7 +4,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface InfoModalProps {
   isOpen: boolean;

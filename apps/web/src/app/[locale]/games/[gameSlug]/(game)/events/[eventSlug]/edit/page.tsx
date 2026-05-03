@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
-import { canManageLeagues } from "@/lib/permissions";
+import { canManageLeagues } from "@/lib/server/permissions";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { GET_LEAGUE } from "@/lib/apollo/queries/leagues";
 import { type GetLeagueQuery } from "@/lib/apollo/generated/graphql";

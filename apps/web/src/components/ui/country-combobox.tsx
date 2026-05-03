@@ -3,8 +3,8 @@
 import { useState, useRef, useMemo } from "react";
 import { Globe, X, Check } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { COUNTRIES } from "@/lib/countries";
+import { cn } from "@/lib/utils/helpers";
+import { COUNTRIES } from "@/lib/utils/countries";
 import {
   useComboboxKeyboard,
   SearchComboboxDropdown,
@@ -109,7 +109,7 @@ export function CountryCombobox({
             />
           </span>
         ) : (
-          <Globe className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-secondary/35" />
+          <Globe className="text-secondary/35 pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2" />
         )}
 
         <input
@@ -142,7 +142,7 @@ export function CountryCombobox({
               inputRef.current?.focus();
             }}
             tabIndex={-1}
-            className="absolute top-1/2 right-3.5 -translate-y-1/2 text-secondary/35 transition-colors hover:text-white"
+            className="text-secondary/35 absolute top-1/2 right-3.5 -translate-y-1/2 transition-colors hover:text-white"
           >
             <X className="size-4" />
           </button>
@@ -168,11 +168,11 @@ export function CountryCombobox({
                       close();
                     }}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
+                      "hover:bg-card-strong/70 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
                       highlighted || value === null ? "bg-card-strong/45" : "",
                     )}
                   >
-                    <Globe className="size-5 text-secondary/35" />
+                    <Globe className="text-secondary/35 size-5" />
                     <span className="text-sm text-white">{clearLabel}</span>
                   </button>
                 ),
@@ -188,7 +188,7 @@ export function CountryCombobox({
               close();
             }}
             className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-card-strong/70",
+              "hover:bg-card-strong/70 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
               highlighted || value === c.code ? "bg-card-strong/45" : "",
             )}
           >

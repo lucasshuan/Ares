@@ -3,7 +3,7 @@ import { GET_GAME_LAYOUT } from "@/lib/apollo/queries/games";
 import { GetGameLayoutQuery } from "@/lib/apollo/generated/graphql";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import Image from "next/image";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 interface GameLayoutProps {
   children: React.ReactNode;

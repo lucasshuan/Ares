@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import type { AddLeagueValues } from "@/schemas/league";
 
 export function SettingsFieldset() {

@@ -13,7 +13,7 @@ import {
   Rows3,
   Rows4,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 import { CustomSelect } from "./custom-select";
 import { useTranslations } from "next-intl";

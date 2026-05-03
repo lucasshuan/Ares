@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Link } from "@/i18n/routing";
 import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { Home, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -38,7 +38,14 @@ function ParticleCanvas() {
     };
 
     const particles: Particle[] = [];
-    const COLORS = ["#d4711c", "#d4711c", "#a4141b", "#c0320e", "#e8d5a3", "rgba(212,113,28,0.85)"];
+    const COLORS = [
+      "#d4711c",
+      "#d4711c",
+      "#a4141b",
+      "#c0320e",
+      "#e8d5a3",
+      "rgba(212,113,28,0.85)",
+    ];
 
     const spawnParticle = (): Particle => ({
       x: Math.random() * canvas.width,
@@ -144,16 +151,18 @@ function GlitchText() {
     >
       <span
         className={cn(
-          "block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase",
+          "font-display block text-[clamp(7rem,22vw,18rem)] leading-none font-normal tracking-[0.06em] uppercase",
           "bg-clip-text text-transparent",
-          "bg-linear-to-b from-secondary via-gold to-gold-dim",
+          "from-secondary via-gold to-gold-dim bg-linear-to-b",
           glitching && "animate-[glitch-shake_0.4s_steps(4,end)]",
         )}
         style={{
           textShadow: glitching
             ? "4px 0 0 var(--primary), -4px 0 0 var(--gold)"
             : "0 0 60px color-mix(in srgb, var(--gold) 40%, transparent)",
-          WebkitTextStroke: glitching ? "1px color-mix(in srgb, var(--gold) 60%, transparent)" : undefined,
+          WebkitTextStroke: glitching
+            ? "1px color-mix(in srgb, var(--gold) 60%, transparent)"
+            : undefined,
         }}
         aria-label="404"
       >
@@ -164,7 +173,7 @@ function GlitchText() {
         <>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase text-primary/60"
+            className="font-display text-primary/60 pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-normal tracking-[0.06em] uppercase"
             style={{
               transform: "translate(6px, 2px)",
               clipPath: "inset(30% 0 40% 0)",
@@ -174,7 +183,7 @@ function GlitchText() {
           </span>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-display font-normal tracking-[0.06em] uppercase text-(--gold)/40"
+            className="font-display pointer-events-none absolute inset-0 block text-[clamp(7rem,22vw,18rem)] leading-none font-normal tracking-[0.06em] text-(--gold)/40 uppercase"
             style={{
               transform: "translate(-5px, -2px)",
               clipPath: "inset(60% 0 10% 0)",
@@ -221,7 +230,7 @@ export function NotFoundPage() {
             {t("description")}{" "}
             <Link
               href="/"
-              className="text-primary transition-colors hover:text-primary/80 hover:underline"
+              className="text-primary hover:text-primary/80 transition-colors hover:underline"
             >
               {t("descriptionHighlight")}
             </Link>
@@ -229,7 +238,7 @@ export function NotFoundPage() {
         </div>
 
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 font-mono text-xs text-white/50 backdrop-blur-sm">
-          <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+          <span className="bg-primary size-1.5 animate-pulse rounded-full" />
           {t("errorInfo")}
         </div>
 

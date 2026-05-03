@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { routing, usePathname, useRouter } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 const flags: Record<(typeof routing.locales)[number], string> = {
   en: "fi-us",

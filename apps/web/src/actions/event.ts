@@ -9,9 +9,9 @@ import {
 } from "@/lib/apollo/queries/league-mutations";
 import { GetGameActionsQuery } from "@/lib/apollo/generated/graphql";
 import { getServerAuthSession } from "@/auth";
-import { canManageLeagues } from "@/lib/permissions";
+import { canManageLeagues } from "@/lib/server/permissions";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { createSafeAction } from "@/lib/action-utils";
+import { createSafeAction } from "@/lib/utils/action-utils";
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
 

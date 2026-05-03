@@ -2,9 +2,9 @@ import type { Route } from "next";
 import { Link } from "@/i18n/routing";
 import { ChevronRight } from "lucide-react";
 import { type Game } from "@/lib/apollo/generated/graphql";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import Image from "next/image";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 interface GameCardProps {
   game: Pick<

@@ -7,7 +7,7 @@ import type { VariantProps } from "class-variance-authority";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 type SignInButtonProps = {
   disabled?: boolean;

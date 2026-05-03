@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 const SEARCH_DEBOUNCE_MS = 250;
 
@@ -75,13 +75,13 @@ export function SearchInput({
         type="text"
         value={value}
         placeholder={placeholder}
-        className="focus:border-gold/45 focus:ring-gold/10 h-11 w-full rounded-xl border border-gold-dim/35 bg-card-strong/50 pr-11 pl-10 text-sm text-secondary outline-hidden transition-all placeholder:text-secondary/30 hover:border-gold-dim/55 focus:bg-card-strong/70 focus:ring-4"
+        className="focus:border-gold/45 focus:ring-gold/10 border-gold-dim/35 bg-card-strong/50 text-secondary placeholder:text-secondary/30 hover:border-gold-dim/55 focus:bg-card-strong/70 h-11 w-full rounded-xl border pr-11 pl-10 text-sm outline-hidden transition-all focus:ring-4"
         onChange={(e) => handleSearch(e.target.value)}
       />
       {value && (
         <button
           onClick={clearSearch}
-          className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted/40 hover:text-muted"
+          className="text-muted/40 hover:text-muted absolute inset-y-0 right-0 flex items-center pr-3"
         >
           <X className="size-4" />
         </button>

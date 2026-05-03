@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
-import { canEditGame } from "@/lib/permissions";
+import { canEditGame } from "@/lib/server/permissions";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { type GetGameQuery, type Game } from "@/lib/apollo/generated/graphql";

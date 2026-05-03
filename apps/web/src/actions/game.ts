@@ -23,10 +23,10 @@ import {
   GetGamesSimpleQuery,
 } from "@/lib/apollo/generated/graphql";
 import { getServerAuthSession } from "@/auth";
-import { canEditGame, canManageGames } from "@/lib/permissions";
+import { canEditGame, canManageGames } from "@/lib/server/permissions";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { normalizeOptionalText, slugify } from "@/lib/utils";
-import { createSafeAction } from "@/lib/action-utils";
+import { normalizeOptionalText, slugify } from "@/lib/utils/helpers";
+import { createSafeAction } from "@/lib/utils/action-utils";
 
 export type SimpleGame = GetGamesSimpleQuery["games"]["nodes"][number];
 

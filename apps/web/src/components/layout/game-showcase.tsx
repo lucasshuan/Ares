@@ -5,9 +5,9 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Route } from "next";
 import { CalendarDays, ChevronRight, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { buttonVariants } from "@/components/ui/button";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 export interface ShowcaseGame {
   id: string;
@@ -140,7 +140,10 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
             {/* CTA */}
             <Link
               href={`/games/${game.slug}` as Route}
-              className={cn(buttonVariants({ intent: "primary", size: "sm" }), "gap-2")}
+              className={cn(
+                buttonVariants({ intent: "primary", size: "sm" }),
+                "gap-2",
+              )}
             >
               {labels.explore}
               <ChevronRight className="size-4 transition-transform group-hover:-translate-x-0.5" />
@@ -170,7 +173,11 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               >
                 {game.backgroundImagePath || game.thumbnailImagePath ? (
                   <Image
-                    src={cdnUrl(game.backgroundImagePath ?? game.thumbnailImagePath)!}
+                    src={
+                      cdnUrl(
+                        game.backgroundImagePath ?? game.thumbnailImagePath,
+                      )!
+                    }
                     alt={game.name}
                     fill
                     className="object-cover"
@@ -183,8 +190,8 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               </div>
 
               {/* Gradient masks */}
-              <div className="absolute inset-0 bg-linear-to-t from-background/95 via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-linear-to-r from-background/40 to-transparent lg:from-background/70" />
+              <div className="from-background/95 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
+              <div className="from-background/40 lg:from-background/70 absolute inset-0 bg-linear-to-r to-transparent" />
 
               {/* Floating game title on image */}
               <div className="absolute right-5 bottom-4 left-5">

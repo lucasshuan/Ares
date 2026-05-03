@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import type { LucideIcon } from "lucide-react";
 
 interface PrimaryActionProps {

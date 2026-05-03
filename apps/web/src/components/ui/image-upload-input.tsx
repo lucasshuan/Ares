@@ -2,8 +2,8 @@
 
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { ImageIcon, UploadCloud, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { cdnUrl } from "@/lib/cdn";
+import { cn } from "@/lib/utils/helpers";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB

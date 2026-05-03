@@ -18,8 +18,8 @@ import {
 } from "@/lib/apollo/generated/graphql";
 import { GET_GAME_STAFF } from "@/lib/apollo/queries/games";
 import { useUser } from "@/components/providers";
-import { cn } from "@/lib/utils";
-import { resolveImageValue } from "@/lib/upload";
+import { cn } from "@/lib/utils/helpers";
+import { resolveImageValue } from "@/lib/utils/upload";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import {
@@ -210,7 +210,6 @@ export function EditGameForm({
           <p className="field-error-text">{errors.name.message}</p>
         )}
       </div>
-
       <div className="flex flex-col gap-2">
         <LabelTooltip
           htmlFor="slug"
@@ -258,7 +257,6 @@ export function EditGameForm({
           <p className="field-error-text">{t("slug.taken")}</p>
         )}
       </div>
-
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="description"
@@ -280,7 +278,6 @@ export function EditGameForm({
           <p className="field-error-text">{errors.description.message}</p>
         )}
       </div>
-
       <div>
         <Controller
           name="backgroundImagePath"
@@ -296,7 +293,6 @@ export function EditGameForm({
           )}
         />
       </div>
-
       <Controller
         name="thumbnailImagePath"
         control={control}
@@ -310,7 +306,6 @@ export function EditGameForm({
           />
         )}
       />
-
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="steamUrl"
@@ -331,7 +326,6 @@ export function EditGameForm({
           <p className="field-error-text">{errors.steamUrl.message}</p>
         )}
       </div>
-
       <div className="col-span-full flex flex-col gap-2">
         <label
           htmlFor="websiteUrl"
@@ -352,13 +346,13 @@ export function EditGameForm({
           <p className="field-error-text">{errors.websiteUrl.message}</p>
         )}
       </div>
-
       <div className="col-span-full mt-4 border-t border-white/5 pt-8">
         <GameStaffFieldset
           currentUserId={user?.id ?? ""}
           staffMembers={staffMembers}
           onStaffChange={setStaffMembers}
         />
-      </div>    </form>
+      </div>{" "}
+    </form>
   );
 }

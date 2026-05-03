@@ -16,8 +16,8 @@ import {
   SearchComboboxDropdown,
   useComboboxKeyboard,
 } from "@/components/ui/search-combobox";
-import { cn } from "@/lib/utils";
-import { cdnUrl } from "@/lib/cdn";
+import { cn } from "@/lib/utils/helpers";
+import { cdnUrl } from "@/lib/utils/cdn";
 import { Tooltip } from "@/components/ui/tooltip";
 import type { SearchUsersQuery } from "@/lib/apollo/generated/graphql";
 

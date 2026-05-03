@@ -8,7 +8,7 @@ import { Trash2, AlertTriangle, Ban } from "lucide-react";
 
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { deleteGame } from "@/actions/game";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface DeleteGameModalProps {
   gameSlug: string;

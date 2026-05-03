@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
-import { canEditProfile } from "@/lib/permissions";
+import { canEditProfile } from "@/lib/server/permissions";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { GET_USER } from "@/lib/apollo/queries/user";
 import { type GetUserQuery } from "@/lib/apollo/generated/graphql";

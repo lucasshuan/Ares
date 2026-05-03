@@ -1,11 +1,12 @@
 import { SectionHeader } from "@/components/ui/section-header";
+import { SidebarPageLayout } from "@/components/ui/sidebar-page-layout";
 import { getTranslations } from "next-intl/server";
 import { getServerAuthSession } from "@/auth";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { canEditGame } from "@/lib/permissions";
+import { canEditGame } from "@/lib/server/permissions";
 import { LeagueCard } from "@/components/cards/league-card";
 import { ChevronLeft, Ghost } from "lucide-react";
 import { Link } from "@/i18n/routing";
@@ -96,10 +97,9 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   };
 
   return (
-    <div className="relative mx-auto mt-4 flex w-full flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
-      {/* Sidebar */}
-      <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
-        <div className="sticky top-28 flex flex-col gap-3">
+    <SidebarPageLayout
+      sidebar={
+        <>
           <Link
             href="/games"
             className="group border-gold/45 bg-card text-muted hover:border-gold hover:text-foreground flex w-full items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-200"
@@ -115,11 +115,10 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
             postCount={gameWithCounts.postCount}
             canEdit={canEditCurrentGame}
           />
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div className="min-w-0 flex-1 space-y-6">
+        </>
+      }
+    >
+      <div className="space-y-6">
         <section className="space-y-6">
           <SectionHeader
             title={t("eventsTitle")}
@@ -156,16 +155,15 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
           )}
         </section>
       </div>
-    </div>
+    </SidebarPageLayout>
   );
 }
 
 function GamePageSkeleton() {
   return (
-    <div className="relative mx-auto mt-4 flex w-full flex-col gap-8 px-6 pb-12 sm:px-10 lg:flex-row lg:gap-8 lg:px-12">
-      {/* Sidebar */}
-      <aside className="w-full shrink-0 lg:w-[320px] xl:w-90">
-        <div className="sticky top-28 flex flex-col gap-3">
+    <SidebarPageLayout
+      sidebar={
+        <>
           {/* Back link */}
           <div className="border-gold/45 bg-card flex h-10 w-full items-center gap-2 rounded-xl border px-4">
             <div className="size-4 animate-pulse rounded bg-white/10" />
@@ -199,11 +197,10 @@ function GamePageSkeleton() {
             <div className="h-7 w-28 animate-pulse rounded-full bg-white/8" />
             <div className="h-5 w-16 animate-pulse rounded bg-white/5" />
           </div>
-        </div>
-      </aside>
-
-      {/* Main content */}
-      <div className="min-w-0 flex-1 space-y-6">
+        </>
+      }
+    >
+      <div className="space-y-6">
         <section className="space-y-6">
           {/* SectionHeader skeleton */}
           <div className="space-y-1.5">
@@ -242,6 +239,6 @@ function GamePageSkeleton() {
           </div>
         </section>
       </div>
-    </div>
+    </SidebarPageLayout>
   );
 }

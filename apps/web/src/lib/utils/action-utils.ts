@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import { logger } from "../server/logger";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;

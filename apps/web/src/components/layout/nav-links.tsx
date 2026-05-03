@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 const links = [
   { href: "/games", labelKey: "games" as const },

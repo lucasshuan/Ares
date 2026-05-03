@@ -9,7 +9,7 @@ import {
 } from "@apollo/client-integration-nextjs";
 import { getServerAuthSession } from "@/auth";
 import { env } from "@/env";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/server/logger";
 
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   const httpLink = new HttpLink({

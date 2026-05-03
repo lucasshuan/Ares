@@ -11,7 +11,7 @@ import { CalendarX2 } from "lucide-react";
 import { AddEventButton } from "@/components/triggers/game/add-event-button";
 import { SearchInput } from "@/components/ui/search-input";
 import { Link } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 const getCachedEvents = unstable_cache(
   async (token: string | null) =>

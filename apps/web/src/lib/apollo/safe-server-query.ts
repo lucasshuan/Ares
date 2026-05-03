@@ -6,7 +6,7 @@ import type {
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 import { getClient } from "@/lib/apollo/apollo-client";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/server/logger";
 import { env } from "@/env";
 
 type SafeServerQueryOptions<

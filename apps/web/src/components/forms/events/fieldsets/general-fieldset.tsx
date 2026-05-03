@@ -19,7 +19,7 @@ import {
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { cn, slugify } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils/helpers";
 import type { AddLeagueValues } from "@/schemas/league";
 
 interface GeneralFieldsetProps {

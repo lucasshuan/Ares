@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { createPortal } from "react-dom";
 
 interface DropdownMenuProps {

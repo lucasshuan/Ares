@@ -1,5 +1,5 @@
 import { type LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { buttonVariants } from "@/components/ui/button";
 import { type VariantProps } from "class-variance-authority";
 

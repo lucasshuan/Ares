@@ -7,7 +7,7 @@ import { SiDiscord } from "react-icons/si";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
-import { getApiUrl } from "@/lib/api";
+import { getApiUrl } from "@/lib/server/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +35,10 @@ function ScanLines() {
 
 // ─── Main modal ───────────────────────────────────────────────────────────────
 
-function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) {
+function AuthModalInner({
+  onClose,
+  isPending,
+}: Omit<AuthModalProps, "isOpen">) {
   const t = useTranslations("Modals.Auth");
 
   const handleDiscord = useCallback(() => {
@@ -60,7 +63,7 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="animate-modal-overlay fixed inset-0 z-200 flex items-center justify-center p-4 bg-black/70 will-change-[opacity,backdrop-filter]"
+      className="animate-modal-overlay fixed inset-0 z-200 flex items-center justify-center bg-black/70 p-4 will-change-[opacity,backdrop-filter]"
     >
       {/* Panel */}
       <div
@@ -77,8 +80,10 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
         {/* Ambient glow blob behind logo */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-48 w-64 -translate-y-1/3 rounded-full blur-3xl"
-          style={{ background: "color-mix(in srgb, var(--primary) 14%, transparent)" }}
+          className="pointer-events-none absolute top-0 left-1/2 h-48 w-64 -translate-x-1/2 -translate-y-1/3 rounded-full blur-3xl"
+          style={{
+            background: "color-mix(in srgb, var(--primary) 14%, transparent)",
+          }}
         />
 
         {/* Top border accent */}
@@ -94,7 +99,7 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 cursor-pointer rounded-xl p-2 text-foreground/30 transition-colors hover:bg-white/8 hover:text-foreground"
+          className="text-foreground/30 hover:text-foreground absolute top-4 right-4 z-10 cursor-pointer rounded-xl p-2 transition-colors hover:bg-white/8"
           aria-label={t("close")}
         >
           <X className="size-4" />
@@ -109,7 +114,10 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
               <div
                 aria-hidden="true"
                 className="absolute inset-0 rounded-full blur-2xl"
-                style={{ background: "color-mix(in srgb, var(--primary) 20%, transparent)" }}
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--primary) 20%, transparent)",
+                }}
               />
               <Image
                 src="/logo2.png"
@@ -122,7 +130,7 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
 
             {/* Wordmark */}
             <div className="space-y-1 text-center">
-              <h2 className="text-2xl font-black tracking-tight text-foreground">
+              <h2 className="text-foreground text-2xl font-black tracking-tight">
                 {t("title1")}{" "}
                 <span
                   className="bg-clip-text text-transparent"
@@ -142,14 +150,20 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
           <div className="mb-5 flex items-center gap-3">
             <div
               className="h-px flex-1"
-              style={{ background: "color-mix(in srgb, var(--gold-dim) 30%, transparent)" }}
+              style={{
+                background:
+                  "color-mix(in srgb, var(--gold-dim) 30%, transparent)",
+              }}
             />
-            <span className="text-[10px] font-medium tracking-widest text-muted/50 uppercase">
+            <span className="text-muted/50 text-[10px] font-medium tracking-widest uppercase">
               {t("continueWith")}
             </span>
             <div
               className="h-px flex-1"
-              style={{ background: "color-mix(in srgb, var(--gold-dim) 30%, transparent)" }}
+              style={{
+                background:
+                  "color-mix(in srgb, var(--gold-dim) 30%, transparent)",
+              }}
             />
           </div>
 
@@ -157,7 +171,7 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
           <button
             onClick={handleDiscord}
             disabled={isPending}
-            className="group relative w-full overflow-hidden rounded-2xl bg-discord px-5 py-3.5 font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="group bg-discord relative w-full overflow-hidden rounded-2xl px-5 py-3.5 font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
             style={{
               boxShadow:
                 "0 4px 24px color-mix(in srgb, var(--discord) 35%, transparent), inset 0 1px 0 color-mix(in srgb, white 12%, transparent)",
@@ -185,7 +199,7 @@ function AuthModalInner({ onClose, isPending }: Omit<AuthModalProps, "isOpen">) 
           </button>
 
           {/* Footer note */}
-          <p className="mt-6 text-center text-[10px] leading-5 text-muted/40">
+          <p className="text-muted/40 mt-6 text-center text-[10px] leading-5">
             {t("termsNotice")}
           </p>
         </div>

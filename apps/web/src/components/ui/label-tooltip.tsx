@@ -9,7 +9,7 @@ import {
   useCallback,
 } from "react";
 import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface LabelTooltipProps {
   label: string;
@@ -71,7 +71,7 @@ export function LabelTooltip({
         <label
           htmlFor={htmlFor}
           className={cn(
-            "cursor-default text-sm font-medium text-secondary/70",
+            "text-secondary/70 cursor-default text-sm font-medium",
             labelClassName,
           )}
         >
@@ -91,7 +91,7 @@ export function LabelTooltip({
           {show &&
             createPortal(
               <div
-                className="pointer-events-none absolute isolate z-9999 w-64 -translate-x-1/2 transform-gpu rounded-xl border border-gold-dim/35 bg-card-strong/90 p-3 text-[11px] leading-relaxed text-secondary/80 shadow-2xl"
+                className="border-gold-dim/35 bg-card-strong/90 text-secondary/80 pointer-events-none absolute isolate z-9999 w-64 -translate-x-1/2 transform-gpu rounded-xl border p-3 text-[11px] leading-relaxed shadow-2xl"
                 style={{
                   top: position.top,
                   left: position.left,
@@ -99,7 +99,7 @@ export function LabelTooltip({
                   WebkitBackdropFilter: "blur(12px)",
                 }}
               >
-                <div className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border-t border-l border-gold-dim/35 bg-card-strong/90" />
+                <div className="border-gold-dim/35 bg-card-strong/90 absolute -top-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border-t border-l" />
                 <div className="relative z-10">{tooltip}</div>
               </div>,
               document.body,

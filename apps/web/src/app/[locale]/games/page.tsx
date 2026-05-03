@@ -7,7 +7,7 @@ import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
 import { GameCard, GameCardSkeleton } from "@/components/cards/game-card";
 import { SearchInput } from "@/components/ui/search-input";
 import { SectionHeader } from "@/components/ui/section-header";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";

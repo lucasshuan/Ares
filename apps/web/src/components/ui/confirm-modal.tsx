@@ -2,7 +2,7 @@
 
 import { type ElementType } from "react";
 import { Modal } from "./modal";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { AlertCircle, CheckCircle2, HelpCircle, Info } from "lucide-react";
 
 interface ConfirmModalProps {

@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import Image from "next/image";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 interface UserChipProps {
   user: {

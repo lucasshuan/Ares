@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import React, { useRef } from "react";
 
 interface NumberInputProps {
@@ -44,7 +44,7 @@ export function NumberInput({
   return (
     <div
       className={cn(
-        "relative flex items-center overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong/50 transition-colors focus-within:border-gold/45 focus-within:bg-card-strong/70 focus-within:ring-4 focus-within:ring-gold/10",
+        "border-gold-dim/35 bg-card-strong/50 focus-within:border-gold/45 focus-within:bg-card-strong/70 focus-within:ring-gold/10 relative flex items-center overflow-hidden rounded-2xl border transition-colors focus-within:ring-4",
         className,
       )}
     >
@@ -76,10 +76,10 @@ export function NumberInput({
               width: `${Math.max(String(value).length, 1)}ch`,
               minWidth: "2ch",
             }}
-            className="h-10 appearance-none bg-transparent text-center text-sm font-semibold text-secondary transition-all outline-none [-moz-appearance:textfield] placeholder:text-secondary/25"
+            className="text-secondary placeholder:text-secondary/25 h-10 appearance-none bg-transparent text-center text-sm font-semibold transition-all outline-none [-moz-appearance:textfield]"
           />
           {unit && (
-            <span className="pointer-events-none ml-1 text-[10px] font-semibold whitespace-nowrap text-gold/45">
+            <span className="text-gold/45 pointer-events-none ml-1 text-[10px] font-semibold whitespace-nowrap">
               {unit}
             </span>
           )}

@@ -4,7 +4,7 @@ import type { NextAuthOptions, User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "@/env";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/server/logger";
 
 const SESSION_REVALIDATION_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 

@@ -25,10 +25,10 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { buttonVariants } from "@/components/ui/button";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

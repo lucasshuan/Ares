@@ -5,7 +5,7 @@ import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 
 import { SignInButton } from "@/components/triggers/auth/sign-in-button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import {
   GameShowcase,
   type ShowcaseGame,
@@ -15,7 +15,7 @@ import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { getServerAuthSession } from "@/auth";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 export default async function HomePage() {
   const t = await getTranslations("HomePage");

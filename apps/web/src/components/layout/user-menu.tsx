@@ -5,7 +5,7 @@ import { LogOut, Settings, User as UserIcon, Edit2 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 type UserProps = {
   id: string;

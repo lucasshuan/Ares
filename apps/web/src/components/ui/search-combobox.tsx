@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { createPortal } from "react-dom";
 import { LoaderCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
@@ -144,7 +150,6 @@ export function SearchComboboxDropdown<T>({
   // flashes at (0,0) in the corner of the viewport.
   useLayoutEffect(() => {
     if (!isOpen || !anchorRef.current) {
-      setIsPositioned(false);
       return;
     }
     const rect = anchorRef.current.getBoundingClientRect();

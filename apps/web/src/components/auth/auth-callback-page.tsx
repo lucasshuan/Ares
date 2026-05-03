@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 import { type AppLocale, getLocalizedPathname } from "@/i18n/locale";
-import { getApiUrl } from "@/lib/api";
+import { getApiUrl } from "@/lib/server/api";
 
 // Module-level set survives React StrictMode's double-mount in development,
 // ensuring each auth code is exchanged exactly once.
@@ -117,7 +117,7 @@ function AuthCallbackContent() {
         aria-hidden="true"
       >
         <div className="bg-primary/8 absolute -top-24 left-1/2 h-120 w-170 -translate-x-1/2 rounded-full blur-[140px]" />
-        <div className="bg-primary-strong/6 absolute -bottom-32 right-1/4 h-80 w-120 rounded-full blur-[120px]" />
+        <div className="bg-primary-strong/6 absolute right-1/4 -bottom-32 h-80 w-120 rounded-full blur-[120px]" />
       </div>
 
       {/* Content */}
@@ -125,7 +125,13 @@ function AuthCallbackContent() {
         {/* Ares logo mark */}
         <div className="relative">
           <div className="bg-primary/20 absolute -inset-8 animate-pulse rounded-full blur-2xl" />
-          <Image src="/logo.png" alt="Bellona" width={40} height={40} className="relative size-10 object-contain" />
+          <Image
+            src="/logo.png"
+            alt="Bellona"
+            width={40}
+            height={40}
+            className="relative size-10 object-contain"
+          />
         </div>
 
         {/* Spinner ring */}
@@ -140,9 +146,7 @@ function AuthCallbackContent() {
           <p className="text-foreground/80 text-lg font-medium tracking-wide">
             {t("title")}
           </p>
-          <p className="text-muted text-sm">
-            {t("subtitle")}
-          </p>
+          <p className="text-muted text-sm">{t("subtitle")}</p>
         </div>
 
         {/* Animated dots */}

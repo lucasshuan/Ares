@@ -11,7 +11,7 @@ import { ProfileManageActions } from "@/components/triggers/profile/profile-mana
 import { ProfileTabs } from "@/components/ui/tabs";
 import { Metadata } from "next";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 type ProfilePageProps = {
   params: Promise<{

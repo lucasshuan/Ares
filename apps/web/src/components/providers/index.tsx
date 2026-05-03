@@ -23,7 +23,7 @@ import {
   canManagePlayers,
   canManageLeagues,
   canEditGame as libCanEditGame,
-} from "@/lib/permissions";
+} from "@/lib/server/permissions";
 
 type UserContextType = {
   user: Session["user"] | null;

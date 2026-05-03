@@ -11,8 +11,8 @@ import {
   UpdateProfileMutation,
   CompleteOnboardingMutation,
 } from "@/lib/apollo/generated/graphql";
-import { normalizeOptionalText } from "@/lib/utils";
-import { createSafeAction } from "@/lib/action-utils";
+import { normalizeOptionalText } from "@/lib/utils/helpers";
+import { createSafeAction } from "@/lib/utils/action-utils";
 
 // ─── User ─────────────────────────────────────────────────────────────────────
 

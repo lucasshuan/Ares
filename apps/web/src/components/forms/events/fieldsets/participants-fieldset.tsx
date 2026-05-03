@@ -19,9 +19,9 @@ import {
   useComboboxKeyboard,
   SearchComboboxDropdown,
 } from "@/components/ui/search-combobox";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import type { SearchUsersQuery } from "@/lib/apollo/generated/graphql";
-import { cdnUrl } from "@/lib/cdn";
+import { cdnUrl } from "@/lib/utils/cdn";
 
 export interface ParticipantEntry {
   localId: string;
@@ -62,7 +62,12 @@ function EntryAvatar({
   if (imagePath) {
     return (
       <div className="relative size-9 shrink-0 overflow-hidden rounded-full">
-        <Image src={cdnUrl(imagePath)!} alt={displayName} fill className="object-cover" />
+        <Image
+          src={cdnUrl(imagePath)!}
+          alt={displayName}
+          fill
+          className="object-cover"
+        />
       </div>
     );
   }
@@ -270,8 +275,8 @@ export function ParticipantsFieldset({
     id: string;
     name: string;
     username: string;
-      imagePath?: string | null;
-    }) => {
+    imagePath?: string | null;
+  }) => {
     if (!linkTargetId) {
       return;
     }
@@ -325,7 +330,9 @@ export function ParticipantsFieldset({
     return null;
   };
 
-  type SearchUser = NonNullable<SearchUsersQuery["searchUsers"]["nodes"]>[number];
+  type SearchUser = NonNullable<
+    SearchUsersQuery["searchUsers"]["nodes"]
+  >[number];
 
   const { highlightedIndex, onInputKeyDown } = useComboboxKeyboard<SearchUser>({
     isOpen: showLinkDropdown,
@@ -406,9 +413,7 @@ export function ParticipantsFieldset({
                                 e.target.value,
                               )
                             }
-                            onFocus={() =>
-                              handleLinkSearchFocus(entry.localId)
-                            }
+                            onFocus={() => handleLinkSearchFocus(entry.localId)}
                             onBlur={handleCloseLinkSearch}
                             onKeyDown={onInputKeyDown}
                             className="field-base field-border-default py-2 pr-4 pl-9 text-sm"
@@ -421,7 +426,7 @@ export function ParticipantsFieldset({
                         <button
                           type="button"
                           onClick={() => handleCancelLink(entry.localId)}
-                          className="text-muted hover:text-white flex size-7 shrink-0 items-center justify-center rounded-xl transition-colors"
+                          className="text-muted flex size-7 shrink-0 items-center justify-center rounded-xl transition-colors hover:text-white"
                         >
                           <X className="size-3.5" />
                         </button>
@@ -460,7 +465,7 @@ export function ParticipantsFieldset({
                               type="button"
                               title={t("unlinkUser")}
                               onClick={() => handleUnlinkUser(entry.localId)}
-                              className="text-muted/50 hover:text-red-400 flex size-5 shrink-0 items-center justify-center rounded-full transition-colors"
+                              className="text-muted/50 flex size-5 shrink-0 items-center justify-center rounded-full transition-colors hover:text-red-400"
                             >
                               <X className="size-3" />
                             </button>

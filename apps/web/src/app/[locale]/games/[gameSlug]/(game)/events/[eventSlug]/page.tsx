@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
-import { canManageLeagues } from "@/lib/permissions";
+import { canManageLeagues } from "@/lib/server/permissions";
 import { GET_EVENT_META } from "@/lib/apollo/queries/events";
 import { GET_LEAGUE } from "@/lib/apollo/queries/leagues";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";

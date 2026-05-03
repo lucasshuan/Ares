@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Gamepad2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 // ─── math ────────────────────────────────────────────────────────────────────
 
@@ -121,7 +121,7 @@ export function EloMatchSimulator({
           : "text-secondary/45";
 
   return (
-    <div className="border-secondary/20 border mt-1 rounded-2xl p-4">
+    <div className="border-secondary/20 mt-1 rounded-2xl border p-4">
       {/* Header */}
       <div className="mb-3 flex items-center gap-2">
         <Gamepad2 className="text-secondary/30 size-3" />

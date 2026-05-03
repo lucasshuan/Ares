@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ElementType } from "react";
 import { createPortal } from "react-dom";
 import { X, LoaderCircle, Save } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import { Button } from "./button";
 
 interface ModalProps {

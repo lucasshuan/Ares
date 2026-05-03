@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { MATCH_FORMATS } from "@bellona/core";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 type MatchFormatsValues = {
   allowedFormats: string[];

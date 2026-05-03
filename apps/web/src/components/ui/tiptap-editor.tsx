@@ -15,7 +15,7 @@ import {
   Undo,
   Redo,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface TiptapEditorProps {
   value?: string;
@@ -92,12 +92,12 @@ export function TiptapEditor({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-gold-dim/35 bg-card-strong/50 transition-all hover:border-gold-dim/55 focus-within:border-gold/45 focus-within:bg-card-strong/70 focus-within:ring-4 focus-within:ring-gold/10",
+        "border-gold-dim/35 bg-card-strong/50 hover:border-gold-dim/55 focus-within:border-gold/45 focus-within:bg-card-strong/70 focus-within:ring-gold/10 overflow-hidden rounded-2xl border transition-all focus-within:ring-4",
         className,
       )}
     >
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-gold-dim/20 bg-card-strong/30 px-3 py-1.5">
+      <div className="border-gold-dim/20 bg-card-strong/30 flex flex-wrap items-center gap-0.5 border-b px-3 py-1.5">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive("bold")}
@@ -120,7 +120,7 @@ export function TiptapEditor({
           <Strikethrough className="size-3.5" />
         </ToolbarButton>
 
-        <div className="mx-1 h-4 w-px bg-gold-dim/30" />
+        <div className="bg-gold-dim/30 mx-1 h-4 w-px" />
 
         <ToolbarButton
           onClick={() =>
@@ -141,7 +141,7 @@ export function TiptapEditor({
           <Heading3 className="size-3.5" />
         </ToolbarButton>
 
-        <div className="mx-1 h-4 w-px bg-gold-dim/30" />
+        <div className="bg-gold-dim/30 mx-1 h-4 w-px" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -158,7 +158,7 @@ export function TiptapEditor({
           <ListOrdered className="size-3.5" />
         </ToolbarButton>
 
-        <div className="mx-1 h-4 w-px bg-gold-dim/30" />
+        <div className="bg-gold-dim/30 mx-1 h-4 w-px" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -167,7 +167,7 @@ export function TiptapEditor({
           <Minus className="size-3.5" />
         </ToolbarButton>
 
-        <div className="mx-1 h-4 w-px bg-gold-dim/30" />
+        <div className="bg-gold-dim/30 mx-1 h-4 w-px" />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
@@ -190,4 +190,3 @@ export function TiptapEditor({
     </div>
   );
 }
-

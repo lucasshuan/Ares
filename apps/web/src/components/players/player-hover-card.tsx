@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Portal } from "@/components/ui/portal";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 
 interface PlayerHoverCardProps {
   displayName: string;
