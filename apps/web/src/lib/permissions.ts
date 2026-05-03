@@ -32,3 +32,13 @@ export function canEditGame(
   if (canManageGames(session)) return true;
   return !!authorId && session.user.id === authorId;
 }
+
+export function canEditProfile(
+  session: Session | null,
+  userId: string | null | undefined,
+) {
+  if (!session?.user) return false;
+  if (session.user.isAdmin) return true;
+  if (hasPermission(session, "manage_users")) return true;
+  return !!userId && session.user.id === userId;
+}

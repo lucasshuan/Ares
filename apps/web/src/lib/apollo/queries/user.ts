@@ -9,6 +9,7 @@ export const GET_USER = gql`
       imagePath
       bio
       profileColor
+      country
       isAdmin
       createdAt
     }

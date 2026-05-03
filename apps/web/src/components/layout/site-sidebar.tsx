@@ -24,12 +24,11 @@ import {
   Palette,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { cdnUrl } from "@/lib/cdn";
-import { EditProfileModal } from "@/components/modals/profile/edit-profile-modal";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -192,7 +191,7 @@ function UserMenuDropdown({
   onClose?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const router = useRouter();
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null,
   );
@@ -309,7 +308,7 @@ function UserMenuDropdown({
           onClick={() => {
             setOpen(false);
             onClose?.();
-            setEditProfileOpen(true);
+            router.push(`/profile/${user.username}/edit`);
           }}
           className="text-muted hover:text-foreground flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] transition-colors hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]"
         >
@@ -443,17 +442,6 @@ function UserMenuDropdown({
       )}
 
       {typeof document !== "undefined" && createPortal(dropdown, document.body)}
-
-      <EditProfileModal
-        isOpen={editProfileOpen}
-        onClose={() => setEditProfileOpen(false)}
-        user={{
-          id: user.id,
-          name: user.name,
-          username: user.username,
-          imagePath: user.imagePath ?? null,
-        }}
-      />
     </div>
   );
 }
@@ -726,8 +714,6 @@ function SidebarBody({
           );
         })}
       </nav>
-
-
     </div>
   );
 }

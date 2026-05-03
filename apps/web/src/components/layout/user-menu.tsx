@@ -5,7 +5,6 @@ import { LogOut, Settings, User as UserIcon, Edit2 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { EditProfileTrigger } from "@/components/triggers/profile/edit-profile-trigger";
 import { cdnUrl } from "@/lib/cdn";
 
 type UserProps = {
@@ -85,12 +84,13 @@ export function UserMenu({ user: initialUser }: { user: UserProps }) {
               <UserIcon className="size-4 shrink-0 transition-colors group-hover:text-white" />
               <span className="leading-none">{t("viewProfile")}</span>
             </Link>
-            <EditProfileTrigger user={user}>
-              <button className="group flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white">
-                <Edit2 className="size-4 shrink-0 transition-colors group-hover:text-white" />
-                <span className="leading-none">{t("editProfile")}</span>
-              </button>
-            </EditProfileTrigger>
+            <Link
+              href={`/profile/${user.username ?? user.id}/edit`}
+              className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Edit2 className="size-4 shrink-0 transition-colors group-hover:text-white" />
+              <span className="leading-none">{t("editProfile")}</span>
+            </Link>
             <Link
               href="#"
               className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
