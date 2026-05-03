@@ -1,25 +1,47 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
+import { unstable_cache } from "next/cache";
 import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
 import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
 import { EventCard, EventCardSkeleton } from "@/components/cards/event-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import { getServerAuthSession } from "@/auth";
 import { CalendarX2 } from "lucide-react";
 import { AddEventButton } from "@/components/triggers/game/add-event-button";
 import { SearchInput } from "@/components/ui/search-input";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+const getCachedEvents = unstable_cache(
+  async (token: string | null) =>
+    safeServerQuery<GetLeaguesQuery>({
+      token,
+      query: GET_LEAGUES,
+      variables: { pagination: { skip: 0, take: 50 } },
+    }),
+  ["events-list"],
+  { tags: ["events"], revalidate: 300 },
+);
 
 type EventsPageProps = {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ search?: string; sort?: string }>;
 };
 
-export default async function EventsPage({ searchParams }: EventsPageProps) {
+export default async function EventsPage({
+  params,
+  searchParams,
+}: EventsPageProps) {
+  const { locale } = await params;
   const t = await getTranslations("EventsPage");
   const { search, sort } = await searchParams;
+  const gridT = {
+    noEventsTitle: t("noEventsTitle"),
+    noEventsDescription: t("noEventsDescription"),
+  };
+  const session = await getServerAuthSession();
+  const token = session?.user?.accessToken ?? null;
 
   return (
     <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
@@ -81,7 +103,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <div className="border-b border-white/5" />
 
       <Suspense fallback={<EventsGridSkeleton />}>
-        <EventsGrid search={search} sort={sort} />
+        <EventsGrid
+          search={search}
+          sort={sort}
+          locale={locale}
+          translations={gridT}
+          token={token}
+        />
       </Suspense>
     </main>
   );
@@ -97,19 +125,25 @@ function EventsGridSkeleton() {
   );
 }
 
+type EventsGridTranslations = {
+  noEventsTitle: string;
+  noEventsDescription: string;
+};
+
 async function EventsGrid({
   search,
   sort,
+  locale,
+  translations,
+  token,
 }: {
   search?: string;
   sort?: string;
+  locale: string;
+  translations: EventsGridTranslations;
+  token: string | null;
 }) {
-  const t = await getTranslations("EventsPage");
-
-  const data = await safeServerQuery<GetLeaguesQuery>({
-    query: GET_LEAGUES,
-    variables: { pagination: { skip: 0, take: 50 } },
-  });
+  const data = await getCachedEvents(token);
 
   const allEvents = data?.leagues?.nodes ?? [];
 
@@ -134,8 +168,10 @@ async function EventsGrid({
         <div className="glass-panel mb-6 flex size-20 items-center justify-center rounded-2xl">
           <CalendarX2 className="text-muted size-10" />
         </div>
-        <h3 className="text-xl font-semibold">{t("noEventsTitle")}</h3>
-        <p className="text-muted mt-2 max-w-sm">{t("noEventsDescription")}</p>
+        <h3 className="text-xl font-semibold">{translations.noEventsTitle}</h3>
+        <p className="text-muted mt-2 max-w-sm">
+          {translations.noEventsDescription}
+        </p>
       </div>
     );
   }

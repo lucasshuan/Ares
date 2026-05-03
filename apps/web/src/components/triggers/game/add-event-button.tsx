@@ -8,7 +8,7 @@ import { useRouter } from "@/i18n/routing";
 import { AuthModal } from "@/components/modals/auth/auth-modal";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { SimpleGame } from "@/actions/get-games";
+import type { SimpleGame } from "@/actions/game";
 
 interface AddEventButtonProps {
   gameId: string;
@@ -33,9 +33,7 @@ export function AddEventButton({
     if (!user) {
       setIsAuthModalOpen(true);
     } else {
-      const href = game?.slug
-        ? `/events/new?game=${game.slug}`
-        : "/events/new";
+      const href = game?.slug ? `/events/new?game=${game.slug}` : "/events/new";
       router.push(href);
     }
   };
@@ -84,5 +82,3 @@ export function AddEventButton({
     </>
   );
 }
-
-

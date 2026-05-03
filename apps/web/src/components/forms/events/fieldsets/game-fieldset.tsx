@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { getGamesSimple, type SimpleGame } from "@/actions/get-games";
+import { getGamesSimple, type SimpleGame } from "@/actions/game";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import {
   useComboboxKeyboard,

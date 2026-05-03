@@ -8,8 +8,8 @@ import {
   type AddLeagueValues,
   LEAGUE_DEFAULT_SETTINGS,
 } from "@/schemas/league";
-import { createLeague, checkLeagueSlugAvailability } from "@/actions/game";
-import { type SimpleGame } from "@/actions/get-games";
+import { createLeague, checkLeagueSlugAvailability } from "@/actions/event";
+import { type SimpleGame } from "@/actions/game";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { GameSearchFieldset } from "./fieldsets/game-fieldset";

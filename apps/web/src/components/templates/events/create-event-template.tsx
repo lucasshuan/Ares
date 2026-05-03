@@ -10,7 +10,7 @@ import { MultiStepFormLayout } from "@/components/ui/multi-step-form-layout";
 import { AddEventForm } from "@/components/forms/events/add-event-form";
 import type { AddEventSuccessData } from "@/components/forms/events/add-event-form";
 import { useUser } from "@/components/providers";
-import type { SimpleGame } from "@/actions/get-games";
+import type { SimpleGame } from "@/actions/game";
 import type { EventStaffDraft } from "@/components/forms/events/fieldsets/staff-fieldset";
 import type { ParticipantEntry } from "@/components/forms/events/fieldsets/participants-fieldset";
 

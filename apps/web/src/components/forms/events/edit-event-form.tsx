@@ -4,7 +4,7 @@ import { useTransition, useState, useEffect, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditLeagueSchema, type EditLeagueValues } from "@/schemas/league";
-import { updateLeague, checkLeagueSlugAvailability } from "@/actions/game";
+import { updateLeague, checkLeagueSlugAvailability } from "@/actions/event";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { GameDisplayFieldset } from "./fieldsets/game-fieldset";

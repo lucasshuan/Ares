@@ -17,8 +17,6 @@ import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { getServerAuthSession } from "@/auth";
 import { cdnUrl } from "@/lib/cdn";
 
-export const dynamic = "force-dynamic";
-
 export default async function HomePage() {
   const t = await getTranslations("HomePage");
   const session = await getServerAuthSession();

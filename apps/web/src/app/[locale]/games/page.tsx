@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing";
 import { Trophy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { unstable_cache } from "next/cache";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
 import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
 import { GameCard, GameCardSkeleton } from "@/components/cards/game-card";
@@ -10,18 +11,43 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
+import { getServerAuthSession } from "@/auth";
 import { AddGameButton } from "@/components/triggers/game/add-game-button";
+
+const getCachedGames = unstable_cache(
+  async (search: string | undefined, token: string | null) =>
+    safeServerQuery<GetGamesQuery>({
+      token,
+      query: GET_GAMES,
+      variables: { search, pagination: { skip: 0, take: 50 } },
+    }),
+  ["games-list"],
+  { tags: ["games"], revalidate: 300 },
+);
 
 interface GamesPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ search?: string; sort?: string }>;
 }
 
-export const dynamic = "force-dynamic";
-
-export default async function GamesPage({ searchParams }: GamesPageProps) {
+export default async function GamesPage({
+  params,
+  searchParams,
+}: GamesPageProps) {
+  const { locale } = await params;
   const { search, sort } = await searchParams;
   const t = await getTranslations("GamesPage");
+  const gridT = {
+    cardFallbackDescription: t("cardFallbackDescription"),
+    pendingBadge: t("pendingBadge"),
+    noGamesFound: t("noGamesFound"),
+    noGamesTitle: t("noGamesTitle"),
+    noGamesFoundDescription: t("noGamesFoundDescription"),
+    noGamesDescription: t("noGamesDescription"),
+    clearSearch: t("clearSearch"),
+  };
+  const session = await getServerAuthSession();
+  const token = session?.user?.accessToken ?? null;
 
   return (
     <main className="mx-auto flex w-full flex-col gap-8 px-6 pt-20 pb-12 sm:px-10 lg:px-12">
@@ -78,7 +104,12 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
       <div className="border-b border-white/5" />
 
       <Suspense fallback={<GamesGridSkeleton />}>
-        <GamesGrid search={search} />
+        <GamesGrid
+          search={search}
+          locale={locale}
+          translations={gridT}
+          token={token}
+        />
       </Suspense>
     </main>
   );
@@ -94,13 +125,28 @@ function GamesGridSkeleton() {
   );
 }
 
-async function GamesGrid({ search }: { search?: string }) {
-  const t = await getTranslations("GamesPage");
+type GamesGridTranslations = {
+  cardFallbackDescription: string;
+  pendingBadge: string;
+  noGamesFound: string;
+  noGamesTitle: string;
+  noGamesFoundDescription: string;
+  noGamesDescription: string;
+  clearSearch: string;
+};
 
-  const data = await safeServerQuery<GetGamesQuery>({
-    query: GET_GAMES,
-    variables: { search, pagination: { skip: 0, take: 50 } },
-  });
+async function GamesGrid({
+  search,
+  locale,
+  translations,
+  token,
+}: {
+  search?: string;
+  locale: string;
+  translations: GamesGridTranslations;
+  token: string | null;
+}) {
+  const data = await getCachedGames(search, token);
 
   const games = data?.games?.nodes || [];
   const gameList = games.map((game) => ({
@@ -120,8 +166,8 @@ async function GamesGrid({ search }: { search?: string }) {
           <GameCard
             key={game.id}
             game={game}
-            fallbackDescription={t("cardFallbackDescription")}
-            pendingLabel={t("pendingBadge")}
+            fallbackDescription={translations.cardFallbackDescription}
+            pendingLabel={translations.pendingBadge}
             priority={index < 4}
           />
         ))}
@@ -135,12 +181,14 @@ async function GamesGrid({ search }: { search?: string }) {
         <Trophy className="text-muted size-10" />
       </div>
       <h3 className="text-xl font-semibold">
-        {showEmptySearch ? t("noGamesFound") : t("noGamesTitle")}
+        {showEmptySearch
+          ? translations.noGamesFound
+          : translations.noGamesTitle}
       </h3>
       <p className="text-muted mt-2 max-w-sm">
         {showEmptySearch
-          ? t("noGamesFoundDescription")
-          : t("noGamesDescription")}
+          ? translations.noGamesFoundDescription
+          : translations.noGamesDescription}
       </p>
       {showEmptySearch && (
         <Link
@@ -150,7 +198,7 @@ async function GamesGrid({ search }: { search?: string }) {
             "mt-6",
           )}
         >
-          {t("clearSearch")}
+          {translations.clearSearch}
         </Link>
       )}
     </div>

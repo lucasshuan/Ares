@@ -13,15 +13,13 @@ import { Link } from "@/i18n/routing";
 import { GameInfoCard } from "@/components/triggers/game/game-info-card";
 import { AddEventButton } from "@/components/triggers/game/add-event-button";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
-import type { SimpleGame } from "@/actions/get-games";
+import type { SimpleGame } from "@/actions/game";
 
 type GamePageProps = {
   params: Promise<{
     gameSlug: string;
   }>;
 };
-
-export const dynamic = "force-dynamic";
 
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
