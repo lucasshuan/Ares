@@ -469,6 +469,11 @@ button:disabled {
   border-color: var(--gold-dim);
 }
 
+.glass-panel.corner-round,
+.glass-panel.corner-round::after {
+  corner-shape: round;
+}
+
 /* ── Ember / fire particles ── */
 .ember-field {
   filter: blur(0.3px);

@@ -306,7 +306,7 @@ export default async function HomePage() {
                 labels={{
                   title: t("games.title"),
                   description: t("games.description"),
-                  leagues: t("games.leagues"),
+                  events: t("games.events"),
                   players: t("games.players"),
                   explore: t("games.exploreGame"),
                   viewAll: t("games.viewAll"),
@@ -326,7 +326,7 @@ interface PublicGamesListProps {
   labels: {
     title: string;
     description: string;
-    leagues: string;
+    events: string;
     players: string;
     explore: string;
     viewAll: string;
@@ -349,7 +349,7 @@ async function PublicGamesList({ labels }: PublicGamesListProps) {
     description: game.description,
     thumbnailImagePath: game.thumbnailImagePath,
     backgroundImagePath: game.backgroundImagePath,
-    leagueCount: game._count?.events || 0,
+    eventCount: game._count?.events || 0,
     playerCount: 0,
   }));
 

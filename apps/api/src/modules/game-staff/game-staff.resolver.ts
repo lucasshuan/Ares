@@ -20,6 +20,11 @@ export class GameStaffResolver {
     return this.gameStaffService.getStaff(gameId);
   }
 
+  @Query(() => [User], { name: 'globalGameManagers' })
+  async getGlobalGameManagers() {
+    return this.gameStaffService.getGlobalGameManagers();
+  }
+
   @Mutation(() => [GameStaff])
   @UseGuards(GqlAuthGuard)
   async setGameStaff(

@@ -1,10 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import {
+  ArrowUpRight,
   Calendar,
+  ChevronDown,
+  ChevronUp,
   ExternalLink,
   Gamepad2,
   Globe,
@@ -17,13 +23,15 @@ import {
 import { InfoModal } from "@/components/ui/info-modal";
 import { InfoSection } from "@/components/ui/info-section";
 import { InfoField } from "@/components/ui/info-field";
-import { GET_GAME_STAFF } from "@/lib/apollo/queries/games";
+import { GET_GAME_STAFF, GET_GLOBAL_GAME_MANAGERS } from "@/lib/apollo/queries/games";
 import type {
   GetGameStaffQuery,
+  GetGlobalGameManagersQuery,
   GetGameQuery,
 } from "@/lib/apollo/generated/graphql";
 import { cdnUrl } from "@/lib/cdn";
 import { formatDate } from "@/lib/date-utils";
+import { cn } from "@/lib/utils";
 
 type Game = NonNullable<GetGameQuery["game"]>;
 
@@ -36,13 +44,30 @@ interface GameInfoModalProps {
 export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
   const t = useTranslations("Modals.GameInfo");
   const locale = useLocale();
+  const pathname = usePathname();
+  const [adminsExpanded, setAdminsExpanded] = useState(false);
+
+  const gamePagePath = `/games/${game.slug}`;
+  const isOnGamePage = pathname === gamePagePath || pathname.startsWith(`${gamePagePath}/`);
 
   const { data: staffData } = useQuery<GetGameStaffQuery>(GET_GAME_STAFF, {
     variables: { gameId: game.id },
     skip: !isOpen,
   });
 
+  const { data: managersData } = useQuery<GetGlobalGameManagersQuery>(
+    GET_GLOBAL_GAME_MANAGERS,
+    { skip: !isOpen },
+  );
+
   const staff = staffData?.gameStaff ?? [];
+  const globalManagers = managersData?.globalGameManagers ?? [];
+
+  // Merge: global managers first (deduplicated against game staff)
+  const staffUserIds = new Set(staff.map((s) => s.userId));
+  const extraManagers = globalManagers.filter((m) => !staffUserIds.has(m.id));
+
+  const totalAdminCount = staff.length + extraManagers.length;
 
   return (
     <InfoModal
@@ -51,7 +76,29 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
       title={game.name}
       subtitle={game.slug}
       heroImageSrc={
-        game.thumbnailImagePath ? cdnUrl(game.thumbnailImagePath)! : undefined
+        game.backgroundImagePath
+          ? cdnUrl(game.backgroundImagePath)!
+          : game.thumbnailImagePath
+            ? cdnUrl(game.thumbnailImagePath)!
+            : undefined
+      }
+      headerAction={
+        <a
+          href={isOnGamePage ? undefined : gamePagePath}
+          target="_blank"
+          rel="noreferrer"
+          aria-disabled={isOnGamePage}
+          tabIndex={isOnGamePage ? -1 : undefined}
+          className={cn(
+            "flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm transition-colors",
+            isOnGamePage
+              ? "cursor-not-allowed opacity-30 pointer-events-none"
+              : "hover:border-white/40 hover:text-white",
+          )}
+        >
+          <ArrowUpRight className="size-3.5" />
+          {t("viewGame")}
+        </a>
       }
     >
       <div className="space-y-6 p-6">
@@ -64,42 +111,59 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
           </InfoSection>
         )}
 
-        {/* Details */}
+        {/* Details — adaptive grid: name wide, metadata fills a row of 3 */}
         <InfoSection title={t("sections.details")} icon={Gamepad2}>
-          <div className="space-y-2.5 rounded-2xl border border-white/5 bg-white/2 p-4">
-            <InfoField label={t("fields.name")} value={game.name} />
-            <InfoField
-              label={t("fields.identifier")}
-              icon={Hash}
-              value={game.slug}
-            />
-            <InfoField
-              label={t("fields.status")}
-              value={
-                <span
-                  className={
-                    game.status === "APPROVED"
-                      ? "text-xs font-semibold text-green-400"
-                      : "text-xs font-semibold text-orange-400"
-                  }
-                >
-                  {t(`status.${game.status}`)}
-                </span>
-              }
-            />
-            {game.createdAt && (
+          <div className="grid grid-cols-3 gap-2">
+            {/* Name spans 2 cols — usually longer */}
+            <div className="col-span-2 rounded-xl border border-white/5 bg-white/2 px-3 py-2.5">
+              <InfoField label={t("fields.name")} value={game.name} stacked />
+            </div>
+            {/* Slug fits in 1 col */}
+            <div className="rounded-xl border border-white/5 bg-white/2 px-3 py-2.5">
               <InfoField
-                label={t("fields.createdAt")}
-                icon={Calendar}
-                value={formatDate(game.createdAt, locale)}
+                label={t("fields.identifier")}
+                icon={Hash}
+                value={game.slug}
+                stacked
               />
+            </div>
+            {/* Status + two dates fill a row of 3 */}
+            <div className="rounded-xl border border-white/5 bg-white/2 px-3 py-2.5">
+              <InfoField
+                label={t("fields.status")}
+                stacked
+                value={
+                  <span
+                    className={
+                      game.status === "APPROVED"
+                        ? "text-xs font-semibold text-green-400"
+                        : "text-xs font-semibold text-orange-400"
+                    }
+                  >
+                    {t(`status.${game.status}`)}
+                  </span>
+                }
+              />
+            </div>
+            {game.createdAt && (
+              <div className="rounded-xl border border-white/5 bg-white/2 px-3 py-2.5">
+                <InfoField
+                  label={t("fields.createdAt")}
+                  icon={Calendar}
+                  value={formatDate(game.createdAt, locale)}
+                  stacked
+                />
+              </div>
             )}
             {game.updatedAt && (
-              <InfoField
-                label={t("fields.updatedAt")}
-                icon={Calendar}
-                value={formatDate(game.updatedAt, locale)}
-              />
+              <div className="rounded-xl border border-white/5 bg-white/2 px-3 py-2.5">
+                <InfoField
+                  label={t("fields.updatedAt")}
+                  icon={Calendar}
+                  value={formatDate(game.updatedAt, locale)}
+                  stacked
+                />
+              </div>
             )}
           </div>
         </InfoSection>
@@ -133,55 +197,119 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
           </InfoSection>
         )}
 
-        {/* Administrators / Staff */}
-        {staff.length > 0 && (
-          <InfoSection title={t("sections.admins")} icon={ShieldCheck}>
-            <ul className="space-y-2">
+        {/* Administrators / Staff — collapsible */}
+        <InfoSection title={t("sections.admins")} icon={ShieldCheck}>
+          {/* Toggle row */}
+          <button
+            type="button"
+            onClick={() => setAdminsExpanded((v) => !v)}
+            className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-white/2 px-4 py-3 text-sm transition-colors hover:bg-white/5"
+          >
+            <span className="text-muted text-xs">
+              {adminsExpanded ? t("hideAdmins") : t("showAdmins")}
+              {totalAdminCount > 0 && (
+                <span className="ml-2 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/50">
+                  {totalAdminCount}
+                </span>
+              )}
+            </span>
+            {adminsExpanded ? (
+              <ChevronUp className="text-muted size-4 shrink-0" />
+            ) : (
+              <ChevronDown className="text-muted size-4 shrink-0" />
+            )}
+          </button>
+
+          {adminsExpanded && (
+            <ul className="mt-2 space-y-2">
+              {/* Game-specific staff */}
               {staff.map((s) => (
-                <li
-                  key={s.userId}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-white/2 px-4 py-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
-                      {s.user?.imagePath ? (
-                        <Image
-                          src={cdnUrl(s.user.imagePath)!}
-                          alt={s.user.name ?? ""}
-                          fill
-                          className="object-cover"
-                          sizes="32px"
-                        />
-                      ) : (
-                        <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
-                          {(s.user?.name ?? "?").slice(0, 2).toUpperCase()}
-                        </span>
-                      )}
+                <li key={`staff-${s.userId}`}>
+                  <Link
+                    href={`/profile/${s.user?.username}` as never}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-white/2 px-4 py-3 transition-colors hover:border-white/10 hover:bg-white/4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
+                        {s.user?.imagePath ? (
+                          <Image
+                            src={cdnUrl(s.user.imagePath)!}
+                            alt={s.user.name ?? ""}
+                            fill
+                            className="object-cover"
+                            sizes="32px"
+                          />
+                        ) : (
+                          <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
+                            {(s.user?.name ?? "?").slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">
+                          {s.user?.name}
+                        </p>
+                        <p className="text-muted text-xs">@{s.user?.username}</p>
+                      </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white">
-                        {s.user?.name}
-                      </p>
-                      <p className="text-muted text-xs">@{s.user?.username}</p>
+                      {s.isFullAccess ? (
+                        <span className="border-primary/30 bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold">
+                          <ShieldCheck className="size-3" />
+                          {t("fullAccess")}
+                        </span>
+                      ) : s.capabilities.length > 0 ? (
+                        <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/50">
+                          {s.capabilities.length} {t("capabilities")}
+                        </span>
+                      ) : null}
                     </div>
-                  </div>
-                  <div>
-                    {s.isFullAccess ? (
-                      <span className="border-primary/30 bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold">
-                        <ShieldCheck className="size-3" />
-                        {t("fullAccess")}
-                      </span>
-                    ) : s.capabilities.length > 0 ? (
-                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/50">
-                        {s.capabilities.length} {t("capabilities")}
-                      </span>
-                    ) : null}
-                  </div>
+                  </Link>
                 </li>
               ))}
+
+              {/* Platform-wide managers (not already in game staff) */}
+              {extraManagers.map((m) => (
+                <li key={`manager-${m.id}`}>
+                  <Link
+                    href={`/profile/${m.username}` as never}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-white/2 px-4 py-3 transition-colors hover:border-white/10 hover:bg-white/4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative size-8 shrink-0 overflow-hidden rounded-full bg-white/10">
+                        {m.imagePath ? (
+                          <Image
+                            src={cdnUrl(m.imagePath)!}
+                            alt={m.name}
+                            fill
+                            className="object-cover"
+                            sizes="32px"
+                          />
+                        ) : (
+                          <span className="flex size-full items-center justify-center text-[10px] font-bold text-white/40">
+                            {m.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{m.name}</p>
+                        <p className="text-muted text-xs">@{m.username}</p>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[10px] font-semibold text-blue-400">
+                      <ShieldCheck className="size-3" />
+                      {m.isAdmin ? t("platformAdmin") : t("gameManager")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+
+              {totalAdminCount === 0 && (
+                <li className="text-muted px-4 py-3 text-xs">{t("noAdmins")}</li>
+              )}
             </ul>
-          </InfoSection>
-        )}
+          )}
+        </InfoSection>
 
         {/* Links */}
         {(game.steamUrl || game.websiteUrl) && (

@@ -65,6 +65,18 @@ export const GET_GAME_STAFF = gql`
     }
   }
 `;
+
+export const GET_GLOBAL_GAME_MANAGERS = gql`
+  query GetGlobalGameManagers {
+    globalGameManagers {
+      id
+      name
+      username
+      imagePath
+      isAdmin
+    }
+  }
+`;
 export const GET_GAME_ACTIONS = gql`
   query GetGameActions($slug: String!) {
     game(slug: $slug) {

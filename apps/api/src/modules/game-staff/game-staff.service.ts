@@ -90,6 +90,23 @@ export class GameStaffService {
     });
   }
 
+  /**
+   * Returns all users who have platform-wide authority over games:
+   * - Users with `isAdmin: true`
+   * - Users with the `manage_games` permission key
+   */
+  async getGlobalGameManagers() {
+    return this.db.user.findMany({
+      where: {
+        OR: [
+          { isAdmin: true },
+          { userPermissions: { some: { key: 'manage_games' } } },
+        ],
+      },
+      orderBy: { name: 'asc' },
+    });
+  }
+
   private sanitizeCapabilities(capabilities: string[]): string[] {
     const known = new Set<string>(GAME_STAFF_CAPABILITIES);
     return Array.from(new Set(capabilities.filter((c) => known.has(c))));

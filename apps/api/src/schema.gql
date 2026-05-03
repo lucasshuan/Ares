@@ -223,6 +223,7 @@ type Query {
   match(id: ID!): Match
   eventStaff(eventId: ID!): [EventStaff!]!
   gameStaff(gameId: ID!): [GameStaff!]!
+  globalGameManagers: [User!]!
 }
 
 input PaginationInput {

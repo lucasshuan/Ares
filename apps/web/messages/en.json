@@ -77,7 +77,7 @@
       "noGamesTitle": "No games available",
       "noGamesDescription": "Games will appear here once they are created.",
       "viewAll": "View all games",
-      "leagues": "Leagues",
+      "events": "Events",
       "players": "Players",
       "exploreGame": "Explore game"
     }
@@ -158,7 +158,8 @@
     "ideaBy": "Idea by",
     "events": "Events",
     "posts": "Posts",
-    "pendingNotice": "Game is pending and needs approval"
+    "pendingNotice": "Game is pending and needs approval",
+    "viewDetails": "View details"
   },
   "League": {
     "playersCount": "players",
@@ -264,6 +265,35 @@
       "cancel": "Cancel",
       "success": "Registered successfully!",
       "error": "Error registering."
+    },
+    "GameInfo": {
+      "sections": {
+        "about": "About",
+        "details": "Details",
+        "author": "Creator",
+        "admins": "Moderation",
+        "links": "Links"
+      },
+      "fields": {
+        "name": "Name",
+        "identifier": "Identifier",
+        "status": "Status",
+        "createdAt": "Created",
+        "updatedAt": "Last updated"
+      },
+      "status": {
+        "APPROVED": "Approved",
+        "PENDING": "Awaiting approval"
+      },
+      "fullAccess": "Full access",
+      "capabilities": "capabilities",
+      "website": "Official website",
+      "viewGame": "View game",
+      "platformAdmin": "Platform Admin",
+      "gameManager": "Game Manager",
+      "showAdmins": "Show administrators",
+      "hideAdmins": "Hide administrators",
+      "noAdmins": "No staff assigned"
     },
     "EditGame": {
       "trigger": "Edit game",

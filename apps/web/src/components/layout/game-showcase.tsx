@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Route } from "next";
-import { ChevronRight, Trophy, Users } from "lucide-react";
+import { CalendarDays, ChevronRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { cdnUrl } from "@/lib/cdn";
@@ -16,7 +16,7 @@ export interface ShowcaseGame {
   description?: string | null;
   thumbnailImagePath?: string | null;
   backgroundImagePath?: string | null;
-  leagueCount: number;
+  eventCount: number;
   playerCount: number;
 }
 
@@ -25,7 +25,7 @@ interface GameShowcaseProps {
   labels: {
     title: string;
     description: string;
-    leagues: string;
+    events: string;
     players: string;
     explore: string;
     viewAll: string;
@@ -126,9 +126,9 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
             {/* Stats */}
             <div className="flex gap-6">
               <Stat
-                icon={Trophy}
-                value={game.leagueCount}
-                label={labels.leagues}
+                icon={CalendarDays}
+                value={game.eventCount}
+                label={labels.events}
               />
               <Stat
                 icon={Users}
@@ -189,7 +189,7 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               {/* Floating game title on image */}
               <div className="absolute right-5 bottom-4 left-5">
                 <p className="text-xs font-medium tracking-widest text-white/40 uppercase">
-                  {labels.leagues} · {game.leagueCount}
+                  {labels.events} · {game.eventCount}
                 </p>
               </div>
             </div>
@@ -314,7 +314,7 @@ function EmptyState({
     <section className="space-y-10">
       <div className="glass-panel flex flex-col items-center justify-center rounded-3xl py-20 text-center">
         <div className="mb-4 flex size-16 items-center justify-center rounded-2xl border border-white/8 bg-white/5">
-          <Trophy className="text-muted size-7" />
+          <CalendarDays className="text-muted size-7" />
         </div>
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-muted mt-1 max-w-sm text-sm">{description}</p>

@@ -24,6 +24,7 @@ type Documents = {
     "\n  query GetGames($pagination: PaginationInput, $search: String) {\n    games(pagination: $pagination, search: $search) {\n      nodes {\n        id\n        name\n        slug\n        description\n        thumbnailImagePath\n        backgroundImagePath\n        status\n        _count {\n          events\n        }\n      }\n      totalCount\n      hasNextPage\n    }\n  }\n": typeof types.GetGamesDocument,
     "\n  query GetGame($slug: String!) {\n    game(slug: $slug) {\n      id\n      name\n      slug\n      description\n      thumbnailImagePath\n      backgroundImagePath\n      steamUrl\n      websiteUrl\n      status\n      authorId\n      createdAt\n      updatedAt\n      author {\n        id\n        name\n        username\n        imagePath\n      }\n      _count {\n        events\n      }\n    }\n  }\n": typeof types.GetGameDocument,
     "\n  query GetGameStaff($gameId: ID!) {\n    gameStaff(gameId: $gameId) {\n      id\n      userId\n      capabilities\n      isFullAccess\n      user {\n        id\n        name\n        username\n        imagePath\n      }\n    }\n  }\n": typeof types.GetGameStaffDocument,
+    "\n  query GetGlobalGameManagers {\n    globalGameManagers {\n      id\n      name\n      username\n      imagePath\n      isAdmin\n    }\n  }\n": typeof types.GetGlobalGameManagersDocument,
     "\n  query GetGameActions($slug: String!) {\n    game(slug: $slug) {\n      id\n      slug\n      authorId\n    }\n  }\n": typeof types.GetGameActionsDocument,
     "\n  query GetGameLayout($slug: String!) {\n    game(slug: $slug) {\n      id\n      backgroundImagePath\n    }\n  }\n": typeof types.GetGameLayoutDocument,
     "\n  query CheckGameSlug($slug: String!, $excludeId: ID) {\n    checkGameSlug(slug: $slug, excludeId: $excludeId)\n  }\n": typeof types.CheckGameSlugDocument,
@@ -49,6 +50,7 @@ const documents: Documents = {
     "\n  query GetGames($pagination: PaginationInput, $search: String) {\n    games(pagination: $pagination, search: $search) {\n      nodes {\n        id\n        name\n        slug\n        description\n        thumbnailImagePath\n        backgroundImagePath\n        status\n        _count {\n          events\n        }\n      }\n      totalCount\n      hasNextPage\n    }\n  }\n": types.GetGamesDocument,
     "\n  query GetGame($slug: String!) {\n    game(slug: $slug) {\n      id\n      name\n      slug\n      description\n      thumbnailImagePath\n      backgroundImagePath\n      steamUrl\n      websiteUrl\n      status\n      authorId\n      createdAt\n      updatedAt\n      author {\n        id\n        name\n        username\n        imagePath\n      }\n      _count {\n        events\n      }\n    }\n  }\n": types.GetGameDocument,
     "\n  query GetGameStaff($gameId: ID!) {\n    gameStaff(gameId: $gameId) {\n      id\n      userId\n      capabilities\n      isFullAccess\n      user {\n        id\n        name\n        username\n        imagePath\n      }\n    }\n  }\n": types.GetGameStaffDocument,
+    "\n  query GetGlobalGameManagers {\n    globalGameManagers {\n      id\n      name\n      username\n      imagePath\n      isAdmin\n    }\n  }\n": types.GetGlobalGameManagersDocument,
     "\n  query GetGameActions($slug: String!) {\n    game(slug: $slug) {\n      id\n      slug\n      authorId\n    }\n  }\n": types.GetGameActionsDocument,
     "\n  query GetGameLayout($slug: String!) {\n    game(slug: $slug) {\n      id\n      backgroundImagePath\n    }\n  }\n": types.GetGameLayoutDocument,
     "\n  query CheckGameSlug($slug: String!, $excludeId: ID) {\n    checkGameSlug(slug: $slug, excludeId: $excludeId)\n  }\n": types.CheckGameSlugDocument,
@@ -118,6 +120,10 @@ export function graphql(source: "\n  query GetGame($slug: String!) {\n    game(s
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query GetGameStaff($gameId: ID!) {\n    gameStaff(gameId: $gameId) {\n      id\n      userId\n      capabilities\n      isFullAccess\n      user {\n        id\n        name\n        username\n        imagePath\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetGameStaff($gameId: ID!) {\n    gameStaff(gameId: $gameId) {\n      id\n      userId\n      capabilities\n      isFullAccess\n      user {\n        id\n        name\n        username\n        imagePath\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetGlobalGameManagers {\n    globalGameManagers {\n      id\n      name\n      username\n      imagePath\n      isAdmin\n    }\n  }\n"): (typeof documents)["\n  query GetGlobalGameManagers {\n    globalGameManagers {\n      id\n      name\n      username\n      imagePath\n      isAdmin\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

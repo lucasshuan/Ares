@@ -20,6 +20,8 @@ interface InfoModalProps {
   children: ReactNode;
   /** Override the modal max-width. Defaults to `sm:max-w-xl`. */
   className?: string;
+  /** Node rendered to the right of the title, inside the hero overlay. */
+  headerAction?: ReactNode;
 }
 
 /**
@@ -39,6 +41,7 @@ export function InfoModal({
   subtitle,
   children,
   className,
+  headerAction,
 }: InfoModalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,9 +72,9 @@ export function InfoModal({
     >
       <div
         className={cn(
-          "glass-panel no-hover animate-modal-content relative flex max-h-[95dvh] w-full flex-col overflow-hidden bg-[#0a080f] will-change-[transform,opacity]",
+          "glass-panel no-hover corner-round animate-modal-content relative flex max-h-[95dvh] w-full flex-col overflow-hidden bg-[#0a080f] will-change-[transform,opacity]",
           "rounded-t-3xl sm:rounded-3xl",
-          className ?? "sm:max-w-xl",
+          className ?? "sm:max-w-2xl lg:max-w-3xl",
         )}
       >
         {/* X close — absolute, above hero */}
@@ -86,7 +89,7 @@ export function InfoModal({
         {/* Hero */}
         <div
           className={cn(
-            "relative flex h-40 shrink-0 items-end overflow-hidden",
+            "relative flex h-52 shrink-0 items-end overflow-hidden",
             !heroImageSrc && `bg-linear-to-br ${heroGradientClass}`,
           )}
         >
@@ -96,21 +99,28 @@ export function InfoModal({
               alt=""
               fill
               className="object-cover"
-              sizes="(max-width: 640px) 100vw, 576px"
+              sizes="(max-width: 640px) 100vw, 768px"
             />
           )}
-          {/* Bottom-to-top dark gradient for text legibility */}
-          <div className="absolute inset-0 bg-linear-to-t from-[#0a080f] via-black/30 to-transparent" />
+          {/* Heavy dark overlay so any image is just a subtle texture */}
+          <div className="absolute inset-0 bg-black/70" />
+          {/* Bottom-to-top gradient for title legibility */}
+          <div className="absolute inset-0 bg-linear-to-t from-[#0a080f] via-transparent to-transparent" />
 
           {/* Title overlay */}
-          <div className="relative z-10 p-6">
-            <h2 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-secondary/60 mt-0.5 text-xs tracking-widest uppercase">
-                {subtitle}
-              </p>
+          <div className="relative z-10 flex w-full items-end justify-between gap-4 p-6">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg">
+                {title}
+              </h2>
+              {subtitle && (
+                <p className="text-secondary/60 mt-0.5 text-xs tracking-widest uppercase">
+                  {subtitle}
+                </p>
+              )}
+            </div>
+            {headerAction && (
+              <div className="shrink-0 pb-0.5">{headerAction}</div>
             )}
           </div>
         </div>
