@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { Route } from "next";
 import { Link } from "@/i18n/routing";
 import { ChevronRight } from "lucide-react";
@@ -5,11 +8,18 @@ import { type Game } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils/helpers";
 import Image from "next/image";
 import { cdnUrl } from "@/lib/utils/cdn";
+import { FollowButton } from "@/components/ui/follow-button";
 
 interface GameCardProps {
   game: Pick<
     Game,
-    "id" | "name" | "slug" | "description" | "thumbnailImagePath" | "status"
+    | "id"
+    | "name"
+    | "slug"
+    | "description"
+    | "thumbnailImagePath"
+    | "status"
+    | "followCount"
   >;
   fallbackDescription?: string;
   pendingLabel?: string;
@@ -22,12 +32,24 @@ export function GameCard({
   pendingLabel,
   priority = false,
 }: GameCardProps) {
+  const [isFollowHovered, setIsFollowHovered] = useState(false);
+
   return (
-    <Link
-      href={`/games/${game.slug}` as Route}
-      className="glass-panel group flex w-full flex-col overflow-hidden rounded-xl transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]"
-    >
-      <div className="relative aspect-368/178 w-full shrink-0 overflow-hidden rounded-xl bg-[#0b080f] brightness-75 transition-all duration-300 ease-out group-hover:brightness-100">
+    <div className={cn(
+      "glass-panel group relative flex w-full flex-col overflow-hidden rounded-xl transition-all duration-300",
+      isFollowHovered
+        ? "no-hover"
+        : "hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]",
+    )}>
+      <Link
+        href={`/games/${game.slug}` as Route}
+        className="absolute inset-0 z-0 rounded-xl"
+        aria-label={game.name}
+      />
+      <div className={cn(
+        "pointer-events-none relative z-0 aspect-368/178 w-full shrink-0 overflow-hidden rounded-xl bg-[#0b080f] brightness-75 transition-all duration-300 ease-out",
+        !isFollowHovered && "group-hover:brightness-100",
+      )}>
         {game.thumbnailImagePath ? (
           <div className="absolute -inset-px transform-gpu transition-transform duration-300 ease-out">
             <Image
@@ -45,9 +67,12 @@ export function GameCard({
         )}
       </div>
 
-      <div className="flex min-h-26 flex-col px-5 pt-5 pb-8">
+      <div className="pointer-events-none relative z-10 flex min-h-26 flex-col px-5 pt-5 pb-4">
         <div className="mb-2 flex items-start justify-between gap-2">
-          <h3 className="line-clamp-2 flex-1 text-lg leading-tight font-semibold transition-colors duration-200 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
+          <h3 className={cn(
+            "line-clamp-2 flex-1 text-lg leading-tight font-semibold transition-colors duration-200",
+            !isFollowHovered && "group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]",
+          )}>
             {game.name}
           </h3>
           {game.status === "PENDING" && pendingLabel && (
@@ -58,16 +83,31 @@ export function GameCard({
           )}
         </div>
 
-        <div className="flex items-start justify-between gap-4">
+        <div className="mb-4 flex items-start justify-between gap-4">
           <p className="text-muted line-clamp-2 flex-1 text-xs leading-4">
             {game.description ?? fallbackDescription}
           </p>
           <div className="flex h-5 items-center">
-            <ChevronRight className="text-gold/80 size-5 shrink-0 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]" />
+            <ChevronRight className={cn(
+              "text-gold/80 size-5 shrink-0 transition-all duration-200",
+              !isFollowHovered && "group-hover:translate-x-1 group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]",
+            )} />
           </div>
         </div>
+
+        <div
+          className="pointer-events-auto self-start"
+          onMouseEnter={() => setIsFollowHovered(true)}
+          onMouseLeave={() => setIsFollowHovered(false)}
+        >
+          <FollowButton
+            targetId={game.id}
+            targetType="GAME"
+            followCount={game.followCount}
+          />
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

@@ -118,4 +118,9 @@ export class GamesResolver {
   ) {
     return this.gamesService.delete(id, user.isAdmin ? undefined : user.id);
   }
+
+  @ResolveField(() => Number, { name: 'followCount' })
+  getFollowCount(@Parent() game: Game): number {
+    return game._count?.followers ?? 0;
+  }
 }

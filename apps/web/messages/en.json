@@ -62,6 +62,10 @@
     "en": "English",
     "pt": "Português"
   },
+  "FollowButton": {
+    "follow": "Follow",
+    "following": "Following"
+  },
   "HomePage": {
     "heroTagline": "Leagues & tournaments. Free and open-source.",
     "heroSubtitle": "",
@@ -78,6 +82,7 @@
       "noGamesDescription": "Games will appear here once they are created.",
       "viewAll": "View all games",
       "events": "Events",
+      "recentEvents": "Recent events",
       "players": "Players",
       "exploreGame": "Explore game"
     }
@@ -93,7 +98,9 @@
     "noPlayers": "No players yet.",
     "searchPlaceholder": "Search events...",
     "sortRecent": "Most Recent",
-    "sortAlphabetical": "Alphabetical (A-Z)"
+    "sortAlphabetical": "Alphabetical (A-Z)",
+    "pendingApproval": "Pending Approval",
+    "noStartDate": "No start date set"
   },
   "GamesPage": {
     "title": "Games",
@@ -375,10 +382,19 @@
       "submit": "Delete Game",
       "submitting": "Deleting...",
       "cancel": "Cancel",
-      "hasEventsWarning": "{gameName} has {count, plural, one {# event} other {# events}} and cannot be deleted. Remove all events first.",
-      "noEventsWarning": "You are about to permanently delete {gameName}. This action cannot be undone.",
-      "success": "Game deleted successfully.",
-      "error": "Failed to delete game."
+      "warning": "You are about to archive {gameName}. It will no longer be visible and {count, plural, one {its # event} other {its # events}} will also be archived. This can only be undone by an administrator.",
+      "warningNoEvents": "You are about to archive {gameName}. It will no longer be visible. This can only be undone by an administrator.",
+      "success": "Game archived successfully.",
+      "error": "Failed to archive game."
+    },
+    "DeleteLeague": {
+      "title": "Delete Event",
+      "submit": "Delete Event",
+      "submitting": "Deleting...",
+      "cancel": "Cancel",
+      "warning": "You are about to archive \u201c{eventName}\u201d. It will no longer be visible. This can only be undone by an administrator.",
+      "success": "Event archived successfully.",
+      "error": "Failed to archive event."
     },
     "AddGame": {
       "title": "Add New Game",

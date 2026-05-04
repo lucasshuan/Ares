@@ -8,6 +8,7 @@ import { CalendarDays, ChevronRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils/helpers";
 import { buttonVariants } from "@/components/ui/button";
 import { cdnUrl } from "@/lib/utils/cdn";
+import { FollowButton } from "@/components/ui/follow-button";
 
 export interface ShowcaseGame {
   id: string;
@@ -18,6 +19,8 @@ export interface ShowcaseGame {
   backgroundImagePath?: string | null;
   eventCount: number;
   playerCount: number;
+  followCount: number;
+  events?: { id: string; name: string; slug: string; type: string }[];
 }
 
 interface GameShowcaseProps {
@@ -26,6 +29,7 @@ interface GameShowcaseProps {
     title: string;
     description: string;
     events: string;
+    recentEvents: string;
     players: string;
     explore: string;
     viewAll: string;
@@ -138,16 +142,23 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
             </div>
 
             {/* CTA */}
-            <Link
-              href={`/games/${game.slug}` as Route}
-              className={cn(
-                buttonVariants({ intent: "primary", size: "sm" }),
-                "gap-2",
-              )}
-            >
-              {labels.explore}
-              <ChevronRight className="size-4 transition-transform group-hover:-translate-x-0.5" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/games/${game.slug}` as Route}
+                className={cn(
+                  buttonVariants({ intent: "primary", size: "sm" }),
+                  "gap-2",
+                )}
+              >
+                {labels.explore}
+                <ChevronRight className="size-4 transition-transform group-hover:-translate-x-0.5" />
+              </Link>
+              <FollowButton
+                targetId={game.id}
+                targetType="GAME"
+                followCount={game.followCount}
+              />
+            </div>
           </div>
         </div>
 
@@ -193,12 +204,28 @@ export function GameShowcase({ games, labels }: GameShowcaseProps) {
               <div className="from-background/95 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
               <div className="from-background/40 lg:from-background/70 absolute inset-0 bg-linear-to-r to-transparent" />
 
-              {/* Floating game title on image */}
-              <div className="absolute right-5 bottom-4 left-5">
-                <p className="text-xs font-medium tracking-widest text-white/40 uppercase">
-                  {labels.events} · {game.eventCount}
-                </p>
-              </div>
+              {/* Recent events overlay */}
+              {game.events && game.events.length > 0 && (
+                <div className="absolute right-3 bottom-3 left-3 flex flex-col gap-1.5">
+                  <p className="mb-0.5 px-1 text-[10px] font-semibold tracking-widest text-white/35 uppercase">
+                    {labels.recentEvents}
+                  </p>
+                  {game.events.slice(0, 3).map((event) => (
+                    <Link
+                      key={event.id}
+                      href={`/games/${game.slug}/events/${event.slug}` as Route}
+                      className="group/ev flex items-center justify-between gap-2 rounded-xl border border-white/8 bg-black/40 px-3 py-2 backdrop-blur-md transition-all hover:border-white/15 hover:bg-black/55"
+                    >
+                      <span className="truncate text-xs font-medium text-white/75 transition-colors group-hover/ev:text-white">
+                        {event.name}
+                      </span>
+                      <span className="shrink-0 rounded-md border border-white/10 bg-white/8 px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wider text-white/40 uppercase">
+                        {event.type}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Thumbnail strip / selector */}

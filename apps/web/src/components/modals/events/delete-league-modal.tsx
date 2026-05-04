@@ -7,34 +7,34 @@ import { toast } from "sonner";
 import { Trash2, AlertTriangle } from "lucide-react";
 
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { deleteGame } from "@/actions/game";
+import { deleteLeague } from "@/actions/event";
 
-interface DeleteGameModalProps {
+interface DeleteLeagueModalProps {
+  eventId: string;
+  eventName: string;
   gameSlug: string;
-  gameName: string;
-  eventCount: number;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function DeleteGameModal({
+export function DeleteLeagueModal({
+  eventId,
+  eventName,
   gameSlug,
-  gameName,
-  eventCount,
   isOpen,
   onClose,
-}: DeleteGameModalProps) {
-  const t = useTranslations("Modals.DeleteGame");
+}: DeleteLeagueModalProps) {
+  const t = useTranslations("Modals.DeleteLeague");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deleteGame(gameSlug);
+      const result = await deleteLeague({ eventId, gameSlug });
       if (result.success) {
         toast.success(t("success"));
         onClose();
-        router.push("/games");
+        router.push(`/games/${gameSlug}`);
       } else {
         toast.error(result.error ?? t("error"));
       }
@@ -57,11 +57,7 @@ export function DeleteGameModal({
         <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-400">
           <AlertTriangle className="size-5" />
         </div>
-        <p className="text-sm leading-relaxed">
-          {eventCount > 0
-            ? t("warning", { gameName, count: eventCount })
-            : t("warningNoEvents", { gameName })}
-        </p>
+        <p className="text-sm leading-relaxed">{t("warning", { eventName })}</p>
       </div>
     </ConfirmModal>
   );

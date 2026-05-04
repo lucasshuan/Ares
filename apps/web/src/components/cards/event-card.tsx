@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { Route } from "next";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
@@ -6,6 +9,7 @@ import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
 import { cn } from "@/lib/utils/helpers";
 import { formatDate } from "@/lib/utils/date-utils";
 import { cdnUrl } from "@/lib/utils/cdn";
+import { FollowButton } from "@/components/ui/follow-button";
 
 type LeagueNode = NonNullable<GetLeaguesQuery["leagues"]["nodes"][number]>;
 
@@ -15,6 +19,7 @@ interface EventCardProps {
 
 export function EventCard({ event }: EventCardProps) {
   const t = useTranslations("EventsPage");
+  const [isFollowHovered, setIsFollowHovered] = useState(false);
 
   const isApproved = event.event?.isApproved ?? false;
   const gameName = event.event?.game?.name ?? "";
@@ -22,16 +27,28 @@ export function EventCard({ event }: EventCardProps) {
   const gameSlug = event.event?.game?.slug ?? "";
   const eventSlug = event.event?.slug ?? "";
   const eventName = event.event?.name ?? "";
+  const eventId = event.event?.id ?? "";
+  const followCount = event.event?.followCount ?? 0;
 
   return (
-    <Link
-      href={`/games/${gameSlug}/events/${eventSlug}` as Route}
-      className="glass-panel group relative flex h-full min-h-80 flex-col overflow-hidden rounded-3xl p-6 transition-all select-none hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)] active:scale-[0.99]"
-    >
+    <div className={cn(
+      "glass-panel group relative flex h-full flex-col overflow-hidden rounded-xl p-5 transition-all select-none active:scale-[0.99]",
+      isFollowHovered
+        ? "no-hover"
+        : "hover:border-[color-mix(in_srgb,var(--gold)_45%,white)] hover:bg-[color-mix(in_srgb,var(--gold)_10%,transparent)]",
+    )}>
+      <Link
+        href={`/games/${gameSlug}/events/${eventSlug}` as Route}
+        className="absolute inset-0 z-0 rounded-xl"
+        aria-label={eventName}
+      />
       {/* Header */}
-      <div className="relative mb-4 flex shrink-0 items-start justify-between gap-3">
+      <div className="relative z-10 mb-3 flex shrink-0 items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <h3 className="line-clamp-2 text-xl font-bold transition-colors group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
+          <h3 className={cn(
+            "line-clamp-2 text-lg leading-tight font-semibold transition-colors",
+            !isFollowHovered && "group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]",
+          )}>
             {eventName}
           </h3>
 
@@ -71,9 +88,12 @@ export function EventCard({ event }: EventCardProps) {
         </div>
       </div>
 
-      <div className="border-gold mb-4 border-b transition-colors group-hover:border-[color-mix(in_srgb,var(--gold)_45%,white)]" />
+      <div className={cn(
+        "border-gold relative z-10 mb-3 border-b transition-colors",
+        !isFollowHovered && "group-hover:border-[color-mix(in_srgb,var(--gold)_45%,white)]",
+      )} />
 
-      <div className="relative flex flex-1 flex-col justify-center">
+      <div className="relative z-10 flex flex-1 flex-col justify-center">
         {event.event?.startDate ? (
           <p className="text-muted text-xs">
             {formatDate(event.event.startDate)}
@@ -85,16 +105,33 @@ export function EventCard({ event }: EventCardProps) {
         )}
       </div>
 
-      <div className="mt-4 flex items-center justify-end text-[10px] font-bold tracking-widest text-white/20 uppercase transition-colors group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]">
-        View event →
+      <div className="relative z-10 mt-3 flex items-center justify-between">
+        {eventId && (
+          <div
+            onMouseEnter={() => setIsFollowHovered(true)}
+            onMouseLeave={() => setIsFollowHovered(false)}
+          >
+            <FollowButton
+              targetId={eventId}
+              targetType="EVENT"
+              followCount={followCount}
+            />
+          </div>
+        )}
+        <span className={cn(
+          "ml-auto text-[10px] font-bold tracking-widest text-white/20 uppercase transition-colors",
+          !isFollowHovered && "group-hover:text-[color-mix(in_srgb,var(--gold)_78%,white)]",
+        )}>
+          View event →
+        </span>
       </div>
-    </Link>
+    </div>
   );
 }
 
 export function EventCardSkeleton() {
   return (
-    <div className="glass-panel flex h-full min-h-80 flex-col overflow-hidden rounded-3xl p-6">
+    <div className="glass-panel flex h-full flex-col overflow-hidden rounded-xl p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex flex-1 flex-col gap-2">
           <div className="h-6 w-40 animate-pulse rounded bg-white/10" />

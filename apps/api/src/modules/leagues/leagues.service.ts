@@ -56,8 +56,8 @@ export class LeaguesService {
   }
 
   async findByEventId(eventId: string) {
-    const league = await this.db.league.findUnique({
-      where: { eventId },
+    const league = await this.db.league.findFirst({
+      where: { eventId, event: { deletedAt: null } },
       include: { event: true },
     });
     return league ? this.mapLeague(league) : null;
@@ -72,6 +72,7 @@ export class LeaguesService {
       where: {
         gameId,
         slug,
+        deletedAt: null,
         ...(excludeEventId ? { id: { not: excludeEventId } } : {}),
       },
       select: { id: true },
@@ -81,7 +82,9 @@ export class LeaguesService {
 
   async findByEventSlug(gameSlug: string, eventSlug: string) {
     const league = await this.db.league.findFirst({
-      where: { event: { slug: eventSlug, game: { slug: gameSlug } } },
+      where: {
+        event: { slug: eventSlug, deletedAt: null, game: { slug: gameSlug } },
+      },
       include: { event: true },
     });
     return league ? this.mapLeague(league) : null;
@@ -89,7 +92,9 @@ export class LeaguesService {
 
   async findAllByGame(gameId: string | undefined, pagination: PaginationInput) {
     const { skip, take } = pagination;
-    const where = gameId ? { event: { gameId } } : {};
+    const where = gameId
+      ? { event: { gameId, deletedAt: null } }
+      : { event: { deletedAt: null } };
 
     const [leagues, totalCount] = await Promise.all([
       this.db.league.findMany({
@@ -281,6 +286,31 @@ export class LeaguesService {
     });
 
     return this.mapLeague(league);
+  }
+
+  async deleteEvent(eventId: string, userId: string, isAdmin: boolean) {
+    const event = await this.db.event.findUnique({
+      where: { id: eventId },
+      select: { authorId: true, deletedAt: true },
+    });
+
+    if (!event) throw new Error('Event not found');
+    if (event.deletedAt) throw new Error('Event is already deleted');
+
+    if (!isAdmin && event.authorId && event.authorId !== userId) {
+      // Allow full-access staff to also delete
+      const staffRecord = await this.db.eventStaff.findFirst({
+        where: { eventId, userId, isFullAccess: true },
+      });
+      if (!staffRecord) {
+        throw new Error('You do not have permission to delete this event');
+      }
+    }
+
+    return this.db.event.update({
+      where: { id: eventId },
+      data: { deletedAt: new Date() },
+    });
   }
 
   private async resolveGameId(gameName?: string): Promise<string | undefined> {

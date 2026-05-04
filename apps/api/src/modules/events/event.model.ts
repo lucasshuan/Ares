@@ -75,4 +75,7 @@ export class Event {
 
   // Not exposed as a GraphQL field — used by EventsResolver.getGame(@Parent())
   gameId: string;
+
+  @Field(() => Number)
+  followCount: number;
 }

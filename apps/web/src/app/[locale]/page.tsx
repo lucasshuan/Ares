@@ -12,7 +12,8 @@ import {
 } from "@/components/layout/game-showcase";
 import { getTranslations } from "next-intl/server";
 import { GET_GAMES } from "@/lib/apollo/queries/games";
-import { GetGamesQuery } from "@/lib/apollo/generated/graphql";
+import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
+import { GetGamesQuery, GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import { getServerAuthSession } from "@/auth";
 import { cdnUrl } from "@/lib/utils/cdn";
@@ -305,6 +306,7 @@ export default async function HomePage() {
                   title: t("games.title"),
                   description: t("games.description"),
                   events: t("games.events"),
+                  recentEvents: t("games.recentEvents"),
                   players: t("games.players"),
                   explore: t("games.exploreGame"),
                   viewAll: t("games.viewAll"),
@@ -325,6 +327,7 @@ interface PublicGamesListProps {
     title: string;
     description: string;
     events: string;
+    recentEvents: string;
     players: string;
     explore: string;
     viewAll: string;
@@ -334,12 +337,35 @@ interface PublicGamesListProps {
 }
 
 async function PublicGamesList({ labels }: PublicGamesListProps) {
-  const data = await safeServerQuery<GetGamesQuery>({
-    query: GET_GAMES,
-    variables: { pagination: { skip: 0, take: 6 } },
-  });
+  const [gamesData, leaguesData] = await Promise.all([
+    safeServerQuery<GetGamesQuery>({
+      query: GET_GAMES,
+      variables: { pagination: { skip: 0, take: 6 } },
+    }),
+    safeServerQuery<GetLeaguesQuery>({
+      query: GET_LEAGUES,
+      variables: { pagination: { skip: 0, take: 20 } },
+    }),
+  ]);
 
-  const games = data?.games?.nodes || [];
+  const games = gamesData?.games?.nodes || [];
+  const leagues = leaguesData?.leagues?.nodes || [];
+
+  // Group leagues by their game id
+  const eventsByGame = leagues.reduce<
+    Record<string, { id: string; name: string; slug: string; type: string }[]>
+  >((acc, league) => {
+    const gameId = league.event?.game?.id;
+    if (!gameId || !league.event) return acc;
+    (acc[gameId] ??= []).push({
+      id: league.eventId,
+      name: league.event.name,
+      slug: league.event.slug,
+      type: league.event.type,
+    });
+    return acc;
+  }, {});
+
   const gameList: ShowcaseGame[] = games.map((game) => ({
     id: game.id,
     name: game.name,
@@ -349,6 +375,8 @@ async function PublicGamesList({ labels }: PublicGamesListProps) {
     backgroundImagePath: game.backgroundImagePath,
     eventCount: game._count?.events || 0,
     playerCount: 0,
+    followCount: game.followCount ?? 0,
+    events: eventsByGame[game.id] ?? [],
   }));
 
   return <GameShowcase games={gameList} labels={labels} />;

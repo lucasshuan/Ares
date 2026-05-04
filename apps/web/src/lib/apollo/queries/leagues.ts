@@ -33,6 +33,7 @@ export const GET_LEAGUES = gql`
             slug
             thumbnailImagePath
           }
+          followCount
         }
       }
       totalCount

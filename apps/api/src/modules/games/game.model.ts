@@ -5,6 +5,9 @@ import { User } from '../auth/user.model';
 export class GameCounts {
   @Field(() => Int)
   events: number;
+
+  @Field(() => Int)
+  followers: number;
 }
 
 @ObjectType()
@@ -47,6 +50,9 @@ export class Game {
 
   @Field(() => User, { nullable: true })
   author?: User;
+
+  @Field(() => Int)
+  followCount: number;
 
   @Field(() => GameCounts, { nullable: true })
   _count?: GameCounts;

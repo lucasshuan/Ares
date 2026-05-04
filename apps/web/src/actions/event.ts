@@ -6,6 +6,7 @@ import { CHECK_EVENT_SLUG } from "@/lib/apollo/queries/leagues";
 import {
   CREATE_LEAGUE,
   UPDATE_LEAGUE,
+  DELETE_LEAGUE,
 } from "@/lib/apollo/queries/league-mutations";
 import { GetGameActionsQuery } from "@/lib/apollo/generated/graphql";
 import { getServerAuthSession } from "@/auth";
@@ -172,5 +173,21 @@ export const checkLeagueSlugAvailability = createSafeAction(
       fetchPolicy: "no-cache",
     });
     return { available: result.data?.checkEventSlug ?? true };
+  },
+);
+
+export const deleteLeague = createSafeAction(
+  "deleteLeague",
+  async (data: { eventId: string; gameSlug: string }) => {
+    const session = await getServerAuthSession();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    await getClient().mutate({
+      mutation: DELETE_LEAGUE,
+      variables: { eventId: data.eventId },
+    });
+
+    revalidateAfterEventMutation(data.gameSlug);
+    return true;
   },
 );

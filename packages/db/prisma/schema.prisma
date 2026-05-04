@@ -133,6 +133,10 @@ model User {
   memberClaims         TeamMemberClaim[]    @relation("MemberClaimRequester")
   memberClaimsReviewed TeamMemberClaim[]    @relation("MemberClaimReviewer")
 
+  // Follows
+  gameFollows  UserGameFollow[]
+  eventFollows UserEventFollow[]
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -211,12 +215,14 @@ model Game {
   status             GameStatus @default(APPROVED)
   authorId           String?    @map("author_id")
 
-  author User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  events Event[]
-  staff  GameStaff[]
+  author    User?           @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  events    Event[]
+  staff     GameStaff[]
+  followers UserGameFollow[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("games")
 }
@@ -260,8 +266,11 @@ model Event {
   matches     Match[]
   attachments EventAttachment[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  followers UserEventFollow[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@unique([gameId, slug])
   @@map("events")
@@ -625,4 +634,32 @@ model AuditLog {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("audit_logs")
+}
+
+// --- FOLLOWS ---
+
+model UserGameFollow {
+  userId String @map("user_id")
+  gameId String @map("game_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([userId, gameId])
+  @@map("user_game_follows")
+}
+
+model UserEventFollow {
+  userId  String @map("user_id")
+  eventId String @map("event_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([userId, eventId])
+  @@map("user_event_follows")
 }

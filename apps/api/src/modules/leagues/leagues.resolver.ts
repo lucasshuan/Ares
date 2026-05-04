@@ -78,4 +78,14 @@ export class LeaguesResolver {
   ) {
     return this.leaguesService.update(eventId, eventInput, leagueInput);
   }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async deleteLeague(
+    @Args('eventId', { type: () => ID }) eventId: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.leaguesService.deleteEvent(eventId, user.id, user.isAdmin);
+    return true;
+  }
 }

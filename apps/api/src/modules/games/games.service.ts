@@ -15,14 +15,16 @@ export class GamesService {
   async findAll(pagination: PaginationInput, search?: string) {
     const { skip, take } = pagination;
 
+    const baseWhere = { deletedAt: null };
     const where = search
       ? {
+          ...baseWhere,
           OR: [
             { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
             { slug: { contains: search, mode: Prisma.QueryMode.insensitive } },
           ],
         }
-      : undefined;
+      : baseWhere;
 
     const [nodes, totalCount] = await Promise.all([
       this.databaseProvider.game.findMany({
@@ -32,7 +34,8 @@ export class GamesService {
         include: {
           _count: {
             select: {
-              events: true,
+              events: { where: { deletedAt: null } },
+              followers: true,
             },
           },
         },
@@ -53,12 +56,14 @@ export class GamesService {
   async findBySlug(slug: string) {
     return this.databaseProvider.game.findFirst({
       where: {
-        slug: slug,
+        slug,
+        deletedAt: null,
       },
       include: {
         _count: {
           select: {
-            events: true,
+            events: { where: { deletedAt: null } },
+            followers: true,
           },
         },
       },
@@ -73,12 +78,12 @@ export class GamesService {
 
   async findEventMeta(gameSlug: string, eventSlug: string) {
     const game = await this.databaseProvider.game.findFirst({
-      where: { slug: gameSlug },
+      where: { slug: gameSlug, deletedAt: null },
     });
     if (!game) return null;
 
     const event = await this.databaseProvider.event.findFirst({
-      where: { gameId: game.id, slug: eventSlug },
+      where: { gameId: game.id, slug: eventSlug, deletedAt: null },
       select: { id: true, type: true },
     });
 
@@ -184,6 +189,7 @@ export class GamesService {
     const existing = await this.databaseProvider.game.findFirst({
       where: {
         slug,
+        deletedAt: null,
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
       select: { id: true },
@@ -207,7 +213,6 @@ export class GamesService {
         authorId: true,
         backgroundImagePath: true,
         thumbnailImagePath: true,
-        _count: { select: { events: true } },
       },
     });
 
@@ -217,12 +222,15 @@ export class GamesService {
       throw new Error('You do not have permission to delete this game');
     }
 
-    if (game._count.events > 0) {
-      throw new Error(
-        'Cannot delete a game that has events. Remove all events first.',
-      );
-    }
+    const now = new Date();
 
+    // Soft-delete all non-deleted events under this game
+    await this.databaseProvider.event.updateMany({
+      where: { gameId: id, deletedAt: null },
+      data: { deletedAt: now },
+    });
+
+    // Clean up CDN images
     const deletions: Promise<void>[] = [];
     if (game.backgroundImagePath) {
       deletions.push(this.storageService.deleteFile(game.backgroundImagePath));
@@ -232,6 +240,9 @@ export class GamesService {
     }
     if (deletions.length > 0) await Promise.all(deletions);
 
-    return this.databaseProvider.game.delete({ where: { id } });
+    return this.databaseProvider.game.update({
+      where: { id },
+      data: { deletedAt: now },
+    });
   }
 }

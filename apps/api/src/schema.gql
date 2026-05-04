@@ -23,6 +23,7 @@ scalar DateTime
 
 type GameCounts {
   events: Int!
+  followers: Int!
 }
 
 type Game {
@@ -39,6 +40,7 @@ type Game {
   createdAt: DateTime!
   updatedAt: DateTime!
   author: User
+  followCount: Float!
   _count: GameCounts
 }
 
@@ -102,6 +104,7 @@ type Event {
   updatedAt: DateTime!
   league: League
   staff: [EventStaff!]
+  followCount: Float!
   game: Game!
 }
 
@@ -224,6 +227,8 @@ type Query {
   eventStaff(eventId: ID!): [EventStaff!]!
   gameStaff(gameId: ID!): [GameStaff!]!
   globalGameManagers: [User!]!
+  isFollowingGame(gameId: ID!): Boolean!
+  isFollowingEvent(eventId: ID!): Boolean!
 }
 
 input PaginationInput {
@@ -241,6 +246,7 @@ type Mutation {
   completeOnboarding: User!
   createLeague(event: CreateLeagueEventInput!, league: CreateLeagueConfigInput!, staff: [InitialStaffInput!], participants: [InitialEntryInput!]): League!
   updateLeague(eventId: ID!, event: UpdateLeagueEventInput, league: UpdateLeagueConfigInput): League!
+  deleteLeague(eventId: ID!): Boolean!
   addEventEntry(input: CreateEventEntryInput!): EventEntry!
   updateEventEntry(id: ID!, input: UpdateEventEntryInput!): EventEntry!
   claimEventEntry(input: ClaimEntryInput!): EventEntry!
@@ -252,6 +258,16 @@ type Mutation {
   removeEventStaff(eventId: ID!, userId: ID!): EventStaff!
   setGameStaff(gameId: ID!, members: [GameStaffMemberInput!]!): [GameStaff!]!
   removeGameStaff(gameId: ID!, userId: ID!): GameStaff!
+
+  """
+  Toggle follow on a game. Returns true if now following, false if unfollowed.
+  """
+  toggleGameFollow(gameId: ID!): Boolean!
+
+  """
+  Toggle follow on an event. Returns true if now following, false if unfollowed.
+  """
+  toggleEventFollow(eventId: ID!): Boolean!
 }
 
 input CreateGameInput {

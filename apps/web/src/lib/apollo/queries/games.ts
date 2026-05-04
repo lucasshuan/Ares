@@ -14,6 +14,7 @@ export const GET_GAMES = gql`
         _count {
           events
         }
+        followCount
       }
       totalCount
       hasNextPage
@@ -45,6 +46,7 @@ export const GET_GAME = gql`
       _count {
         events
       }
+      followCount
     }
   }
 `;

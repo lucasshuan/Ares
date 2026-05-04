@@ -52,3 +52,9 @@ export const UPDATE_LEAGUE = gql`
     }
   }
 `;
+
+export const DELETE_LEAGUE = gql`
+  mutation DeleteLeague($eventId: ID!) {
+    deleteLeague(eventId: $eventId)
+  }
+`;

@@ -9,6 +9,7 @@ import { GlowBorder } from "@/components/ui/glow-border";
 import { UserChip } from "@/components/ui/user-chip";
 import { GameManageActions } from "@/components/triggers/game/game-manage-actions";
 import { GameInfoModal } from "@/components/modals/game/game-info-modal";
+import { FollowButton } from "@/components/ui/follow-button";
 import { cdnUrl } from "@/lib/utils/cdn";
 import { cn, formatCompactNumber } from "@/lib/utils/helpers";
 import type { GetGameQuery } from "@/lib/apollo/generated/graphql";
@@ -39,6 +40,7 @@ export function GameInfoCard({
 }: GameInfoCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActionsHovered, setIsActionsHovered] = useState(false);
+  const [isFollowHovered, setIsFollowHovered] = useState(false);
   const t = useTranslations("GamePage");
 
   const openModal = () => setIsModalOpen(true);
@@ -68,6 +70,7 @@ export function GameInfoCard({
               "transition-[background] duration-300",
               "bg-[color-mix(in_srgb,var(--gold)_45%,transparent)]",
               !isActionsHovered &&
+                !isFollowHovered &&
                 "group-hover/card:bg-[color-mix(in_srgb,var(--gold)_75%,transparent)]",
             )}
           >
@@ -165,6 +168,21 @@ export function GameInfoCard({
                   </div>
                 </div>
               )}
+
+              {/* Follow button — stops propagation so it doesn't open the modal */}
+              <div
+                onClick={stopAndPrevent}
+                onKeyDown={stopAndPrevent}
+                onMouseEnter={() => setIsFollowHovered(true)}
+                onMouseLeave={() => setIsFollowHovered(false)}
+              >
+                <FollowButton
+                  targetId={game.id}
+                  targetType="GAME"
+                  followCount={game.followCount ?? 0}
+                  className="w-full justify-center py-2 text-sm"
+                />
+              </div>
 
               {/* External links — stop propagation so clicks don't open the modal */}
               {(game.steamUrl || game.websiteUrl) && (

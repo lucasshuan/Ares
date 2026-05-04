@@ -62,6 +62,10 @@
     "en": "English",
     "pt": "Português"
   },
+  "FollowButton": {
+    "follow": "Seguir",
+    "following": "Seguindo"
+  },
   "HomePage": {
     "heroTagline": "Ligas e torneios. Gratuito e open-source.",
     "heroSubtitle": "",
@@ -78,6 +82,7 @@
       "noGamesDescription": "Os jogos aparecerão aqui quando forem criados.",
       "viewAll": "Ver todos os jogos",
       "events": "Eventos",
+      "recentEvents": "Eventos recentes",
       "players": "Jogadores",
       "exploreGame": "Explorar jogo"
     }
@@ -93,7 +98,9 @@
     "noPlayers": "Nenhum jogador ainda.",
     "searchPlaceholder": "Buscar eventos...",
     "sortRecent": "Mais Recentes",
-    "sortAlphabetical": "Alfabético (A-Z)"
+    "sortAlphabetical": "Alfabético (A-Z)",
+    "pendingApproval": "Aprovação Pendente",
+    "noStartDate": "Sem data de início"
   },
   "GamesPage": {
     "title": "Jogos",
@@ -375,10 +382,19 @@
       "submit": "Excluir Jogo",
       "submitting": "Excluindo...",
       "cancel": "Cancelar",
-      "hasEventsWarning": "{gameName} possui {count, plural, one {# evento} other {# eventos}} e não pode ser excluído. Remova todos os eventos primeiro.",
-      "noEventsWarning": "Você está prestes a excluir permanentemente {gameName}. Esta ação não pode ser desfeita.",
-      "success": "Jogo excluído com sucesso.",
-      "error": "Falha ao excluir o jogo."
+      "warning": "Voc\u00ea est\u00e1 prestes a arquivar {gameName}. Ele deixar\u00e1 de ser vis\u00edvel e {count, plural, one {seu # evento} other {seus # eventos}} tamb\u00e9m ser\u00e1(\u00e3o) arquivado(s). Isso s\u00f3 pode ser desfeito por um administrador.",
+      "warningNoEvents": "Voc\u00ea est\u00e1 prestes a arquivar {gameName}. Ele deixar\u00e1 de ser vis\u00edvel. Isso s\u00f3 pode ser desfeito por um administrador.",
+      "success": "Jogo arquivado com sucesso.",
+      "error": "Falha ao arquivar o jogo."
+    },
+    "DeleteLeague": {
+      "title": "Excluir Evento",
+      "submit": "Excluir Evento",
+      "submitting": "Excluindo...",
+      "cancel": "Cancelar",
+      "warning": "Voc\u00ea est\u00e1 prestes a arquivar \u201c{eventName}\u201d. Ele deixar\u00e1 de ser vis\u00edvel. Isso s\u00f3 pode ser desfeito por um administrador.",
+      "success": "Evento arquivado com sucesso.",
+      "error": "Falha ao arquivar o evento."
     },
     "AddGame": {
       "title": "Adicionar Novo Jogo",
