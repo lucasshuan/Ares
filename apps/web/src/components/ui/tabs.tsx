@@ -1,5 +1,6 @@
 "use client";
 
+import { type ReactNode } from "react";
 import { cn } from "@/lib/utils/helpers";
 import { type LucideIcon } from "lucide-react";
 
@@ -7,7 +8,7 @@ interface ProfileTabsProps {
   tabs: {
     id: string;
     label: string;
-    icon: LucideIcon;
+    icon: ReactNode;
     active?: boolean;
   }[];
   className?: string;
@@ -27,12 +28,14 @@ export function ProfileTabs({ tabs, className }: ProfileTabsProps) {
                 : "border-transparent text-white/40 hover:text-white/60",
             )}
           >
-            <tab.icon
+            <span
               className={cn(
                 "size-6",
                 tab.active ? "opacity-100" : "opacity-50",
               )}
-            />
+            >
+              {tab.icon}
+            </span>
             {tab.label}
           </div>
         ))}

@@ -154,7 +154,7 @@ export default async function UserProfilePage({ params }: ProfilePageProps) {
                 {
                   id: "games",
                   label: t("playedGamesTab"),
-                  icon: Gamepad2,
+                  icon: <Gamepad2 className="size-6" />,
                   active: true,
                 },
               ]}
