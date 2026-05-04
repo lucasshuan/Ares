@@ -22,6 +22,10 @@ import {
   Bell,
   Pencil,
   Palette,
+  Plus,
+  CalendarPlus,
+  Crown,
+  Network,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
@@ -483,11 +487,10 @@ function SidebarBody({
                   labelKey: "dashboard",
                   icon: LayoutDashboard,
                 },
-
                 {
                   href: "/teams",
                   labelKey: "myTeams",
-                  icon: Users,
+                  icon: Crown,
                   soon: true,
                 },
                 {
@@ -498,21 +501,21 @@ function SidebarBody({
                 },
               ],
             },
-            ...(user.isAdmin
-              ? [
-                  {
-                    titleKey: "admin",
-                    items: [
-                      {
-                        href: "/admin",
-                        labelKey: "admin",
-                        icon: Shield,
-                        soon: true,
-                      },
-                    ],
-                  },
-                ]
-              : []),
+            {
+              titleKey: "create",
+              items: [
+                {
+                  href: "/games/new",
+                  labelKey: "newGame",
+                  icon: Plus,
+                },
+                {
+                  href: "/events/new",
+                  labelKey: "newEvent",
+                  icon: CalendarPlus,
+                },
+              ],
+            },
           ]
         : []),
       {
@@ -520,6 +523,7 @@ function SidebarBody({
         items: [
           { href: "/games", labelKey: "games", icon: Gamepad2 },
           { href: "/leagues", labelKey: "leagues", icon: Table },
+          { href: "/clans", labelKey: "clans", icon: Network, soon: true },
           {
             href: "/leaderboards",
             labelKey: "leaderboards",
@@ -662,6 +666,38 @@ function SidebarBody({
             />
           </>
         ) : null}
+
+        {user?.isAdmin && (
+          <div className="group/nav relative mb-2">
+            <Link
+              href="/admin"
+              onClick={onClose}
+              className={cn(
+                "relative flex items-center rounded-lg py-1.5 text-[13px] tracking-wide",
+                "transition-[background-color,color,opacity] duration-400 ease-in-out",
+                "border border-amber-500/25 bg-amber-500/10 text-amber-400 hover:border-amber-500/50 hover:bg-amber-500/20",
+                effective ? "mx-2 justify-center" : "mx-1.5 gap-3 px-2.5",
+              )}
+            >
+              <Shield className="size-3.5 shrink-0" />
+              <span
+                className={cn(
+                  "truncate font-medium transition-all duration-300",
+                  effective ? "w-0 overflow-hidden opacity-0" : "flex-1",
+                )}
+              >
+                {t("adminPanel")}
+              </span>
+            </Link>
+            {effective && (
+              <div className="pointer-events-none absolute top-1/2 left-full z-50 ml-3 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/nav:opacity-100">
+                <div className="border-amber-500/30 bg-background-soft rounded-lg border px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-amber-400 shadow-2xl">
+                  {t("adminPanel")}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {sections.map((section, i) => {
           const isSectionCollapsed =

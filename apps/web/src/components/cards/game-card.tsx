@@ -47,7 +47,7 @@ export function GameCard({
         aria-label={game.name}
       />
       <div className={cn(
-        "pointer-events-none relative z-0 aspect-368/178 w-full shrink-0 overflow-hidden rounded-xl bg-[#0b080f] brightness-75 transition-all duration-300 ease-out",
+        "pointer-events-none relative z-0 aspect-368/178 w-full shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-300 ease-out",
         !isFollowHovered && "group-hover:brightness-100",
       )}>
         {game.thumbnailImagePath ? (

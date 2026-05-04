@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { unstable_cache } from "next/cache";
 import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
-import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
+import { GET_GAMES_SIMPLE } from "@/lib/apollo/queries/games";
+import { type GetLeaguesQuery, type GetGamesSimpleQuery } from "@/lib/apollo/generated/graphql";
 import { LeagueCard } from "@/components/cards/league-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
@@ -21,6 +22,17 @@ const getCachedLeagues = unstable_cache(
     }),
   ["leagues-list"],
   { tags: ["events"], revalidate: 300 },
+);
+
+const getCachedGames = unstable_cache(
+  async (token: string | null) =>
+    safeServerQuery<GetGamesSimpleQuery>({
+      token,
+      query: GET_GAMES_SIMPLE,
+      variables: { pagination: { skip: 0, take: 200 } },
+    }),
+  ["games-simple-list"],
+  { tags: ["games"], revalidate: 300 },
 );
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -59,25 +71,6 @@ type LeaguesPageText = {
   systemPoints: string;
 };
 
-function getGameOptions(leagues: LeagueNode[]): GameOption[] {
-  const gamesMap = new Map<string, GameOption>();
-
-  for (const league of leagues) {
-    const game = league.event?.game;
-    if (game?.slug && !gamesMap.has(game.slug)) {
-      gamesMap.set(game.slug, {
-        slug: game.slug,
-        name: game.name,
-        thumbnailImagePath: game.thumbnailImagePath,
-      });
-    }
-  }
-
-  return Array.from(gamesMap.values()).sort((currentGame, nextGame) =>
-    currentGame.name.localeCompare(nextGame.name),
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 type LeaguesPageProps = {
@@ -89,9 +82,16 @@ export default async function LeaguesPage({ searchParams }: LeaguesPageProps) {
   const filters = await searchParams;
   const session = await getServerAuthSession();
   const token = session?.user?.accessToken ?? null;
-  const data = await getCachedLeagues(token);
+  const [data, gamesData] = await Promise.all([
+    getCachedLeagues(token),
+    getCachedGames(token),
+  ]);
   const leagues = data?.leagues?.nodes ?? [];
-  const games = getGameOptions(leagues);
+  const games: GameOption[] = (gamesData?.games?.nodes ?? []).map((g) => ({
+    slug: g.slug,
+    name: g.name,
+    thumbnailImagePath: g.thumbnailImagePath,
+  }));
   const translations: LeaguesPageText = {
     filterToggle: t("filterToggle"),
     clearFilters: t("clearFilters"),
