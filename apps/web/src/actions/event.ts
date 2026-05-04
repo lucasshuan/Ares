@@ -122,10 +122,17 @@ export const updateLeague = createSafeAction(
       slug?: string;
       description?: string | null;
       about?: string | null;
+      status?: string;
+      visibility?: string;
       startDate?: Date | null;
       endDate?: Date | null;
+      registrationsEnabled?: boolean;
       registrationStartDate?: Date | null;
       registrationEndDate?: Date | null;
+      maxParticipants?: number | null;
+      requiresApproval?: boolean;
+      waitlistEnabled?: boolean;
+      officialLinks?: unknown;
       thumbnailImagePath?: string | null;
       classificationSystem?: string;
       config?: unknown;
@@ -146,10 +153,17 @@ export const updateLeague = createSafeAction(
           slug: data.slug,
           description: data.description,
           about: data.about,
+          status: data.status,
+          visibility: data.visibility,
           startDate: data.startDate,
           endDate: data.endDate,
+          registrationsEnabled: data.registrationsEnabled,
           registrationStartDate: data.registrationStartDate,
           registrationEndDate: data.registrationEndDate,
+          maxParticipants: data.maxParticipants,
+          requiresApproval: data.requiresApproval,
+          waitlistEnabled: data.waitlistEnabled,
+          officialLinks: data.officialLinks,
           thumbnailImagePath: data.thumbnailImagePath,
         },
         league: {

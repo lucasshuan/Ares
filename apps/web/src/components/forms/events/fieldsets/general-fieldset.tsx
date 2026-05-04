@@ -21,7 +21,7 @@ import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { ImageUploadInput } from "@/components/ui/image-upload-input";
 import { cn, slugify } from "@/lib/utils/helpers";
-import type { AddLeagueValues } from "@/schemas/league";
+import type { EventSharedFormValues } from "@/schemas/league";
 
 interface GeneralFieldsetProps {
   onSlugStatusChange: (isChecking: boolean, hasConflict: boolean) => void;
@@ -42,7 +42,7 @@ export function GeneralFieldset({
     control,
     setValue,
     formState: { errors, touchedFields },
-  } = useFormContext<AddLeagueValues>();
+  } = useFormContext<EventSharedFormValues>();
 
   const { fields, append, remove } = useFieldArray({
     control,

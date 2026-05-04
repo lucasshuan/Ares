@@ -838,8 +838,9 @@
       "description": "Atualize as informações deste evento.",
       "steps": {
         "game": "Jogo",
-        "general": "Geral",
+        "general": "Detalhes",
         "format": "Formato",
+        "access": "Acesso",
         "matchFormats": "Partida"
       },
       "next": "Próxima Etapa",

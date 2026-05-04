@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { GameDisplayFieldset } from "./fieldsets/game-fieldset";
 import { LeagueConfigFieldset } from "./fieldsets/league-config-fieldset";
 import { GeneralFieldset } from "./fieldsets/general-fieldset";
+import { SettingsFieldset } from "./fieldsets/settings-fieldset";
 import { MatchFormatsFieldset } from "./fieldsets/match-formats-fieldset";
 
 type LeagueForEdit = {
@@ -25,6 +26,17 @@ type LeagueForEdit = {
   allowDraw?: boolean | null;
   config: Record<string, unknown>;
   allowedFormats?: string[] | null;
+  status?: string | null;
+  visibility?: string | null;
+  startDate?: string | Date | null;
+  endDate?: string | Date | null;
+  registrationsEnabled?: boolean | null;
+  registrationStartDate?: string | Date | null;
+  registrationEndDate?: string | Date | null;
+  maxParticipants?: number | null;
+  requiresApproval?: boolean | null;
+  waitlistEnabled?: boolean | null;
+  officialLinks?: Array<{ label: string; url: string }> | null;
   game?: {
     name: string;
     slug: string;
@@ -60,6 +72,9 @@ export function EditEventForm({
 
   const cfg = league.config as Record<string, number>;
 
+  const toDate = (v: string | Date | null | undefined) =>
+    v ? (v instanceof Date ? v : new Date(v)) : null;
+
   const methods = useForm<EditLeagueValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -83,6 +98,17 @@ export function EditEventForm({
         (league.allowedFormats?.length ?? 0) > 0
           ? [...(league.allowedFormats as string[])]
           : ["ONE_V_ONE"],
+      status: (league.status as EditLeagueValues["status"]) ?? "PENDING",
+      visibility: (league.visibility as EditLeagueValues["visibility"]) ?? "PUBLIC",
+      startDate: toDate(league.startDate),
+      endDate: toDate(league.endDate),
+      registrationsEnabled: league.registrationsEnabled ?? false,
+      registrationStartDate: toDate(league.registrationStartDate),
+      registrationEndDate: toDate(league.registrationEndDate),
+      maxParticipants: league.maxParticipants ?? null,
+      requiresApproval: league.requiresApproval ?? false,
+      waitlistEnabled: league.waitlistEnabled ?? false,
+      officialLinks: league.officialLinks ?? [],
     },
     mode: "onChange",
   });
@@ -132,6 +158,8 @@ export function EditEventForm({
       valid = name.trim().length >= 2 && slug.trim().length >= 2;
       if (valid) valid = !isSlugChecking && !hasSlugConflict;
     } else if (currentStep === 3) {
+      valid = true;
+    } else if (currentStep === 4) {
       valid = allowedFormats.length > 0;
     }
 
@@ -186,6 +214,17 @@ export function EditEventForm({
         thumbnailImagePath,
         allowedFormats: values.allowedFormats,
         config,
+        status: values.status,
+        visibility: values.visibility,
+        startDate: values.startDate ?? null,
+        endDate: values.endDate ?? null,
+        registrationsEnabled: values.registrationsEnabled,
+        registrationStartDate: values.registrationStartDate ?? null,
+        registrationEndDate: values.registrationEndDate ?? null,
+        maxParticipants: values.maxParticipants ?? null,
+        requiresApproval: values.requiresApproval,
+        waitlistEnabled: values.waitlistEnabled,
+        officialLinks: values.officialLinks,
       });
 
       if (result.success) {
@@ -215,7 +254,8 @@ export function EditEventForm({
             originalSlug={league.slug}
           />
         )}
-        {currentStep === 3 && <MatchFormatsFieldset />}
+        {currentStep === 3 && <SettingsFieldset allowAllStatuses />}
+        {currentStep === 4 && <MatchFormatsFieldset />}
       </form>
     </FormProvider>
   );

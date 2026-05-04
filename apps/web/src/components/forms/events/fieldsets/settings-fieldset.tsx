@@ -19,16 +19,20 @@ import { format } from "date-fns";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { DateInput } from "@/components/ui/date-input";
 import { cn } from "@/lib/utils/helpers";
-import type { AddLeagueValues } from "@/schemas/league";
+import type { EventSharedFormValues } from "@/schemas/league";
 
-export function SettingsFieldset() {
+interface SettingsFieldsetProps {
+  allowAllStatuses?: boolean;
+}
+
+export function SettingsFieldset({ allowAllStatuses = false }: SettingsFieldsetProps) {
   const t = useTranslations("Modals.AddEvent.settings");
   const {
     register,
     control,
     setValue,
     formState: { errors },
-  } = useFormContext<AddLeagueValues>();
+  } = useFormContext<EventSharedFormValues>();
 
   const visibility = useWatch({ control, name: "visibility" }) ?? "PUBLIC";
   const registrationsEnabled =
@@ -75,7 +79,7 @@ export function SettingsFieldset() {
       icon: Flag,
       accentClassName:
         "border-primary/35 bg-primary/10 text-primary shadow-primary/10",
-      disabled: true,
+      disabled: !allowAllStatuses,
     },
     {
       value: "CANCELLED",
@@ -83,7 +87,7 @@ export function SettingsFieldset() {
       icon: Ban,
       accentClassName:
         "border-danger/35 bg-danger/10 text-danger shadow-danger/10",
-      disabled: true,
+      disabled: !allowAllStatuses,
     },
   ];
 

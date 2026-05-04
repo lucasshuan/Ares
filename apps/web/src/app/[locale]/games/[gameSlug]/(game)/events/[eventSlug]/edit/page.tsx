@@ -42,6 +42,19 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     allowDraw: league.allowDraw,
     config: (league.config ?? {}) as Record<string, unknown>,
     allowedFormats: [...league.allowedFormats],
+    status: league.event?.status ?? null,
+    visibility: league.event?.visibility ?? null,
+    startDate: league.event?.startDate ?? null,
+    endDate: league.event?.endDate ?? null,
+    registrationsEnabled: league.event?.registrationsEnabled ?? null,
+    registrationStartDate: league.event?.registrationStartDate ?? null,
+    registrationEndDate: league.event?.registrationEndDate ?? null,
+    maxParticipants: league.event?.maxParticipants ?? null,
+    requiresApproval: league.event?.requiresApproval ?? null,
+    waitlistEnabled: league.event?.waitlistEnabled ?? null,
+    officialLinks: Array.isArray(league.event?.officialLinks)
+      ? (league.event.officialLinks as Array<{ label: string; url: string }>)
+      : null,
     game: {
       name: league.event?.game?.name ?? "",
       slug: league.event?.game?.slug ?? "",

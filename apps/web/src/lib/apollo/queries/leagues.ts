@@ -59,10 +59,17 @@ export const GET_LEAGUE = gql`
         about
         type
         isApproved
+        status
+        visibility
         startDate
         endDate
+        registrationsEnabled
         registrationStartDate
         registrationEndDate
+        maxParticipants
+        requiresApproval
+        waitlistEnabled
+        officialLinks
         thumbnailImagePath
         createdAt
         updatedAt

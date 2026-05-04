@@ -215,6 +215,27 @@ export const getEditLeagueSchema = (t: TFunction) => {
           t("required"),
         )
         .min(1, t("required")),
+      // Event settings
+      status: z
+        .enum(["PENDING", "REGISTRATION", "ACTIVE", "FINISHED", "CANCELLED"])
+        .optional(),
+      visibility: z.enum(["PUBLIC", "PRIVATE"]).optional(),
+      startDate: z.date().optional().nullable(),
+      endDate: z.date().optional().nullable(),
+      registrationsEnabled: z.boolean().optional(),
+      registrationStartDate: z.date().optional().nullable(),
+      registrationEndDate: z.date().optional().nullable(),
+      maxParticipants: z.number().int().min(1).optional().nullable(),
+      requiresApproval: z.boolean().optional(),
+      waitlistEnabled: z.boolean().optional(),
+      officialLinks: z
+        .array(
+          z.object({
+            label: z.string().min(1),
+            url: z.string().url(t("invalidUrl")),
+          }),
+        )
+        .optional(),
     })
     .superRefine((data, ctx) => {
       if (data.ratingSystem === "ELO") {
@@ -308,6 +329,27 @@ export const useEditLeagueSchema = () => {
 // Tipagem "Achatada" para o react-hook-form não reclamar das uniões
 export type AddLeagueValues = z.infer<ReturnType<typeof getAddLeagueSchema>>;
 export type EditLeagueValues = z.infer<ReturnType<typeof getEditLeagueSchema>>;
+
+// Subset used by shared fieldsets (GeneralFieldset, SettingsFieldset)
+export type EventSharedFormValues = Pick<
+  AddLeagueValues,
+  | "name"
+  | "slug"
+  | "description"
+  | "about"
+  | "thumbnailImagePath"
+  | "officialLinks"
+  | "status"
+  | "visibility"
+  | "startDate"
+  | "endDate"
+  | "registrationsEnabled"
+  | "registrationStartDate"
+  | "registrationEndDate"
+  | "maxParticipants"
+  | "requiresApproval"
+  | "waitlistEnabled"
+>;
 
 export const LEAGUE_DEFAULT_SETTINGS = {
   initialElo: 1000,

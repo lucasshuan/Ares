@@ -20,6 +20,17 @@ type LeagueForEdit = {
   allowDraw: boolean;
   config: Record<string, unknown>;
   allowedFormats: string[];
+  status?: string | null;
+  visibility?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  registrationsEnabled?: boolean | null;
+  registrationStartDate?: string | null;
+  registrationEndDate?: string | null;
+  maxParticipants?: number | null;
+  requiresApproval?: boolean | null;
+  waitlistEnabled?: boolean | null;
+  officialLinks?: Array<{ label: string; url: string }> | null;
   game: {
     name: string;
     slug: string;
@@ -52,6 +63,7 @@ export function EditEventTemplate({
     { label: t("steps.game") },
     { label: t("steps.format") },
     { label: t("steps.general") },
+    { label: t("steps.access") },
     { label: t("steps.matchFormats") },
   ];
 

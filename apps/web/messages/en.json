@@ -838,8 +838,9 @@
       "description": "Update information for this event.",
       "steps": {
         "game": "Game",
-        "general": "General",
+        "general": "Details",
         "format": "Format",
+        "access": "Access",
         "matchFormats": "Match"
       },
       "next": "Next Step",
