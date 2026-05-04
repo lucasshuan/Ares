@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { InfoModal } from "@/components/ui/info-modal";
+import { FollowButton } from "@/components/ui/follow-button";
 import { InfoSection } from "@/components/ui/info-section";
 import { InfoField } from "@/components/ui/info-field";
 import {
@@ -87,22 +88,29 @@ export function GameInfoModal({ isOpen, onClose, game }: GameInfoModalProps) {
             : undefined
       }
       headerAction={
-        <a
-          href={isOnGamePage ? undefined : gamePagePath}
-          target="_blank"
-          rel="noreferrer"
-          aria-disabled={isOnGamePage}
-          tabIndex={isOnGamePage ? -1 : undefined}
-          className={cn(
-            "flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm transition-colors",
-            isOnGamePage
-              ? "pointer-events-none cursor-not-allowed opacity-30"
-              : "hover:border-white/40 hover:text-white",
-          )}
-        >
-          <ArrowUpRight className="size-3.5" />
-          {t("viewGame")}
-        </a>
+        <div className="flex items-center gap-2">
+          <FollowButton
+            targetId={game.id}
+            targetType="GAME"
+            followCount={game.followCount ?? 0}
+          />
+          <a
+            href={isOnGamePage ? undefined : gamePagePath}
+            target="_blank"
+            rel="noreferrer"
+            aria-disabled={isOnGamePage}
+            tabIndex={isOnGamePage ? -1 : undefined}
+            className={cn(
+              "flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm transition-colors",
+              isOnGamePage
+                ? "pointer-events-none cursor-not-allowed opacity-30"
+                : "hover:border-white/40 hover:text-white",
+            )}
+          >
+            <ArrowUpRight className="size-3.5" />
+            {t("viewGame")}
+          </a>
+        </div>
       }
     >
       <div className="space-y-6 p-6">
