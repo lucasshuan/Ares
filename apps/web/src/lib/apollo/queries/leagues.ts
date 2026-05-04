@@ -63,6 +63,7 @@ export const GET_LEAGUE = gql`
         endDate
         registrationStartDate
         registrationEndDate
+        thumbnailImagePath
         createdAt
         updatedAt
         game {

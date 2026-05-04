@@ -37,6 +37,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     slug: league.event?.slug ?? "",
     description: league.event?.description ?? null,
     about: league.event?.about ?? null,
+    thumbnailImagePath: league.event?.thumbnailImagePath ?? null,
     classificationSystem: league.classificationSystem as "ELO" | "POINTS",
     allowDraw: league.allowDraw,
     config: (league.config ?? {}) as Record<string, unknown>,

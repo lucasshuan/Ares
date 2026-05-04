@@ -474,6 +474,10 @@
         "placeholder": "Write something about this event — rules, context, schedule, or anything you want participants to know...",
         "hint": "This content will be shown on the event page. Supports rich text formatting."
       },
+      "thumbnailImagePath": {
+        "label": "Thumbnail Image (Optional)"
+      },
+      "uploadError": "Failed to upload image. Please try again.",
       "ratingSystem": {
         "label": "Classification System",
         "elo": "Elo",
@@ -851,7 +855,8 @@
       "submitting": "Saving...",
       "cancel": "Cancel",
       "success": "Event updated successfully!",
-      "error": "Error updating event."
+      "error": "Error updating event.",
+      "uploadError": "Failed to upload image. Please try again."
     },
     "AddPlayerToLeague": {
       "trigger": "Register player",

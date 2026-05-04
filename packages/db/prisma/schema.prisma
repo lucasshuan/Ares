@@ -237,10 +237,11 @@ model Event {
   status            EventStatus       @default(PENDING)
   visibility        EventVisibility   @default(PUBLIC)
 
-  name        String
-  slug        String
-  description String?
-  about       String?
+  name                String
+  slug                String
+  description         String?
+  about               String?
+  thumbnailImagePath  String? @map("thumbnail_image_path")
 
   startDate             DateTime? @map("start_date")
   endDate               DateTime? @map("end_date")

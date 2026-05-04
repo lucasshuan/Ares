@@ -88,6 +88,7 @@ type Event {
   slug: String!
   description: String
   about: String
+  thumbnailImagePath: String
   status: String!
   visibility: String!
   isApproved: Boolean!
@@ -322,6 +323,7 @@ input CreateLeagueEventInput {
   requiresApproval: Boolean
   waitlistEnabled: Boolean
   officialLinks: JSON
+  thumbnailImagePath: String
 }
 
 input CreateLeagueConfigInput {
@@ -360,6 +362,7 @@ input UpdateLeagueEventInput {
   requiresApproval: Boolean
   waitlistEnabled: Boolean
   officialLinks: JSON
+  thumbnailImagePath: String
 }
 
 input UpdateLeagueConfigInput {

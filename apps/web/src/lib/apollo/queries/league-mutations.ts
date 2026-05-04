@@ -29,6 +29,7 @@ export const CREATE_LEAGUE = gql`
         requiresApproval
         waitlistEnabled
         officialLinks
+        thumbnailImagePath
       }
     }
   }

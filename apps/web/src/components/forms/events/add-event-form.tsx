@@ -10,6 +10,7 @@ import {
 } from "@/schemas/league";
 import { createLeague, checkLeagueSlugAvailability } from "@/actions/event";
 import { type SimpleGame } from "@/actions/game";
+import { resolveImageValue } from "@/lib/utils/upload";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { GameSearchFieldset } from "./fieldsets/game-fieldset";
@@ -115,6 +116,7 @@ export function AddEventForm({
       slug: "",
       description: "",
       about: "",
+      thumbnailImagePath: null,
       ratingSystem: undefined,
       initialElo: LEAGUE_DEFAULT_SETTINGS.initialElo,
       allowDraw: false,
@@ -243,6 +245,14 @@ export function AddEventForm({
     startTransition(async () => {
       const isElo = values.ratingSystem === "ELO";
 
+      let thumbnailImagePath: string | null;
+      try {
+        thumbnailImagePath = await resolveImageValue(values.thumbnailImagePath);
+      } catch {
+        toast.error(t("uploadError"));
+        return;
+      }
+
       const config = isElo
         ? {
             initialElo: values.initialElo ?? LEAGUE_DEFAULT_SETTINGS.initialElo,
@@ -287,6 +297,7 @@ export function AddEventForm({
           values.officialLinks && values.officialLinks.length > 0
             ? values.officialLinks
             : null,
+        thumbnailImagePath,
         classificationSystem: isElo ? "ELO" : "POINTS",
         allowDraw: values.allowDraw,
         allowedFormats: values.allowedFormats,

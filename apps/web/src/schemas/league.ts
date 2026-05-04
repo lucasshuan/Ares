@@ -25,6 +25,10 @@ export const getAddLeagueSchema = (t: TFunction) => {
         .max(500, t("descMax", { count: 500 }))
         .optional(),
       about: z.string().optional(),
+      thumbnailImagePath: z
+        .union([z.instanceof(File), z.string()])
+        .optional()
+        .nullable(),
       allowDraw: z.boolean(),
       gameId: z.string().optional(),
       gameName: z.string().optional(),
@@ -182,6 +186,10 @@ export const getEditLeagueSchema = (t: TFunction) => {
         .max(500, t("descMax", { count: 500 }))
         .optional(),
       about: z.string().optional(),
+      thumbnailImagePath: z
+        .union([z.instanceof(File), z.string()])
+        .optional()
+        .nullable(),
       allowDraw: z.boolean(),
       ratingSystem: z.enum(["ELO", "POINTS"]),
       // Elo fields

@@ -8,10 +8,14 @@ import {
   UpdateLeagueConfigInput,
 } from './dto/leagues.input';
 import { Prisma } from '@bellona/db';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class LeaguesService {
-  constructor(private db: DatabaseProvider) {}
+  constructor(
+    private db: DatabaseProvider,
+    private storageService: StorageService,
+  ) {}
 
   private mapLeague(league: {
     eventId: string;
@@ -132,6 +136,21 @@ export class LeaguesService {
     const gameId =
       eventInput.gameId ?? (await this.resolveGameId(eventInput.gameName));
 
+    // Move thumbnail from tmp to permanent location before creating the event
+    let thumbnailImagePath: string | undefined;
+    if (
+      eventInput.thumbnailImagePath &&
+      this.storageService.isTmpPath(eventInput.thumbnailImagePath)
+    ) {
+      const filename = eventInput.thumbnailImagePath.split('/').pop()!;
+      thumbnailImagePath = await this.storageService.moveFile(
+        eventInput.thumbnailImagePath,
+        `events/tmp-placeholder/thumbnail-${filename}`,
+      );
+    } else {
+      thumbnailImagePath = eventInput.thumbnailImagePath;
+    }
+
     const result = await this.db.$transaction(async (tx) => {
       const event = await tx.event.create({
         data: {
@@ -144,6 +163,7 @@ export class LeaguesService {
           slug: eventInput.slug,
           description: eventInput.description,
           about: eventInput.about,
+          thumbnailImagePath: thumbnailImagePath ?? null,
           startDate: eventInput.startDate,
           endDate: eventInput.endDate,
           registrationsEnabled: eventInput.registrationsEnabled ?? false,
@@ -158,6 +178,22 @@ export class LeaguesService {
           authorId,
         },
       });
+
+      // Rename to permanent location using the real event id
+      if (
+        thumbnailImagePath &&
+        thumbnailImagePath.includes('tmp-placeholder')
+      ) {
+        const filename = thumbnailImagePath.split('/').pop()!;
+        const permanentPath = await this.storageService.moveFile(
+          thumbnailImagePath,
+          `events/${event.id}/thumbnail-${filename}`,
+        );
+        await tx.event.update({
+          where: { id: event.id },
+          data: { thumbnailImagePath: permanentPath },
+        });
+      }
 
       const league = await tx.league.create({
         data: {
@@ -231,9 +267,35 @@ export class LeaguesService {
     eventInput?: UpdateLeagueEventInput,
     leagueInput?: UpdateLeagueConfigInput,
   ) {
+    let mutableEventInput = eventInput ? { ...eventInput } : undefined;
+
+    // Move thumbnail from tmp to permanent location
+    if (
+      mutableEventInput?.thumbnailImagePath &&
+      this.storageService.isTmpPath(mutableEventInput.thumbnailImagePath)
+    ) {
+      const current = await this.db.event.findUnique({
+        where: { id: eventId },
+        select: { thumbnailImagePath: true },
+      });
+      const filename = mutableEventInput.thumbnailImagePath.split('/').pop()!;
+      const permanentPath = await this.storageService.moveFile(
+        mutableEventInput.thumbnailImagePath,
+        `events/${eventId}/thumbnail-${filename}`,
+      );
+      mutableEventInput = {
+        ...mutableEventInput,
+        thumbnailImagePath: permanentPath,
+      };
+      if (current?.thumbnailImagePath) {
+        await this.storageService.deleteFile(current.thumbnailImagePath);
+      }
+    }
+
     const [league] = await this.db.$transaction(async (tx) => {
-      if (eventInput && Object.keys(eventInput).length > 0) {
-        const { officialLinks, status, visibility, ...rest } = eventInput;
+      if (mutableEventInput && Object.keys(mutableEventInput).length > 0) {
+        const { officialLinks, status, visibility, ...rest } =
+          mutableEventInput;
         const eventData: Prisma.EventUpdateInput = {
           ...rest,
           ...(status !== undefined && { status: status as never }),

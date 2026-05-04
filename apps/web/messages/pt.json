@@ -474,6 +474,10 @@
         "placeholder": "Escreva sobre o evento — regras, contexto, cronograma, ou qualquer informação que os participantes precisam saber...",
         "hint": "Este conteúdo será exibido na página do evento. Suporta formatação de texto."
       },
+      "thumbnailImagePath": {
+        "label": "Imagem de Thumbnail (Opcional)"
+      },
+      "uploadError": "Falha ao enviar imagem. Tente novamente.",
       "ratingSystem": {
         "label": "Sistema de Classificação",
         "elo": "Elo",
@@ -851,7 +855,8 @@
       "submitting": "Salvando...",
       "cancel": "Cancelar",
       "success": "Evento atualizado com sucesso!",
-      "error": "Erro ao atualizar evento."
+      "error": "Erro ao atualizar evento.",
+      "uploadError": "Falha ao enviar imagem. Tente novamente."
     },
     "AddPlayerToLeague": {
       "trigger": "Registrar jogador",

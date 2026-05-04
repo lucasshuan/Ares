@@ -134,6 +134,11 @@ export class CreateLeagueEventInput {
   @Field(() => Object, { nullable: true })
   @IsOptional()
   officialLinks?: unknown;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  thumbnailImagePath?: string;
 }
 
 @InputType()
@@ -243,6 +248,11 @@ export class UpdateLeagueEventInput {
   @Field(() => Object, { nullable: true })
   @IsOptional()
   officialLinks?: unknown;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  thumbnailImagePath?: string;
 }
 
 @InputType()

@@ -54,6 +54,7 @@ export const createLeague = createSafeAction(
     officialLinks?: unknown;
     startDate?: Date | null;
     endDate?: Date | null;
+    thumbnailImagePath?: string | null;
     classificationSystem: string;
     config: unknown;
     allowDraw?: boolean;
@@ -93,6 +94,7 @@ export const createLeague = createSafeAction(
           officialLinks: data.officialLinks,
           startDate: data.startDate,
           endDate: data.endDate,
+          thumbnailImagePath: data.thumbnailImagePath,
         },
         league: {
           classificationSystem: data.classificationSystem,
@@ -124,6 +126,7 @@ export const updateLeague = createSafeAction(
       endDate?: Date | null;
       registrationStartDate?: Date | null;
       registrationEndDate?: Date | null;
+      thumbnailImagePath?: string | null;
       classificationSystem?: string;
       config?: unknown;
       allowDraw?: boolean;
@@ -147,6 +150,7 @@ export const updateLeague = createSafeAction(
           endDate: data.endDate,
           registrationStartDate: data.registrationStartDate,
           registrationEndDate: data.registrationEndDate,
+          thumbnailImagePath: data.thumbnailImagePath,
         },
         league: {
           classificationSystem: data.classificationSystem,

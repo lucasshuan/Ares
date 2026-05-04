@@ -19,6 +19,7 @@ import {
 import { useTranslations } from "next-intl";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { ImageUploadInput } from "@/components/ui/image-upload-input";
 import { cn, slugify } from "@/lib/utils/helpers";
 import type { AddLeagueValues } from "@/schemas/league";
 
@@ -189,7 +190,7 @@ export function GeneralFieldset({
           )}
         </div>
 
-        <div className="col-span-full flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <LabelTooltip label={t("descriptionField.label")} />
           <textarea
             {...register("description")}
@@ -204,6 +205,20 @@ export function GeneralFieldset({
           {errors.description && touchedFields.description && (
             <p className="field-error-text">{errors.description.message}</p>
           )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Controller
+            name="thumbnailImagePath"
+            control={control}
+            render={({ field }) => (
+              <ImageUploadInput
+                label={t("thumbnailImagePath.label")}
+                value={field.value as File | string | null}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </div>
       </div>
 

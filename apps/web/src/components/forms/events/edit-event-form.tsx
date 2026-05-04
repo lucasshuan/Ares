@@ -5,6 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditLeagueSchema, type EditLeagueValues } from "@/schemas/league";
 import { updateLeague, checkLeagueSlugAvailability } from "@/actions/event";
+import { resolveImageValue } from "@/lib/utils/upload";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { GameDisplayFieldset } from "./fieldsets/game-fieldset";
@@ -19,6 +20,7 @@ type LeagueForEdit = {
   slug: string;
   description?: string | null;
   about?: string | null;
+  thumbnailImagePath?: string | null;
   classificationSystem: "ELO" | "POINTS";
   allowDraw?: boolean | null;
   config: Record<string, unknown>;
@@ -65,6 +67,7 @@ export function EditEventForm({
       slug: league.slug,
       description: league.description ?? "",
       about: league.about ?? "",
+      thumbnailImagePath: league.thumbnailImagePath ?? null,
       ratingSystem: league.classificationSystem,
       initialElo: cfg.initialElo ?? 1000,
       allowDraw: league.allowDraw ?? true,
@@ -147,6 +150,14 @@ export function EditEventForm({
     startTransition(async () => {
       const isElo = values.ratingSystem === "ELO";
 
+      let thumbnailImagePath: string | null;
+      try {
+        thumbnailImagePath = await resolveImageValue(values.thumbnailImagePath);
+      } catch {
+        toast.error(t("uploadError"));
+        return;
+      }
+
       const config = isElo
         ? {
             initialElo: values.initialElo ?? cfg.initialElo ?? 1000,
@@ -172,6 +183,7 @@ export function EditEventForm({
         allowDraw: values.allowDraw,
         description: values.description ?? null,
         about: values.about ?? null,
+        thumbnailImagePath,
         allowedFormats: values.allowedFormats,
         config,
       });

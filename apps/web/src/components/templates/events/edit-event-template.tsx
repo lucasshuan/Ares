@@ -15,6 +15,7 @@ type LeagueForEdit = {
   slug: string;
   description?: string | null;
   about?: string | null;
+  thumbnailImagePath?: string | null;
   classificationSystem: "ELO" | "POINTS";
   allowDraw: boolean;
   config: Record<string, unknown>;

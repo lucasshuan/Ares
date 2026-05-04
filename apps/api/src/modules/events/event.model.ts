@@ -25,6 +25,9 @@ export class Event {
   @Field({ nullable: true })
   about?: string;
 
+  @Field({ nullable: true })
+  thumbnailImagePath?: string;
+
   @Field()
   status: string;
 
