@@ -33,7 +33,7 @@ export function SidebarPageLayout({
       )}
     >
       <aside className="w-full shrink-0 lg:w-64 xl:w-80">
-        <div className="sticky top-28 flex flex-col gap-3">{sidebar}</div>
+        <div className="sticky top-28 flex flex-col gap-2">{sidebar}</div>
       </aside>
 
       <div className="min-w-0 flex-1">{children}</div>

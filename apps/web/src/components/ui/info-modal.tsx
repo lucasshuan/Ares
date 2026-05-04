@@ -15,6 +15,8 @@ interface InfoModalProps {
   subtitle?: string;
   /** CDN URL of a hero image shown at the top. */
   heroImageSrc?: string;
+  /** CDN URL of a thumbnail shown at its native aspect ratio (368/178) in front of the hero background. */
+  heroThumbnailSrc?: string;
   /** Tailwind gradient classes used when no heroImageSrc is provided. */
   heroGradientClass?: string;
   children: ReactNode;
@@ -36,6 +38,7 @@ export function InfoModal({
   isOpen,
   onClose,
   heroImageSrc,
+  heroThumbnailSrc,
   heroGradientClass = "from-primary/20 to-primary/5",
   title,
   subtitle,
@@ -106,6 +109,19 @@ export function InfoModal({
           <div className="absolute inset-0 bg-black/70" />
           {/* Bottom-to-top gradient for title legibility */}
           <div className="absolute inset-0 bg-linear-to-t from-[#0a080f] via-transparent to-transparent" />
+
+          {/* Thumbnail — floats over background, top-left, above the title */}
+          {heroThumbnailSrc && (
+            <div className="absolute top-4 left-6 z-10 w-52 overflow-hidden rounded-xl border border-white/10 shadow-2xl" style={{ aspectRatio: "368/178" }}>
+              <Image
+                src={heroThumbnailSrc}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="144px"
+              />
+            </div>
+          )}
 
           {/* Title overlay */}
           <div className="relative z-10 flex w-full items-end justify-between gap-4 p-6">

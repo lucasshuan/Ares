@@ -90,9 +90,10 @@ export function GameInfoModal({ isOpen, onClose, game, canEdit }: GameInfoModalP
       heroImageSrc={
         game.backgroundImagePath
           ? cdnUrl(game.backgroundImagePath)!
-          : game.thumbnailImagePath
-            ? cdnUrl(game.thumbnailImagePath)!
-            : undefined
+          : undefined
+      }
+      heroThumbnailSrc={
+        game.thumbnailImagePath ? cdnUrl(game.thumbnailImagePath)! : undefined
       }
       headerAction={
         <div className="flex items-center gap-2">

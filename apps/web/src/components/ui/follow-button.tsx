@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils/helpers";
 import { useUser } from "@/components/providers";
+import { AuthModal } from "@/components/modals/auth/auth-modal";
 import {
   IsFollowingGameDocument,
   IsFollowingEventDocument,
@@ -32,6 +33,7 @@ export function FollowButton({
   const { user } = useUser();
   const isLoggedIn = !!user;
 
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [optimisticFollowing, setOptimisticFollowing] = useState<
     boolean | null
   >(null);
@@ -87,7 +89,11 @@ export function FollowButton({
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn || isLoading) return;
+    if (!isLoggedIn) {
+      setAuthModalOpen(true);
+      return;
+    }
+    if (isLoading) return;
 
     const nextState = !isFollowing;
     setOptimisticFollowing(nextState);
@@ -107,22 +113,28 @@ export function FollowButton({
   };
 
   return (
-    <button
-      onClick={handleToggle}
-      disabled={!isLoggedIn || isLoading}
-      title={isLoggedIn ? undefined : t("follow")}
-      className={cn(
-        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all",
-        isFollowing
-          ? "border-primary/40 bg-primary/15 text-primary hover:border-primary/60 hover:bg-primary/25"
-          : "border-white/10 bg-white/5 text-white/50 hover:border-white/20 hover:bg-white/10 hover:text-white/80",
-        !isLoggedIn && "cursor-default opacity-60",
-        isLoading && "opacity-70",
-        className,
-      )}
-    >
-      <Heart className={cn("size-3", isFollowing && "fill-primary")} />
-      <span>{displayCount}</span>
-    </button>
+    <>
+      <button
+        onClick={handleToggle}
+        disabled={isLoading}
+        title={isLoggedIn ? undefined : t("follow")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all",
+          isFollowing
+            ? "border-primary/40 bg-primary/15 text-primary hover:border-primary/60 hover:bg-primary/25"
+            : "border-white/10 bg-white/5 text-white/50 hover:border-white/20 hover:bg-white/10 hover:text-white/80",
+          isLoading && "opacity-70",
+          className,
+        )}
+      >
+        <Heart className={cn("size-3", isFollowing && "fill-primary")} />
+        <span>{displayCount}</span>
+      </button>
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isPending={false}
+      />
+    </>
   );
 }

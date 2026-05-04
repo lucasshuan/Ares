@@ -8,6 +8,7 @@ import { Bell, BellPlus, LoaderCircle, Users } from "lucide-react";
 import { cn, formatCompactNumber } from "@/lib/utils/helpers";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useUser } from "@/components/providers";
+import { AuthModal } from "@/components/modals/auth/auth-modal";
 import {
   GameFollowCountDocument,
   IsFollowingGameDocument,
@@ -35,6 +36,7 @@ export function GameWatchButton({
   >(null);
   const [ringKey, setRingKey] = useState(0);
   const [localCount, setLocalCount] = useState<number | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const { data: followData } = useQuery(IsFollowingGameDocument, {
     variables: { gameId },
@@ -59,7 +61,11 @@ export function GameWatchButton({
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn || loading) return;
+    if (!isLoggedIn) {
+      setAuthModalOpen(true);
+      return;
+    }
+    if (loading) return;
 
     const nextState = !isFollowing;
     setOptimisticFollowing(nextState);
@@ -77,19 +83,19 @@ export function GameWatchButton({
   // ── Compact pill variant (action bar) ─────────────────────────────────────
   if (variant === "compact") {
     return (
-      <button
-        onClick={handleToggle}
-        disabled={!isLoggedIn || loading}
-        aria-pressed={isFollowing}
-        className={cn(
-          "group focus-visible:ring-gold/40 relative flex h-10 w-60 items-center gap-2.5 overflow-hidden rounded-xl px-3 font-medium transition-all duration-300 focus-visible:ring-2 focus-visible:outline-none",
-          isFollowing
-            ? "border-primary/60 bg-primary/25 hover:bg-primary/30 border text-white shadow-[0_0_14px_0px_color-mix(in_srgb,var(--primary)_35%,transparent)]"
-            : "border-gold-dim/50 bg-card-strong/80 text-gold/80 hover:border-gold/60 hover:text-gold border",
-          !isLoggedIn && "cursor-default opacity-50",
-          loading && "opacity-60",
-        )}
-      >
+      <>
+        <button
+          onClick={handleToggle}
+          disabled={loading}
+          aria-pressed={isFollowing}
+          className={cn(
+            "group focus-visible:ring-gold/40 relative flex h-10 w-60 items-center gap-2.5 overflow-hidden rounded-xl px-3 font-medium transition-all duration-300 focus-visible:ring-2 focus-visible:outline-none",
+            isFollowing
+              ? "border-primary/60 bg-primary/25 hover:bg-primary/30 border text-white shadow-[0_0_14px_0px_color-mix(in_srgb,var(--primary)_35%,transparent)]"
+              : "border-gold-dim/50 bg-card-strong/80 text-gold/80 hover:border-gold/60 hover:text-gold border",
+            loading && "opacity-60",
+          )}
+        >
         {/* Subtle background tint */}
         <span
           aria-hidden
@@ -135,24 +141,30 @@ export function GameWatchButton({
           </span>
         </Tooltip>
       </button>
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isPending={false}
+      />
+    </>
     );
   }
 
-  // ── Card variant (sidebar) ─────────────────────────────────────────────────
+  // ── Card variant (sidebar) ─────────────────────────────────────────────
   return (
-    <button
-      onClick={handleToggle}
-      disabled={!isLoggedIn || loading}
-      aria-pressed={isFollowing}
-      className={cn(
-        "group relative w-full overflow-hidden rounded-2xl border px-4 py-3 text-left transition-all duration-300 focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:outline-none",
-        isFollowing
-          ? "border-primary/30 bg-primary/10 hover:border-primary/45 hover:bg-primary/15"
-          : "border-white/10 bg-white/3 hover:border-white/20 hover:bg-white/6",
-        !isLoggedIn && "cursor-default opacity-50",
-        loading && "opacity-60",
-      )}
-    >
+    <>
+      <button
+        onClick={handleToggle}
+        disabled={loading}
+        aria-pressed={isFollowing}
+        className={cn(
+          "group relative w-full overflow-hidden rounded-2xl border px-4 py-3 text-left transition-all duration-300 focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:outline-none",
+          isFollowing
+            ? "border-primary/30 bg-primary/10 hover:border-primary/45 hover:bg-primary/15"
+            : "border-white/10 bg-white/3 hover:border-white/20 hover:bg-white/6",
+          loading && "opacity-60",
+        )}
+      >
       {/* Radial glow when following */}
       {isFollowing && (
         <span
@@ -220,6 +232,12 @@ export function GameWatchButton({
           <span>{formatCompactNumber(displayCount)}</span>
         </div>
       </div>
-    </button>
+      </button>
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isPending={false}
+      />
+    </>
   );
 }

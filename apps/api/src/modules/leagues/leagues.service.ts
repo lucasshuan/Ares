@@ -35,7 +35,6 @@ export class LeaguesService {
       slug: string;
       description: string | null;
       about: string | null;
-      approvedAt: Date | null;
       startDate: Date | null;
       endDate: Date | null;
       registrationsEnabled: boolean;
@@ -66,7 +65,7 @@ export class LeaguesService {
       ...league,
       event: {
         ...restEvent,
-        isApproved: !!league.event.approvedAt,
+        isApproved: true,
         entriesCount: league.event._count?.entries ?? 0,
         topEntries: (entries ?? [])
           .slice()

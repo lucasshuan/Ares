@@ -8,6 +8,7 @@ import { Bell, BellPlus, LoaderCircle, Users } from "lucide-react";
 import { cn, formatCompactNumber } from "@/lib/utils/helpers";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useUser } from "@/components/providers";
+import { AuthModal } from "@/components/modals/auth/auth-modal";
 import {
   EventFollowCountDocument,
   IsFollowingEventDocument,
@@ -32,6 +33,7 @@ export function EventWatchButton({
   >(null);
   const [ringKey, setRingKey] = useState(0);
   const [localCount, setLocalCount] = useState<number | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const { data: followData } = useQuery(IsFollowingEventDocument, {
     variables: { eventId },
@@ -55,7 +57,11 @@ export function EventWatchButton({
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn || loading) return;
+    if (!isLoggedIn) {
+      setAuthModalOpen(true);
+      return;
+    }
+    if (loading) return;
 
     const nextState = !isFollowing;
     setOptimisticFollowing(nextState);
@@ -75,19 +81,19 @@ export function EventWatchButton({
   };
 
   return (
-    <button
-      onClick={handleToggle}
-      disabled={!isLoggedIn || loading}
-      aria-pressed={isFollowing}
-      className={cn(
-        "group focus-visible:ring-gold/40 relative flex h-10 w-60 items-center gap-2.5 overflow-hidden rounded-xl px-3 font-medium transition-all duration-300 focus-visible:ring-2 focus-visible:outline-none",
-        isFollowing
-          ? "border-primary/60 bg-primary/25 hover:bg-primary/30 border text-white shadow-[0_0_14px_0px_color-mix(in_srgb,var(--primary)_35%,transparent)]"
-          : "border-gold-dim/50 bg-card-strong/80 text-gold/80 hover:border-gold/60 hover:text-gold border",
-        !isLoggedIn && "cursor-default opacity-50",
-        loading && "opacity-60",
-      )}
-    >
+    <>
+      <button
+        onClick={handleToggle}
+        disabled={loading}
+        aria-pressed={isFollowing}
+        className={cn(
+          "group focus-visible:ring-gold/40 relative flex h-10 w-60 items-center gap-2.5 overflow-hidden rounded-xl px-3 font-medium transition-all duration-300 focus-visible:ring-2 focus-visible:outline-none",
+          isFollowing
+            ? "border-primary/60 bg-primary/25 hover:bg-primary/30 border text-white shadow-[0_0_14px_0px_color-mix(in_srgb,var(--primary)_35%,transparent)]"
+            : "border-gold-dim/50 bg-card-strong/80 text-gold/80 hover:border-gold/60 hover:text-gold border",
+          loading && "opacity-60",
+        )}
+      >
       {/* Subtle background tint */}
       <span
         aria-hidden
@@ -119,19 +125,25 @@ export function EventWatchButton({
       </span>
 
       {/* Follower count chip */}
-      <Tooltip content={t("watchersTooltip", { count: displayCount })}>
-        <span
-          className={cn(
-            "relative flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[10px] font-bold tabular-nums",
-            isFollowing
-              ? "bg-white/10 text-white/70"
-              : "bg-gold-dim/20 text-gold/60",
-          )}
-        >
-          <Users className="size-2.5" />
-          {formatCompactNumber(displayCount)}
-        </span>
-      </Tooltip>
-    </button>
+        <Tooltip content={t("watchersTooltip", { count: displayCount })}>
+          <span
+            className={cn(
+              "relative flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[10px] font-bold tabular-nums",
+              isFollowing
+                ? "bg-white/10 text-white/70"
+                : "bg-gold-dim/20 text-gold/60",
+            )}
+          >
+            <Users className="size-2.5" />
+            {formatCompactNumber(displayCount)}
+          </span>
+        </Tooltip>
+      </button>
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isPending={false}
+      />
+    </>
   );
 }
