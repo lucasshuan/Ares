@@ -621,6 +621,12 @@
         "status": {
           "label": "Status",
           "tooltip": "Define a fase atual do evento. Rascunho = configuração em progresso; Inscrições abertas = período de inscrição; Em andamento = evento acontecendo; Encerrado e Cancelado ficam disponíveis após o evento ser criado.",
+          "tooltipIntro": "Define a fase atual do evento.",
+          "tooltipPending": "configuração em progresso",
+          "tooltipRegistration": "período de inscrições",
+          "tooltipActive": "evento em andamento",
+          "tooltipFinished": "disponível após o evento ser criado",
+          "tooltipCancelled": "disponível após o evento ser criado",
           "pending": "Rascunho",
           "registration": "Inscrições abertas",
           "active": "Em andamento",
@@ -645,7 +651,15 @@
           "enabled": "Inscrições abertas habilitadas",
           "disabled": "Inscrições abertas desabilitadas",
           "startDate": "Data de Abertura das Inscrições",
-          "endDate": "Data de Encerramento das Inscrições"
+          "endDate": "Data de Encerramento das Inscrições",
+          "datesHint": "Deixe em branco para manter as inscrições abertas indefinidamente."
+        },
+        "eventDates": {
+          "label": "Datas do Evento",
+          "startDate": "Data de Início",
+          "endDate": "Data de Término",
+          "placeholder": "dd / mm / aaaa",
+          "hint": "Datas opcionais que indicam quando o evento começa e termina."
         },
         "requiresApproval": {
           "label": "Inscrições precisam de aprovação",

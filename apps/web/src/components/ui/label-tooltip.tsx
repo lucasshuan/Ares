@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Info } from "lucide-react";
 import {
   useState,
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils/helpers";
 
 interface LabelTooltipProps {
   label: string;
-  tooltip?: string;
+  tooltip?: React.ReactNode;
   className?: string; // Container className
   labelClassName?: string; // Label specific className
   htmlFor?: string;

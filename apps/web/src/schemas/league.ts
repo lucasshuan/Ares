@@ -59,6 +59,8 @@ export const getAddLeagueSchema = (t: TFunction) => {
         .enum(["PENDING", "REGISTRATION", "ACTIVE", "FINISHED", "CANCELLED"])
         .optional(),
       visibility: z.enum(["PUBLIC", "PRIVATE"]).optional(),
+      startDate: z.date().optional().nullable(),
+      endDate: z.date().optional().nullable(),
       registrationsEnabled: z.boolean().optional(),
       registrationStartDate: z.date().optional().nullable(),
       registrationEndDate: z.date().optional().nullable(),

@@ -15,7 +15,9 @@ import {
   Clock,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { format } from "date-fns";
 import { LabelTooltip } from "@/components/ui/label-tooltip";
+import { DateInput } from "@/components/ui/date-input";
 import { cn } from "@/lib/utils/helpers";
 import type { AddLeagueValues } from "@/schemas/league";
 
@@ -181,6 +183,52 @@ export function SettingsFieldset() {
         />
       </div>
 
+      {/* Event Dates */}
+      <div className="flex flex-col gap-3">
+        <LabelTooltip
+          label={t("eventDates.label")}
+          tooltip={t("eventDates.hint")}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <LabelTooltip label={t("eventDates.startDate")} />
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <DateInput
+                  value={
+                    field.value instanceof Date
+                      ? format(field.value, "yyyy-MM-dd")
+                      : ""
+                  }
+                  onChange={(v) => field.onChange(v ? new Date(v) : null)}
+                  placeholder={t("eventDates.placeholder")}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <LabelTooltip label={t("eventDates.endDate")} />
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <DateInput
+                  value={
+                    field.value instanceof Date
+                      ? format(field.value, "yyyy-MM-dd")
+                      : ""
+                  }
+                  onChange={(v) => field.onChange(v ? new Date(v) : null)}
+                  placeholder={t("eventDates.placeholder")}
+                />
+              )}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Open registrations */}
       <div className="flex flex-col gap-4">
         <LabelTooltip
@@ -216,64 +264,51 @@ export function SettingsFieldset() {
         {registrationsEnabled && (
           <div className="animate-in fade-in slide-in-from-top-2 space-y-4 duration-300">
             {/* Date range */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <LabelTooltip label={t("openRegistrations.startDate")} />
-                <Controller
-                  name="registrationStartDate"
-                  control={control}
-                  render={({ field }) => (
-                    <input
-                      type="date"
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString().substring(0, 10)
-                          : (field.value ?? "")
-                      }
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? new Date(e.target.value) : null,
-                        )
-                      }
-                      className={cn(
-                        "field-base",
-                        errors.registrationStartDate
-                          ? "field-border-error"
-                          : "field-border-default",
-                      )}
-                    />
-                  )}
-                />
-              </div>
+            <div className="space-y-2">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <LabelTooltip label={t("openRegistrations.startDate")} />
+                  <Controller
+                    name="registrationStartDate"
+                    control={control}
+                    render={({ field }) => (
+                      <DateInput
+                        value={
+                          field.value instanceof Date
+                            ? format(field.value, "yyyy-MM-dd")
+                            : ""
+                        }
+                        onChange={(v) =>
+                          field.onChange(v ? new Date(v) : null)
+                        }
+                        placeholder={t("eventDates.placeholder")}
+                      />
+                    )}
+                  />
+                </div>
 
-              <div className="flex flex-col gap-2">
-                <LabelTooltip label={t("openRegistrations.endDate")} />
-                <Controller
-                  name="registrationEndDate"
-                  control={control}
-                  render={({ field }) => (
-                    <input
-                      type="date"
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString().substring(0, 10)
-                          : (field.value ?? "")
-                      }
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? new Date(e.target.value) : null,
-                        )
-                      }
-                      className={cn(
-                        "field-base",
-                        errors.registrationEndDate
-                          ? "field-border-error"
-                          : "field-border-default",
-                      )}
-                    />
-                  )}
-                />
+                <div className="flex flex-col gap-2">
+                  <LabelTooltip label={t("openRegistrations.endDate")} />
+                  <Controller
+                    name="registrationEndDate"
+                    control={control}
+                    render={({ field }) => (
+                      <DateInput
+                        value={
+                          field.value instanceof Date
+                            ? format(field.value, "yyyy-MM-dd")
+                            : ""
+                        }
+                        onChange={(v) =>
+                          field.onChange(v ? new Date(v) : null)
+                        }
+                        placeholder={t("eventDates.placeholder")}
+                      />
+                    )}
+                  />
+                </div>
               </div>
+              <p className="text-secondary/35 text-xs">{t("openRegistrations.datesHint")}</p>
             </div>
 
             {/* Requires approval toggle */}
@@ -359,7 +394,26 @@ export function SettingsFieldset() {
 
       {/* Status */}
       <div className="flex flex-col gap-3">
-        <LabelTooltip label={t("status.label")} tooltip={t("status.tooltip")} />
+        <LabelTooltip
+          label={t("status.label")}
+          tooltip={
+            <div className="flex flex-col gap-1.5">
+              <p className="text-secondary/60 mb-0.5">{t("status.tooltipIntro")}</p>
+              {([
+                [t("status.pending"), t("status.tooltipPending")],
+                [t("status.registration"), t("status.tooltipRegistration")],
+                [t("status.active"), t("status.tooltipActive")],
+                [t("status.finished"), t("status.tooltipFinished")],
+                [t("status.cancelled"), t("status.tooltipCancelled")],
+              ] as [string, string][]).map(([label, desc]) => (
+                <div key={label} className="flex gap-1.5">
+                  <span className="text-secondary/90 font-semibold shrink-0">{label}</span>
+                  <span className="text-secondary/50">— {desc}</span>
+                </div>
+              ))}
+            </div>
+          }
+        />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {STATUS_OPTIONS.map((opt) => (
             <button

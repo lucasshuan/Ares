@@ -621,6 +621,12 @@
         "status": {
           "label": "Status",
           "tooltip": "Sets the event's current phase. Draft = setup in progress; Open Registration = enrollment period; In Progress = event running; Finished and Cancelled become available after the event is created.",
+          "tooltipIntro": "Sets the event's current phase.",
+          "tooltipPending": "setup in progress",
+          "tooltipRegistration": "enrollment period",
+          "tooltipActive": "event is running",
+          "tooltipFinished": "available after the event is created",
+          "tooltipCancelled": "available after the event is created",
           "pending": "Draft",
           "registration": "Open Registration",
           "active": "In Progress",
@@ -645,7 +651,15 @@
           "enabled": "Open registrations enabled",
           "disabled": "Open registrations disabled",
           "startDate": "Registration Start Date",
-          "endDate": "Registration End Date"
+          "endDate": "Registration End Date",
+          "datesHint": "Leave blank to keep registrations open indefinitely."
+        },
+        "eventDates": {
+          "label": "Event Dates",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "placeholder": "dd / mm / yyyy",
+          "hint": "Optional dates indicating when the event begins and ends."
         },
         "requiresApproval": {
           "label": "Registrations require approval",
