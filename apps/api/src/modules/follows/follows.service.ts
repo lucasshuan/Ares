@@ -54,4 +54,16 @@ export class FollowsService {
     });
     return follow !== null;
   }
+
+  async gameFollowCount(gameId: string): Promise<number> {
+    return this.databaseProvider.userGameFollow.count({
+      where: { gameId },
+    });
+  }
+
+  async eventFollowCount(eventId: string): Promise<number> {
+    return this.databaseProvider.userEventFollow.count({
+      where: { eventId },
+    });
+  }
 }

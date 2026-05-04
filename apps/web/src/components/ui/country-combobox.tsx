@@ -12,6 +12,30 @@ import {
 
 type LocalizedCountry = { code: string; name: string };
 
+// Module-level cache: locale → sorted localized country list.
+// Shared across all CountryCombobox instances; survives re-mounts.
+const localizedCountriesCache = new Map<string, LocalizedCountry[]>();
+
+function getLocalizedCountries(locale: string): LocalizedCountry[] {
+  const cached = localizedCountriesCache.get(locale);
+  if (cached) return cached;
+
+  let dn: Intl.DisplayNames | null = null;
+  try {
+    dn = new Intl.DisplayNames([locale], { type: "region" });
+  } catch {
+    // fall back to raw names
+  }
+
+  const list = COUNTRIES.map((c) => ({
+    code: c.code,
+    name: dn ? (dn.of(c.code) ?? c.name) : c.name,
+  })).sort((a, b) => a.name.localeCompare(b.name, locale));
+
+  localizedCountriesCache.set(locale, list);
+  return list;
+}
+
 interface CountryComboboxProps {
   value: string | null;
   onChange: (v: string | null) => void;
@@ -35,16 +59,8 @@ export function CountryCombobox({
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const localizedCountries = useMemo<LocalizedCountry[]>(
-    () =>
-      COUNTRIES.map((c) => {
-        try {
-          const dn = new Intl.DisplayNames([locale], { type: "region" });
-          return { code: c.code, name: dn.of(c.code) || c.name };
-        } catch {
-          return c;
-        }
-      }).sort((a, b) => a.name.localeCompare(b.name, locale)),
+  const localizedCountries = useMemo(
+    () => getLocalizedCountries(locale),
     [locale],
   );
 

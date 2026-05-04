@@ -229,6 +229,8 @@ type Query {
   globalGameManagers: [User!]!
   isFollowingGame(gameId: ID!): Boolean!
   isFollowingEvent(eventId: ID!): Boolean!
+  gameFollowCount(gameId: ID!): Float!
+  eventFollowCount(eventId: ID!): Float!
 }
 
 input PaginationInput {

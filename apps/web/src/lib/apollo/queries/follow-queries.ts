@@ -23,3 +23,15 @@ export const IS_FOLLOWING_EVENT = gql`
     isFollowingEvent(eventId: $eventId)
   }
 `;
+
+export const GAME_FOLLOW_COUNT = gql`
+  query GameFollowCount($gameId: ID!) {
+    gameFollowCount(gameId: $gameId)
+  }
+`;
+
+export const EVENT_FOLLOW_COUNT = gql`
+  query EventFollowCount($eventId: ID!) {
+    eventFollowCount(eventId: $eventId)
+  }
+`;

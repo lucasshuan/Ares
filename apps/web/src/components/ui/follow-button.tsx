@@ -11,6 +11,8 @@ import {
   IsFollowingEventDocument,
   ToggleGameFollowDocument,
   ToggleEventFollowDocument,
+  GameFollowCountDocument,
+  EventFollowCountDocument,
 } from "@/lib/apollo/generated/graphql";
 
 interface FollowButtonProps {
@@ -33,7 +35,7 @@ export function FollowButton({
   const [optimisticFollowing, setOptimisticFollowing] = useState<
     boolean | null
   >(null);
-  const [optimisticCount, setOptimisticCount] = useState(followCount);
+  const [optimisticCountDelta, setOptimisticCountDelta] = useState(0);
 
   const { data: followGameData } = useQuery(IsFollowingGameDocument, {
     variables: { gameId: targetId },
@@ -47,12 +49,31 @@ export function FollowButton({
     fetchPolicy: "cache-and-network",
   });
 
+  const { data: gameCountData } = useQuery(GameFollowCountDocument, {
+    variables: { gameId: targetId },
+    skip: targetType !== "GAME",
+    fetchPolicy: "network-only",
+  });
+
+  const { data: eventCountData } = useQuery(EventFollowCountDocument, {
+    variables: { eventId: targetId },
+    skip: targetType !== "EVENT",
+    fetchPolicy: "network-only",
+  });
+
   const serverFollowing =
     targetType === "GAME"
       ? (followGameData?.isFollowingGame ?? null)
       : (followEventData?.isFollowingEvent ?? null);
 
   const isFollowing = optimisticFollowing ?? serverFollowing ?? false;
+
+  const liveCount =
+    targetType === "GAME"
+      ? (gameCountData?.gameFollowCount ?? followCount)
+      : (eventCountData?.eventFollowCount ?? followCount);
+
+  const displayCount = liveCount + optimisticCountDelta;
 
   const [toggleGameFollow, { loading: gameLoading }] = useMutation(
     ToggleGameFollowDocument,
@@ -70,18 +91,24 @@ export function FollowButton({
 
     const nextState = !isFollowing;
     setOptimisticFollowing(nextState);
-    setOptimisticCount((c) => c + (nextState ? 1 : -1));
+    setOptimisticCountDelta((d) => d + (nextState ? 1 : -1));
+
+    const refetchQuery =
+      targetType === "GAME"
+        ? { query: GameFollowCountDocument, variables: { gameId: targetId } }
+        : { query: EventFollowCountDocument, variables: { eventId: targetId } };
 
     try {
       if (targetType === "GAME") {
-        await toggleGameFollow({ variables: { gameId: targetId } });
+        await toggleGameFollow({ variables: { gameId: targetId }, refetchQueries: [refetchQuery] });
       } else {
-        await toggleEventFollow({ variables: { eventId: targetId } });
+        await toggleEventFollow({ variables: { eventId: targetId }, refetchQueries: [refetchQuery] });
       }
+      setOptimisticCountDelta(0);
     } catch {
       // revert
       setOptimisticFollowing(!nextState);
-      setOptimisticCount((c) => c + (nextState ? -1 : 1));
+      setOptimisticCountDelta((d) => d + (nextState ? -1 : 1));
     }
   };
 
@@ -101,7 +128,7 @@ export function FollowButton({
       )}
     >
       <Heart className={cn("size-3", isFollowing && "fill-primary")} />
-      <span>{optimisticCount}</span>
+      <span>{displayCount}</span>
     </button>
   );
 }

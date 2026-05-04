@@ -13,6 +13,7 @@ import { Link } from "@/i18n/routing";
 
 import { GameInfoCard } from "@/components/triggers/game/game-info-card";
 import { AddEventButton } from "@/components/triggers/game/add-event-button";
+import { GameActionBar } from "@/components/triggers/game/game-action-bar";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
 import type { SimpleGame } from "@/actions/game";
 
@@ -22,6 +23,7 @@ type GamePageProps = {
   }>;
 };
 
+import { unstable_cache } from "next/cache";
 import { GET_GAME } from "@/lib/apollo/queries/games";
 import { GET_LEAGUES } from "@/lib/apollo/queries/leagues";
 import {
@@ -29,15 +31,26 @@ import {
   type GetLeaguesQuery,
 } from "@/lib/apollo/generated/graphql";
 
+const getCachedGame = (slug: string) =>
+  unstable_cache(
+    () => safeServerQuery<GetGameQuery>({ query: GET_GAME, variables: { slug } }),
+    ["game", slug],
+    { tags: ["games"], revalidate: 300 },
+  )();
+
+const getCachedGameLeagues = (gameId: string, slug: string) =>
+  unstable_cache(
+    () => safeServerQuery<GetLeaguesQuery>({ query: GET_LEAGUES, variables: { gameId } }),
+    ["game-leagues", slug],
+    { tags: ["events"], revalidate: 300 },
+  )();
+
 export async function generateMetadata({
   params,
 }: GamePageProps): Promise<Metadata> {
   const { gameSlug } = await params;
 
-  const data = await safeServerQuery<GetGameQuery>({
-    query: GET_GAME,
-    variables: { slug: gameSlug },
-  });
+  const data = await getCachedGame(gameSlug);
 
   const t = await getTranslations("GamePage");
   if (!data?.game) {
@@ -69,10 +82,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
 async function GamePageContent({ gameSlug }: { gameSlug: string }) {
   const session = await getServerAuthSession();
-  const data = await safeServerQuery<GetGameQuery>({
-    query: GET_GAME,
-    variables: { slug: gameSlug },
-  });
+  const data = await getCachedGame(gameSlug);
 
   const t = await getTranslations("GamePage");
 
@@ -82,10 +92,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
 
   const { game } = data;
 
-  const leaguesData = await safeServerQuery<GetLeaguesQuery>({
-    query: GET_LEAGUES,
-    variables: { gameId: game.id },
-  });
+  const leaguesData = await getCachedGameLeagues(game.id, gameSlug);
   const leagues = leaguesData?.leagues?.nodes ?? [];
 
   const canEditCurrentGame = canEditGame(session, game.authorId);
@@ -119,6 +126,10 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
       }
     >
       <div className="space-y-6">
+        <GameActionBar
+          gameId={game.id}
+          followCount={game.followCount ?? 0}
+        />
         <section className="space-y-6">
           <SectionHeader
             title={t("eventsTitle")}

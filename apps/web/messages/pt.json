@@ -166,7 +166,14 @@
     "events": "Eventos",
     "posts": "Postagens",
     "pendingNotice": "O jogo está pendente e precisa de aprovação",
-    "viewDetails": "Ver detalhes"
+    "viewDetails": "Ver detalhes",
+    "watchGame": "Acompanhar Jogo",
+    "watching": "Acompanhando",
+    "watchDescription": "Seja notificado quando novos eventos forem lançados",
+    "watchingDescription": "Você será notificado sobre novos eventos",
+    "watchersTooltip": "{count} acompanhando",
+    "share": "Compartilhar",
+    "copied": "Copiado!"
   },
   "League": {
     "playersCount": "jogadores",

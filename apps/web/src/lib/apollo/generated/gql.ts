@@ -19,6 +19,8 @@ type Documents = {
     "\n  mutation ToggleEventFollow($eventId: ID!) {\n    toggleEventFollow(eventId: $eventId)\n  }\n": typeof types.ToggleEventFollowDocument,
     "\n  query IsFollowingGame($gameId: ID!) {\n    isFollowingGame(gameId: $gameId)\n  }\n": typeof types.IsFollowingGameDocument,
     "\n  query IsFollowingEvent($eventId: ID!) {\n    isFollowingEvent(eventId: $eventId)\n  }\n": typeof types.IsFollowingEventDocument,
+    "\n  query GameFollowCount($gameId: ID!) {\n    gameFollowCount(gameId: $gameId)\n  }\n": typeof types.GameFollowCountDocument,
+    "\n  query EventFollowCount($eventId: ID!) {\n    eventFollowCount(eventId: $eventId)\n  }\n": typeof types.EventFollowCountDocument,
     "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n": typeof types.RequestUploadUrlDocument,
     "\n  mutation CreateGame($input: CreateGameInput!) {\n    createGame(input: $input) {\n      id\n      name\n      slug\n      status\n    }\n  }\n": typeof types.CreateGameDocument,
     "\n  mutation UpdateGame($id: ID!, $input: UpdateGameInput!) {\n    updateGame(id: $id, input: $input) {\n      id\n      name\n      slug\n    }\n  }\n": typeof types.UpdateGameDocument,
@@ -50,6 +52,8 @@ const documents: Documents = {
     "\n  mutation ToggleEventFollow($eventId: ID!) {\n    toggleEventFollow(eventId: $eventId)\n  }\n": types.ToggleEventFollowDocument,
     "\n  query IsFollowingGame($gameId: ID!) {\n    isFollowingGame(gameId: $gameId)\n  }\n": types.IsFollowingGameDocument,
     "\n  query IsFollowingEvent($eventId: ID!) {\n    isFollowingEvent(eventId: $eventId)\n  }\n": types.IsFollowingEventDocument,
+    "\n  query GameFollowCount($gameId: ID!) {\n    gameFollowCount(gameId: $gameId)\n  }\n": types.GameFollowCountDocument,
+    "\n  query EventFollowCount($eventId: ID!) {\n    eventFollowCount(eventId: $eventId)\n  }\n": types.EventFollowCountDocument,
     "\n  mutation RequestUploadUrl($filename: String!, $contentType: String!) {\n    requestUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      path\n    }\n  }\n": types.RequestUploadUrlDocument,
     "\n  mutation CreateGame($input: CreateGameInput!) {\n    createGame(input: $input) {\n      id\n      name\n      slug\n      status\n    }\n  }\n": types.CreateGameDocument,
     "\n  mutation UpdateGame($id: ID!, $input: UpdateGameInput!) {\n    updateGame(id: $id, input: $input) {\n      id\n      name\n      slug\n    }\n  }\n": types.UpdateGameDocument,
@@ -110,6 +114,14 @@ export function graphql(source: "\n  query IsFollowingGame($gameId: ID!) {\n    
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query IsFollowingEvent($eventId: ID!) {\n    isFollowingEvent(eventId: $eventId)\n  }\n"): (typeof documents)["\n  query IsFollowingEvent($eventId: ID!) {\n    isFollowingEvent(eventId: $eventId)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GameFollowCount($gameId: ID!) {\n    gameFollowCount(gameId: $gameId)\n  }\n"): (typeof documents)["\n  query GameFollowCount($gameId: ID!) {\n    gameFollowCount(gameId: $gameId)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query EventFollowCount($eventId: ID!) {\n    eventFollowCount(eventId: $eventId)\n  }\n"): (typeof documents)["\n  query EventFollowCount($eventId: ID!) {\n    eventFollowCount(eventId: $eventId)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

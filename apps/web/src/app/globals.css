@@ -676,3 +676,18 @@ button:disabled {
 .border-glow-animation button:hover {
   transform: none;
 }
+
+@keyframes bell-ring {
+  0%   { transform: rotate(0deg); }
+  15%  { transform: rotate(18deg); }
+  35%  { transform: rotate(-16deg); }
+  55%  { transform: rotate(12deg); }
+  70%  { transform: rotate(-8deg); }
+  85%  { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-bell-ring {
+  animation: bell-ring 0.55s ease-in-out;
+  transform-origin: top center;
+}

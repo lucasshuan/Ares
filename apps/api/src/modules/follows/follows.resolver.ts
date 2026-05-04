@@ -50,4 +50,18 @@ export class FollowsResolver {
   ): Promise<boolean> {
     return this.followsService.isFollowingEvent(user.id, eventId);
   }
+
+  @Query(() => Number, { name: 'gameFollowCount' })
+  async gameFollowCount(
+    @Args('gameId', { type: () => ID }) gameId: string,
+  ): Promise<number> {
+    return this.followsService.gameFollowCount(gameId);
+  }
+
+  @Query(() => Number, { name: 'eventFollowCount' })
+  async eventFollowCount(
+    @Args('eventId', { type: () => ID }) eventId: string,
+  ): Promise<number> {
+    return this.followsService.eventFollowCount(eventId);
+  }
 }

@@ -166,7 +166,14 @@
     "events": "Events",
     "posts": "Posts",
     "pendingNotice": "Game is pending and needs approval",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "watchGame": "Watch Game",
+    "watching": "Watching",
+    "watchDescription": "Get notified when new events launch",
+    "watchingDescription": "You'll be notified of new events",
+    "watchersTooltip": "{count} watching",
+    "share": "Share",
+    "copied": "Copied!"
   },
   "League": {
     "playersCount": "players",

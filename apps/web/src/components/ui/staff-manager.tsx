@@ -86,8 +86,10 @@ export function StaffManager({
 
   const showResults = isInputFocused && query.trim().length > 0;
 
-  const [searchUsers, { data, loading }] =
-    useLazyQuery<SearchUsersQuery>(SEARCH_USERS);
+  const [searchUsers, { data, loading }] = useLazyQuery<SearchUsersQuery>(
+    SEARCH_USERS,
+    { fetchPolicy: "cache-first" },
+  );
 
   useEffect(() => {
     if (!query.trim()) return;
