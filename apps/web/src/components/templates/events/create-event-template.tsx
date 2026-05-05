@@ -33,6 +33,7 @@ export function CreateEventTemplate({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isStepValid, setIsStepValid] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const [requiresUnknownGameConfirmation, setRequiresUnknownGameConfirmation] =
     useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -117,6 +118,22 @@ export function CreateEventTemplate({
         isStepValid={isStepValid}
         onBeforeNext={handleBeforeNext}
         labels={{ back: t("back"), next: t("next") }}
+        headerAction={
+          <Button
+            type="button"
+            onClick={() => setIsConfirmOpen(true)}
+            disabled={!isValid || isLoading}
+            intent="primary"
+            className="rounded-2xl px-6 py-2.5 text-sm font-semibold shadow-lg shadow-primary/20"
+          >
+            {isLoading ? (
+              <LoaderCircle className="mr-2 size-4 animate-spin" />
+            ) : (
+              <Trophy className="mr-2 size-4" />
+            )}
+            {isLoading ? t("submitting") : t("submit")}
+          </Button>
+        }
         renderSubmit={
           <Button
             type="button"
@@ -143,6 +160,7 @@ export function CreateEventTemplate({
             currentStep={currentStep}
             onSuccess={handleSuccess}
             onLoadingChange={setIsLoading}
+            onValidationChange={setIsValid}
             onStepValidationChange={setIsStepValid}
             onUnknownGameSelectionChange={setRequiresUnknownGameConfirmation}
             currentUserId={user?.id}

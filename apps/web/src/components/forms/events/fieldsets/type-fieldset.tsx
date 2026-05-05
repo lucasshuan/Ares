@@ -145,9 +145,9 @@ export function TypeFieldset({
           </div>
         )}
 
-        {!readonly && eventType === "LEAGUE" && participationMode !== null && (
+        {eventType === "LEAGUE" && participationMode !== null && (
           <div className="animate-in fade-in slide-in-from-top-3 duration-400">
-            <MatchFormatsFieldset />
+            <MatchFormatsFieldset readonly={readonly} />
           </div>
         )}
       </div>

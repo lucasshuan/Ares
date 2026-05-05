@@ -572,14 +572,14 @@ function SidebarBody({
           )}
         >
           <Image
-            src="/logo.svg"
+            src="/logo-compact.svg"
             alt="Bellona"
-            width={26}
-            height={26}
-            className="h-6.5 w-6.5 shrink-0 object-contain"
+            width={24}
+            height={24}
+            className="h-6 w-6 shrink-0 object-contain"
           />
           <div className="flex min-w-0 items-center leading-none">
-            <span className="text-gold font-display text-[11px] font-bold tracking-[0.22em] whitespace-nowrap uppercase">
+            <span className="text-primary font-display text-[13px] font-bold tracking-[0.14em] whitespace-nowrap uppercase">
               Bellona
             </span>
           </div>
@@ -825,11 +825,11 @@ export function SiteSidebar() {
 
         <Link href="/" className="flex items-center gap-1.5">
           <Image
-            src="/logo.svg"
+            src="/logo-compact.svg"
             alt="Bellona"
-            width={18}
-            height={18}
-            className="h-4.5 w-4.5 shrink-0 object-contain"
+            width={16}
+            height={16}
+            className="h-4 w-4 shrink-0 object-contain"
           />
           <span className="text-secondary font-display text-[11px] font-bold tracking-[0.22em] uppercase">
             Bellona

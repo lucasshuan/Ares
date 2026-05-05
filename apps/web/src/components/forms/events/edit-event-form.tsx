@@ -1,7 +1,7 @@
 "use client";
 
-import { useTransition, useState, useEffect, useCallback } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useTransition, useState, useEffect, useCallback, useMemo } from "react";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditLeagueSchema, type EditLeagueValues } from "@/schemas/league";
 import { updateLeague, checkLeagueSlugAvailability } from "@/actions/event";
@@ -53,9 +53,10 @@ type LeagueForEdit = {
 
 interface EditEventFormProps {
   league: LeagueForEdit;
-  onSuccess: () => void;
+  onSuccess: (eventSlug: string) => void;
   onLoadingChange?: (loading: boolean) => void;
   onValidationChange?: (isValid: boolean) => void;
+  onDirtyFieldCountChange?: (count: number) => void;
   onStepValidationChange?: (isValid: boolean) => void;
   currentStep: number;
   formId: string;
@@ -84,11 +85,59 @@ function areParticipantsValid(
   return true;
 }
 
+function normalizeComparableValue(value: unknown): unknown {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof File !== "undefined" && value instanceof File) {
+    return {
+      lastModified: value.lastModified,
+      name: value.name,
+      size: value.size,
+      type: value.type,
+    };
+  }
+  if (Array.isArray(value)) return value.map(normalizeComparableValue);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .filter(([, entryValue]) => entryValue !== undefined)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, entryValue]) => [key, normalizeComparableValue(entryValue)]),
+    );
+  }
+  return value ?? null;
+}
+
+function areComparableValuesEqual(a: unknown, b: unknown): boolean {
+  return (
+    JSON.stringify(normalizeComparableValue(a)) ===
+    JSON.stringify(normalizeComparableValue(b))
+  );
+}
+
+function countChangedFields(
+  currentValues: Partial<EditLeagueValues>,
+  defaultValues: EditLeagueValues,
+): number {
+  return (Object.keys(defaultValues) as Array<keyof EditLeagueValues>).filter(
+    (field) => {
+      const currentValue = Object.prototype.hasOwnProperty.call(
+        currentValues,
+        field,
+      )
+        ? currentValues[field]
+        : defaultValues[field];
+
+      return !areComparableValuesEqual(currentValue, defaultValues[field]);
+    },
+  ).length;
+}
+
 export function EditEventForm({
   league,
   onSuccess,
   onLoadingChange,
   onValidationChange,
+  onDirtyFieldCountChange,
   onStepValidationChange,
   currentStep,
   formId,
@@ -106,34 +155,35 @@ export function EditEventForm({
 
   const cfg = league.config as Record<string, number>;
 
-  const toDate = (v: string | Date | null | undefined) =>
-    v ? (v instanceof Date ? v : new Date(v)) : null;
+  const defaultValues = useMemo<EditLeagueValues>(() => {
+    const config = league.config as Record<string, number>;
+    const toDate = (v: string | Date | null | undefined) =>
+      v ? (v instanceof Date ? v : new Date(v)) : null;
 
-  const methods = useForm<EditLeagueValues>({
-    resolver: zodResolver(schema),
-    defaultValues: {
+    return {
       name: league.name,
       slug: league.slug,
       description: league.description ?? "",
       about: league.about ?? "",
       thumbnailImagePath: league.thumbnailImagePath ?? null,
       ratingSystem: league.classificationSystem,
-      initialElo: cfg.initialElo ?? 1000,
+      initialElo: config.initialElo ?? 1000,
       allowDraw: league.allowDraw ?? true,
-      kFactor: cfg.kFactor ?? 20,
-      scoreRelevance: cfg.scoreRelevance ?? 0,
-      inactivityDecay: cfg.inactivityDecay ?? 0,
-      inactivityThresholdHours: cfg.inactivityThresholdHours ?? 120,
-      inactivityDecayFloor: cfg.inactivityDecayFloor ?? 1000,
-      pointsPerWin: cfg.pointsPerWin ?? 3,
-      pointsPerDraw: cfg.pointsPerDraw ?? 1,
-      pointsPerLoss: cfg.pointsPerLoss ?? 0,
+      kFactor: config.kFactor ?? 20,
+      scoreRelevance: config.scoreRelevance ?? 0,
+      inactivityDecay: config.inactivityDecay ?? 0,
+      inactivityThresholdHours: config.inactivityThresholdHours ?? 120,
+      inactivityDecayFloor: config.inactivityDecayFloor ?? 1000,
+      pointsPerWin: config.pointsPerWin ?? 3,
+      pointsPerDraw: config.pointsPerDraw ?? 1,
+      pointsPerLoss: config.pointsPerLoss ?? 0,
       allowedFormats:
         (league.allowedFormats?.length ?? 0) > 0
           ? [...(league.allowedFormats as string[])]
           : ["ONE_V_ONE"],
       status: (league.status as EditLeagueValues["status"]) ?? "PENDING",
-      visibility: (league.visibility as EditLeagueValues["visibility"]) ?? "PUBLIC",
+      visibility:
+        (league.visibility as EditLeagueValues["visibility"]) ?? "PUBLIC",
       startDate: toDate(league.startDate),
       endDate: toDate(league.endDate),
       registrationsEnabled: league.registrationsEnabled ?? false,
@@ -143,18 +193,24 @@ export function EditEventForm({
       requiresApproval: league.requiresApproval ?? false,
       waitlistEnabled: league.waitlistEnabled ?? false,
       officialLinks: league.officialLinks ?? [],
-    },
+    };
+  }, [league]);
+
+  const methods = useForm<EditLeagueValues>({
+    resolver: zodResolver(schema),
+    defaultValues,
     mode: "onChange",
   });
 
   const {
+    control,
     handleSubmit,
     formState: { isValid },
-    watch,
   } = methods;
 
-  const name = watch("name") ?? "";
-  const slug = watch("slug") ?? "";
+  const watchedValues = useWatch({ control });
+  const name = watchedValues.name ?? "";
+  const slug = watchedValues.slug ?? "";
 
   const handleSlugStatusChange = useCallback(
     (checking: boolean, conflict: boolean) => {
@@ -179,6 +235,12 @@ export function EditEventForm({
   useEffect(() => {
     onValidationChange?.(isFormValid);
   }, [isFormValid, onValidationChange]);
+
+  useEffect(() => {
+    onDirtyFieldCountChange?.(
+      countChangedFields(watchedValues as Partial<EditLeagueValues>, defaultValues),
+    );
+  }, [defaultValues, onDirtyFieldCountChange, watchedValues]);
 
   useEffect(() => {
     let valid = true;
@@ -258,7 +320,8 @@ export function EditEventForm({
 
       if (result.success) {
         toast.success(t("success"));
-        onSuccess();
+        onDirtyFieldCountChange?.(0);
+        onSuccess(values.slug);
       } else {
         toast.error(result.error || t("error"));
       }

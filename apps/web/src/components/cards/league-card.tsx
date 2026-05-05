@@ -97,15 +97,15 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
             src={cdnUrl(thumbnailPath)!}
             alt={league.event?.name ?? ""}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:blur-[2px]"
             sizes="(max-width: 1280px) 100vw, 560px"
           />
         ) : (
-          <div className="from-primary/25 via-primary/10 h-full w-full bg-linear-to-br to-transparent" />
+          <div className="from-primary via-primary/70 to-gold/60 h-full w-full bg-linear-to-br" />
         )}
 
         {/* Cinematic gradient for text contrast */}
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/35 to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/15 to-transparent transition-all duration-400 group-hover:from-black/90 group-hover:via-black/55" />
 
         {/* Extra veil on hover for leaderboard contrast */}
         <div className="absolute inset-0 bg-black/0 transition-all duration-400 group-hover:bg-black/50" />

@@ -240,7 +240,7 @@ function OutcomePill({ outcome }: { outcome: string }) {
   return (
     <span
       className={cn(
-        "inline-flex size-[18px] items-center justify-center rounded border text-[9px] font-bold",
+        "inline-flex size-4.5 items-center justify-center rounded border text-[9px] font-bold",
         def?.cls ?? "border-white/10 bg-white/5 text-white/30",
       )}
     >
@@ -496,9 +496,9 @@ export function TableCore({
             <div
               key={row.entry.id}
               className={cn(
-                "grid items-center gap-2 px-4 py-3 transition-colors hover:bg-white/[0.03]",
+                "grid items-center gap-2 px-4 py-3 transition-colors hover:bg-white/3",
                 gridCols,
-                idx < sortedRows.length - 1 && "border-b border-white/[0.05]",
+                idx < sortedRows.length - 1 && "border-b border-white/5",
               )}
             >
               {/* Rank + change */}
@@ -574,7 +574,7 @@ export function TableCore({
                     contentClassName="w-max max-w-[180px] px-2.5 py-1.5 text-[10px] font-medium rounded-lg leading-snug"
                   >
                     <span
-                      className={`fi fi-${row.entry.user.country.toLowerCase()} h-3 w-4 overflow-hidden rounded-[2px]`}
+                      className={`fi fi-${row.entry.user.country.toLowerCase()} h-3 w-4 overflow-hidden rounded-xs`}
                     />
                   </Tooltip>
                 ) : (

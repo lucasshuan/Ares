@@ -957,6 +957,11 @@
         "elo": "Rating",
         "points": "Points"
       },
+      "saveButton": {
+        "clean": "No changes",
+        "dirty": "Save {count, plural, one {# change} other {# changes}}",
+        "invalid": "Review fields"
+      },
       "submit": "Save Changes",
       "submitting": "Saving...",
       "cancel": "Cancel",

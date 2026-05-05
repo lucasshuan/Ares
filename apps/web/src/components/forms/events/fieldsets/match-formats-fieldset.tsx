@@ -11,7 +11,7 @@ type MatchFormatsValues = {
   allowedFormats: string[];
 };
 
-export function MatchFormatsFieldset() {
+export function MatchFormatsFieldset({ readonly = false }: { readonly?: boolean }) {
   const t = useTranslations("Modals.AddEvent");
   const { control, setValue, getValues } = useFormContext<MatchFormatsValues>();
   const allowedFormats = useWatch({ control, name: "allowedFormats" }) ?? [];
@@ -43,20 +43,22 @@ export function MatchFormatsFieldset() {
           {matchFormatOptions.map((option) => {
             const isLocked = option.value !== "ONE_V_ONE";
             const isSelected = allowedFormats.includes(option.value);
+            const isDisabled = readonly || isLocked;
 
             return (
               <button
                 key={option.value}
                 type="button"
-                disabled={isLocked}
-                onClick={() => !isLocked && toggleMatchFormat(option.value)}
+                disabled={isDisabled}
+                onClick={() => !isDisabled && toggleMatchFormat(option.value)}
                 className={cn(
                   "flex items-center justify-between gap-1.5 rounded-xl border px-3 py-2 text-left transition-all",
-                  isLocked
+                  isDisabled
                     ? "border-gold-dim/25 bg-card-strong/45 cursor-not-allowed opacity-50"
                     : isSelected
                       ? "border-primary/50 bg-primary/10 text-primary shadow-primary/10 shadow-lg"
                       : "border-gold-dim/35 bg-card-strong/45 text-secondary/80 hover:bg-card-strong/70",
+                  !isDisabled && isSelected && "cursor-default",
                 )}
               >
                 <div className="flex flex-col gap-0.5">

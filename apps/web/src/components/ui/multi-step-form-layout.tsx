@@ -14,6 +14,7 @@ interface MultiStepFormLayoutProps {
   description: string;
   steps: Step[];
   initialStep?: number;
+  initialMaxReachedStep?: number;
   isLoading?: boolean;
   isStepValid?: boolean;
   onBeforeNext?: (currentStep: number, proceed: () => void) => void;
@@ -22,6 +23,7 @@ interface MultiStepFormLayoutProps {
     next: string;
   };
   renderSubmit: React.ReactNode;
+  headerAction?: React.ReactNode;
   children: (currentStep: number) => React.ReactNode;
 }
 
@@ -30,15 +32,19 @@ export function MultiStepFormLayout({
   description,
   steps,
   initialStep = 0,
+  initialMaxReachedStep,
   isLoading = false,
   isStepValid = false,
   onBeforeNext,
   labels,
   renderSubmit,
+  headerAction,
   children,
 }: MultiStepFormLayoutProps) {
   const [currentStep, setCurrentStep] = useState(initialStep);
-  const [maxReachedStep, setMaxReachedStep] = useState(initialStep);
+  const [maxReachedStep, setMaxReachedStep] = useState(
+    initialMaxReachedStep ?? initialStep,
+  );
   const lastStepIndex = steps.length - 1;
   const visibleCurrentStep = Math.min(currentStep, lastStepIndex);
   const visibleMaxReachedStep = Math.min(maxReachedStep, lastStepIndex);
@@ -71,11 +77,14 @@ export function MultiStepFormLayout({
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10 sm:px-10 lg:px-12">
       {/* Page header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-white">
-          {title}
-        </h1>
-        <p className="text-muted mt-1 text-sm">{description}</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            {title}
+          </h1>
+          <p className="text-muted mt-1 text-sm">{description}</p>
+        </div>
+        {headerAction && <div className="shrink-0">{headerAction}</div>}
       </div>
 
       {/* Steps indicator */}

@@ -54,9 +54,8 @@ const CLASSIFICATION_LABEL: Record<string, string> = {
 
 function EventTypeBadge({ type }: { type: string }) {
   const styles: Record<string, string> = {
-    LEAGUE:
-      "border-gold/35 bg-[color-mix(in_srgb,var(--gold)_12%,transparent)] text-gold",
-    TOURNAMENT: "border-danger/30 bg-danger/10 text-danger",
+    LEAGUE: "border-gold/60 text-gold shadow-gold/20",
+    TOURNAMENT: "border-danger/60 text-danger shadow-danger/20",
   };
   const labels: Record<string, string> = {
     LEAGUE: "Liga",
@@ -66,8 +65,8 @@ function EventTypeBadge({ type }: { type: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase",
-        styles[type] ?? "border-primary/20 bg-primary/10 text-primary",
+        "inline-flex items-center gap-1.5 rounded-full border bg-black/60 px-3 py-1 text-[10px] font-bold tracking-widest uppercase shadow-sm backdrop-blur-md",
+        styles[type] ?? "border-primary/60 text-primary shadow-primary/20",
       )}
     >
       <Trophy className="size-3" />
@@ -141,7 +140,7 @@ export async function EloLeagueTemplate({
                     sizes="320px"
                   />
                 ) : (
-                  <div className="from-primary/20 to-primary/5 h-full w-full bg-linear-to-br" />
+                  <div className="from-primary via-primary/70 to-gold/60 h-full w-full bg-linear-to-br" />
                 )}
 
                 {/* Type badge — over the thumbnail, top-left */}
