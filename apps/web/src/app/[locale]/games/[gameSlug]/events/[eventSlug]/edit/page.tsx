@@ -2,8 +2,11 @@ import { notFound, redirect } from "next/navigation";
 import { getServerAuthSession } from "@/auth";
 import { canManageLeagues } from "@/lib/server/permissions";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
-import { GET_LEAGUE } from "@/lib/apollo/queries/leagues";
-import { type GetLeagueQuery } from "@/lib/apollo/generated/graphql";
+import { GET_EVENT_ENTRIES, GET_LEAGUE } from "@/lib/apollo/queries/leagues";
+import {
+  type GetEventEntriesQuery,
+  type GetLeagueQuery,
+} from "@/lib/apollo/generated/graphql";
 import { EditEventTemplate } from "@/components/templates/events/edit-event-template";
 
 interface EditEventPageProps {
@@ -29,6 +32,11 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
   if (!data?.league) notFound();
 
   const { league } = data;
+
+  const entriesData = await safeServerQuery<GetEventEntriesQuery>({
+    query: GET_EVENT_ENTRIES,
+    variables: { eventId: league.eventId, take: 500, skip: 0 },
+  });
 
   const leagueForEdit = {
     eventId: league.eventId,
@@ -59,6 +67,20 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     officialLinks: Array.isArray(league.event?.officialLinks)
       ? (league.event.officialLinks as Array<{ label: string; url: string }>)
       : null,
+    participants:
+      entriesData?.eventEntries?.nodes?.map((entry) => ({
+        localId: entry.id,
+        displayName: entry.displayName,
+        imagePath: entry.imagePath ?? null,
+        linkedUser: entry.user
+          ? {
+              userId: entry.user.id,
+              name: entry.user.name,
+              username: entry.user.username,
+              imagePath: entry.user.imagePath ?? null,
+            }
+          : null,
+      })) ?? [],
     game: {
       name: league.event?.game?.name ?? "",
       slug: league.event?.game?.slug ?? "",

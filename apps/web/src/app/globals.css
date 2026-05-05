@@ -26,8 +26,8 @@
   --primary: #a4141b;
   --primary-strong: #6d0d12;
   --secondary: #e8d5a3;
-  --gold: #d4711c;
-  --gold-dim: #6b370e;
+  --gold: #da9d3b;
+  --gold-dim: rgb(142, 89, 27);
   --success: #10b981;
   --danger: #ff7b7b;
   --warning: #f5c66a;
@@ -411,15 +411,15 @@ button:disabled {
     linear-gradient(
       45deg,
       transparent calc(50% - 0.5px),
-      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% - 0.5px),
-      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% + 0.5px),
+      color-mix(in srgb, var(--gold-dim) 12%, transparent) calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 12%, transparent) calc(50% + 0.5px),
       transparent calc(50% + 0.5px)
     ),
     linear-gradient(
       -45deg,
       transparent calc(50% - 0.5px),
-      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% - 0.5px),
-      color-mix(in srgb, var(--gold-dim) 22%, transparent) calc(50% + 0.5px),
+      color-mix(in srgb, var(--gold-dim) 12%, transparent) calc(50% - 0.5px),
+      color-mix(in srgb, var(--gold-dim) 12%, transparent) calc(50% + 0.5px),
       transparent calc(50% + 0.5px)
     );
   background-size: 70px 70px;

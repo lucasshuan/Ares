@@ -37,6 +37,7 @@ type LeagueForEdit = {
   requiresApproval?: boolean | null;
   waitlistEnabled?: boolean | null;
   officialLinks?: Array<{ label: string; url: string }> | null;
+  participants?: ParticipantEntry[];
   game: {
     name: string;
     slug: string;
@@ -65,7 +66,9 @@ export function EditEventTemplate({
   const [isValid, setIsValid] = useState(true);
   const [isStepValid, setIsStepValid] = useState(true);
   const [dirtyFieldCount, setDirtyFieldCount] = useState(0);
-  const [participants, setParticipants] = useState<ParticipantEntry[]>([]);
+  const [participants, setParticipants] = useState<ParticipantEntry[]>(
+    () => league.participants ?? [],
+  );
   const [staffMembers, setStaffMembers] = useState<EventStaffDraft[]>(() =>
     user
       ? [

@@ -1,4 +1,3 @@
-import { SectionHeader } from "@/components/ui/section-header";
 import { SidebarPageLayout } from "@/components/ui/sidebar-page-layout";
 import { getTranslations } from "next-intl/server";
 import { getServerAuthSession } from "@/auth";
@@ -11,11 +10,9 @@ import { ChevronLeft } from "lucide-react";
 import { Link } from "@/i18n/routing";
 
 import { GameInfoCard } from "@/components/triggers/game/game-info-card";
-import { AddEventButton } from "@/components/triggers/game/add-event-button";
 import { GameActionBar } from "@/components/triggers/game/game-action-bar";
-import { GameEventsSection } from "@/components/ui/game-events-section";
+import { GameDetailSections } from "@/components/templates/game/game-detail-sections";
 import { safeServerQuery } from "@/lib/apollo/safe-server-query";
-import type { SimpleGame } from "@/actions/game";
 
 type GamePageProps = {
   params: Promise<{
@@ -132,22 +129,7 @@ async function GamePageContent({ gameSlug }: { gameSlug: string }) {
     >
       <div className="space-y-6">
         <GameActionBar gameId={game.id} followCount={game.followCount ?? 0} />
-        <hr className="border-border/50" />
-        <section className="space-y-6">
-          <SectionHeader
-            title={t("eventsTitle")}
-            description={t("eventsDescription", { gameName: game.name })}
-            actions={
-              <AddEventButton
-                gameId={game.id}
-                game={game as SimpleGame}
-                variant="header"
-              />
-            }
-          />
-
-          <GameEventsSection leagues={leagues} gameSlug={gameSlug} />
-        </section>
+        <GameDetailSections game={game} leagues={leagues} gameSlug={gameSlug} />
       </div>
     </SidebarPageLayout>
   );
@@ -195,43 +177,56 @@ function GamePageSkeleton() {
       }
     >
       <div className="space-y-6">
-        <section className="space-y-6">
-          {/* SectionHeader skeleton */}
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-36 animate-pulse rounded bg-white/10 sm:h-8 sm:w-48" />
-                <div className="bg-primary/30 h-px w-8 animate-pulse rounded-full" />
-              </div>
-              <div className="bg-primary/20 h-9 w-32 animate-pulse rounded-2xl" />
+        <div className="border-gold-dim/40 bg-card/90 overflow-hidden rounded-3xl border">
+          <div className="border-gold-dim/35 bg-card-strong/75 border-b p-1.5">
+            <div className="grid grid-cols-2 gap-1 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-gold-dim/10 h-13 animate-pulse rounded-xl"
+                />
+              ))}
             </div>
-            <div className="h-4 w-72 animate-pulse rounded bg-white/6 sm:w-96" />
           </div>
 
-          {/* League cards */}
-          <div className="grid gap-5 xl:grid-cols-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="glass-panel min-h-80 overflow-hidden rounded-3xl p-6"
-              >
-                <div className="mb-4 flex items-start justify-between gap-4">
-                  <div className="h-6 w-36 animate-pulse rounded bg-white/10" />
-                  <div className="h-5 w-16 shrink-0 animate-pulse rounded-full bg-white/6" />
+          <section className="space-y-6 p-5 sm:p-6">
+            {/* SectionHeader skeleton */}
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-7 w-36 animate-pulse rounded bg-white/10 sm:h-8 sm:w-48" />
+                  <div className="bg-primary/30 h-px w-8 animate-pulse rounded-full" />
                 </div>
-                <div className="border-gold/20 mb-4 border-b" />
-                <div className="space-y-2.5">
-                  {[1, 2, 3].map((j) => (
-                    <div
-                      key={j}
-                      className="h-8 w-full animate-pulse rounded-lg bg-white/4"
-                    />
-                  ))}
-                </div>
+                <div className="bg-primary/20 h-9 w-32 animate-pulse rounded-2xl" />
               </div>
-            ))}
-          </div>
-        </section>
+              <div className="h-4 w-72 animate-pulse rounded bg-white/6 sm:w-96" />
+            </div>
+
+            {/* League cards */}
+            <div className="grid gap-5 xl:grid-cols-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="glass-panel min-h-80 overflow-hidden rounded-3xl p-6"
+                >
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div className="h-6 w-36 animate-pulse rounded bg-white/10" />
+                    <div className="h-5 w-16 shrink-0 animate-pulse rounded-full bg-white/6" />
+                  </div>
+                  <div className="border-gold/20 mb-4 border-b" />
+                  <div className="space-y-2.5">
+                    {[1, 2, 3].map((j) => (
+                      <div
+                        key={j}
+                        className="h-8 w-full animate-pulse rounded-lg bg-white/4"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </SidebarPageLayout>
   );

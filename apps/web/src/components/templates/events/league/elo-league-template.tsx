@@ -143,11 +143,6 @@ export async function EloLeagueTemplate({
                   <div className="from-primary via-primary/70 to-gold/60 h-full w-full bg-linear-to-br" />
                 )}
 
-                {/* Type badge — over the thumbnail, top-left */}
-                <div className="absolute top-3 left-3 z-10">
-                  <EventTypeBadge type={event.type} />
-                </div>
-
                 {/* Manage actions — over the thumbnail */}
                 {isEditor && (
                   <div className="absolute top-3 right-3 z-10">
@@ -164,9 +159,14 @@ export async function EloLeagueTemplate({
               <div className="p-5">
                 {/* Title + description */}
                 <div className="mb-4">
-                  <h2 className="text-foreground text-base leading-snug font-bold">
-                    {event.name}
-                  </h2>
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="text-foreground min-w-0 flex-1 text-base leading-snug font-bold">
+                      {event.name}
+                    </h2>
+                    <div className="shrink-0">
+                      <EventTypeBadge type={event.type} />
+                    </div>
+                  </div>
                   {event.description && (
                     <p className="text-muted mt-1 text-[13px] leading-snug">
                       {event.description}
