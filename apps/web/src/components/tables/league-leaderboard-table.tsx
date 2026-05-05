@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ChevronUp, ChevronDown, Search, Trophy } from "lucide-react";
 import { useState, useMemo } from "react";
 
-import { UserChip } from "@/components/ui/user-chip";
+import { Link } from "@/i18n/routing";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cdnUrl } from "@/lib/utils/cdn";
 import { cn } from "@/lib/utils/helpers";
@@ -517,7 +517,28 @@ export function TableCore({
               {/* Player */}
               <div className="min-w-0 overflow-hidden">
                 {row.entry.user ? (
-                  <UserChip user={row.entry.user} className="max-w-full" />
+                  <Link
+                    href={`/profile/${row.entry.user.username ?? row.entry.user.id}`}
+                    className="group bg-card hover:border-gold/40 hover:bg-card-strong inline-flex max-w-full items-center gap-2 rounded-lg border border-white/10 p-1 transition-all"
+                  >
+                    <div className="relative size-5 shrink-0 overflow-hidden rounded-md bg-white/10">
+                      {row.entry.user.imagePath ? (
+                        <Image
+                          src={cdnUrl(row.entry.user.imagePath)!}
+                          alt={row.entry.displayName}
+                          fill
+                          className="object-cover transition-transform group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="flex size-full items-center justify-center text-[9px] font-bold text-white/50">
+                          {row.entry.displayName.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <span className="truncate text-sm font-medium text-white/75 transition-colors group-hover:text-white">
+                      {row.entry.displayName}
+                    </span>
+                  </Link>
                 ) : (
                   <div className="bg-card inline-flex max-w-full items-center gap-2 rounded-lg border border-white/10 px-2 py-1">
                     {row.entry.imagePath ? (
