@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { EventActionBar } from "@/components/triggers/events/event-action-bar";
 import { EventManageActions } from "@/components/triggers/events/event-manage-actions";
 import { EventRegistrationTrigger } from "@/components/triggers/events/event-registration-trigger";
+import { MediaHeroSection } from "@/components/templates/shared/media-hero-section";
 import { Link } from "@/i18n/routing";
 import type {
   GetEventEntriesQuery,
@@ -75,27 +76,7 @@ export function EventHero({
   const participantCount = entries.totalCount;
 
   return (
-    <section className="bg-card/25 relative isolate min-h-[420px] overflow-hidden">
-      <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)]">
-        {backgroundSrc ? (
-          <Image
-            src={backgroundSrc}
-            alt=""
-            fill
-            priority
-            className="object-cover object-center opacity-70"
-            sizes="100vw"
-          />
-        ) : (
-          <div className="from-primary/22 via-background-soft/85 to-background absolute inset-0 bg-linear-to-br" />
-        )}
-
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_70%_90%_at_82%_42%,transparent_0%,rgb(13_12_14/0.18)_46%,rgb(13_12_14/0.92)_100%),linear-gradient(90deg,rgb(13_12_14/0.98)_0%,rgb(13_12_14/0.88)_31%,rgb(13_12_14/0.46)_58%,rgb(13_12_14/0.82)_100%)]"
-        />
-      </div>
-
+    <MediaHeroSection backgroundSrc={backgroundSrc}>
       <div className="relative">
         <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-5 pt-14 pb-0 sm:px-6 lg:px-8">
           <Link
@@ -230,8 +211,6 @@ export function EventHero({
           </div>
         )}
       </div>
-
-      <div className="h-4 sm:h-6" />
-    </section>
+    </MediaHeroSection>
   );
 }

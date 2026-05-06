@@ -9,6 +9,7 @@ import { Link } from "@/i18n/routing";
 import { GameActionBar } from "@/components/triggers/game/game-action-bar";
 import { GameInfoModal } from "@/components/modals/game/game-info-modal";
 import { GameManageActions } from "@/components/triggers/game/game-manage-actions";
+import { MediaHeroSection } from "@/components/templates/shared/media-hero-section";
 import { cdnUrl } from "@/lib/utils/cdn";
 import type { GetGameQuery } from "@/lib/apollo/generated/graphql";
 
@@ -34,29 +35,7 @@ export function GameHero({
 
   return (
     <>
-      <section className="bg-card/25 relative isolate min-h-[420px] overflow-hidden">
-        {/* Background + color overlays wrapped so only they fade to transparent at bottom */}
-        <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)]">
-          {backgroundSrc ? (
-            <Image
-              src={backgroundSrc}
-              alt=""
-              fill
-              priority
-              className="object-cover object-center opacity-70"
-              sizes="100vw"
-            />
-          ) : (
-            <div className="from-primary/22 via-background-soft/85 to-background absolute inset-0 bg-linear-to-br" />
-          )}
-
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(ellipse_70%_90%_at_82%_42%,transparent_0%,rgb(13_12_14/0.18)_46%,rgb(13_12_14/0.92)_100%),linear-gradient(90deg,rgb(13_12_14/0.98)_0%,rgb(13_12_14/0.88)_31%,rgb(13_12_14/0.46)_58%,rgb(13_12_14/0.82)_100%)]"
-          />
-        </div>
-
-        {/* Content wrapper — ocupa ~80% da altura total da section */}
+      <MediaHeroSection backgroundSrc={backgroundSrc}>
         <div className="relative">
           {/* Overlay topbar */}
           <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-5 pt-14 pb-0 sm:px-6 lg:px-8">
@@ -161,10 +140,7 @@ export function GameHero({
             </div>
           )}
         </div>
-
-        {/* Espaço extra para a imagem de fundo se estender além do conteúdo */}
-        <div className="h-4 sm:h-6" />
-      </section>
+      </MediaHeroSection>
 
       <GameInfoModal
         isOpen={isModalOpen}

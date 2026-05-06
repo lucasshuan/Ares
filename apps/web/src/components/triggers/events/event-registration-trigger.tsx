@@ -55,7 +55,7 @@ export function EventRegistrationTrigger({
 
   if (!registrationsEnabled) {
     return (
-      <div className="border-white/10 bg-card-strong flex items-center gap-3 rounded-2xl border px-5 py-4">
+      <div className="bg-card-strong flex items-center gap-3 rounded-2xl border border-white/10 px-5 py-4">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/5">
           <Swords className="text-muted size-5" />
         </div>
