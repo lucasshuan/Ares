@@ -50,7 +50,7 @@ export function GameCard({
       />
       <div
         className={cn(
-          "pointer-events-none relative z-0 aspect-368/178 w-full shrink-0 overflow-hidden bg-[#0b080f] brightness-75 transition-all duration-300 ease-out",
+          "bg-background-deep pointer-events-none relative z-0 aspect-368/178 w-full shrink-0 overflow-hidden brightness-75 transition-all duration-300 ease-out",
           !isFollowHovered && "group-hover:brightness-100",
         )}
       >
@@ -67,7 +67,7 @@ export function GameCard({
             />
           </div>
         ) : (
-          <div className="from-primary/48 absolute -inset-px h-auto w-auto bg-linear-to-br to-[#0b080f]/92 transition-transform duration-300 ease-out" />
+          <div className="from-primary/48 to-background-deep/92 absolute -inset-px h-auto w-auto bg-linear-to-br transition-transform duration-300 ease-out" />
         )}
       </div>
 

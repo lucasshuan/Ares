@@ -14,7 +14,7 @@ export function SiteFooter() {
           target="_blank"
           rel="noreferrer"
           aria-label="GitHub de lucasshuan"
-          className="text-gold hover:bg-gold flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:text-[#1a1208]"
+          className="text-gold hover:bg-gold flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors hover:text-gold-dark"
         >
           <FaGithub className="size-4" />
         </a>

@@ -112,7 +112,7 @@ export function GameHero({
                         target="_blank"
                         rel="noreferrer"
                         aria-label={t("playOnSteam")}
-                        className="inline-flex shrink-0 items-center rounded-xl border border-white/10 bg-black/60 p-2 text-[#c6d4df] shadow-[0_2px_8px_rgb(0_0_0/0.5)] backdrop-blur-sm transition-all duration-200 hover:border-[#66c0f4]/40 hover:bg-black/80 hover:text-[#66c0f4] hover:shadow-[0_0_12px_rgb(102_192_244/0.2)] focus-visible:ring-2 focus-visible:ring-[#66c0f4]/40 focus-visible:outline-none"
+                        className="text-steam-muted hover:border-steam/40 hover:text-steam focus-visible:ring-steam/40 inline-flex shrink-0 items-center rounded-xl border border-white/10 bg-black/60 p-2 shadow-[0_2px_8px_rgb(0_0_0/0.5)] backdrop-blur-sm transition-all duration-200 hover:bg-black/80 hover:shadow-[0_0_12px_color-mix(in_srgb,var(--color-steam)_20%,transparent)] focus-visible:ring-2 focus-visible:outline-none"
                       >
                         <SteamIcon className="size-5" />
                       </a>

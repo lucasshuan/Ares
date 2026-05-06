@@ -42,6 +42,11 @@
   --match-dominant: #22c55e;
   --match-shutout: #06b6d4;
   --discord: #5865f2;
+  --background-deep: #0a080f;
+  --background-panel: #0d0a14;
+  --gold-dark: #1a1208;
+  --steam: #66c0f4;
+  --steam-muted: #c6d4df;
 }
 
 @theme inline {
@@ -69,6 +74,11 @@
   --color-match-dominant: var(--match-dominant);
   --color-match-shutout: var(--match-shutout);
   --color-discord: var(--discord);
+  --color-background-deep: var(--background-deep);
+  --color-background-panel: var(--background-panel);
+  --color-gold-dark: var(--gold-dark);
+  --color-steam: var(--steam);
+  --color-steam-muted: var(--steam-muted);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-ibm-plex-mono);
   --font-display: var(--font-cinzel), "Trajan Pro", "Cormorant Garamond", serif;

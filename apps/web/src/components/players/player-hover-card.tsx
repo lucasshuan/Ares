@@ -77,7 +77,7 @@ export function PlayerHoverCard({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="glass-panel overflow-hidden rounded-2xl bg-[#0a080f] px-4 py-3 shadow-2xl ring-1 ring-white/10">
+            <div className="glass-panel bg-background-deep overflow-hidden rounded-2xl px-4 py-3 shadow-2xl ring-1 ring-white/10">
               <div className="flex items-center gap-3">
                 <div className="flex size-9 items-center justify-center rounded-xl bg-white/5 text-sm font-bold text-white/40">
                   {displayName.slice(0, 1).toUpperCase()}

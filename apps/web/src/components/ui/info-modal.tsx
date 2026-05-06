@@ -75,7 +75,7 @@ export function InfoModal({
     >
       <div
         className={cn(
-          "glass-panel no-hover corner-round animate-modal-content relative flex max-h-[95dvh] w-full flex-col overflow-hidden bg-[#0a080f] will-change-[transform,opacity]",
+          "glass-panel no-hover corner-round animate-modal-content bg-background-deep relative flex max-h-[95dvh] w-full flex-col overflow-hidden will-change-[transform,opacity]",
           "rounded-t-3xl sm:rounded-3xl",
           className ?? "sm:max-w-2xl lg:max-w-3xl",
         )}
@@ -108,7 +108,7 @@ export function InfoModal({
           {/* Heavy dark overlay so any image is just a subtle texture */}
           <div className="absolute inset-0 bg-black/70" />
           {/* Bottom-to-top gradient for title legibility */}
-          <div className="absolute inset-0 bg-linear-to-t from-[#0a080f] via-transparent to-transparent" />
+          <div className="from-background-deep absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
 
           {/* Thumbnail — floats over background, top-left, above the title */}
           {heroThumbnailSrc && (

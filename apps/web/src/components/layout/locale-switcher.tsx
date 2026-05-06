@@ -101,7 +101,7 @@ export function LocaleSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="glass-panel absolute top-full right-0 z-50 mt-2 min-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0f0b12]/95 p-1 shadow-2xl backdrop-blur-xl">
+        <div className="glass-panel bg-background-panel/95 absolute top-full right-0 z-50 mt-2 min-w-full overflow-hidden rounded-2xl border border-white/10 p-1 shadow-2xl backdrop-blur-xl">
           <div
             role="listbox"
             aria-label={`${t("label")}: ${t(selectedLocale)}`}

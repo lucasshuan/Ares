@@ -105,7 +105,7 @@ export function DataTable<T>({
       className={cn(
         "glass-panel group flex flex-col overflow-hidden transition-all duration-300",
         isFullScreen
-          ? "fixed inset-0 z-99999 h-screen w-screen rounded-none bg-[#0b080f]!"
+          ? "bg-background-deep! fixed inset-0 z-99999 h-screen w-screen rounded-none"
           : "relative rounded-3xl",
       )}
     >
