@@ -36,7 +36,7 @@ export function EventLeaderboardSection({
   const event = league.event!;
 
   return (
-    <section className="mx-auto min-h-[24rem] w-full max-w-[1600px] px-5 pt-5 pb-12 sm:px-6 lg:px-8">
+    <section className="mx-auto min-h-96 w-full max-w-400 px-5 pt-5 pb-12 sm:px-6 lg:px-8">
       <div className="space-y-5">
         <SectionHeader
           eyebrow={t("sectionTabLeaderboard")}
@@ -108,11 +108,11 @@ export function EventComingSoonSection({
   ];
 
   return (
-    <section className="mx-auto min-h-[24rem] w-full max-w-[1600px] px-5 pt-5 pb-12 sm:px-6 lg:px-8">
+    <section className="mx-auto min-h-96 w-full max-w-400 px-5 pt-5 pb-12 sm:px-6 lg:px-8">
       <div className="border-gold-dim/25 bg-card/70 animate-in fade-in slide-in-from-bottom-2 relative overflow-hidden rounded-3xl border shadow-[0_18px_70px_rgb(0_0_0/0.2),inset_0_1px_0_rgb(255_255_255/0.03)] duration-300">
         <div
           aria-hidden="true"
-          className="absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:28px_28px] opacity-35"
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[28px_28px] opacity-35"
         />
         <div
           aria-hidden="true"

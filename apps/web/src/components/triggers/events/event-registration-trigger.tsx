@@ -18,6 +18,11 @@ interface EventRegistrationTriggerProps {
   registrationsEnabled: boolean;
 }
 
+const CARD_BASE =
+  "w-full rounded-2xl border px-5 py-4 shadow-[0_18px_44px_rgb(0_0_0/0.28)] backdrop-blur-sm";
+
+const CARD_ROW = "flex items-center gap-3";
+
 export function EventRegistrationTrigger({
   eventId,
   isRegistered,
@@ -39,8 +44,14 @@ export function EventRegistrationTrigger({
 
   if (isRegistered) {
     return (
-      <div className="border-success/40 from-success-dark to-success-dark/60 flex items-center gap-3 rounded-2xl border bg-gradient-to-br px-5 py-4">
-        <div className="bg-success/15 flex size-9 shrink-0 items-center justify-center rounded-xl">
+      <div
+        className={cn(
+          CARD_BASE,
+          CARD_ROW,
+          "border-success/40 from-success-dark to-success-dark/60 bg-gradient-to-br",
+        )}
+      >
+        <div className="bg-success/15 flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/10">
           <CheckCircle2 className="text-success size-5" />
         </div>
         <div>
@@ -55,11 +66,19 @@ export function EventRegistrationTrigger({
 
   if (!registrationsEnabled) {
     return (
-      <div className="bg-card-strong flex items-center gap-3 rounded-2xl border border-white/10 px-5 py-4">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/5">
+      <div
+        className={cn(
+          CARD_BASE,
+          CARD_ROW,
+          "border-white/12 bg-black/60 bg-gradient-to-br from-white/8 to-white/3",
+        )}
+      >
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/8">
           <Swords className="text-muted size-5" />
         </div>
-        <p className="text-muted text-sm">{t("registrationsClosed")}</p>
+        <p className="text-secondary/80 text-sm font-medium">
+          {t("registrationsClosed")}
+        </p>
       </div>
     );
   }
@@ -70,19 +89,22 @@ export function EventRegistrationTrigger({
         <button
           onClick={() => setIsAuthModalOpen(true)}
           className={cn(
-            "group relative w-full overflow-hidden rounded-2xl border px-6 py-5 text-left transition-all active:scale-[0.98]",
-            "border-primary/20 from-primary/8 to-primary/3 hover:border-primary/40 hover:from-primary/12 hover:to-primary/6 bg-gradient-to-br",
+            CARD_BASE,
+            "group relative overflow-hidden px-5 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98]",
+            "border-primary/28 from-primary/24 to-primary-strong/18 hover:border-primary/42 hover:from-primary/30 hover:to-primary-strong/24 bg-black/55 bg-gradient-to-br",
           )}
         >
-          <div className="flex items-center gap-4">
-            <div className="bg-primary/15 group-hover:bg-primary/20 flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors">
+          <div className={cn(CARD_ROW, "relative")}>
+            <div className="bg-primary/16 group-hover:bg-primary/22 border-primary/18 flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors">
               <LogIn className="text-primary size-5" />
             </div>
             <div>
               <p className="text-foreground text-sm font-semibold">
                 {t("loginToRegister")}
               </p>
-              <p className="text-muted text-xs">{t("loginToRegisterHint")}</p>
+              <p className="text-secondary/75 text-xs">
+                {t("loginToRegisterHint")}
+              </p>
             </div>
           </div>
         </button>
@@ -101,38 +123,59 @@ export function EventRegistrationTrigger({
         onClick={() => !isFull && setIsRegModalOpen(true)}
         disabled={isFull}
         className={cn(
-          "group relative w-full overflow-hidden rounded-2xl border px-6 py-5 text-left transition-all active:scale-[0.98]",
+          CARD_BASE,
+          "group relative overflow-hidden px-5 py-4 text-left transition-all duration-200 active:scale-[0.98]",
           isFull
-            ? "border-border bg-card/40 cursor-not-allowed opacity-60"
-            : "border-gold/20 from-gold/8 to-gold/3 hover:border-gold/40 hover:from-gold/12 hover:to-gold/6 cursor-pointer bg-gradient-to-br",
+            ? "border-gold/20 from-gold/18 to-gold-dim/14 cursor-not-allowed bg-black/55 bg-gradient-to-br"
+            : "border-gold/26 from-gold/24 to-gold-dim/18 hover:border-gold/42 hover:from-gold/30 hover:to-gold-dim/24 cursor-pointer bg-black/55 bg-gradient-to-br hover:-translate-y-0.5",
         )}
       >
         {/* Decorative shimmer */}
         {!isFull && (
-          <div className="from-gold/0 via-gold/6 to-gold/0 pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r transition-transform duration-700 group-hover:translate-x-full" />
+          <div className="from-gold/0 via-gold/10 to-gold/0 pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r transition-transform duration-700 group-hover:translate-x-full" />
         )}
-        <div className="relative flex items-center gap-4">
+        <div className={cn(CARD_ROW, "relative")}>
           <div
             className={cn(
-              "flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors",
-              isFull ? "bg-white/5" : "bg-gold/15 group-hover:bg-gold/20",
+              "flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors",
+              isFull
+                ? "border-gold/10 bg-gold/10"
+                : "border-gold/18 bg-gold/16 group-hover:bg-gold/22",
             )}
           >
             <Swords
-              className={cn("size-5", isFull ? "text-white/30" : "text-gold")}
+              className={cn(
+                "size-5",
+                isFull ? "text-secondary/55" : "text-gold",
+              )}
             />
           </div>
           <div className="min-w-0">
-            <p className="text-foreground text-sm font-bold tracking-wide uppercase">
+            <p
+              className={cn(
+                "text-sm font-bold tracking-wide uppercase",
+                isFull ? "text-secondary" : "text-foreground",
+              )}
+            >
               {isFull ? t("eventFull") : t("register")}
             </p>
             {participantCount != null && maxParticipants != null ? (
-              <p className="text-muted flex items-center gap-1 text-xs">
+              <p
+                className={cn(
+                  "flex items-center gap-1 text-xs",
+                  isFull ? "text-secondary/70" : "text-secondary/75",
+                )}
+              >
                 <Users className="size-3" />
                 {participantCount}/{maxParticipants} {t("participants")}
               </p>
             ) : participantCount != null ? (
-              <p className="text-muted flex items-center gap-1 text-xs">
+              <p
+                className={cn(
+                  "flex items-center gap-1 text-xs",
+                  isFull ? "text-secondary/70" : "text-secondary/75",
+                )}
+              >
                 <Users className="size-3" />
                 {participantCount} {t("participants")}
               </p>

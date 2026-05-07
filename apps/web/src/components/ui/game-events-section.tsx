@@ -17,8 +17,10 @@ import { LeagueCard } from "@/components/cards/league-card";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { SectionHeader } from "@/components/ui/section-header";
 import { type GetLeaguesQuery } from "@/lib/apollo/generated/graphql";
+import { cn } from "@/lib/utils/helpers";
 
 type LeagueNode = NonNullable<GetLeaguesQuery["leagues"]["nodes"][number]>;
+type EventTypeFilter = "ALL" | "LEAGUE" | "TOURNAMENT";
 type StatusFilter =
   | "ALL"
   | "ACTIVE"
@@ -75,6 +77,15 @@ const HIGHLIGHT_FILTERS: {
   { value: "FEATURED", labelKey: "filterFeatured" },
 ];
 
+const EVENT_TYPE_FILTERS: {
+  value: EventTypeFilter;
+  labelKey: string;
+}[] = [
+  { value: "ALL", labelKey: "eventTypeAll" },
+  { value: "LEAGUE", labelKey: "eventTypeLeagues" },
+  { value: "TOURNAMENT", labelKey: "eventTypeTournaments" },
+];
+
 function isFeaturedLeague(league: LeagueNode) {
   const config = league.config;
   if (!config || typeof config !== "object" || Array.isArray(config)) {
@@ -87,6 +98,10 @@ function isFeaturedLeague(league: LeagueNode) {
 
 function getParticipantCount(league: LeagueNode) {
   return league.event?.entriesCount ?? 0;
+}
+
+function getEventType(league: LeagueNode): Exclude<EventTypeFilter, "ALL"> {
+  return league.event?.type === "TOURNAMENT" ? "TOURNAMENT" : "LEAGUE";
 }
 
 function compareLeagues(current: LeagueNode, next: LeagueNode) {
@@ -140,6 +155,8 @@ export function GameEventsSection({
   action,
 }: GameEventsSectionProps) {
   const t = useTranslations("GamePage");
+  const [eventTypeFilter, setEventTypeFilter] =
+    useState<EventTypeFilter>("ALL");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [systemFilter, setSystemFilter] = useState<SystemFilter>("ALL");
@@ -153,7 +170,7 @@ export function GameEventsSection({
   );
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
-  const filteredLeagues = useMemo(() => {
+  const baseFilteredLeagues = useMemo(() => {
     let visibleLeagues = sortedLeagues;
 
     if (normalizedSearchTerm) {
@@ -184,24 +201,52 @@ export function GameEventsSection({
       visibleLeagues = visibleLeagues.filter(isFeaturedLeague);
     }
 
-    return sortLeagues(visibleLeagues, sortBy);
+    return visibleLeagues;
   }, [
     highlightFilter,
     normalizedSearchTerm,
     sortedLeagues,
-    sortBy,
     statusFilter,
     systemFilter,
   ]);
 
-  const hasActiveFilters =
+  const eventTypeCounts = useMemo<Record<EventTypeFilter, number>>(
+    () => ({
+      ALL: baseFilteredLeagues.length,
+      LEAGUE: baseFilteredLeagues.filter(
+        (league) => getEventType(league) === "LEAGUE",
+      ).length,
+      TOURNAMENT: baseFilteredLeagues.filter(
+        (league) => getEventType(league) === "TOURNAMENT",
+      ).length,
+    }),
+    [baseFilteredLeagues],
+  );
+
+  const filteredLeagues = useMemo(() => {
+    const visibleLeagues =
+      eventTypeFilter === "ALL"
+        ? baseFilteredLeagues
+        : baseFilteredLeagues.filter(
+            (league) => getEventType(league) === eventTypeFilter,
+          );
+
+    return sortLeagues(visibleLeagues, sortBy);
+  }, [baseFilteredLeagues, eventTypeFilter, sortBy]);
+
+  const hasContextualFilters =
     normalizedSearchTerm.length > 0 ||
     statusFilter !== "ALL" ||
     systemFilter !== "ALL" ||
-    highlightFilter !== "ALL" ||
+    highlightFilter !== "ALL";
+
+  const hasActiveFilters =
+    hasContextualFilters ||
+    eventTypeFilter !== "ALL" ||
     sortBy !== "recommended";
 
   function resetFilters() {
+    setEventTypeFilter("ALL");
     setSearchTerm("");
     setStatusFilter("ALL");
     setSystemFilter("ALL");
@@ -210,13 +255,21 @@ export function GameEventsSection({
   }
 
   const emptyStateTitle =
-    hasActiveFilters && sortedLeagues.length > 0
+    hasContextualFilters && sortedLeagues.length > 0
       ? t("noFilteredEvents")
-      : t("noLeagues");
+      : eventTypeFilter === "LEAGUE"
+        ? t("noLeagues")
+        : eventTypeFilter === "TOURNAMENT"
+          ? t("noTournaments")
+          : t("noEvents");
   const emptyStateDescription =
-    hasActiveFilters && sortedLeagues.length > 0
+    hasContextualFilters && sortedLeagues.length > 0
       ? t("noFilteredEventsDescription")
-      : t("noLeaguesDescription");
+      : eventTypeFilter === "LEAGUE"
+        ? t("noLeaguesDescription")
+        : eventTypeFilter === "TOURNAMENT"
+          ? t("noTournamentsDescription")
+          : t("noEventsDescription");
 
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(15rem,18rem)_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)]">
@@ -314,6 +367,17 @@ export function GameEventsSection({
           }
         />
 
+        <EventTypeTabs
+          activeFilter={eventTypeFilter}
+          ariaLabel={t("eventTypeTabsAriaLabel")}
+          onChange={setEventTypeFilter}
+          tabs={EVENT_TYPE_FILTERS.map((filter) => ({
+            value: filter.value,
+            label: t(filter.labelKey),
+            count: eventTypeCounts[filter.value],
+          }))}
+        />
+
         {filteredLeagues.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {filteredLeagues.map((league) => (
@@ -332,6 +396,60 @@ export function GameEventsSection({
           />
         )}
       </section>
+    </div>
+  );
+}
+
+function EventTypeTabs({
+  activeFilter,
+  ariaLabel,
+  tabs,
+  onChange,
+}: {
+  activeFilter: EventTypeFilter;
+  ariaLabel: string;
+  tabs: { value: EventTypeFilter; label: string; count: number }[];
+  onChange: (value: EventTypeFilter) => void;
+}) {
+  return (
+    <div className="custom-scrollbar overflow-x-auto">
+      <div
+        className="border-gold-dim/25 bg-card-strong/30 inline-flex min-w-full items-center gap-1 rounded-2xl border p-1 sm:min-w-0"
+        role="tablist"
+        aria-label={ariaLabel}
+      >
+        {tabs.map((tab) => {
+          const selected = tab.value === activeFilter;
+
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => onChange(tab.value)}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold whitespace-nowrap transition-all duration-200 sm:flex-none",
+                selected
+                  ? "border-primary/35 from-primary/22 to-primary-strong/18 text-foreground bg-linear-to-b shadow-[0_10px_30px_rgb(0_0_0/0.22)]"
+                  : "text-secondary/65 hover:border-gold-dim/25 hover:bg-gold-dim/10 hover:text-secondary border-transparent",
+              )}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={cn(
+                  "rounded-full border px-2 py-0.5 text-[10px] font-bold tabular-nums",
+                  selected
+                    ? "border-primary/30 bg-primary/15 text-primary"
+                    : "border-gold-dim/20 bg-card/55 text-secondary/55",
+                )}
+              >
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -91,7 +91,7 @@ export function EventRouteTabs({
 
   return (
     <div className="w-full">
-      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-400 px-5 sm:px-6 lg:px-8">
         <div className="custom-scrollbar border-gold-dim/35 bg-card-strong/65 overflow-x-auto rounded-xl border shadow-[0_18px_60px_rgb(0_0_0/0.24),inset_0_1px_0_rgb(255_255_255/0.04)] backdrop-blur">
           <nav
             className="relative grid min-w-max overflow-hidden sm:min-w-0"

@@ -79,14 +79,14 @@ export function EventHero({
   return (
     <MediaHeroSection backgroundSrc={backgroundSrc}>
       <div className="relative">
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-5 pt-3 pb-0 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-400 items-center justify-between px-5 pt-3 pb-0 sm:px-6 lg:px-8">
           <Link
             href={`/games/${game.slug}`}
             className="group focus-visible:ring-gold/40 text-gold/70 hover:text-gold inline-flex items-center gap-1.5 text-xs font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none"
           >
             <ChevronLeft className="size-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
             {gameThumbnailSrc ? (
-              <span className="relative h-4 w-[33px] shrink-0 overflow-hidden rounded-sm bg-black/45">
+              <span className="relative h-4 w-8.25 shrink-0 overflow-hidden rounded-sm bg-black/45">
                 <Image
                   src={gameThumbnailSrc}
                   alt={game.name}
@@ -128,7 +128,7 @@ export function EventHero({
           </div>
         )}
 
-        <div className="mx-auto grid w-full max-w-[1600px] gap-4 px-5 py-2 sm:px-6 sm:py-3 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-center lg:px-8 xl:px-10">
+        <div className="mx-auto grid w-full max-w-400 gap-4 px-5 py-2 sm:px-6 sm:py-3 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-center lg:px-8 xl:px-10">
           <div className="grid gap-4 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
             <div className="bg-background/75 relative aspect-92/43 w-full max-w-80 overflow-hidden rounded-xl shadow-[0_18px_48px_rgb(0_0_0/0.34)]">
               <Image
