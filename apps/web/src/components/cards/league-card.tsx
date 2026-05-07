@@ -115,6 +115,7 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
   const systemCfg =
     SYSTEM_CONFIG[league.classificationSystem] ?? SYSTEM_CONFIG.POINTS!;
   const thumbnailPath = league.event?.thumbnailImagePath;
+  const eventThumbnailSrc = cdnUrl(thumbnailPath) ?? "/league-placeholder.webp";
   const gameThumbnailPath = league.event?.game?.thumbnailImagePath;
   const gameName = league.event?.game?.name ?? "";
   const rawName = league.event?.name ?? "";
@@ -232,25 +233,23 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
 
       {/* Thumbnail strip + leaderboard overlay */}
       <div
-        className="relative w-full border-y border-white/[0.04]"
+        className="relative w-full overflow-hidden border-y border-white/4 transition-colors duration-400 group-hover:border-transparent"
         style={{ aspectRatio: "92/43" }}
       >
-        {/* Background: thumbnail or gradient */}
-        {thumbnailPath ? (
+        {/* Background: thumbnail or placeholder */}
+        <div className="absolute -inset-2">
           <Image
-            src={cdnUrl(thumbnailPath)!}
-            alt={league.event?.name ?? ""}
+            src={eventThumbnailSrc}
+            alt={league.event?.name ?? "Liga"}
             fill
-            className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:blur-[2px]"
+            className="object-cover transition-all duration-500 group-hover:blur-[5px]"
             sizes="(max-width: 1280px) 100vw, 560px"
           />
-        ) : (
-          <div className="from-primary via-primary/70 to-gold/60 h-full w-full bg-linear-to-br" />
-        )}
+        </div>
 
         {/* Static finish for the resting thumbnail state */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_78%_88%,color-mix(in_srgb,var(--gold)_18%,transparent),transparent_68%)] opacity-70 transition-opacity duration-400 group-hover:opacity-0" />
-        <div className="bg-gold/18 pointer-events-none absolute inset-x-0 top-0 h-px" />
+        <div className="bg-gold/18 pointer-events-none absolute inset-x-0 top-0 h-px transition-opacity duration-400 group-hover:opacity-0" />
 
         {/* Cinematic gradient for text contrast */}
         <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/15 to-transparent transition-all duration-400 group-hover:from-black/90 group-hover:via-black/55" />
@@ -352,7 +351,7 @@ export function LeagueCard({ league, game }: LeagueCardProps) {
       </div>
 
       {/* Footer: status + affordance */}
-      <div className="flex min-h-11 shrink-0 items-center justify-between gap-3 border-t border-white/[0.05] px-4 py-2.5">
+      <div className="flex min-h-11 shrink-0 items-center justify-between gap-3 border-t border-white/5 px-4 py-2.5">
         <div className="flex min-w-0 items-center gap-2">
           <span
             className={cn(

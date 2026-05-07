@@ -71,7 +71,8 @@ export function EventHero({
   const t = useTranslations("EventPage");
   const event = league.event!;
   const backgroundSrc = cdnUrl(game.backgroundImagePath) ?? null;
-  const eventThumbnailSrc = cdnUrl(event.thumbnailImagePath) ?? null;
+  const eventThumbnailSrc =
+    cdnUrl(event.thumbnailImagePath) ?? "/league-placeholder.webp";
   const gameThumbnailSrc = cdnUrl(game.thumbnailImagePath) ?? null;
   const participantCount = entries.totalCount;
 
@@ -130,18 +131,14 @@ export function EventHero({
         <div className="mx-auto grid w-full max-w-[1600px] gap-4 px-5 py-2 sm:px-6 sm:py-3 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-center lg:px-8 xl:px-10">
           <div className="grid gap-4 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
             <div className="bg-background/75 relative aspect-92/43 w-full max-w-80 overflow-hidden rounded-xl shadow-[0_18px_48px_rgb(0_0_0/0.34)]">
-              {eventThumbnailSrc ? (
-                <Image
-                  src={eventThumbnailSrc}
-                  alt={event.name}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 320px"
-                />
-              ) : (
-                <div className="from-primary via-primary/70 to-gold/60 absolute inset-0 bg-linear-to-br" />
-              )}
+              <Image
+                src={eventThumbnailSrc}
+                alt={event.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 320px"
+              />
 
               <div
                 aria-hidden

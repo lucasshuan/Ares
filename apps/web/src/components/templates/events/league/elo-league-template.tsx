@@ -89,6 +89,8 @@ export async function EloLeagueTemplate({
   const gameSlug = game.slug;
   const eventSlug = event.slug;
   const gameThumbnail = game.thumbnailImagePath;
+  const eventThumbnailSrc =
+    cdnUrl(event.thumbnailImagePath) ?? "/league-placeholder.webp";
 
   const userId = session?.user?.id;
   const userName = session?.user?.name ?? "";
@@ -126,22 +128,18 @@ export async function EloLeagueTemplate({
             borderClassName="bg-[color-mix(in_srgb,var(--gold)_45%,transparent)]"
           >
             <div className="space-y-0">
-              {/* Thumbnail — always shown, gradient fallback when no image */}
+              {/* Thumbnail — always shown, with placeholder fallback */}
               <div
                 className="relative w-full overflow-hidden rounded-t-3xl"
                 style={{ aspectRatio: "368/178" }}
               >
-                {event.thumbnailImagePath ? (
-                  <Image
-                    src={cdnUrl(event.thumbnailImagePath)!}
-                    alt={event.name}
-                    fill
-                    className="object-cover"
-                    sizes="320px"
-                  />
-                ) : (
-                  <div className="from-primary via-primary/70 to-gold/60 h-full w-full bg-linear-to-br" />
-                )}
+                <Image
+                  src={eventThumbnailSrc}
+                  alt={event.name}
+                  fill
+                  className="object-cover"
+                  sizes="320px"
+                />
 
                 {/* Manage actions — over the thumbnail */}
                 {isEditor && (
